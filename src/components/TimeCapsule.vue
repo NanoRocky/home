@@ -4,23 +4,24 @@
       <hourglass-full theme="two-tone" size="24" :fill="['#efefef', '#00000020']" />
       <span>时光胶囊</span>
     </div>
-    <span class="text">今日已经度过了&nbsp;{{ timeData.day.elapsed }}&nbsp;小时</span>
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="timeData.day.pass" />
-    <span class="text">本周已经度过了&nbsp;{{ timeData.week.elapsed }}&nbsp;天</span>
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="timeData.week.pass" />
-    <span class="text">本月已经度过了&nbsp;{{ timeData.month.elapsed }}&nbsp;天</span>
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="timeData.month.pass" />
-    <span class="text">今年已经度过了&nbsp;{{ timeData.year.elapsed }}&nbsp;个月</span>
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="timeData.year.pass" />
-    <div v-if="startDate?.length >= 4 && store.siteStartShow">
-      <span class="text" v-html="startDateText" />
-      <!-- <el-progress
-        :show-text="false"
-        :indeterminate="true"
-        :stroke-width="6"
-        :percentage="80"
-        :duration="2"
-      /> -->
+    <div v-if="timeData" class="all-capsule">
+      <div v-for="(item, tag, index) in timeData" :key="index" class="capsule-item">
+        <div class="item-title">
+          <span class="percentage">
+            {{ item.name }}已度过
+            <strong>{{ item.passed }}</strong>
+            {{ tag === "day" ? "小时" : "天" }}
+          </span>
+          <span class="remaining">
+            剩余&nbsp;{{ item.remaining }}&nbsp;{{ tag === "day" ? "小时" : "天" }}
+          </span>
+        </div>
+        <el-progress :text-inside="true" :stroke-width="20" :percentage="item.percentage" />
+      </div>
+      <!-- 建站日期 -->
+      <div v-if="store.siteStartShow" class="capsule-item start">
+        <div class="item-title">{{ startDateText }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -65,10 +66,33 @@ onBeforeUnmount(() => {
       margin-right: 6px;
     }
   }
-  .text {
-    display: block;
-    margin: 1rem 0rem 0.5rem 0rem;
-    font-size: 0.95rem;
+  .all-capsule {
+    .capsule-item {
+      margin-bottom: 1rem;
+      .item-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin: 1rem 0rem 0.5rem 0rem;
+        font-size: 0.95rem;
+        .remaining {
+          opacity: 0.6;
+          font-size: 0.85rem;
+          font-style: oblique;
+        }
+      }
+      &:last-child {
+        margin-bottom: 0;
+      }
+      &.start {
+        .item-title {
+          justify-content: center;
+          opacity: 0.8;
+          font-size: 0.85rem;
+        }
+      }
+    }
   }
 }
 </style>

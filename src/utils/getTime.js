@@ -1,5 +1,6 @@
 import { h } from "vue";
 import { SpaCandle } from "@icon-park/vue-next";
+import dayjs from "dayjs";
 
 // 时钟
 export const getCurrentTime = () => {
@@ -25,47 +26,44 @@ export const getCurrentTime = () => {
 
 // 时光胶囊
 export const getTimeCapsule = () => {
-  // 日进度
-  const todayStartDate = new Date(new Date().toLocaleDateString()).getTime();
-  const todayPassHours = (new Date() - todayStartDate) / 1000 / 60 / 60;
-  const todayPassHoursPercent = (todayPassHours / 24) * 100;
-
-  // 周进度
-  const weeks = [7, 1, 2, 3, 4, 5, 6];
-  const weekDay = weeks[new Date().getDay()];
-  const weekDayPassPercent = (weekDay / 7) * 100;
-
-  // 月进度
-  const year = new Date().getFullYear();
-  const date = new Date().getDate();
-  const month = new Date().getMonth() + 1;
-  const monthAll = new Date(year, month, 0).getDate();
-  const monthPassPercent = (date / monthAll) * 100;
-
-  // 年进度
-  const yearStartDate = new Date(year, 0, 1).getTime();
-  const yearEndDate = new Date(year + 1, 0, 1).getTime();
-  const yearPassHours = (new Date() - yearStartDate) / 1000 / 60 / 60;
-  const yearTotalHours = (yearEndDate - yearStartDate) / 1000 / 60 / 60;
-  const yearPassPercent = (yearPassHours / yearTotalHours) * 100;
-
+  const now = dayjs();
+  const dayText = {
+    day: "今日",
+    week: "本周",
+    month: "本月",
+    year: "本年",
+  };
+  /**
+   * 计算时间差的函数
+   * @param {String} unit 时间单位，可以是 'day', 'week', 'month', 'year'
+   */
+  const getDifference = (unit) => {
+    // 获取当前时间单位的开始时间
+    const start = now.startOf(unit);
+    // 获取当前时间单位的结束时间
+    const end = now.endOf(unit);
+    // 计算总的天数或小时数
+    const total = Math.floor(end.diff(start, unit === "day" ? "hour" : "day")) + 1;
+    // 计算已经过去的天数或小时数
+    const passed = Math.floor(now.diff(start, unit === "day" ? "hour" : "day"));
+    // 计算剩余的天数或小时数
+    const remaining = total - passed;
+    // 计算已经过去的时间占总时间的百分比
+    const percentage = (passed / total) * 100;
+    // 返回数据
+    return {
+      name: dayText[unit],
+      total: total,
+      passed: passed,
+      remaining: remaining,
+      percentage: Number(percentage.toFixed(2)),
+    };
+  };
   return {
-    day: {
-      elapsed: Math.floor(todayPassHours),
-      pass: Math.floor(todayPassHoursPercent),
-    },
-    week: {
-      elapsed: weekDay,
-      pass: Math.floor(weekDayPassPercent),
-    },
-    month: {
-      elapsed: date,
-      pass: Math.floor(monthPassPercent),
-    },
-    year: {
-      elapsed: month - 1,
-      pass: Math.floor(yearPassPercent),
-    },
+    day: getDifference("day"),
+    week: getDifference("week"),
+    month: getDifference("month"),
+    year: getDifference("year"),
   };
 };
 
