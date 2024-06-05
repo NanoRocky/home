@@ -231,7 +231,7 @@ if (type == 0) {
 
 ### API
 
-- [小歪 API](https://api.aixiaowai.cn)
+- [韩小韩 WebAPI 接口](https://api.vvhan.com/)
 - [搏天 API](https://api.btstu.cn/doc/sjbz.php)
 - [教书先生 API](https://api.oioweb.cn/doc/weather/GetWeather)
 - [高德开放平台](https://lbs.amap.com/)
