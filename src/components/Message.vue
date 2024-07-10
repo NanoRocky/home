@@ -58,7 +58,7 @@ const descriptionText = reactive({
 
 // 切换右侧功能区
 const changeBox = () => {
-  if (store.getInnerWidth >= 990) {
+  if (store.getInnerWidth >= 721) {
     store.boxOpenState = !store.boxOpenState;
   } else {
     ElMessage({
@@ -112,7 +112,7 @@ watch(
       .sm {
         margin-left: 6px;
         font-size: 2rem;
-        @media (min-width: 720px) and (max-width: 789px) {
+        @media (min-width: 721px) and (max-width: 789px) {
           display: none;
         }
       }
@@ -166,28 +166,28 @@ watch(
       pointer-events: none;
     }
   }
-  @media (max-width: 390px) {
-    .logo {
-      flex-direction: column;
-      .logo-img {
-        display: none;
-      }
-      .name {
-        margin-left: 0;
-        height: auto;
-        transform: none;
-        text-align: center;
-        .bg {
-          font-size: 3.5rem;
-        }
-        .sm {
-          font-size: 1.4rem;
-        }
-      }
-    }
-    .description {
-      margin-top: 2.5rem;
-    }
-  }
+  // @media (max-width: 390px) {
+  //   .logo {
+  //     flex-direction: column;
+  //     .logo-img {
+  //       display: none;
+  //     }
+  //     .name {
+  //       margin-left: 0;
+  //       height: auto;
+  //       transform: none;
+  //       text-align: center;
+  //       .bg {
+  //         font-size: 3.5rem;
+  //       }
+  //       .sm {
+  //         font-size: 1.4rem;
+  //       }
+  //     }
+  //   }
+  //   .description {
+  //     margin-top: 2.5rem;
+  //   }
+  // }
 }
 </style>

@@ -145,6 +145,23 @@ const jumpTo = (url) => {
           margin-left: 6px;
           font-size: 2rem;
         }
+
+        @media (max-width: 990px) {
+          .bg {
+            font-size: 4.5rem;
+          }
+          .sm {
+            font-size: 1.7rem;
+          }
+        }
+        @media (max-width: 825px) {
+          .bg {
+            font-size: 3.8rem;
+          }
+          .sm {
+            font-size: 1.3rem;
+          }
+        }
       }
 
       .version {
