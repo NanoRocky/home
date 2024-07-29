@@ -45,12 +45,9 @@ export const getTimeCapsule = () => {
     // 计算总的天数或小时数
     const total = end.diff(start, unit === "day" ? "hour" : "day") + 1;
     // 计算已经过去的天数或小时数
-    let passed;
-    if (unit === "week" && now.day() === 0) {
-      // 如果是星期日
-      passed = total - 1;
-    } else {
-      passed = now.diff(start, unit === "day" ? "hour" : "day");
+    let passed = now.diff(start, unit === "day" ? "hour" : "day");
+    if (unit === "week") {
+      passed = (passed + 6) % 7;
     }
     const remaining = total - passed;
     const percentage = (passed / total) * 100;
