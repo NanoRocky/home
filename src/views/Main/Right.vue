@@ -39,7 +39,7 @@ const siteUrl = computed(() => {
   .logo {
     width: 100%;
     font-family: "Pacifico-Regular";
-    font-size: 1.75rem;
+    font-size: 2.25rem;
     position: fixed;
     top: 6%;
     left: 0;
@@ -49,8 +49,15 @@ const siteUrl = computed(() => {
     &:active {
       transform: scale(0.95);
     }
-    @media (min-width: 720px) {
+    @media (min-width: 721px) {
       display: none;
+    }
+    @media (max-height: 720px) {
+      width: calc(100% + 6px);
+      top: 43.26px; // 721px * 0.06
+    }
+    @media (max-width: 390px) {
+        width: 391px;
     }
   }
   @media (max-width: 720px) {

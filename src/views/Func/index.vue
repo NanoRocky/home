@@ -127,6 +127,15 @@ onBeforeUnmount(() => {
           letter-spacing: 2px;
           font-family: "UnidreamLED";
         }
+        @media (min-width: 1201px) and (max-width: 1280px) {
+          font-size: 1rem;
+        }
+        @media (min-width: 911px) and (max-width: 992px) {
+          font-size: 1rem;
+          .text {
+            font-size: 2.75rem;
+          }
+        }
       }
       .weather {
         text-align: center;

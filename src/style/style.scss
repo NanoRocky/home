@@ -37,6 +37,12 @@ p {
   }
 }
 
+// 链接悬停效果
+a:hover {
+  color: rgb(57, 159, 255);
+  text-decoration: underline;
+}
+
 // 字体文件
 @font-face {
   font-family: "Pacifico-Regular";
