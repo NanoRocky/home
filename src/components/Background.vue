@@ -26,6 +26,7 @@
 <script setup>
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
+import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 
 const store = mainStore();
 const bgUrl = ref(null);
@@ -77,6 +78,12 @@ const imgLoadError = () => {
     }),
   });
   bgUrl.value = `/images/background${bgRandom}.jpg`;
+  if (store.webSpeech) {
+    stopSpeech();
+    const voice = import.meta.env.VITE_TTS_Voice;
+    const vstyle = import.meta.env.VITE_TTS_Style;
+    SpeechLocal("壁纸加载失败.mp3");
+  };
 };
 
 // 监听壁纸切换

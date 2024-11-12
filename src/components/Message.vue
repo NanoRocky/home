@@ -34,6 +34,7 @@ import { Icon } from "@vicons/utils";
 import { QuoteLeft, QuoteRight } from "@vicons/fa";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
+import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 const store = mainStore();
 
 // 主页站点logo
@@ -69,6 +70,12 @@ const changeBox = () => {
         fill: "#efefef",
       }),
     });
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("分辨率不足.mp3");
+    };
   }
 };
 
@@ -79,6 +86,12 @@ watch(
     if (value) {
       descriptionText.hello = import.meta.env.VITE_DESC_HELLO_OTHER;
       descriptionText.text = import.meta.env.VITE_DESC_TEXT_OTHER;
+      if (store.webSpeech) {
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("惊讶.mp3");
+      };
     } else {
       descriptionText.hello = import.meta.env.VITE_DESC_HELLO;
       descriptionText.text = import.meta.env.VITE_DESC_TEXT;
@@ -95,10 +108,12 @@ watch(
     align-items: center;
     animation: fade 0.5s;
     max-width: 460px;
+
     .logo-img {
       border-radius: 50%;
       width: 120px;
     }
+
     .name {
       width: 100%;
       padding-left: 22px;
@@ -112,17 +127,21 @@ watch(
       .sm {
         margin-left: 6px;
         font-size: 2rem;
+
         @media (min-width: 721px) and (max-width: 789px) {
           display: none;
         }
       }
     }
+
     @media (max-width: 768px) {
       .logo-img {
         width: 100px;
       }
+
       .name {
         height: 128px;
+
         .bg {
           font-size: 4.5rem;
         }
@@ -161,11 +180,13 @@ watch(
         align-self: flex-end;
       }
     }
+
     @media (max-width: 720px) {
       max-width: 100%;
       pointer-events: none;
     }
   }
+
   // @media (max-width: 390px) {
   //   .logo {
   //     flex-direction: column;

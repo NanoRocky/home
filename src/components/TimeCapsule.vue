@@ -53,12 +53,14 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .time-capsule {
   width: 100%;
+
   .title {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin: 0.2rem 0 1.5rem;
     font-size: 1.1rem;
+
     .i-icon {
       display: flex;
       justify-content: center;
@@ -66,9 +68,11 @@ onBeforeUnmount(() => {
       margin-right: 6px;
     }
   }
+
   .all-capsule {
     .capsule-item {
       margin-bottom: 1rem;
+
       .item-title {
         display: flex;
         flex-direction: row;
@@ -76,15 +80,18 @@ onBeforeUnmount(() => {
         justify-content: space-between;
         margin: 1rem 0rem 0.5rem 0rem;
         font-size: 0.95rem;
+
         .remaining {
           opacity: 0.6;
           font-size: 0.85rem;
           font-style: oblique;
         }
       }
+
       &:last-child {
         margin-bottom: 0;
       }
+
       &.start {
         .item-title {
           justify-content: center;

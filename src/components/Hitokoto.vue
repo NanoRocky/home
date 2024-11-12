@@ -1,18 +1,9 @@
 <template>
-  <div
-    class="hitokoto cards"
-    v-show="!store.musicOpenState"
-    @mouseenter="openMusicShow = true"
-    @mouseleave="openMusicShow = false"
-    @click.stop
-  >
+  <div class="hitokoto cards" v-show="!store.musicOpenState" @mouseenter="openMusicShow = true"
+    @mouseleave="openMusicShow = false" @click.stop>
     <!-- 打开音乐面板 -->
     <Transition name="el-fade-in-linear">
-      <div
-        class="open-music"
-        v-show="openMusicShow && store.musicIsOk"
-        @click="store.musicOpenState = true"
-      >
+      <div class="open-music" v-show="openMusicShow && store.musicIsOk" @click="store.musicOpenState = true">
         <music-menu theme="filled" size="18" fill="#efefef" />
         <span>打开音乐播放器</span>
       </div>
@@ -32,6 +23,7 @@ import { MusicMenu, Error } from "@icon-park/vue-next";
 import { getHitokoto } from "@/api";
 import { mainStore } from "@/store";
 import debounce from "@/utils/debounce.js";
+import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 
 const store = mainStore();
 
@@ -60,6 +52,12 @@ const getHitokotoData = async () => {
     });
     hitokotoData.text = "这里应该显示一句话";
     hitokotoData.from = "無名";
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("一言加载失败.mp3");
+    };
   }
 };
 
@@ -82,6 +80,7 @@ onMounted(() => {
   height: 100%;
   padding: 20px;
   animation: fade 0.5s;
+
   .open-music {
     width: 100%;
     position: absolute;
@@ -93,21 +92,25 @@ onMounted(() => {
     background: #00000026;
     padding: 4px 0;
     border-radius: 8px 8px 0 0;
+
     .i-icon {
       width: 18px;
       height: 18px;
       display: block;
       margin-right: 8px;
     }
+
     span {
       font-size: 0.95rem;
     }
   }
+
   .content {
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+
     .text {
       font-size: 1.1rem;
       word-break: break-all;
@@ -117,6 +120,7 @@ onMounted(() => {
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
     }
+
     .from {
       margin-top: 10px;
       font-weight: bold;

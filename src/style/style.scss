@@ -56,6 +56,12 @@ a:hover {
   src: url("/font/UnidreamLED.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: 'MiSans-Regular';
+  font-display: swap;
+  src: url('/font/MiSans-Regular.otf') format('opentype');
+}
+
 // 基础样式
 #app {
   position: fixed;

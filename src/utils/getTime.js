@@ -1,5 +1,6 @@
 import { h } from "vue";
 import { SpaCandle } from "@icon-park/vue-next";
+import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import dayjs from "dayjs";
 
 // 时钟
@@ -69,30 +70,49 @@ export const getTimeCapsule = () => {
 };
 
 // 欢迎提示
-export const helloInit = () => {
+export const helloInit = (store) => {
   const hour = new Date().getHours();
   let hello = null;
-  if (hour < 6) {
-    hello = "凌晨好";
+  let hellosound = null;
+  stopSpeech();
+  if (hour < 5) {
+    hello = "凌晨好，该睡了啦！";
+    hellosound = "欢迎1.mp3";
+  } else if (hour < 7) {
+    hello = "早上好，起的真早哦~";
+    hellosound = "欢迎2.mp3";
   } else if (hour < 9) {
-    hello = "早上好";
-  } else if (hour < 12) {
-    hello = "上午好";
+    hello = "早上好，又是新的一天~";
+    hellosound = "欢迎3.mp3";
+  } else if (hour < 11) {
+    hello = "上午好！";
+    hellosound = "欢迎4.mp3";
   } else if (hour < 14) {
-    hello = "中午好";
+    hello = "中午好，辛苦了一个上午，补充下能量吧~";
+    hellosound = "欢迎5.mp3";
   } else if (hour < 17) {
-    hello = "下午好";
-  } else if (hour < 19) {
-    hello = "傍晚好";
+    hello = "下午好！";
+    hellosound = "欢迎6.mp3";
+  } else if (hour < 18) {
+    hello = "傍晚好，吃顿美味的晚餐休息休息吧~";
+    hellosound = "欢迎7.mp3";
   } else if (hour < 22) {
-    hello = "晚上好";
+    hello = "晚上好，娱乐一下，放松心情~";
+    hellosound = "欢迎8.mp3";
+  } else if (hour < 23) {
+    hello = "深夜好！夜深了，晚安噢w";
+    hellosound = "欢迎9.mp3";
   } else {
-    hello = "夜深了";
-  }
+    hello = "深夜好！都快凌晨了啦，早点休息哦~";
+    hellosound = "欢迎10.mp3";
+  };
   ElMessage({
     dangerouslyUseHTMLString: true,
     message: `<strong>${hello}</strong> 欢迎来到我的主页`,
   });
+  if (store.webSpeech) {
+    SpeechLocal(hellosound);
+  };
 };
 
 // 默哀模式
