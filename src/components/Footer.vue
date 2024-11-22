@@ -41,7 +41,11 @@
             :key="store.playerLrc.length != 0 ? `lrc-line-${store.playerLrc[0][2]}` : `lrc-line-null`">
             <music-one theme="filled" size="18" fill="#efefef" />
             <span class="yrc-box">
-              <span class="yrc-1 lrc-text text-hidden">
+              <span class="yrc-2 lrc-text text-hidden" id="yrc-2-wrap">
+                <span v-for="i in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                </span>
+              </span>
+              <span class="yrc-1 lrc-text text-hidden" id="yrc-1-wrap">
                 <span v-for="i in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
                   :style="`opacity: ${i[1] ? '1' : '0.6'}`"
                   :class="`yrc-char ${i[0] ? 'fade-in' : 'fade-in-start'} ${i[0] > 1.5 ? 'long-tone' : 'fade-in-start'}`"
@@ -87,14 +91,14 @@ const siteUrl = computed(() => {
   // 判断协议前缀
   if (!url.startsWith("http://") && !url.startsWith("https://")) {
     return "//" + url;
-  }
+  };
   return url;
 });
 </script>
 
 <style lang="scss" scoped>
+// 逐字模块1
 .yrc-char {
-  // 逐字部分
   display: inline-block;
   opacity: 0.3;
   transform: translateY(1px);
@@ -174,8 +178,32 @@ const siteUrl = computed(() => {
   }
 }
 
+// 逐字模块2
+#yrc-2-wrap>span {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+}
+
+#yrc-2-wrap {
+  display: inline-block;
+  position: absolute;
+  width: auto;
+  opacity: 0.5;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  font-family: MiSans-Regular;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    opacity 0.3s linear,
+    color 0.5s linear,
+    transform 0.3s linear,
+    width 0.3s linear;
+}
+
+// 逐行部分
 .lrc-char {
-  // 逐行部分
   display: inline;
   opacity: 1;
   background-clip: text;
@@ -187,6 +215,8 @@ const siteUrl = computed(() => {
     color 0.5s linear;
 }
 
+// End
+
 #footer {
   width: 100%;
   position: absolute;
@@ -196,7 +226,7 @@ const siteUrl = computed(() => {
   line-height: 46px;
   text-align: center;
   z-index: 0;
-  font-size: 14px;
+  font-size: 16px;
   // 文字不换行
   word-break: keep-all;
   white-space: nowrap;
@@ -211,6 +241,8 @@ const siteUrl = computed(() => {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    z-index: 1;
+    justify-content: flex-start;
 
     .lrc-all {
       width: 98%;
@@ -218,6 +250,7 @@ const siteUrl = computed(() => {
       flex-direction: row;
       justify-content: center;
       align-items: center;
+      white-space: nowrap;
 
       .lrc-text {
         margin: 0 8px;
@@ -250,9 +283,6 @@ const siteUrl = computed(() => {
         .yrc-2 {
           position: absolute;
           z-index: 1000;
-          overflow: hidden;
-          float: left;
-          text-align: left;
         }
       }
     }

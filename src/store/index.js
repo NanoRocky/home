@@ -24,10 +24,10 @@ export const mainStore = defineStore("main", {
     playerAutoplay: true, // 是否自动播放
     playerLoop: "all", // 循环播放 "all", "one", "none"
     playerOrder: "random", // 循环顺序 "list", "random"
-    webSpeech: false, // 网页语音交互总开关（包含播报歌名功能）
+    webSpeech: true, // 网页语音交互总开关（包含播报歌名功能）
     playerSpeechName: true, // 播报歌名
     playerYrcShow: true, // 逐字歌词解析总开关
-    playerYrcShowPro: false, // 逐字效果增强开关（更高的性能要求）
+    playerYrcShowPro: false, // 逐字效果增强开关
     playerYrcATDB: true, // 允许接入 AMLL TTML Database
     yrcIndex: -1, // 逐字歌词进度存储
     yrcTemp: [], // 逐字歌词缓存

@@ -47,7 +47,7 @@ const siteUrl = computed(() => {
   if (url.startsWith("http://") || url.startsWith("https://")) {
     const urlFormat = url.replace(/^(https?:\/\/)/, "");
     return urlFormat.split(".");
-  }
+  };
   return url.split(".");
 });
 
@@ -76,7 +76,7 @@ const changeBox = () => {
       const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("分辨率不足.mp3");
     };
-  }
+  };
 };
 
 // 监听状态变化
@@ -95,7 +95,7 @@ watch(
     } else {
       descriptionText.hello = import.meta.env.VITE_DESC_HELLO;
       descriptionText.text = import.meta.env.VITE_DESC_TEXT;
-    }
+    };
   },
 );
 </script>

@@ -110,7 +110,7 @@ export function stopSpeech() {
 }
 
 export function SpeechLocal(fileName) {
-  // 考虑到生成延迟，所以加了这个，仅必要模块调用 api 实时生成，其它模块使用预先生成好的音频
+  // 考虑到生成延迟，所以加了这个，仅必要模块调用 api 实时生成，其它模块使用预先生成好的音频。记得根据需求更换自己的音频文件哇！
   return new Promise((resolve, reject) => {
     if (!fileName) {
       reject(new Error("No file name provided"));

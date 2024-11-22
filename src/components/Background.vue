@@ -47,7 +47,7 @@ const changeBg = (type) => {
     bgUrl.value = "https://api.vvhan.com/api/wallpaper/views";
   } else if (type == 3) {
     bgUrl.value = "https://api.vvhan.com/api/wallpaper/acg";
-  }
+  };
 };
 
 // 图片加载完成

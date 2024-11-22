@@ -59,7 +59,7 @@
           <el-switch v-model="playerYrcShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
         <div v-if="playerLrcShow && playerYrcShow" class="item">
-          <span class="text">逐字效果增强开关（更高的性能要求）</span>
+          <span class="text">逐字效果增强开关</span>
           <el-switch v-model="playerYrcShowPro" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
       </el-collapse-item>

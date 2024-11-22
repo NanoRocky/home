@@ -20,6 +20,9 @@
 <script setup>
 import { getAdcode, getWeather, getOtherWeather } from "@/api";
 import { Error } from "@icon-park/vue-next";
+import { mainStore } from "@/store";
+import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+const store = mainStore();
 
 // 高德开发者 Key
 const mainKey = import.meta.env.VITE_WEATHER_KEY;
