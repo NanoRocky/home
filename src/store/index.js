@@ -18,7 +18,7 @@ export const mainStore = defineStore("main", {
     playerState: false, // 当前播放状态
     playerTitle: null, // 当前播放歌曲名
     playerArtist: null, // 当前播放歌手名
-    playerLrc: [[true, "歌词加载中"]], // 当前播放歌词
+    playerLrc: [[true, "猫猫正在翻找歌词..."]], // 当前播放歌词
     playerLrcShow: true, // 是否显示底栏歌词
     footerBlur: true, // 底栏模糊
     playerAutoplay: true, // 是否自动播放

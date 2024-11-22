@@ -18,27 +18,10 @@
         </div>
         <div class="version">
           <div class="num">v&nbsp;{{ config.version }}</div>
-          <el-tooltip content="Github 源代码仓库" placement="right" :show-arrow="false">
+          <el-tooltip content="Powered by imsyy" placement="right" :show-arrow="false">
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
         </div>
-        <el-card class="update">
-          <template #header>
-            <div class="card-header">
-              <span>更新日志</span>
-            </div>
-          </template>
-          <div class="upnote">
-            <div v-for="item in upData.new" :key="item" class="uptext">
-              <add-one theme="outline" size="22" />
-              {{ item }}
-            </div>
-            <div v-for="item in upData.fix" :key="item" class="uptext">
-              <bug theme="outline" size="22" />
-              {{ item }}
-            </div>
-          </div>
-        </el-card>
       </el-col>
       <el-col :span="12" class="right">
         <div class="title">
@@ -63,24 +46,13 @@ const closeShow = ref(false);
 // 站点链接
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
-  if (!url) return "imsyy.top".split(".");
+  if (!url) return "nanorocky.top".split(".");
   // 判断协议前缀
   if (url.startsWith("http://") || url.startsWith("https://")) {
     const urlFormat = url.replace(/^(https?:\/\/)/, "");
     return urlFormat.split(".");
   }
   return url.split(".");
-});
-
-// 更新日志
-const upData = reactive({
-  new: [
-    "采用 Vue 进行重构",
-    "音乐歌单支持快速自定义",
-    "壁纸支持个性化设置",
-    "音乐播放器支持音量控制",
-  ],
-  fix: ["修复天气 API", "时光胶囊显示错误", "移动端动画及细节", "图标更换为 IconPark"],
 });
 
 // 跳转源代码仓库

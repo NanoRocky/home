@@ -2,7 +2,7 @@
   <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
     :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
     :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false" @play="onPlay" @pause="onPause"
-    @timeupdate="onTimeUp" @error="loadMusicError" />
+    @timeupdate="showYrc" @error="loadMusicError" />
 </template>
 
 <script setup>
@@ -53,7 +53,7 @@ const props = defineProps({
   // id
   songId: {
     type: String,
-    default: "7452421335",
+    default: "3035221869",
   },
   // 列表是否默认折叠
   listFolded: {
@@ -101,7 +101,7 @@ onMounted(() => {
       console.error(err);
       store.musicIsOk = false;
       ElMessage({
-        message: "播放器加载失败",
+        message: "播音员消失惹，音乐加载失败qwq",
         grouping: true,
         icon: h(PlayWrong, {
           theme: "filled",
@@ -255,7 +255,7 @@ function showYrc() {
       }
       let lrc = lyrics[lyricIndex][1];
       if (lrc === "Loading") {
-        lrc = "歌词加载中...";
+        lrc = "猫猫正在翻找歌词...";
       } else if (lrc === "Not available") {
         if (store.playerYrcATDB) {
           // 哈哈哈又是你（）
@@ -274,18 +274,18 @@ function showYrc() {
             fetch(amllUrllrc)
               .then((response) => {
                 if (response.status === 404 || !response.ok) {
-                  lrc = "歌词加载失败";
+                  lrc = "猫猫没有找到这首歌的歌词诶qwq";
                   return;
                 } else {
                   return response.text();
                 }
               })
               .catch(() => {
-                lrc = "歌词加载失败";
+                lrc = "猫猫没有找到这首歌的歌词诶qwq";
               });
           }
         } else {
-          lrc = "歌词加载失败";
+          lrc = "猫猫没有找到这首歌的歌词诶qwq";
         };
       }
       const output = [[true, 1, lyricIndex, 0, lrc]];
@@ -394,7 +394,7 @@ const toggleList = () => {
 const loadMusicError = () => {
   let notice = "";
   if (playList.value.length > 1) {
-    notice = "播放歌曲出现错误，播放器将在 2s 后进行下一首";
+    notice = "猫猫“不会唱”这首歌啦qwq，将在 2 秒后播放下一首歌曲";
     if (store.webSpeech) {
       stopSpeech();
       const voice = import.meta.env.VITE_TTS_Voice;
@@ -402,7 +402,7 @@ const loadMusicError = () => {
       SpeechLocal("歌曲加载失败.mp3");
     };
   } else {
-    notice = "播放歌曲出现错误";
+    notice = "播音室出现了一点小故障，请稍后再试qwq";
     if (store.webSpeech) {
       stopSpeech();
       const voice = import.meta.env.VITE_TTS_Voice;
@@ -420,7 +420,7 @@ const loadMusicError = () => {
     }),
   });
   console.error(
-    "播放歌曲: " + player.value.aplayer.audio[player.value.aplayer.index].name + " 出现错误",
+    "猫猫在播放歌曲: " + player.value.aplayer.audio[player.value.aplayer.index].name + " 出现错误...",
   );
 };
 

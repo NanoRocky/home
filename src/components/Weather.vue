@@ -13,7 +13,7 @@
     <span class="sm-hidden">{{ weatherData.weather.windpower }}&nbsp;级</span>
   </div>
   <div class="weather" v-else>
-    <span>天气数据获取失败</span>
+    <span>猫猫不知道今天的天气诶qwq</span>
   </div>
 </template>
 
@@ -48,7 +48,7 @@ const getTemperature = (min, max) => {
     const average = (Number(min) + Number(max)) / 2;
     return Math.round(average);
   } catch (error) {
-    console.error("计算温度出现错误：", error);
+    console.error("猫猫不会计算获得的温度数据qwq：", error);
     if (store.webSpeech) {
       stopSpeech();
       const voice = import.meta.env.VITE_TTS_Voice;
@@ -81,7 +81,6 @@ const getWeatherData = async () => {
     } else {
       // 获取 Adcode
       const adCode = await getAdcode(mainKey);
-      console.log(adCode);
       if (adCode.infocode !== "10000") {
         if (store.webSpeech) {
           stopSpeech();
@@ -89,7 +88,7 @@ const getWeatherData = async () => {
           const vstyle = import.meta.env.VITE_TTS_Style;
           SpeechLocal("位置信息获取失败.mp3");
         };
-        throw "地区查询失败";
+        throw "猫猫无法识别访问区域qwq";
       }
       weatherData.adCode = {
         city: adCode.city,
@@ -105,8 +104,8 @@ const getWeatherData = async () => {
       };
     }
   } catch (error) {
-    console.error("天气信息获取失败:" + error);
-    onError("天气信息获取失败");
+    console.error("猫猫不知道今天的天气诶qwq：" + error);
+    onError("猫猫不知道今天的天气诶qwq");
     if (store.webSpeech) {
       stopSpeech();
       const voice = import.meta.env.VITE_TTS_Voice;

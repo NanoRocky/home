@@ -62,6 +62,24 @@ a:hover {
   src: url('/font/MiSans-Regular.otf') format('opentype');
 }
 
+@font-face {
+  font-family: '字魂元气酪酪体';
+  font-display: swap;
+  src: url('/font/zihunn162hao-yuanqilaolaoti.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: '字魂萌趣软糖体';
+  font-display: swap;
+  src: url('/font/zihun64hao-mengquruantangti.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: '方正喵呜体';
+  font-display: swap;
+  src: url('/font/FangZheng-miaowu.ttf') format('truetype');
+}
+
 // 基础样式
 #app {
   position: fixed;

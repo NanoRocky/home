@@ -36,7 +36,7 @@ window.addEventListener("beforeunload", () => {
     playerState: false, // 当前播放状态
     playerTitle: null, // 当前播放歌曲名
     playerArtist: null, // 当前播放歌手名
-    playerLrc: [[true, "歌词加载中..."]], // 当前播放歌词
+    playerLrc: [[true, "猫猫正在翻找歌词..."]], // 当前播放歌词
     yrcIndex: -1, // 逐字歌词进度存储
     yrcTemp: [], // 逐字歌词缓存
     yrcEnable: true,
@@ -50,8 +50,8 @@ app.mount("#app");
 // PWA
 navigator.serviceWorker.addEventListener("controllerchange", async () => {
   // 弹出更新提醒
-  console.log("站点已更新，刷新后生效");
-  ElMessage("站点已更新，刷新后生效");
+  console.log("网站已更新，请刷新网页嗷！");
+  ElMessage("网站已更新，请刷新网页嗷！");
   if (store.webSpeech) {
     stopSpeech();
     const voice = import.meta.env.VITE_TTS_Voice;

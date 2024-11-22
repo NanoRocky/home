@@ -32,8 +32,8 @@ const openMusicShow = ref(false);
 
 // 一言数据
 const hitokotoData = reactive({
-  text: "这里应该显示一句话",
-  from: "無名",
+  text: "修猫正在思考ing...",
+  from: "酪灰",
 });
 
 // 获取一言数据
@@ -44,14 +44,14 @@ const getHitokotoData = async () => {
     hitokotoData.from = result.from;
   } catch (error) {
     ElMessage({
-      message: "一言获取失败",
+      message: "一言信息加载失败惹喵qwq...",
       icon: h(Error, {
         theme: "filled",
         fill: "#efefef",
       }),
     });
-    hitokotoData.text = "这里应该显示一句话";
-    hitokotoData.from = "無名";
+    hitokotoData.text = "猫猫思考不出来惹qwq";
+    hitokotoData.from = "酪灰";
     if (store.webSpeech) {
       stopSpeech();
       const voice = import.meta.env.VITE_TTS_Voice;
