@@ -117,7 +117,7 @@ export function SpeechLocal(fileName) {
       return;
     }
 
-    const audioUrl = `/speechlocal/${fileName}`;
+    const audioUrl = `https://file.nanorocky.top/home/speechlocal/${fileName}`;
 
     // 清除之前的音频
     if (currentAudio) {

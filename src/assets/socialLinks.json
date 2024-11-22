@@ -1,38 +1,44 @@
 [
   {
     "name": "Github",
-    "icon": "/images/icon/github.png",
-    "tip": "去 Github 看看",
-    "url": "https://github.com/imsyy"
+    "icon": "https://file.nanorocky.top/home/images/icon/github.png",
+    "tip": "催眠学",
+    "url": "https://github.com/NanoRocky"
+  },
+  {
+    "name": "Steam",
+    "icon": "https://file.nanorocky.top/home/images/icon/steam.png",
+    "tip": "谁家的辣鸡宽带！我要和蒸汽学共眠！",
+    "url": "https://steamcommunity.com/id/NanoRocky/"
   },
   {
     "name": "BiliBili",
-    "icon": "/images/icon/bilibili.png",
-    "tip": "(゜-゜)つロ 干杯 ~",
-    "url": "https://space.bilibili.com/98544142"
+    "icon": "https://file.nanorocky.top/home/images/icon/bilibili.png",
+    "tip": "哔哔叭叭小破站",
+    "url": "https://space.bilibili.com/454187211/dynamic"
   },
   {
     "name": "QQ",
-    "icon": "/images/icon/qq.png",
-    "tip": "有什么事吗",
-    "url": "https://res.abeim.cn/api/qq/?qq=1539250352"
-  },
-  {
-    "name": "Email",
-    "icon": "/images/icon/email.png",
-    "tip": "来封 Email ~",
-    "url": "mailto:one@imsyy.top"
+    "icon": "https://file.nanorocky.top/home/images/icon/qq.png",
+    "tip": "蕉个朋友~",
+    "url": "https://res.abeim.cn/api/qq/?qq=3525987739"
   },
   {
     "name": "Twitter",
-    "icon": "/images/icon/twitter.png",
-    "tip": "你懂的 ~",
-    "url": "https://twitter.com/iimmsyy"
+    "icon": "https://file.nanorocky.top/home/images/icon/twitter.png",
+    "tip": "迅雷！（bushi）",
+    "url": "https://twitter.com/NanoRocky_Sama"
+  },
+  {
+    "name": "Email",
+    "icon": "https://file.nanorocky.top/home/images/icon/email.png",
+    "tip": "律师函马上到你邮箱！（bushi）",
+    "url": "mailto:gongxi3525987739@sina.com"
   },
   {
     "name": "Telegram",
-    "icon": "/images/icon/telegram.png",
-    "tip": "你懂的 ~",
-    "url": "https://t.me/bottom_user"
+    "icon": "https://file.nanorocky.top/home/images/icon/telegram.png",
+    "tip": "喂？喂！没有信号！",
+    "url": "https://t.me/NanoRocky_Sama"
   }
 ]

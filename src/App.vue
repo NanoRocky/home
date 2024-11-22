@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { helloInit, checkDays } from "@/utils/getTime.js";
+import { helloInit } from "@/utils/getTime.js";
 import { HamburgerButton, CloseSmall } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { Icon } from "@vicons/utils";
@@ -57,8 +57,6 @@ const loadComplete = () => {
   nextTick(() => {
     // 欢迎提示
     helloInit(store);
-    // 默哀模式
-    checkDays();
   });
 };
 
@@ -80,7 +78,7 @@ onMounted(() => {
   // 屏蔽右键
   document.oncontextmenu = () => {
     ElMessage({
-      message: "为了浏览体验，本站禁用右键",
+      message: "为了更好嘟体验，右键被猫猫吃掉啦！",
       grouping: true,
       duration: 2000,
     });
@@ -96,18 +94,15 @@ onMounted(() => {
   // 鼠标中键事件
   window.addEventListener("mousedown", (event) => {
     if (event.button == 1) {
-      store.backgroundShow = !store.backgroundShow;
       ElMessage({
-        message: `已${store.backgroundShow ? "开启" : "退出"}壁纸展示状态`,
+        message: `已停用壁纸预览状态，本站默认壁纸为酪灰的收藏小图库，版权归原主所有，只做装饰，不提供预览和下载喔~ 果咩纳塞！`,
         grouping: true,
       });
       if (store.webSpeech) {
-        // 这部分原本是给禁用壁纸预览功能后提供的，如果有需要请自行修改喔！
-        // 可以跟上面的 ElMessage 一样使用 store.backgroundShow 判断，调用两个不同的音频。
-        // stopSpeech();
-        // const voice = import.meta.env.VITE_TTS_Voice;
-        // const vstyle = import.meta.env.VITE_TTS_Style;
-        // SpeechLocal("壁纸预览.mp3");
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("壁纸预览.mp3");
       };
     }
   });
@@ -120,16 +115,9 @@ onMounted(() => {
   const styleTitle1 = "font-size: 20px;font-weight: 600;color: rgb(244,167,89);";
   const styleTitle2 = "font-size:12px;color: rgb(244,167,89);";
   const styleContent = "color: rgb(30,152,255);";
-  const title1 = "無名の主页";
-  const title2 = `
- _____ __  __  _______     ____     __
-|_   _|  \\/  |/ ____\\ \\   / /\\ \\   / /
-  | | | \\  / | (___  \\ \\_/ /  \\ \\_/ /
-  | | | |\\/| |\\___ \\  \\   /    \\   /
- _| |_| |  | |____) |  | |      | |
-|_____|_|  |_|_____/   |_|      |_|`;
-  const content = `\n\n版本: ${config.version}\n主页: ${config.home}\nGithub: ${config.github}`;
-  console.info(`%c${title1} %c${title2} %c${content}`, styleTitle1, styleTitle2, styleContent);
+  const title1 = "酪灰の主页";
+  const content = `\n\n版本: ${config.version}`;
+  console.info(`%c${title1} %c${content}`, styleTitle1, styleContent);
 });
 
 onBeforeUnmount(() => {
