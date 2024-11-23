@@ -13,8 +13,8 @@ const app = createApp(App);
 const pinia = createPinia();
 pinia.use(
   createPersistedStatePlugin({
-    // 为升级 pinia 后的兼容性保留的一块巧克力（
-    storage: sessionStorage,
+    // 为升级 pinia 后的兼容性保留的一块巧克力，但巧克力太甜了（
+    // storage: sessionStorage,
   })
 );
 export default pinia;
