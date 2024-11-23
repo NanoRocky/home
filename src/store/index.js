@@ -84,7 +84,7 @@ export const mainStore = defineStore("main", {
   },
   persist: {
     key: "data",
-    storage: localStorage,
+    storage: window.localStorage,
     paths: [
       "coverType",
       "musicVolume",
