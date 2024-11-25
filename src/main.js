@@ -21,7 +21,6 @@ export default pinia;
 
 window.addEventListener("beforeunload", () => {
   // 这堆代码原本的意义是在于强制刷新这些本不需要被 pinia 缓存的变量，不知为什么这些变量只会在关闭页面重新输入域名访问才能恢复，导致刷新页面部分模块短时间内出现异常。
-  // 但是貌似这堆代码也没能解决问题...罢了，先暂且留着叭（）
   const store = mainStore();
   Object.assign(store, {
     imgLoadStatus: false, // 壁纸加载状态

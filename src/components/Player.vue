@@ -2,7 +2,7 @@
   <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
     :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
     :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false" @play="onPlay" @pause="onPause"
-    @timeupdate="showYrc" @error="loadMusicError" />
+   @error="loadMusicError" />
 </template>
 
 <script setup>
