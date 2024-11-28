@@ -160,10 +160,12 @@ onBeforeUnmount(() => {
       width: 100%;
       height: 100%;
       background-color: #00000080;
+      -webkit-backdrop-filter: blur(20px);
       backdrop-filter: blur(20px);
       z-index: 2;
       animation: fade 0.5s;
     }
+
 
     @media (max-width: 1200px) {
       padding: 0 2vw;
@@ -180,6 +182,7 @@ onBeforeUnmount(() => {
     width: 56px;
     height: 34px;
     background: rgb(0 0 0 / 20%);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-radius: 6px;
     transition: transform 0.3s;

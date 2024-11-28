@@ -103,8 +103,8 @@ const siteUrl = computed(() => {
   display: inline-block;
   opacity: 0.3;
   transform: translateY(1px);
-  background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   font-family: MiSans-Regular;
   transition:
     opacity 0.3s linear,
@@ -207,8 +207,8 @@ const siteUrl = computed(() => {
 .lrc-char {
   display: inline;
   opacity: 1;
-  background-clip: text;
   -webkit-background-clip: text;
+  background-clip: text;
   text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
   font-family: MiSans-Regular;
   transition:
@@ -290,6 +290,7 @@ const siteUrl = computed(() => {
   }
 
   &.blur {
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     background: rgb(0 0 0 / 25%);
     font-size: 16px;

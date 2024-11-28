@@ -2,11 +2,11 @@
   <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
     :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
     :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false" @play="onPlay" @pause="onPause"
-   @error="loadMusicError" />
+    @error="loadMusicError" />
 </template>
 
 <script setup>
-import { MusicOne, PlayWrong } from "@icon-park/vue-next";
+import { Float, MusicOne, PlayWrong } from "@icon-park/vue-next";
 import { getPlayerList } from "@/api";
 import { mainStore } from "@/store";
 import APlayer from "@worstone/vue-aplayer";
@@ -181,7 +181,7 @@ function showYrc() {
     // 至于为什么要 try 呢？问得好！因为网易云接口时不时会返回一些令人费解的东西，比如没有时间轴、时间轴为负数（[20720,-4200]）、时间轴乱码，这些东西会造成模块直接卡死，除非刷新页面。暂时没有那么多纠错逻辑，为了防止模块死掉，就先加个 try 在这里复活自己。咕咕咕！
     if (player.value == null) {
       return requestAnimationFrame(showYrc);
-    }
+    };
     const aplayer = player.value.aplayer;
     const lyrics = aplayer.lyrics[playIndex.value];
     if (store.playerYrcShow != true) {
@@ -337,6 +337,10 @@ function showYrc() {
         };
         const computedStyle = window.getComputedStyle(intputItem);
         const width = parseFloat(computedStyle.width);
+        if (isNaN(width)) {
+          intputItem.removeAttribute('data-start');
+          return requestAnimationFrame(showYrc);
+        };
         const outputItem = outputDom[i];
         const animateOptions = {
           delay: Math.max(0, start - now),
@@ -362,6 +366,7 @@ function showYrc() {
     };
     requestAnimationFrame(showYrc);
   } catch (error) {
+    console.error(error);
     requestAnimationFrame(showYrc);
   };
 };
@@ -465,15 +470,14 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         text-align: left;
         margin: 7px 0 6px 6px;
         height: 44px;
-        mask: linear-gradient(#fff 15%,
-            #fff 85%,
-            hsla(0deg, 0%, 100%, 0.6) 90%,
-            hsla(0deg, 0%, 100%, 0));
         -webkit-mask: linear-gradient(#fff 15%,
             #fff 85%,
             hsla(0deg, 0%, 100%, 0.6) 90%,
             hsla(0deg, 0%, 100%, 0));
-
+        mask: linear-gradient(#fff 15%,
+            #fff 85%,
+            hsla(0deg, 0%, 100%, 0.6) 90%,
+            hsla(0deg, 0%, 100%, 0));
         &::before,
         &::after {
           display: none;
