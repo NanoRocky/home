@@ -147,6 +147,7 @@ watch(
   width: 100%;
   height: 100%;
   background: #00000040;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius: 6px;
   padding: 20px;
@@ -257,6 +258,7 @@ watch(
   width: 100%;
   height: 100%;
   background-color: #00000080;
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   z-index: 1;
   .list {

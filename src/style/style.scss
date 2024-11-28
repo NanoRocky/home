@@ -27,6 +27,7 @@ a,
 p {
   margin: 0;
   padding: 0;
+  -webkit-user-select: none;
   user-select: none;
   text-decoration: none;
   color: #fff;
@@ -94,6 +95,7 @@ a:hover {
 .cards {
   border-radius: 6px;
   background-color: #00000040;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   transform: scale(1);
   transition:
