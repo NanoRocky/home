@@ -136,7 +136,7 @@ const siteUrl = computed(() => {
   }
 
   &.long-tone {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
     animation: pulse 1.5s infinite alternate;
   }
 }
