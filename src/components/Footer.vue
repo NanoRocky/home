@@ -40,6 +40,10 @@
           <div class="lrc-all"
             :key="store.playerLrc.length != 0 ? `lrc-line-${store.playerLrc[0][2]}` : `lrc-line-null`">
             <music-one theme="filled" size="18" fill="#efefef" />
+            &nbsp;
+            <Icon size="20" style="transform: rotate(-18deg);" class="paws-1">
+              <paw />
+            </Icon>
             <span class="yrc-box">
               <span class="yrc-2 lrc-text text-hidden" id="yrc-2-wrap">
                 <span v-for="i in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
@@ -48,11 +52,15 @@
               <span class="yrc-1 lrc-text text-hidden" id="yrc-1-wrap">
                 <span v-for="i in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
                   :style="`opacity: ${i[1] ? '1' : '0.6'}`"
-                  :class="`yrc-char ${i[0] ? 'fade-in' : 'fade-in-start'} ${i[0] > 1.5 ? 'long-tone' : 'fade-in-start'}`"
+                  :class="`yrc-char ${i[0] ? 'fade-in' : 'fade-in-start'} ${i[0] && Number(i[5]) > 1019 ? 'long-tone' : 'fade-in-start'}`"
                   :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
               </span>
             </span>
+            <Icon size="20" style="transform: rotate(18deg);" class="paws-2">
+              <paw />
+            </Icon>
+            &nbsp;
             <music-one theme="filled" size="18" fill="#efefef" />
           </div>
         </Transition>
@@ -60,7 +68,15 @@
           <!-- 逐行模块 -->
           <div class="lrc-all" :key="store.getPlayerLrc">
             <music-one theme="filled" size="18" fill="#efefef" />
+            &nbsp;
+            <Icon size="20" style="transform: rotate(-18deg);" class="paws-3">
+              <paw />
+            </Icon>
             <span class="lrc-text text-hidden" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
+            <Icon size="20" style="transform: rotate(18deg);" class="paws-4">
+              <paw />
+            </Icon>
+            &nbsp;
             <music-one theme="filled" size="18" fill="#efefef" />
           </div>
         </Transition>
@@ -71,6 +87,8 @@
 
 <script setup>
 import { MusicOne } from "@icon-park/vue-next";
+import { Icon } from "@vicons/utils";
+import { Paw } from "@vicons/ionicons5";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
 
@@ -112,7 +130,7 @@ const siteUrl = computed(() => {
     transform 0.3s linear;
 
   &.fade-in-start {
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+    text-shadow: 0px 0px 2px rgba(255, 240, 245, 1);
     opacity: 0.3; // 初始显示的透明度
     transform: translateY(1px);
     transition:
@@ -136,8 +154,13 @@ const siteUrl = computed(() => {
   }
 
   &.long-tone {
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
-    animation: pulse 1.5s infinite alternate;
+    opacity: 1;
+    transform: translateY(-1px);
+    animation: pulse 1s ease-in-out forwards;
+    transition:
+      color 0.5s linear,
+      opacity 0.3s linear,
+      transform 0.3s linear;
   }
 }
 
@@ -155,27 +178,35 @@ const siteUrl = computed(() => {
   from {
     color: #dfd9d9;
     opacity: 0.6;
-    text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+    text-shadow: 0px 0px 3px rgba(255, 240, 245, 1),
+      0px 0px 0px rgba(176, 224, 230, 1),
+      0px 0px 0px rgba(176, 224, 230, 1);
   }
 
   to {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 240, 245, 1);
     opacity: 1;
-    text-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+    text-shadow: 0px 0px 6px rgba(255, 240, 245, 1),
+      0px 0px 1px rgba(176, 224, 230, 1),
+      0px 0px 1px rgba(176, 224, 230, 1);
   }
 }
 
 @keyframes pulse {
   from {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
-      0 0 20px rgba(255, 255, 255, 0.6),
-      0 0 30px rgba(255, 255, 255, 0.4);
+    color: #dfd9d9;
+    opacity: 0.6;
+    text-shadow: 0px 0px 3px rgba(255, 240, 245, 1),
+      0px 0px 0px rgba(255, 192, 203, 1),
+      0px 0px 0px rgba(255, 192, 203, 1);
   }
 
   to {
-    text-shadow: 0 0 15px rgba(255, 255, 255, 1),
-      0 0 25px rgba(255, 255, 255, 0.8),
-      0 0 35px rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.8);
+    opacity: 1;
+    text-shadow: 3px 3px 7px rgba(255, 240, 245, 1),
+      0px 0px 12px rgba(255, 192, 203, 1),
+      0px 0px 12px rgba(255, 192, 203, 1);
   }
 }
 
@@ -191,8 +222,10 @@ const siteUrl = computed(() => {
   display: inline-block;
   position: absolute;
   width: auto;
-  opacity: 0.5;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  opacity: 0.6;
+  text-shadow: 0 0 6px rgba(255, 240, 245, 1),
+    0px 0px 1px rgba(176, 224, 230, 1),
+    0px 0px 1px rgba(176, 224, 230, 1);
   font-family: MiSans-Regular;
   overflow: hidden;
   white-space: nowrap;
