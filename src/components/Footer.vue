@@ -50,10 +50,13 @@
                 </span>
               </span>
               <span class="yrc-1 lrc-text text-hidden" id="yrc-1-wrap">
-                <span v-for="i in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
-                  :style="`opacity: ${i[1] ? '1' : '0.6'}`"
-                  :class="`yrc-char ${i[0] ? 'fade-in' : 'fade-in-start'} ${i[0] && Number(i[5]) > 1019 ? 'long-tone' : 'fade-in-start'}`"
-                  :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                <span v-for="i in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`" :class="[
+                  'yrc-char',
+                  i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
+                  i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
+                  i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                  i[1] ? 'yrc-style-s2' : 'yrc-style-s1'
+                ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
               </span>
             </span>
@@ -119,7 +122,7 @@ const siteUrl = computed(() => {
 // 逐字模块1
 .yrc-char {
   display: inline-block;
-  opacity: 0.3;
+  opacity: 0.6;
   transform: translateY(1px);
   -webkit-background-clip: text;
   background-clip: text;
@@ -131,7 +134,7 @@ const siteUrl = computed(() => {
 
   &.fade-in-start {
     text-shadow: 0px 0px 2px rgba(255, 240, 245, 1);
-    opacity: 0.3; // 初始显示的透明度
+    opacity: 0.6; // 初始显示的透明度
     transform: translateY(1px);
     transition:
       color 0.5s linear,
@@ -143,6 +146,18 @@ const siteUrl = computed(() => {
     opacity: 1;
     transform: translateY(-1px);
     animation: colorFade 0.7s ease-in-out forwards;
+    transition:
+      color 0.5s linear,
+      opacity 0.3s linear,
+      transform 0.3s linear;
+  }
+
+  &.fade-out {
+    opacity: 1;
+    transform: translateY(-1px);
+    text-shadow: 0px 0px 6px rgba(255, 240, 245, 1),
+      0px 0px 2px rgba(176, 224, 230, 1),
+      0px 0px 2px rgba(230, 230, 250, 1);
     transition:
       color 0.5s linear,
       opacity 0.3s linear,
@@ -162,6 +177,27 @@ const siteUrl = computed(() => {
       opacity 0.3s linear,
       transform 0.3s linear;
   }
+
+  &.yrc-style-s1 {
+    opacity: 0.6;
+    color: rgba(220, 220, 220, 1);
+    transition:
+      color 0.5s linear,
+      opacity 0.3s linear,
+      transform 0.3s linear;
+  }
+
+  &.yrc-style-s2 {
+    opacity: 1;
+    color: rgba(255, 240, 245, 1);
+    text-shadow: 0px 0px 6px rgba(255, 240, 245, 1),
+      0px 0px 2px rgba(176, 224, 230, 1),
+      0px 0px 2px rgba(230, 230, 250, 1);
+    transition:
+      color 0.5s linear,
+      opacity 0.3s linear,
+      transform 0.3s linear;
+  }
 }
 
 @keyframes float-up {
@@ -176,28 +212,28 @@ const siteUrl = computed(() => {
 
 @keyframes colorFade {
   from {
-    color: #dfd9d9;
+    color: rgba(220, 220, 220, 1);
     opacity: 0.6;
     text-shadow: 0px 0px 3px rgba(255, 240, 245, 1),
       0px 0px 0px rgba(176, 224, 230, 1),
-      0px 0px 0px rgba(176, 224, 230, 1);
+      0px 0px 0px rgba(230, 230, 250, 1);
   }
 
   to {
     color: rgba(255, 240, 245, 1);
     opacity: 1;
     text-shadow: 0px 0px 6px rgba(255, 240, 245, 1),
-      0px 0px 1px rgba(176, 224, 230, 1),
-      0px 0px 1px rgba(176, 224, 230, 1);
+      0px 0px 2px rgba(176, 224, 230, 1),
+      0px 0px 2px rgba(230, 230, 250, 1);
   }
 }
 
 @keyframes pulse {
   from {
-    color: #dfd9d9;
+    color: rgba(220, 220, 220, 1);
     opacity: 0.6;
     text-shadow: 0px 0px 3px rgba(255, 240, 245, 1),
-      0px 0px 0px rgba(255, 192, 203, 1),
+      0px 0px 0px rgba(255, 182, 193, 1),
       0px 0px 0px rgba(255, 192, 203, 1);
   }
 
@@ -205,7 +241,7 @@ const siteUrl = computed(() => {
     color: rgba(255, 255, 255, 0.8);
     opacity: 1;
     text-shadow: 3px 3px 7px rgba(255, 240, 245, 1),
-      0px 0px 12px rgba(255, 192, 203, 1),
+      0px 0px 12px rgba(255, 182, 193, 1),
       0px 0px 12px rgba(255, 192, 203, 1);
   }
 }
@@ -224,8 +260,8 @@ const siteUrl = computed(() => {
   width: auto;
   opacity: 0.6;
   text-shadow: 0 0 6px rgba(255, 240, 245, 1),
-    0px 0px 1px rgba(176, 224, 230, 1),
-    0px 0px 1px rgba(176, 224, 230, 1);
+    0px 0px 2px rgba(176, 224, 230, 1),
+    0px 0px 2px rgba(230, 230, 250, 1);
   font-family: MiSans-Regular;
   overflow: hidden;
   white-space: nowrap;
@@ -242,7 +278,9 @@ const siteUrl = computed(() => {
   opacity: 1;
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.8),
+    0 0 2px rgba(255, 165, 0, 1),
+    0 0 2px rgba(255, 179, 71, 1);
   font-family: MiSans-Regular;
   transition:
     opacity 0.3s linear,

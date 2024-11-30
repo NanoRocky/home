@@ -304,7 +304,8 @@ function showYrc() {
           const [[start, duration], word, line, row] = it;
           const isCurrent = now >= start && now <= start + duration;
           const isSungLyrics = start + duration < now;
-          return [isCurrent, isSungLyrics, line, row, word, duration, "auto"];
+          const lessdur = start + duration - now;
+          return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto"];
         })
         : [[true, 1, 0, 0, `${store.playerTitle} - ${store.playerArtist}`]];
     if (store.playerLrc.toString() != yrcLyric.toString()) {
