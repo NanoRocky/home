@@ -38,7 +38,7 @@ const siteUrl = computed(() => {
   margin-left: 0.75rem;
   .logo {
     width: 100%;
-    font-family: "Pacifico-Regular";
+    font-family: "字魂元气酪酪体";
     font-size: 2.25rem;
     position: fixed;
     top: 6%;

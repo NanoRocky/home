@@ -10,7 +10,7 @@
             -
           </span>
           {{ fullYear }}
-          <a :href="siteUrl">{{ siteAuthor }}</a>
+          <a href="https://nanorocky.top/">{{ siteAuthor }}</a>
         </span>
         <!-- 以下信息请不要修改哦 -->
         <span class="hidden">
@@ -259,7 +259,8 @@ const siteUrl = computed(() => {
   position: absolute;
   width: auto;
   opacity: 0.6;
-  text-shadow: 0 0 6px rgba(255, 240, 245, 1),
+  color: rgba(255, 240, 245, 1);
+  text-shadow: 0 0 6px rgba(0, 191, 255, 1),
     0px 0px 2px rgba(176, 224, 230, 1),
     0px 0px 2px rgba(230, 230, 250, 1);
   font-family: MiSans-Regular;
@@ -298,7 +299,7 @@ const siteUrl = computed(() => {
   line-height: 46px;
   text-align: center;
   z-index: 0;
-  font-size: 16px;
+  font-size: 18px;
   // 文字不换行
   word-break: keep-all;
   white-space: nowrap;
