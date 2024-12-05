@@ -118,7 +118,7 @@ watch(
       width: 100%;
       padding-left: 22px;
       transform: translateY(-8px);
-      font-family: "Pacifico-Regular";
+      font-family: "字魂元气酪酪体";
 
       .bg {
         font-size: 5rem;
@@ -171,7 +171,7 @@ watch(
 
         p {
           &:nth-of-type(1) {
-            font-family: "Pacifico-Regular";
+            font-family: "字魂元气酪酪体";
           }
         }
       }
