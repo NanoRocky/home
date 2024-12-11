@@ -94,9 +94,13 @@ import { Icon } from "@vicons/utils";
 import { Paw } from "@vicons/ionicons5";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
+import { ref, watch, computed, onMounted } from "vue";
 
 const store = mainStore();
 const fullYear = new Date().getFullYear();
+const lrcContainer = ref(null);
+const scrollPosition = ref(0);
+const currentLine = ref(0);
 
 // 加载配置数据
 // const siteStartDate = ref(import.meta.env.VITE_SITE_START);
@@ -116,6 +120,37 @@ const siteUrl = computed(() => {
   };
   return url;
 });
+
+// 监听播放时间并更新歌词滚动位置
+watch(
+  () => store.currentTime,
+  (currentTime) => {
+    const activeLineIndex = store.playerLrc.findIndex(
+      (line) =>
+        line[0] <= currentTime && currentTime < line[0] + line[1] // 根据时间范围匹配行
+    );
+    if (activeLineIndex !== -1) {
+      currentLine.value = activeLineIndex;
+      updateScrollPosition();
+    }
+  }
+);
+
+const updateScrollPosition = () => {
+  const containerWidth = lrcContainer.value.offsetWidth;
+  const activeLine = lrcContainer.value.querySelector(
+    `.lrc-line:nth-child(${currentLine.value + 1})`
+  );
+  if (activeLine) {
+    const activeLineWidth = activeLine.offsetWidth;
+    const activeLineLeft = activeLine.offsetLeft;
+    const threshold = containerWidth * 0.6; // 60% 阈值
+
+    if (activeLineLeft + activeLineWidth > threshold) {
+      scrollPosition.value = Math.max(0, activeLineLeft - threshold);
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -358,6 +393,37 @@ const siteUrl = computed(() => {
           z-index: 1000;
         }
       }
+    }
+
+    .lrc-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 46px;
+      white-space: nowrap;
+    }
+
+    .lrc-scroll {
+      display: flex;
+      transition: transform 0.3s ease;
+    }
+
+    .lrc-line {
+      display: inline-block;
+      padding: 0 10px;
+      white-space: nowrap;
+      font-size: 18px;
+      opacity: 0.6;
+      transition: opacity 0.3s, color 0.3s;
+    }
+
+    .lrc-line.active {
+      opacity: 1;
+      color: #fff;
+    }
+
+    .lrc-line.played {
+      color: #aaa;
     }
   }
 
