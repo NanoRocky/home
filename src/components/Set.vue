@@ -55,6 +55,10 @@
             不稳定的网络中可能导致歌词载入速度变慢）</span>
           <el-switch v-model="playerYrcATDB" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
+        <div v-if="playerLrcShow && playerYrcATDB" class="item">
+          <span class="text" white-space="pre">调用 AMLL TTML Database 时使用镜像加速</span>
+          <el-switch v-model="playerYrcATDBF" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+        </div>
         <div v-if="playerLrcShow" class="item">
           <span class="text">逐字歌词解析总开关</span>
           <el-switch v-model="playerYrcShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
@@ -102,6 +106,7 @@ const {
   playerYrcShow,
   playerYrcShowPro,
   playerYrcATDB,
+  playerYrcATDBF,
 } = storeToRefs(store);
 
 // 默认选中项

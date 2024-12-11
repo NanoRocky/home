@@ -221,10 +221,15 @@ function showYrc() {
             if (!songId) {
               return;
             };
-            const songUrlInfUrl = {
-              'netease': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-              'tencent': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`
-            };
+            const songUrlInfUrl = store.playerYrcATDBF
+              ? {
+                'netease': `https://ghp.ci/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+                'tencent': `https://ghp.ci/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`
+              }
+              : {
+                'netease': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+                'tencent': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`
+              };
             if (!['netease', 'tencent'].includes(songServer)) {
               return;
             };
@@ -263,10 +268,15 @@ function showYrc() {
           const songIdlrc = songUrlInfw.get('id')
           const songServerlrc = songUrlInfw.get("server");
           if (songIdlrc) {
-            const songUrlInfwurl = {
-              'netease': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songIdlrc}.lrc`,
-              'tencent': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songIdlrc}.lrc`
-            };
+            const songUrlInfwurl = store.playerYrcATDBF
+              ? {
+                'netease': `https://ghp.ci/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+                'tencent': `https://ghp.ci/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`
+              }
+              : {
+                'netease': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+                'tencent': `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`
+              };
             if (!['netease', 'tencent'].includes(songServerlrc)) {
               return;
             };
@@ -479,6 +489,7 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
             #fff 85%,
             hsla(0deg, 0%, 100%, 0.6) 90%,
             hsla(0deg, 0%, 100%, 0));
+
         &::before,
         &::after {
           display: none;
