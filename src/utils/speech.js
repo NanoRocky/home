@@ -8,7 +8,7 @@ let timeoutId = null;
  * Speech
  * Made by NanoRocky
  * 使用指定参数生成语音并播放音频。
- * 该功能原为 Azure 设计，理应兼容大部分使用 post 传参的 api 。请自行根据要求修改！
+ * 该功能原为 Azure 设计，理应兼容大部分使用 post 传参的 api 。请自行根据要求修改！如果也使用 Azure ，您可直接使用 https://github.com/NanoRocky/AzureSpeechAPI-by-PHP 完成 API 部署
  * https://learn.microsoft.com/zh-cn/azure/ai-services/speech-service/speech-synthesis-markup-voice
  * 
  * @param {string} text - 朗读的文本

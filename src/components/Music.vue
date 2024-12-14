@@ -119,17 +119,37 @@ const changeMusicIndex = (type) => {
 };
 
 onMounted(() => {
-  // 空格键事件
-  window.addEventListener("keydown", (e) => {
+  // 全局键盘事件
+  const handleKeydown = (e) => {
     if (!store.musicIsOk) {
       return;
     }
-    if (e.code == "Space") {
-      changePlayState();
+    switch (e.code) {
+      case "Space": // 播放/暂停
+        e.preventDefault(); // 阻止页面默认滚动
+        changePlayState();
+        break;
+      case "PageUp": // 上一曲
+        e.preventDefault();
+        changeMusicIndex(0);
+        break;
+      case "PageDown": // 下一曲
+        e.preventDefault();
+        changeMusicIndex(1);
+        break;
     }
-  });
+  };
+
+  // 添加键盘事件监听
+  window.addEventListener("keydown", handleKeydown);
+
   // 挂载方法至 window
   window.$openList = openMusicList;
+
+  // 卸载时移除事件监听
+  onUnmounted(() => {
+    window.removeEventListener("keydown", handleKeydown);
+  });
 });
 
 // 监听音量变化
