@@ -6,7 +6,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
-import viteCompression from "vite-plugin-compression";
+import viteCompression from "vite-plugin-compression2";
 
 // https://vitejs.dev/config/
 export default ({ mode }) =>
@@ -107,7 +107,7 @@ export default ({ mode }) =>
       preprocessorOptions: {
         scss: {
           charset: false,
-          additionalData: `@use "./src/style/global.scss" as global;`,
+          additionalData: `@use "@/style/global.scss" as global;`,
         },
       },
     },
