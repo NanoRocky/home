@@ -119,4 +119,5 @@ export default ({ mode }) =>
         },
       },
     },
+    publicPath:'/',
   });

@@ -1,4 +1,5 @@
 <template>
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <!-- 加载 -->
   <Loading />
   <!-- 壁纸 -->

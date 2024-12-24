@@ -20,10 +20,20 @@ const store = mainStore();
 const bgUrl = ref(null);
 const imgTimeout = ref(null);
 const emit = defineEmits(["loadComplete"]);
+let bgImageCount = 38;  // 默认值，防止没有加载 JSON 文件时出错
+
+// 加载 config.json
+fetch('https://file.nanorocky.top/home/images/config.json')
+  .then(response => response.json())
+  .then(data => {
+    bgImageCount = data.bgImageCount;  // 更新 bgImageCount 为 JSON 中的值
+  })
+  .catch(error => {
+    console.error('无法加载壁纸配置文件:', error);
+  });
 
 // 壁纸随机数
-// 请依据文件夹内的图片个数修改 Math.random() 后面的第一个数字
-const bgRandom = Math.floor(Math.random() * 41 + 1);
+const bgRandom = Math.floor(Math.random() * bgImageCount + 1);
 
 // 更换壁纸链接
 const changeBg = (type) => {
@@ -37,6 +47,8 @@ const changeBg = (type) => {
     bgUrl.value = "https://img.moehu.org/pic.php?id=kemonomimi";
   } else if (type == 4) {
     bgUrl.value = "https://img.moehu.org/pic.php?id=gqbz";
+  } else if (type == 5) {
+    bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
   };
 };
 
