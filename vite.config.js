@@ -22,15 +22,38 @@ export default ({ mode }) =>
       }),
       VitePWA({
         registerType: "autoUpdate",
+        selfDestroying: true,
+        injectRegister: false,
         workbox: {
           skipWaiting: true,
           clientsClaim: true,
           runtimeCaching: [
             {
-              urlPattern: /(.*?)\.(js|css|woff2|woff|ttf)/, // js / css 静态资源缓存
-              handler: "CacheFirst",
+              urlPattern: /\/index\.html$/, // 针对主页面（index.html）
+              handler: "NetworkFirst", // 优先从网络获取，如果失败则使用缓存
+              options: {
+                cacheName: "index-html-cache",
+              },
+            },
+            {
+              urlPattern: /(.*?)\.html$/, // 针对其他 HTML 页面
+              handler: "NetworkOnly", // 强制从网络获取，不使用缓存
+              options: {
+                cacheName: "other-html-cache",
+              },
+            },
+            {
+              urlPattern: /(.*?)\.(js|css)/, // js / css 静态资源缓存
+              handler: "NetworkFirst",
               options: {
                 cacheName: "js-css-cache",
+              },
+            },
+            {
+              urlPattern: /(.*?)\.(woff2|woff|ttf)/, // 字体资源缓存
+              handler: "CacheFirst",
+              options: {
+                cacheName: "ttf-cache",
               },
             },
             {
@@ -47,7 +70,7 @@ export default ({ mode }) =>
           short_name: loadEnv(mode, process.cwd()).VITE_SITE_NAME,
           description: loadEnv(mode, process.cwd()).VITE_SITE_DES,
           display: "standalone",
-          start_url: "/",
+          start_url: "/index.html",
           theme_color: "#424242",
           background_color: "#424242",
           icons: [
