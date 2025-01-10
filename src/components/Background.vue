@@ -15,6 +15,8 @@
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import initSnowfall from "@/utils/season/snow";
+import initFirefly from "@/utils/season/firefly";
 
 const store = mainStore();
 const bgUrl = ref(null);
@@ -96,9 +98,26 @@ watch(
   },
 );
 
-onMounted(() => {
+const SeasonStyle = async () => {
+  if (store.seasonalEffects) {
+    const month = new Date().getMonth() + 1; // 当前月份，1-12
+    if ([12, 1, 2].includes(month)) {
+      initSnowfall();
+    };
+    if ([1, 2].includes(month)) {
+      await import("@/utils/season/lantern");
+    };
+    if ([7, 8, 9].includes(month)) {
+      initFirefly();
+    };
+  };
+};
+
+onMounted(async () => {
   // 加载壁纸
   changeBg(store.coverType);
+  // 加载季节特效
+  SeasonStyle();
 });
 
 onBeforeUnmount(() => {

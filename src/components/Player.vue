@@ -1,7 +1,7 @@
 <template>
   <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
     :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
-    :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false" @play="onPlay" @pause="onPause"
+    :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false" @play="onPlay" @pause="onPause" @onLoadstart="onLoadStart"
     @timeupdate="onTimeUp" @error="loadMusicError" />
 </template>
 
@@ -184,8 +184,7 @@ async function showYrc() {
     if (player.value == null) {
       return requestAnimationFrame(showYrc);
     };
-    const aplayer = player.value.aplayer;
-    const lyrics = aplayer.lyrics[playIndex.value];
+    const lyrics = player.value.aplayer.lyrics[playIndex.value];
     if (store.playerYrcShow != true) {
       store.yrcEnable = false;
       store.yrcTemp = [];
@@ -193,7 +192,7 @@ async function showYrc() {
     }
     else {
       if (store.yrcIndex != playIndex.value) {
-        const yrcUrl = aplayer.audio[aplayer.index]["lrc"] + "&yrc=true";
+        const yrcUrl = player.value.aplayer.audio[player.value.aplayer.index]["lrc"] + "&yrc=true";
         store.yrcIndex = playIndex.value;
         store.yrcLoading = true;
         fetch(yrcUrl)
@@ -259,7 +258,7 @@ async function showYrc() {
       let lyricIndex = player.value.aplayer.lyricIndex;
       if (lyrics === undefined || lyrics[lyricIndex] === undefined) {
         return requestAnimationFrame(showYrc);
-      }
+      };
       let lrc = lyrics[lyricIndex][1];
       if (lrc === "Loading") {
         lrc = "猫猫正在翻找歌词...";
@@ -299,7 +298,7 @@ async function showYrc() {
         } else {
           lrc = "猫猫没有找到这首歌的歌词诶qwq";
         };
-      }
+      };
       const output = [[true, 1, lyricIndex, 0, lrc]];
       if (store.playerLrc.toString() != output.toString()) {
         store.setPlayerLrc(output);
@@ -314,9 +313,9 @@ async function showYrc() {
       yrcFiltered.length > 0
         ? yrcFiltered.slice(-1)[0][2].map((it) => {
           const [[start, duration], word, line, row] = it;
-          const isCurrent = now >= start && now <= start + duration;
-          const isSungLyrics = start + duration < now;
-          const lessdur = start + duration - now;
+          const isCurrent = now >= start && now <= start + duration; // 是否为当前歌词
+          const isSungLyrics = start + duration < now; // 是否为已唱歌词
+          const lessdur = start + duration - now; // 当前行剩余时间
           return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto"];
         })
         : [[true, 1, 0, 0, `${store.playerTitle} - ${store.playerArtist}`]];
@@ -385,9 +384,15 @@ async function showYrc() {
 };
 
 const onTimeUp = () => {
+  store.playerCurrentTime = player.value.audioStatus.playedTime;
+  store.playerDuration = player.value.audioStatus.duration;
   if (showYrcRunning == 0) {
     requestAnimationFrame(showYrc);
-  };
+  }
+};
+
+const onLoadStart = () => {
+
 };
 
 // 切换播放暂停事件
