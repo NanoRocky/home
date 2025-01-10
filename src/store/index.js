@@ -5,6 +5,7 @@ export const mainStore = defineStore("main", {
     imgLoadStatus: false, // 壁纸加载状态
     innerWidth: null, // 当前窗口宽度
     coverType: "1", // 壁纸种类
+    seasonalEffects: true, // 季节特效
     siteStartShow: true, // 建站日期显示
     musicClick: true, // 音乐链接是否跳转
     musicIsOk: false, // 音乐是否加载完成
@@ -21,6 +22,7 @@ export const mainStore = defineStore("main", {
     playerLrc: [[true, "猫猫正在翻找歌词..."]], // 当前播放歌词
     playerLrcShow: true, // 是否显示底栏歌词
     footerBlur: true, // 底栏模糊
+    footerProgressBar: true, // 是否显示底栏进度条
     playerAutoplay: true, // 是否自动播放
     playerLoop: "all", // 循环播放 "all", "one", "none"
     playerOrder: "random", // 循环顺序 "list", "random"
@@ -30,6 +32,8 @@ export const mainStore = defineStore("main", {
     playerYrcShowPro: false, // 逐字效果增强开关
     playerYrcATDB: true, // 允许接入 AMLL TTML Database
     playerYrcATDBF: false, // 接入 AMLL TTML Database 时使用镜像加速
+    playerCurrentTime: null, // 当前歌曲已播放时间
+    playerDuration: null, // 当前歌曲总时长
     yrcIndex: -1, // 逐字歌词进度存储
     yrcTemp: [], // 逐字歌词缓存
     yrcEnable: true,
@@ -93,6 +97,7 @@ export const mainStore = defineStore("main", {
       "musicClick",
       "playerLrcShow",
       "footerBlur",
+      "footerProgressBar",
       "playerAutoplay",
       "playerLoop",
       "playerOrder",
@@ -102,6 +107,7 @@ export const mainStore = defineStore("main", {
       "playerYrcShowPro",
       "playerYrcATDB",
       "playerYrcATDBF",
+      "seasonalEffects",
     ],
   },
 });

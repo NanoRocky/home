@@ -23,8 +23,16 @@
           <el-switch v-model="musicClick" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
         <div class="item">
+          <span class="text">显示季节特效（此开关刷新后生效）</span>
+          <el-switch v-model="seasonalEffects" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+        </div>
+        <div class="item">
           <span class="text">底栏背景模糊</span>
           <el-switch v-model="footerBlur" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+        </div>
+        <div class="item">
+          <span class="text">显示底栏音乐进度条</span>
+          <el-switch v-model="footerProgressBar" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
       </el-collapse-item>
       <el-collapse-item title="播放器配置" name="3">
@@ -108,6 +116,8 @@ const {
   playerYrcShowPro,
   playerYrcATDB,
   playerYrcATDBF,
+  footerProgressBar,
+  seasonalEffects,
 } = storeToRefs(store);
 
 // 默认选中项

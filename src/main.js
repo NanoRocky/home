@@ -36,6 +36,8 @@ window.addEventListener("beforeunload", () => {
     playerTitle: null, // 当前播放歌曲名
     playerArtist: null, // 当前播放歌手名
     playerLrc: [[true, "猫猫正在翻找歌词..."]], // 当前播放歌词
+    playerCurrentTime: null, // 当前歌曲已播放时间
+    playerDuration: null, // 当前歌曲总时长
     yrcIndex: -1, // 逐字歌词进度存储
     yrcTemp: [], // 逐字歌词缓存
     yrcEnable: true,
