@@ -29,7 +29,7 @@ export const mainStore = defineStore("main", {
     webSpeech: true, // 网页语音交互总开关（包含播报歌名功能）
     playerSpeechName: true, // 播报歌名
     playerYrcShow: true, // 逐字歌词解析总开关
-    playerYrcShowPro: false, // 逐字效果增强开关
+    playerYrcShowPro: true, // 逐字效果增强开关
     playerYrcATDB: true, // 允许接入 AMLL TTML Database
     playerYrcATDBF: false, // 接入 AMLL TTML Database 时使用镜像加速
     playerCurrentTime: null, // 当前歌曲已播放时间
