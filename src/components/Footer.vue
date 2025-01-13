@@ -36,7 +36,8 @@
         <!-- 音乐进度条 -->
         <div v-if="store.footerProgressBar" class="progress-bar">
           <div class="progress" :style="{ width: progressBarWidth + '%' }">
-            <img v-if="showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico" class="progress-icon" />
+            <img v-if="showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
+              class="progress-icon" />
             <!-- <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" /> -->
           </div>
         </div>
@@ -101,7 +102,7 @@ import { Icon } from "@vicons/utils";
 import { Paw } from "@vicons/ionicons5";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
-import { ref, watch, computed, onMounted, nextTick } from "vue";
+import { ref, watch, computed, onMounted, nextTick, onUpdated } from "vue";
 
 const store = mainStore();
 const fullYear = new Date().getFullYear();
@@ -192,6 +193,77 @@ const progressBarWidth = computed(() => {
   if (!store.playerState) return 0;
   return (store.playerCurrentTime / store.playerDuration) * 100;
 });
+
+// yrc part
+watch(() => store.getPlayerLrc, (_new, _old) => {
+  const isLineByLine = !store.yrcEnable || store.yrcTemp.length == 0 || store.yrcLoading;
+  if (!store.playerYrcShowPro || isLineByLine) {
+    return;
+  };
+  const audio = document.querySelector('audio');
+  if (audio == undefined) {
+    return;
+  };
+  const now = audio.currentTime * 1000;
+  const yrc2 = document.getElementsByClassName("yrc-box")[0];
+  if (yrc2 == undefined) {
+    return;
+  };
+  const outputDom = yrc2.querySelectorAll("#yrc-2-wrap span");
+  const inputDom = yrc2.querySelectorAll("#yrc-1-wrap span");
+  if (inputDom.length == 0 || outputDom.length == 0) {
+    return;
+  };
+  const yrcFiltered = store.yrcTemp.filter((i) => i[0] < now && now < i[0] + i[1]);
+  if (yrcFiltered.length == 0) {
+    return;
+  };
+  const nowLine = yrcFiltered[yrcFiltered.length - 1][2];
+  for (let i = 0; i < nowLine.length; i++) {
+    const [[start, duration], _a, _b, _c] = nowLine[i];
+    const inputItem = inputDom[i];
+    if (!inputItem || inputItem.hasAttribute('data-start')) {
+      return;
+    };
+    const computedStyle = window.getComputedStyle(inputItem);
+    const width = parseFloat(computedStyle.width);
+    if (isNaN(width)) {
+      inputItem.removeAttribute('data-start');
+      return;
+    };
+    const outputItem = outputDom[i];
+    const animateOptions = {
+      delay: Math.max(0, start - now),
+      duration: duration,
+      fill: "forwards",
+      easing: "linear",
+    };
+    outputItem.style.transform = "translateY(-1px)";
+    const outputAnimate = outputItem.animate(
+      [
+        { width: 0 },
+        { width: `${width}px` },
+      ],
+      animateOptions,
+    );
+    outputAnimate.onfinish = () => {
+      outputItem.style.transform = "translateY(1px)";
+      outputItem.animate(
+        [
+          { transform: "translateY(-1px)" },
+          { transform: "translateY(1px)" },
+        ],
+        {
+          duration: 300,
+          fill: "forwards",
+          easing: "linear",
+        }
+      );
+    };
+    inputItem.setAttribute("data-start", true);
+  };
+});
+
 </script>
 
 <style lang="scss" scoped>
@@ -328,6 +400,11 @@ const progressBarWidth = computed(() => {
   white-space: nowrap;
   overflow: hidden;
   width: 0;
+  transition:
+    opacity 0.3s linear,
+    color 0.5s linear,
+    transform 0.3s linear,
+    width 0.3s linear;
 }
 
 #yrc-2-wrap {
