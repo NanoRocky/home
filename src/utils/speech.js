@@ -17,7 +17,7 @@ let timeoutId = null;
  * @param {string} [role="Boy"] - 讲话角色扮演（默认为“Boy”）
  * @param {string} [rate="1"] - 语速（默认为“1”）
  * @param {string} [volume="100"] - 音量（默认为“100”）
- * @param {number} [delay=1500] - 等待时间【毫秒】后发出请求，防止频繁点击产生请求洪水（默认为等待2000毫秒）
+ * @param {number} [delay=1500] - 等待时间【毫秒】后发出请求，防止频繁点击产生请求洪水（默认为等待1500毫秒）
  * @returns {Promise<void>} - 一个 Promise，在语音播放完成时解析或出现错误时拒绝
  */
 export function Speech(
