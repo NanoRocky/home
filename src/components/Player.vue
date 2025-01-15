@@ -365,20 +365,42 @@ function syncYrcLrc() {
                 fetch(amllUrllrc)
                   .then((response) => {
                     if (response.status === 404 || !response.ok) {
-                      lrc = "歌词加载失败";
+                      lrc = "猫猫没有找到这首歌的歌词诶qwq";
                     } else {
-                      lrc = response.text();
+                      // 加载 AMLL 逐行歌词 [酪灰写这段代码时脑子没带,纯瞎写的,测试不周,一般也用不到...有异常记得反馈!]
+                      response.text().then((text) => {
+                        const lines = text.split('\n');
+                        const lyrics = lines.map((line) => {
+                          const match = line.match(/\[(\d{2}):(\d{2}\.\d{3})\](.*)/);
+                          if (match) {
+                            const minutes = parseInt(match[1], 10);
+                            const seconds = parseFloat(match[2]);
+                            const time = minutes * 60 + seconds;
+                            const lyric = match[3];
+                            return [time, lyric];
+                          }
+                          return null;
+                        }).filter(line => line !== null);
+                        player.value.aplayer.lyrics[playIndex.value] = lyrics;
+                        const playerLyricIndex = player.value.aplayer.lyricIndex;
+                        const lrc = lyrics[playerLyricIndex][1];
+                        const output = [[true, 1, playerLyricIndex, 0, lrc]];
+                        if (store.playerLrc.toString() != output.toString()) {
+                          store.setPlayerLrc(output);
+                        }
+                      });
                     };
                   })
                   .catch(() => {
-                    lrc = "歌词加载失败";
+                    lrc = "猫猫没有找到这首歌的歌词诶qwq";
                   });
               };
             };
-          };
-          const output = [[true, 1, playerLyricIndex, 0, lrc]];
-          if (store.playerLrc.toString() != output.toString()) {
-            store.setPlayerLrc(output);
+          } else {
+            const output = [[true, 1, playerLyricIndex, 0, lrc]];
+            if (store.playerLrc.toString() != output.toString()) {
+              store.setPlayerLrc(output);
+            };
           };
         };
       } else {
