@@ -7,7 +7,7 @@
   {
     "icon": "Cloud",
     "name": "云盘",
-    "link": ""
+    "link": "https://cloud.nanorocky.top/"
   },
   {
     "icon": "CompactDisc",
@@ -17,7 +17,7 @@
   {
     "icon": "Google",
     "name": "搜索",
-    "link": "https://www.google.com"
+    "link": "https://www.google.com/"
   },
   {
     "icon": "WikipediaW",

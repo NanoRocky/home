@@ -400,6 +400,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   white-space: nowrap;
   overflow: hidden;
   width: 0;
+  opacity: 0.8;
   transition:
     opacity 0.3s linear,
     color 0.5s linear,
@@ -411,11 +412,11 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   display: inline-block;
   position: absolute;
   width: auto;
-  opacity: 0.6;
-  color: rgba(255, 240, 245, 1);
-  text-shadow: 0 0 6px rgba(0, 191, 255, 1),
-    0px 0px 2px rgba(176, 224, 230, 1),
-    0px 0px 2px rgba(230, 230, 250, 1);
+  opacity: 0.8;
+  color: rgba(255, 240, 245, 0.3);
+  text-shadow: 0 0 6px rgba(0, 191, 255, 0.9),
+    0px 0px 2px rgba(176, 224, 230, 0.9),
+    0px 0px 2px rgba(230, 230, 250, 0.9);
   font-family: MiSans-Regular;
   overflow: hidden;
   white-space: nowrap;
@@ -587,7 +588,21 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
 
   .fade-enter-active,
   .fade-leave-active {
-    transition: opacity 0.15s ease-in-out;
+    transition:
+      opacity 0.2s linear,
+      transform 0.2s linear;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  .fade-enter-to,
+  .fade-leave-from {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   @media (max-width: 720px) {
