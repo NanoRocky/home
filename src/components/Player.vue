@@ -378,7 +378,7 @@ function syncYrcLrc() {
                             const time = minutes * 60 + seconds;
                             const lyric = match[3];
                             return [time, lyric];
-                          }
+                          };
                           return null;
                         }).filter(line => line !== null);
                         player.value.aplayer.lyrics[playIndex.value] = lyrics;
@@ -387,7 +387,7 @@ function syncYrcLrc() {
                         const output = [[true, 1, playerLyricIndex, 0, lrc]];
                         if (store.playerLrc.toString() != output.toString()) {
                           store.setPlayerLrc(output);
-                        }
+                        };
                       });
                     };
                   })
