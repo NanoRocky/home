@@ -272,10 +272,12 @@ const fetchYrc = async (yrcUrl) => {
     const amllUrl = songUrlInfUrl[songServer].replace("${songIdlrc}", songId);
     const amllSource = await fetch(amllUrl);
     const amllText = await amllSource.text();
-  } catch (e) {
-    console.log(e);
     store.yrcEnable = true;
     store.yrcTemp = decodeYrc(amllText);
+    store.yrcLoading = false;
+  } catch (e) {
+    store.yrcEnable = false;
+    store.yrcTemp = [];
     store.yrcLoading = false;
   };
 };
@@ -361,11 +363,16 @@ function syncYrcLrc() {
               } else {
                 const amllUrllrc = songUrlInfwurl[songServerlrc].replace("${songIdlrc}", songIdlrc);
                 fetch(amllUrllrc)
-                  .then((response) => response.text())
+                  .then((response) => {
+                    if (response.status === 404 || !response.ok) {
+                      lrc = "歌词加载失败";
+                    } else {
+                      lrc = response.text();
+                    };
+                  })
                   .catch(() => {
-                    lrc = "猫猫没有找到这首歌的歌词诶qwq";
+                    lrc = "歌词加载失败";
                   });
-                lrc = "猫猫正在翻找歌词...";
               };
             };
           };
