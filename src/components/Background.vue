@@ -17,41 +17,95 @@ import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import initSnowfall from "@/utils/season/snow";
 import initFirefly from "@/utils/season/firefly";
+import { ref } from 'vue';
 
 const store = mainStore();
 const bgUrl = ref(null);
 const imgTimeout = ref(null);
 const emit = defineEmits(["loadComplete"]);
-let bgImageCount = 38;  // 默认值，防止没有加载 JSON 文件时出错
+
+// 自定义壁纸
+// 酪灰的小批注：这里增加了从配置文件读取壁纸数的功能，使得在增加壁纸时不需要重新编译项目，只需修改这个 json 文件内的值
+// 设置一个默认值，防止在无法加载 JSON 文件时壁纸失效。应该尽量保证壁纸数始终不小于这个默认值
+let bgImageCount = 24; // PC 版壁纸
+let bgImageCountP = 24; // 移动版壁纸
+let bgRandom = 0;
+let bgRandomp = 0;
 
 // 加载 config.json
-fetch('https://file.nanorocky.top/home/images/config.json')
-  .then(response => response.json())
-  .then(data => {
-    bgImageCount = data.bgImageCount;  // 更新 bgImageCount 为 JSON 中的值
-  })
-  .catch(error => {
+async function loadConfig() {
+  try {
+    const response = await fetch('https://file.nanorocky.top/home/images/config.json');
+    const data = await response.json();
+    bgImageCount = Math.max(data.bgImageCount, 1);
+    bgImageCountP = Math.max(data.bgImageCountP, 1);
+    bgRandom = Math.floor(Math.random() * bgImageCount + 1);
+    bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+  } catch (error) {
     console.error('无法加载壁纸配置文件:', error);
-  });
+    bgRandom = Math.floor(Math.random() * bgImageCount + 1);
+    bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+  };
+};
 
-// 壁纸随机数
-const bgRandom = Math.floor(Math.random() * bgImageCount + 1);
+// 检测设备类型
+const detectDevice = () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  if (/mobile|android|iphone|ipad|ipod|windows phone/.test(userAgent)) {
+    if (/ipad|tablet|playbook|silk|kindle/.test(userAgent)) {
+      return 'tablet'; // 平板
+    } else {
+      return 'mobile'; // 手机
+    };
+  } else {
+    return 'pc'; // PC
+  };
+};
 
 // 更换壁纸链接
 const changeBg = (type) => {
-  if (type == 0) {
-    bgUrl.value = `https://file.nanorocky.top/home/images/background${bgRandom}.webp`;
-  } else if (type == 1) {
-    bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
-  } else if (type == 2) {
-    bgUrl.value = "https://img.moehu.org/pic.php?id=pc";
-  } else if (type == 3) {
-    bgUrl.value = "https://img.moehu.org/pic.php?id=kemonomimi";
-  } else if (type == 4) {
-    bgUrl.value = "https://img.moehu.org/pic.php?id=gqbz";
-  } else if (type == 5) {
-    bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
-  };
+  (async () => {
+    await loadConfig(); // 加载配置文件
+    const deviceType = detectDevice(); // 加载设备类型
+    if (type == 0) {
+      // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
+      // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
+      if (deviceType === 'mobile') {
+        bgUrl.value = `https://file.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+      } else if (deviceType === 'tablet' || deviceType === 'pc') {
+        bgUrl.value = `https://file.nanorocky.top/home/images/background${bgRandom}.webp`;
+      } else {
+        bgUrl.value = `https://file.nanorocky.top/home/images/background${bgRandom}.webp`;
+      };
+    } else if (type == 1) {
+      if (deviceType === 'mobile') {
+        const bgfmRandom = Math.floor(Math.random() * 2 + 1);
+        if (bgfmRandom == 1) {
+          bgUrl.value = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
+        } else {
+          bgUrl.value = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
+        };
+      } else if (deviceType === 'tablet' || deviceType === 'pc') {
+        bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
+      } else {
+        bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
+      };
+    } else if (type == 2) {
+      if (deviceType === 'mobile') {
+        bgUrl.value = `https://img.moehu.org/pics.php?id=sjpic`;
+      } else if (deviceType === 'tablet' || deviceType === 'pc') {
+        bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
+      } else {
+        bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
+      };
+    } else if (type == 3) {
+      bgUrl.value = "https://img.moehu.org/pic.php?id=kemonomimi";
+    } else if (type == 4) {
+      bgUrl.value = "https://img.moehu.org/pic.php?id=gqbz";
+    } else if (type == 5) {
+      bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
+    };
+  })();
 };
 
 // 图片加载完成
