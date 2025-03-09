@@ -73,3 +73,28 @@ export const getOtherWeather = async () => {
   const res = await fetch("https://api.oioweb.cn/api/weather/GetWeather");
   return await res.json();
 };
+
+
+// 这是一个待完善的新免 token 天气模块
+
+// // 获取位置信息
+// export const getLocation = async () => {
+//   const res = await fetch("http://inip.in/ip.json");
+//   return await res.json();
+// };
+
+// // 转换城市 ID
+// export const getCityId = async (city) => {
+//   const res = await fetch(
+//     `https://api.songzixian.com/api/china-city?dataSource=LOCAL_CHINA_CITY&district=${city}`,
+//   );
+//   return await res.json();
+// };
+
+// // 获取小米天气 API
+// export const getOtherWeather = async () => {
+//   const res = await fetch(
+//     `https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?latitude=0&longitude=0&isLocated=true&locationKey=weathercn%3A${city}&days=2&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07&locale=zh_cn&alpha=false&isGlobal=false`,
+//   );
+//   return await res.json();
+// };
