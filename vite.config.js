@@ -129,8 +129,10 @@ export default ({ mode }) =>
     css: {
       preprocessorOptions: {
         scss: {
+          api: 'modern',
           charset: false,
           additionalData: `@use "@/style/global.scss" as global;`,
+          silenceDeprecations: ["legacy-js-api"],
         },
       },
     },
@@ -142,5 +144,5 @@ export default ({ mode }) =>
         },
       },
     },
-    publicPath:'/',
+    publicPath: '/',
   });
