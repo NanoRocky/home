@@ -29,13 +29,13 @@ async function gst() {
 export async function gwp(u, s, b) {
     // 备注：POST 方法需要传入 body ！
     const { origin: ul, pathname: p } = new URL(u);
-    return `${ul}${p}?sig=${d(`${p}?${Object.keys(b).sort().map(key => `${key}=${JSON.stringify(b[key])}`).join("&")}&${s}`).toLowerCase()}`;
+    return `${ul}${p}?sig=${d(`${p}?${Object.keys(b).sort().map(key => `${key}=${JSON.stringify(b[key])}`).join("&")}${s}`).toLowerCase()}`;
 };
 
 
 export async function gwg(u, s) {
     const { origin: ul, pathname: p } = new URL(u), q = new URLSearchParams(new URL(u).search);
-    q.set("sig", d(`${p}?${[...q.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => `${key}=${value}`).join("&")}&${s}`).toLowerCase());
+    q.set("sig", d(`${p}?${[...q.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => `${key}=${value}`).join("&")}${s}`).toLowerCase());
     return `${ul}${p}?${q.toString()}`;
 };
 
