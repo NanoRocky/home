@@ -18,6 +18,7 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import initSnowfall from "@/utils/season/snow";
 import initFirefly from "@/utils/season/firefly";
 import { ref } from 'vue';
+import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
 const bgUrl = ref(null);
@@ -31,11 +32,20 @@ let bgImageCount = 24; // PC 版壁纸
 let bgImageCountP = 24; // 移动版壁纸
 let bgRandom = 0;
 let bgRandomp = 0;
+let confUrlS = null;
+
+const key = import.meta.env.VITE_SFILE_SKEY;
 
 // 加载 config.json
 async function loadConfig() {
   try {
-    const response = await fetch('https://file.nanorocky.top/home/images/config.json');
+    if (key) {
+      const confUrl = "https://filep.nanorocky.top/home/images/config.json";
+      confUrlS = await gasC(confUrl, key);
+    } else {
+      confUrlS = "https://filep.nanorocky.top/home/images/config.json";
+    };
+    const response = await fetch(confUrlS);
     const data = await response.json();
     bgImageCount = Math.max(data.bgImageCount, 1);
     bgImageCountP = Math.max(data.bgImageCountP, 1);
@@ -71,11 +81,26 @@ const changeBg = (type) => {
       // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
       // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
       if (deviceType === 'mobile') {
-        bgUrl.value = `https://file.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+        if (key) {
+          const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+          bgUrl.value = await gasC(bgUrlS, key);
+        } else {
+          bgUrl.value = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+        };
       } else if (deviceType === 'tablet' || deviceType === 'pc') {
-        bgUrl.value = `https://file.nanorocky.top/home/images/background${bgRandom}.webp`;
+        if (key) {
+          const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+          bgUrl.value = await gasC(bgUrlS, key);
+        } else {
+          bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+        };
       } else {
-        bgUrl.value = `https://file.nanorocky.top/home/images/background${bgRandom}.webp`;
+        if (key) {
+          const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+          bgUrl.value = await gasC(bgUrlS, key);
+        } else {
+          bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+        };
       };
     } else if (type == 1) {
       if (deviceType === 'mobile') {
@@ -126,7 +151,7 @@ const imgAnimationEnd = () => {
 };
 
 // 图片显示失败
-const imgLoadError = () => {
+const imgLoadError = async () => {
   console.error("壁纸加载失败：", bgUrl.value);
   ElMessage({
     message: "壁纸加载失败惹喵...已临时切换回默认！",
@@ -135,7 +160,12 @@ const imgLoadError = () => {
       fill: "#efefef",
     }),
   });
-  bgUrl.value = `https://file.nanorocky.top/home/images/background${bgRandom}.webp`;
+  if (key) {
+    const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+    bgUrl.value = await gasC(bgUrlS, key);
+  } else {
+    bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+  };
   if (store.webSpeech) {
     stopSpeech();
     const voice = import.meta.env.VITE_TTS_Voice;
