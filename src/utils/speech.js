@@ -1,8 +1,12 @@
+import { gasA, gasC } from "@/utils/authServer";
+
 let currentAudio = null;
 let audioQueue = [];
 let isPlaying = false;
 let controller = null;
 let timeoutId = null;
+let speechapiUrlS = null;
+let audioUrlS = null;
 
 /**
  * Speech
@@ -56,12 +60,20 @@ export function Speech(
     timeoutId = setTimeout(async () => {
       try {
         const speechapi = import.meta.env.VITE_TTS_API;
-        const response = await fetch(speechapi, {
+        const key = import.meta.env.VITE_TTS_SKEY;
+        if(!key){
+          speechapiUrlS = speechapi;
+        } else {
+          const speechapiurl = new URL(speechapi);
+          const path = speechapiurl.pathname;
+          const sign =  await gasA(path, key);
+          speechapiUrlS = `${speechapi}?sign=${sign}`;
+        };
+        const response = await fetch(speechapiUrlS, {
           method: "POST",
           body: formData,
           signal, // 传递 AbortSignal
         });
-
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error);
@@ -147,19 +159,26 @@ export function stopSpeech() {
  * Made by NanoRocky
  * 播放本地预生成的语音音频。
  * 考虑到生成延迟，所以加了这个，仅必要模块调用 api 实时生成，其它模块使用预先生成好的音频。记得根据需求更换自己的音频文件哇！
- * 
+ *
  * @param {string} fileName - 音频文件名 + 文件拓展名（请将文件放在指定路径）
  * @param {number} [delay=0] - 等待时间【毫秒】后发出请求，防止频繁点击产生请求洪水（默认提前生成的不等待）
  * @returns {Promise<void>} - 一个 Promise，在语音播放完成时解析或出现错误时拒绝
  */
 export function SpeechLocal(fileName, delay = 0) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (!fileName) {
       reject(new Error("No file name provided"));
       return;
     }
 
-    const audioUrl = `https://file.nanorocky.top/home/speechlocal/${fileName}`;
+    const audioUrl = `https://filep.nanorocky.top/home/speechlocal/${fileName}`;
+    const key = import.meta.env.VITE_SFILE_SKEY;
+    if (key) {
+      const fileUrl = audioUrl;
+      audioUrlS = await gasC(fileUrl, key);
+    } else {
+      audioUrlS = audioUrl;
+    };
 
     // 如果有现有的等待，取消之前的 timeout
     if (timeoutId) {
@@ -181,7 +200,7 @@ export function SpeechLocal(fileName, delay = 0) {
       }
 
       // 添加新音频到队列并播放
-      audioQueue.push(audioUrl);
+      audioQueue.push(audioUrlS);
       if (!isPlaying) {
         playNext();
       }
