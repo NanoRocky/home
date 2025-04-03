@@ -73,7 +73,7 @@ const getTXW = async () => {
     console.log("正在使用腾讯天气接口");
     // 获取 Adcode
     const adCode = await getTXAdcode(txkey);
-    if (adCode.status !== "0") {
+    if (String(adCode.status) !== "0") {
       if (store.webSpeech) {
         stopSpeech();
         const voice = import.meta.env.VITE_TTS_Voice;
@@ -88,7 +88,17 @@ const getTXW = async () => {
     };
     // 获取天气信息
     const txWeather = await getTXWeather(txkey, weatherData.adCode.adcode);
-    if (txWeather.status !== "0") {
+    if (String(txWeather.status) !== "0") {
+      if (store.webSpeech) {
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("天气加载失败.mp3");
+      };
+      throw "猫猫无法找到当前地区的天气信息qwq";
+    };
+    const realtimeData = txWeather.result.realtime?.[0];
+    if (!realtimeData?.infos) {
       if (store.webSpeech) {
         stopSpeech();
         const voice = import.meta.env.VITE_TTS_Voice;
@@ -98,16 +108,16 @@ const getTXW = async () => {
       throw "猫猫无法找到当前地区的天气信息qwq";
     };
     weatherData.weather = {
-      weather: txWeather.result.realtime.infos.weather,
-      temperature: txWeather.result.realtime.infos.temperature,
-      winddirection: txWeather.result.realtime.infos.wind_direction,
-      windpower: txWeather.result.realtime.infos.wind_power,
+      weather: realtimeData.infos.weather,
+      temperature: realtimeData.infos.temperature,
+      winddirection: realtimeData.infos.wind_direction,
+      windpower: realtimeData.infos.wind_power,
     };
   } else {
     console.log("正在使用腾讯天气接口，鉴权模式已启用");
     // 获取 Adcode
     const adCode = await getTXAdcodeS(txkey, txskey);
-    if (adCode.status !== "0") {
+    if (String(adCode?.status) !== "0") {
       if (store.webSpeech) {
         stopSpeech();
         const voice = import.meta.env.VITE_TTS_Voice;
@@ -122,7 +132,17 @@ const getTXW = async () => {
     };
     // 获取天气信息
     const txWeather = await getTXWeatherS(txkey, weatherData.adCode.adcode, txskey);
-    if (txWeather.status !== "0") {
+    if (String(txWeather.status) !== "0") {
+      if (store.webSpeech) {
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("天气加载失败.mp3");
+      };
+      throw "猫猫无法找到当前地区的天气信息qwq";
+    };
+    const realtimeData = txWeather.result.realtime?.[0];
+    if (!realtimeData?.infos) {
       if (store.webSpeech) {
         stopSpeech();
         const voice = import.meta.env.VITE_TTS_Voice;
@@ -132,27 +152,23 @@ const getTXW = async () => {
       throw "猫猫无法找到当前地区的天气信息qwq";
     };
     weatherData.weather = {
-      weather: txWeather.result.realtime.infos.weather,
-      temperature: txWeather.result.realtime.infos.temperature,
-      winddirection: txWeather.result.realtime.infos.wind_direction,
-      windpower: txWeather.result.realtime.infos.wind_power,
+      weather: realtimeData.infos.weather,
+      temperature: realtimeData.infos.temperature,
+      winddirection: realtimeData.infos.wind_direction,
+      windpower: realtimeData.infos.wind_power,
     };
   };
-};
-
-function isPureNumber(value) {
-    return typeof value === 'number' && !isNaN(value) && !Array.isArray(value);
 };
 
 const getGDW = async () => {
   // 获取 Adcode
   const adCode = await getGDAdcode(gdkey);
   let adCodei = null;
-  if (adCode?.infocode !== "10000" || !isPureNumber(adCode?.adcode)) {
+  if (String(adCode?.infocode) !== "10000" || String(adCode?.status) !== "1") {
     console.log("检测到高德接口 IP 获取失败，调用额外接口获取 IPV4 地址...");
     const ipV4addr = await getIPV4Addr();
     adCodei = await getGDAdcodeI(ipV4addr.ip, gdkey);
-    if (adCode?.infocode !== "10000" || !isPureNumber(adCode?.adcode)) {
+    if (String(adCodei?.infocode) !== "10000" || String(adCodei?.status) !== "1") {
       if (store.webSpeech) {
         stopSpeech();
         const voice = import.meta.env.VITE_TTS_Voice;
@@ -175,6 +191,15 @@ const getGDW = async () => {
   };
   // 获取天气信息
   const result = await getGDWeather(gdkey, weatherData.adCode.adcode);
+  if (String(result?.status) !== "1" || String(result?.infocode) !== "10000") {
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("天气加载失败.mp3");
+    };
+    throw "猫猫无法找到当前地区的天气信息qwq";
+  };
   weatherData.weather = {
     weather: result.lives[0].weather,
     temperature: result.lives[0].temperature,
@@ -199,18 +224,28 @@ const getOW = async () => {
 
 const getHXHW = async () => {
   const result = await getHXHWeather();
+  if (String(result?.success) !== "true") {
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("天气加载失败.mp3");
+    };
+    throw "猫猫无法找到当前地区的天气信息qwq";
+  };
   weatherData.adCode = {
     city: result.city || "未知地区",
   };
   weatherData.weather = {
-    weather: result.data.type,
-    temperature: getTemperature(result.data.low, result.data.high),
-    winddirection: result.data.fengxiang,
-    windpower: result.data.fengli,
+    weather: result.data.type || result.data.night.type,
+    temperature: getTemperature(result.data.low || result.data.night.low, result.data.high || result.data.night.high),
+    winddirection: result.data.fengxiang || result.data.night.fengxiang,
+    windpower: result.data.fengli || result.data.night.fengli,
   };
 };
 
 const getXMW = async () => {
+  // 待补（）
 };
 
 // 获取天气数据
@@ -264,7 +299,7 @@ const getWeatherData = async () => {
       const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("天气加载失败.mp3");
     };
-  }
+  };
 };
 
 // 报错信息
