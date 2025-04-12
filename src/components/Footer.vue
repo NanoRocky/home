@@ -100,7 +100,7 @@ import { Icon } from "@vicons/utils";
 import { Paw } from "@vicons/ionicons5";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
-import { ref, watch, computed, onMounted, nextTick, onUpdated } from "vue";
+import { ref, watch, computed, onMounted, nextTick, onBeforeUnmount } from "vue";
 
 const store = mainStore();
 const fullYear = new Date().getFullYear();
@@ -112,28 +112,36 @@ const isSeeking = ref(false)
 const audio = ref(null)
 const icon = ref(null)
 
-watch(() => store.playerState, (_acc, _now) => {
-  nextTick(() => {
-    audio.value = document.querySelector('audio')
-  })
-})
-
 const handleMouseDown = () => {
   isSeeking.value = true
 }
 
-document.addEventListener('mouseup', () => {
+const onMouseUp = () => {
   isSeeking.value = false
+  // TODO: audio event: 等能播放了再取消，以及加载动画
   if (icon.value) {
-    icon.value.style.left = undefined
+    icon.value.style.left = ''
   }
-})
+}
 
-document.addEventListener('mousemove', (ev) => {
+const onMouseMove = (ev) => {
   if (isSeeking.value && audio.value && icon.value) {
     audio.value.currentTime = ev.clientX / innerWidth * store.playerDuration
     icon.value.style.left = `${Math.floor(ev.clientX - 16)}px`
   }
+}
+
+watch(() => store.playerState, (_acc, _now) => {
+    audio.value = document.querySelector('audio')
+})
+
+onMounted(() => nextTick(() => {
+  document.addEventListener('mouseup', onMouseUp)
+  document.addEventListener('mousemove', onMouseMove)
+}))
+onBeforeUnmount(() => {
+  document.removeEventListener('mouseup', onMouseUp)
+  document.removeEventListener('mousemove', onMouseMove)
 })
 
 // 加载配置数据
