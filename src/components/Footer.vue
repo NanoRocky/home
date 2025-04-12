@@ -36,7 +36,7 @@
         <!-- 音乐进度条 -->
         <div v-if="store.footerProgressBar" class="progress-bar">
           <div class="progress" :style="{ width: progressBarWidth + '%' }">
-            <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" />
+            <img src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false" :onmousedown="handleMouseDown" ref="icon" />
           </div>
         </div>
         <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
@@ -108,65 +108,33 @@ const lrcContainer = ref(null);
 const scrollPosition = ref(0);
 const currentLine = ref(0);
 const showProgressIcon = ref(false);
+const isSeeking = ref(false)
+const audio = ref(null)
+const icon = ref(null)
 
-const handleMouseEnter = () => {
-  showProgressIcon.value = true;
-};
+watch(() => store.playerState, (_acc, _now) => {
+  nextTick(() => {
+    audio.value = document.querySelector('audio')
+  })
+})
 
-const handleMouseLeave = () => {
-  showProgressIcon.value = false;
-};
+const handleMouseDown = () => {
+  isSeeking.value = true
+}
 
-const progressIconPosition = ref({ x: 0 });
-const isDragging = ref(false);
-
-const handleDragStart = (event) => {
-  isDragging.value = true;
-  progressIconPosition.value.x = event.clientX;
-};
-
-const handleDrag = (event) => {
-  if (!isDragging.value) return;
-  const deltaX = event.clientX - progressIconPosition.value.x;
-  progressIconPosition.value.x += deltaX;
-  const progressIcon = document.querySelector('.progress-icon');
-  if (progressIcon) {
-    progressIcon.style.transform = `translateX(${progressIconPosition.value.x}px)`;
+document.addEventListener('mouseup', () => {
+  isSeeking.value = false
+  if (icon.value) {
+    icon.value.style.left = undefined
   }
-};
+})
 
-const handleDragEnd = (event) => {
-  isDragging.value = false;
-  const progressBar = document.querySelector('.progress-bar');
-  if (progressBar) {
-    const progressBarRect = progressBar.getBoundingClientRect();
-    const newProgress = (event.clientX - progressBarRect.left) / progressBarRect.width;
-    // 赋值步骤先留空，后面再补
-    //  = newProgress * store.playerDuration;
+document.addEventListener('mousemove', (ev) => {
+  if (isSeeking.value && audio.value && icon.value) {
+    audio.value.currentTime = ev.clientX / innerWidth * store.playerDuration
+    icon.value.style.left = `${Math.floor(ev.clientX - 16)}px`
   }
-  setTimeout(() => {
-    progressIconPosition.value.x = 0;
-    const progressIcon = document.querySelector('.progress-icon');
-    if (progressIcon) {
-      progressIcon.style.transform = `translateX(0)`;
-    }
-  }, 100);
-};
-
-onMounted(async () => {
-  await nextTick();
-  const progressBarShowCheck = document.querySelector('#footer');
-  if (progressBarShowCheck) {
-    progressBarShowCheck.addEventListener('mouseenter', handleMouseEnter);
-    progressBarShowCheck.addEventListener('mouseleave', handleMouseLeave);
-  };
-  const progressIcon = document.querySelector('.progress-icon');
-  if (progressIcon) {
-    progressIcon.addEventListener('mousedown', handleDragStart);
-    document.addEventListener('mousemove', handleDrag);
-    document.addEventListener('mouseup', handleDragEnd);
-  }
-});
+})
 
 // 加载配置数据
 // const siteStartDate = ref(import.meta.env.VITE_SITE_START);
@@ -570,7 +538,6 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
         opacity: 1;
         width: 32px;
         height: 32px;
-        cursor: grab;
         transform: translateX(var(--progress-icon-x, 0));
         transition: transform 0.1s linear;
       }
