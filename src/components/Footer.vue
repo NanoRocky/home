@@ -30,15 +30,21 @@
           <a v-if="siteMps" href="https://beian.mps.gov.cn" target="_blank">
             {{ siteMps }}
           </a>
+          &amp;
+          <!-- 不妨碍再整个活儿 -->
+          <a v-if="sideMICP" href="https://icp.gov.moe/?keyword=20257739" target="_blank">
+            {{ sideMICP }}
+          </a>
         </span>
       </div>
       <div v-else class="lrc">
         <!-- 音乐进度条 -->
         <div v-if="store.footerProgressBar" class="progress-bar">
-          <div class="progress" :style="{ width: progressBarWidth + '%' }">
+          <div class="progress" :class="{ dragging: isDragging }"
+            :style="{ width: isDragging ? `${dragProgress}%` : `${progressBarWidth}%` }">
             <img v-if="showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
-              class="progress-icon" />
-            <!-- <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" /> -->
+              class="progress-icon" draggable="false" :onmousedown="handleMouseDown" ref="icon" />
+            <!-- <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false" :onmousedown="handleMouseDown" ref="icon" /> -->
           </div>
         </div>
         <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
@@ -102,7 +108,8 @@ import { Icon } from "@vicons/utils";
 import { Paw } from "@vicons/ionicons5";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
-import { ref, watch, computed, onMounted, nextTick, onUpdated } from "vue";
+import { ref, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
+import { throttle } from "lodash";
 
 const store = mainStore();
 const fullYear = new Date().getFullYear();
@@ -110,7 +117,21 @@ const lrcContainer = ref(null);
 const scrollPosition = ref(0);
 const currentLine = ref(0);
 const showProgressIcon = ref(false);
+const isSeeking = ref(false);
+const audio = ref(null);
+const icon = ref(null);
+const touchIdentifier = ref(null);
+const isDragging = ref(false);
+const dragProgress = ref(0);
+let dragTimer = null;
 
+// 进度计算
+const progressBarWidth = computed(() => {
+  if (!store.playerState) return 0;
+  return (store.playerCurrentTime / store.playerDuration) * 100;
+});
+
+// 鼠标事件处理
 const handleMouseEnter = () => {
   showProgressIcon.value = true;
 };
@@ -119,55 +140,59 @@ const handleMouseLeave = () => {
   showProgressIcon.value = false;
 };
 
-const progressIconPosition = ref({ x: 0 });
-const isDragging = ref(false);
-
-const handleDragStart = (event) => {
+const handleMouseDown = (e) => {
   isDragging.value = true;
-  progressIconPosition.value.x = event.clientX;
-};
-
-const handleDrag = (event) => {
-  if (!isDragging.value) return;
-  const deltaX = event.clientX - progressIconPosition.value.x;
-  progressIconPosition.value.x += deltaX;
-  const progressIcon = document.querySelector('.progress-icon');
-  if (progressIcon) {
-    progressIcon.style.transform = `translateX(${progressIconPosition.value.x}px)`;
-  }
-};
-
-const handleDragEnd = (event) => {
-  isDragging.value = false;
+  isSeeking.value = true;
   const progressBar = document.querySelector('.progress-bar');
-  if (progressBar) {
-    const progressBarRect = progressBar.getBoundingClientRect();
-    const newProgress = (event.clientX - progressBarRect.left) / progressBarRect.width;
-    // 赋值步骤先留空，后面再补
-    //  = newProgress * store.playerDuration;
-  }
-  setTimeout(() => {
-    progressIconPosition.value.x = 0;
-    const progressIcon = document.querySelector('.progress-icon');
-    if (progressIcon) {
-      progressIcon.style.transform = `translateX(0)`;
-    }
-  }, 100);
+  const rect = progressBar.getBoundingClientRect();
+  const initialX = e.clientX - rect.left;
+  dragProgress.value = (initialX / rect.width) * 100;
 };
 
-onMounted(async () => {
-  await nextTick();
+const onMouseUp = () => {
+  if (!isDragging.value) return;
+  isDragging.value = false;
+  isSeeking.value = false;
+  if (dragTimer) clearTimeout(dragTimer);
+  if (audio.value && store.playerDuration) {
+      audio.value.currentTime = (dragProgress.value / 100) * store.playerDuration;
+    };
+  dragTimer = setTimeout(() => {
+    if (icon.value) icon.value.style.left = '';
+  }, 1000);
+};
+
+const onMouseMove = throttle((e) => {
+  if (!isDragging.value) return;
+  const progressBar = document.querySelector('.progress-bar');
+  const rect = progressBar.getBoundingClientRect();
+  let offsetX = e.clientX - rect.left;
+  offsetX = Math.max(0, Math.min(rect.width, offsetX));
+  dragProgress.value = (offsetX / rect.width) * 100;
+  if (icon.value) {
+    const newLeft = offsetX - icon.value.offsetWidth / 2;
+    icon.value.style.left = `${newLeft}px`;
+  };
+}, 16);
+
+watch(() => store.playerState, (_acc, _now) => {
+  audio.value = document.querySelector('audio');
+});
+
+onMounted(() => nextTick(() => {
+  audio.value = document.querySelector('audio');
   const progressBarShowCheck = document.querySelector('#footer');
   if (progressBarShowCheck) {
     progressBarShowCheck.addEventListener('mouseenter', handleMouseEnter);
     progressBarShowCheck.addEventListener('mouseleave', handleMouseLeave);
   };
-  const progressIcon = document.querySelector('.progress-icon');
-  if (progressIcon) {
-    progressIcon.addEventListener('mousedown', handleDragStart);
-    document.addEventListener('mousemove', handleDrag);
-    document.addEventListener('mouseup', handleDragEnd);
-  }
+  document.addEventListener('mouseup', onMouseUp);
+  document.addEventListener('mousemove', onMouseMove);
+}));
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mouseup', onMouseUp);
+  document.removeEventListener('mousemove', onMouseMove);
 });
 
 // 加载配置数据
@@ -178,20 +203,16 @@ const startYear = ref(
 );
 const siteIcp = ref(import.meta.env.VITE_SITE_ICP);
 const siteMps = ref(import.meta.env.VITE_SITE_MPS);
+const sideMICP = ref(import.meta.env.VITE_SITE_MICP);
 const siteAuthor = ref(import.meta.env.VITE_SITE_AUTHOR);
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
-  if (!url) return "https://www.nanorocky.top";
+  if (!url) return "https://nanorocky.top";
   // 判断协议前缀
   if (!url.startsWith("http://") && !url.startsWith("https://")) {
     return "//" + url;
   };
   return url;
-});
-
-const progressBarWidth = computed(() => {
-  if (!store.playerState) return 0;
-  return (store.playerCurrentTime / store.playerDuration) * 100;
 });
 
 // yrc part
@@ -564,6 +585,10 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       transition: width 0.1s linear;
       position: relative;
 
+      &.dragging {
+        transition: none !important;
+      }
+
       .progress-icon {
         // 进度条图标，请勿修改宽高和边距，这些参数是定嘶的！除非你有大改动的能力
         position: absolute;
@@ -575,6 +600,10 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
         cursor: grab;
         transform: translateX(var(--progress-icon-x, 0));
         transition: transform 0.1s linear;
+
+        &:active {
+          cursor: grabbing;
+        }
       }
     }
   }
