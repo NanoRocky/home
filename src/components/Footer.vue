@@ -34,11 +34,7 @@
       </div>
       <div v-else class="lrc">
         <!-- 音乐进度条 -->
-        <div v-if="store.footerProgressBar" class="progress-bar">
-          <div class="progress" :style="{ width: progressBarWidth + '%' }">
-            <img src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false" :onmousedown="handleMouseDown" ref="icon" />
-          </div>
-        </div>
+        <MusicProgressBar v-if="store.footerProgressBar" />
         <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
           v-if="!(!store.yrcEnable || store.yrcTemp.length == 0 || store.yrcLoading)">
           <!-- &amp; -->
@@ -101,6 +97,7 @@ import { Paw } from "@vicons/ionicons5";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
 import { ref, watch, computed, onMounted, nextTick, onBeforeUnmount } from "vue";
+import MusicProgressBar from "./MusicProgressBar.vue";
 
 const store = mainStore();
 const fullYear = new Date().getFullYear();
@@ -108,41 +105,6 @@ const lrcContainer = ref(null);
 const scrollPosition = ref(0);
 const currentLine = ref(0);
 const showProgressIcon = ref(false);
-const isSeeking = ref(false)
-const audio = ref(null)
-const icon = ref(null)
-
-const handleMouseDown = () => {
-  isSeeking.value = true
-}
-
-const onMouseUp = () => {
-  isSeeking.value = false
-  // TODO: audio event: 等能播放了再取消，以及加载动画
-  if (icon.value) {
-    icon.value.style.left = ''
-  }
-}
-
-const onMouseMove = (ev) => {
-  if (isSeeking.value && audio.value && icon.value) {
-    audio.value.currentTime = ev.clientX / innerWidth * store.playerDuration
-    icon.value.style.left = `${Math.floor(ev.clientX - 16)}px`
-  }
-}
-
-watch(() => store.playerState, (_acc, _now) => {
-    audio.value = document.querySelector('audio')
-})
-
-onMounted(() => nextTick(() => {
-  document.addEventListener('mouseup', onMouseUp)
-  document.addEventListener('mousemove', onMouseMove)
-}))
-onBeforeUnmount(() => {
-  document.removeEventListener('mouseup', onMouseUp)
-  document.removeEventListener('mousemove', onMouseMove)
-})
 
 // 加载配置数据
 // const siteStartDate = ref(import.meta.env.VITE_SITE_START);
@@ -161,11 +123,6 @@ const siteUrl = computed(() => {
     return "//" + url;
   };
   return url;
-});
-
-const progressBarWidth = computed(() => {
-  if (!store.playerState) return 0;
-  return (store.playerCurrentTime / store.playerDuration) * 100;
 });
 
 // yrc part
@@ -517,38 +474,6 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
 
     .lrc-line.played {
       color: #aaa;
-    }
-  }
-
-  .progress-bar {
-    // 进度条样式
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1.5px;
-    opacity: 1;
-    background-color: rgba(240, 240, 240, 1);
-
-    .progress {
-      height: 100%;
-      width: 100%;
-      opacity: 1;
-      background-color: rgba(138, 43, 226, 1);
-      transition: width 0.1s linear;
-      position: relative;
-
-      .progress-icon {
-        // 进度条图标，请勿修改宽高和边距，这些参数是定嘶的！除非你有大改动的能力
-        position: absolute;
-        top: -16px;
-        right: -16px;
-        opacity: 1;
-        width: 32px;
-        height: 32px;
-        transform: translateX(var(--progress-icon-x, 0));
-        transition: transform 0.1s linear;
-      }
     }
   }
 
