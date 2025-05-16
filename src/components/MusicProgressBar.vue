@@ -26,25 +26,30 @@ const startSeeking = () => {
 };
 
 const endSeeking = () => {
-  isSeeking.value = false;
-  // TODO: audio event: 等能播放了再取消，以及加载动画
-  if (icon.value) {
-    icon.value.style.left = "";
+  if (isSeeking.value && audio.value) {
+    const rect = icon.value.getBoundingClientRect();
+    const position = rect.left + rect.width / 2;
+    audio.value.fastSeek((position / innerWidth) * store.playerDuration);
   }
+  isSeeking.value = false;
 };
 
 const onMouseMove = (ev) => {
   if (isSeeking.value && audio.value && icon.value) {
-    audio.value.currentTime = (ev.clientX / innerWidth) * store.playerDuration;
     icon.value.style.left = `${Math.floor(ev.clientX - 16)}px`;
   }
 };
 
 const onTouchMove = (ev) => {
   if (isSeeking.value && audio.value && icon.value && ev.touches.length == 1) {
-    audio.value.currentTime = (ev.touches[0].clientX / innerWidth) * store.playerDuration;
     icon.value.style.left = `${Math.floor(ev.touches[0].clientX - 16)}px`;
   }
+};
+
+const onCanplay = () => {
+  setTimeout(() => {
+    icon.value.style.left = "";
+  }, 1000);
 };
 
 const progressBarWidth = computed(() => {
@@ -60,8 +65,11 @@ onMounted(() =>
     document.addEventListener("touchmove", onTouchMove);
     document.addEventListener("touchend", endSeeking);
     document.addEventListener("touchcancel", endSeeking);
-    if (icon) {
+    if (icon.value) {
       icon.value.addEventListener("touchstart", startSeeking);
+    }
+    if (icon.value && audio.value) {
+      audio.value.addEventListener("canplay", onCanplay);
     }
   }),
 );
@@ -72,8 +80,11 @@ onBeforeUnmount(() => {
   document.removeEventListener("touchmove", onTouchMove);
   document.removeEventListener("touchend", endSeeking);
   document.removeEventListener("touchcancel", endSeeking);
-  if (icon) {
+  if (icon.value) {
     icon.value.removeEventListener("touchstart", startSeeking);
+  }
+  if (icon.value && audio.value) {
+    audio.value.removeEventListener("canplay", onCanplay);
   }
 });
 </script>
