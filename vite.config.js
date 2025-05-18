@@ -135,6 +135,9 @@ export default ({ mode }) =>
           silenceDeprecations: ["legacy-js-api"],
         },
       },
+      postcss: {
+        config: true,
+      },
     },
     build: {
       minify: "terser",

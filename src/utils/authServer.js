@@ -14,6 +14,9 @@ const f = () => Math.floor(Date.now() / 1000);
 const o = (v) => v.toString(16);
 
 async function gst() {
+    // 为什么这里要整一个模块用于获取网络时间呢...
+    // 因为客户端时间不可信，即使客户端会自动对时，也很难避免差个几十秒的情况...
+    // 而下面的签名 Token，有效期设置的都是几秒级别，所以优先使用网络时间。
     if (!x) {
         try {
             const { timestamp: t } = await (await fetch("https://nanorocky.top/time/")).json();
