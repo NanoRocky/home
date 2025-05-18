@@ -50,25 +50,25 @@ export async function gasA(p, s) {
 export async function gasB(u, s) {
     const { origin: ul, pathname: p } = new URL(u);
     const t = new Date((await gst()) * 1000 + 8 * 3600 * 1000).toISOString().replace(/[-T:]|(\..*)/g, "").substring(0, 12);
-    return `${ul}/${t}/${d(`${s}${t}/${p}`)}/${p}`;
+    return `${ul}/${t}/${d(`${s}${t}/${p.startsWith('/') ? p.slice(1) : p}`)}/${p.startsWith('/') ? p.slice(1) : p}`;
 };
 
 export async function gasC(u, s) {
     const { origin: ul, pathname: p } = new URL(u);
     const t = o((await gst()));
-    return `${ul}/${d(`${s}/${p}${t}`)}/${t}/${p.startsWith('/') ? p.slice(1) : p}`;
+    return `${ul}/${d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`)}/${t}/${p.startsWith('/') ? p.slice(1) : p}`;
 };
 
 export async function gasDH(u, s) {
     const ul = new URL(u), p = ul.pathname, t = await gst();
-    ul.searchParams.set("sign", d(`${s}/${p}${t}`));
+    ul.searchParams.set("sign", d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`));
     ul.searchParams.set("t", t);
     return ul.toString();
 };
 
 export async function gasDI(u, s) {
     const ul = new URL(u), p = ul.pathname, t = o(await gst());
-    ul.searchParams.set("sign", d(`${s}/${p}${t}`));
+    ul.searchParams.set("sign", d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`));
     ul.searchParams.set("t", t);
     return ul.toString();
 };
