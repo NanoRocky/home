@@ -56,7 +56,7 @@ export async function gasB(u, s) {
 export async function gasC(u, s) {
     const { origin: ul, pathname: p } = new URL(u);
     const t = o((await gst()));
-    return `${ul}/${d(`${s}/${p}${t}`)}/${t}/${p}`;
+    return `${ul}/${d(`${s}/${p}${t}`)}/${t}/${p.startsWith('/') ? p.slice(1) : p}`;
 };
 
 export async function gasDH(u, s) {
