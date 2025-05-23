@@ -1,5 +1,4 @@
 <template>
-
   <div class="mobileset" v-if="store.mobileOpenState" @mouseenter="closeShow = true" @mouseleave="closeShow = false"
     @click.stop>
     <transition name="el-fade-in-linear">
@@ -28,7 +27,6 @@
       </el-col>
     </el-row>
   </div>
-
   <div class="set" v-else @mouseenter="closeShow = true" @mouseleave="closeShow = false" @click.stop>
     <transition name="el-fade-in-linear">
       <close-one class="close" theme="filled" size="28" fill="#ffffff60" v-show="closeShow"
