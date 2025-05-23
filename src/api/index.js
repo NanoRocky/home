@@ -47,6 +47,7 @@ export const getPlayerList = async (server, type, id, yrc) => {
     return data.map((v, i) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
+      album: v.album || import.meta.env.VITE_SITE_NAME,
       url: domain + jsonpData.req_0.data.midurlinfo[i].purl,
       cover: v.cover || v.pic,
       lrc: v.lrc,

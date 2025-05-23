@@ -21,19 +21,16 @@
         </span>
         <!-- 站点备案 -->
         <span>
-          &amp;
           <a v-if="siteIcp" href="https://beian.miit.gov.cn" target="_blank">
-            {{ siteIcp }}
+            &amp;&nbsp; {{ siteIcp }}
           </a>
-          &amp;
           <!-- 这备那备的真的很扫（bushi） -->
           <a v-if="siteMps" href="https://beian.mps.gov.cn" target="_blank">
-            {{ siteMps }}
+            &amp;&nbsp;{{ siteMps }}
           </a>
-          &amp;
           <!-- 不妨碍再整个活儿 -->
           <a v-if="sideMICP" href="https://icp.gov.moe/?keyword=20257739" target="_blank">
-            {{ sideMICP }}
+            &amp;&nbsp;{{ sideMICP }}
           </a>
         </span>
       </div>
