@@ -8,7 +8,7 @@ RUN [ ! -e ".env" ] && cp .env.example .env || true
 RUN npm run build
 
 # 最小化镜像
-FROM node:18-alpine
+FROM node:24.0.2-alpine
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 RUN npm install -g http-server
