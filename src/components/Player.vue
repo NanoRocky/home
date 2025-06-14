@@ -11,7 +11,7 @@ import { getPlayerList } from "@/api";
 import { mainStore } from "@/store";
 import APlayer from "@worstone/vue-aplayer";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
-import { decodeDWQYRC } from "@/utils/decodeYrc";
+import { decodeDWQYRC } from "@/utils/decodeDWQYRC";
 
 const store = mainStore();
 let showDWRCRunning = 0;

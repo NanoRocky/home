@@ -21,11 +21,11 @@ export function decodeDWQYRC(i) {
         const timeBeforeText = /^\(\d+,\d+(?:,\d+)?\)/.test(content);
         const parts = content.split(/(\(\d+,\d+(?:,\d+)?\))/).filter(Boolean);
         const stack = [];
-        let wordIndex = 0;
+        let wordIndex = 1;
         if (timeBeforeText) {
             for (let i = 0; i < parts.length - 1; i += 2) {
                 const timePart = parts[i];
-                const textPart = parts[i + 1]?.trim();
+                const textPart = parts[i + 1];
                 const timeMatch = timePart.match(/^\((\d+),(\d+)(?:,\d+)?\)$/);
                 if (timeMatch && textPart) {
                     const word = textPart.replace(' ', '&nbsp;');
@@ -33,13 +33,14 @@ export function decodeDWQYRC(i) {
                         [parseInt(timeMatch[1]), parseInt(timeMatch[2])],
                         word,
                         lineIndex,
-                        wordIndex++
+                        wordIndex
                     ]);
+                    wordIndex += 2;
                 }
             }
         } else {
             for (let i = 0; i < parts.length - 1; i += 2) {
-                const textPart = parts[i]?.trim();
+                const textPart = parts[i];
                 const timePart = parts[i + 1];
                 const timeMatch = timePart.match(/^\((\d+),(\d+)(?:,\d+)?\)$/);
                 if (timeMatch && textPart) {
@@ -48,8 +49,9 @@ export function decodeDWQYRC(i) {
                         [parseInt(timeMatch[1]), parseInt(timeMatch[2])],
                         word,
                         lineIndex,
-                        wordIndex++
+                        wordIndex
                     ]);
+                    wordIndex += 2;
                 };
             };
         };
