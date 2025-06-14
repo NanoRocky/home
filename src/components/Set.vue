@@ -62,19 +62,19 @@
         <div v-if="playerLrcShow" class="item">
           <span class="text" white-space="pre">允许调用 AMLL TTML Database 加载网易云没有的歌词<br>&nbsp;&nbsp;&nbsp;（在 Github
             不稳定的网络中可能导致歌词载入速度变慢）</span>
-          <el-switch v-model="playerYrcATDB" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch v-model="playerDWRCATDB" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
-        <div v-if="playerLrcShow && playerYrcATDB" class="item">
+        <div v-if="playerLrcShow && playerDWRCATDB" class="item">
           <span class="text" white-space="pre">调用 AMLL TTML Database 时使用镜像加速</span>
-          <el-switch v-model="playerYrcATDBF" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch v-model="playerDWRCATDBF" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
         <div v-if="playerLrcShow" class="item">
           <span class="text">逐字歌词解析总开关</span>
-          <el-switch v-model="playerYrcShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch v-model="playerDWRCShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
-        <div v-if="playerLrcShow && playerYrcShow" class="item">
+        <div v-if="playerLrcShow && playerDWRCShow" class="item">
           <span class="text">逐字效果增强开关</span>
-          <el-switch v-model="playerYrcShowPro" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch v-model="playerDWRCShowPro" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
       </el-collapse-item>
       <el-collapse-item title="语音设置" name="5">
@@ -116,10 +116,10 @@ const {
   playerLoop,
   webSpeech,
   playerSpeechName,
-  playerYrcShow,
-  playerYrcShowPro,
-  playerYrcATDB,
-  playerYrcATDBF,
+  playerDWRCShow,
+  playerDWRCShowPro,
+  playerDWRCATDB,
+  playerDWRCATDBF,
   footerProgressBar,
   seasonalEffects,
   setV,
