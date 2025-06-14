@@ -38,7 +38,7 @@
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" :forceShowIcon="forceShowIcon" />
         <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
-          v-if="!(!store.yrcEnable || store.yrcTemp.length == 0 || store.yrcLoading)">
+          v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)">
           <!-- &amp; -->
           <!-- 逐字模块山 -->
           <div class="lrc-all"
@@ -48,18 +48,18 @@
             <Icon size="20" style="transform: rotate(-18deg);" class="paws-1">
               <paw />
             </Icon>
-            <span class="yrc-box">
-              <span class="yrc-2 lrc-text text-hidden" id="yrc-2-wrap">
+            <span class="dwrc-box">
+              <span class="dwrc-2 lrc-text text-hidden" id="dwrc-2-wrap">
                 <span v-for="i in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
               </span>
-              <span class="yrc-1 lrc-text text-hidden" id="yrc-1-wrap">
+              <span class="dwrc-1 lrc-text text-hidden" id="dwrc-1-wrap">
                 <span v-for="i in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`" :class="[
-                  'yrc-char',
+                  'dwrc-char',
                   i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                   i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
                   i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
-                  i[1] ? 'yrc-style-s2' : 'yrc-style-s1'
+                  i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1'
                 ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
               </span>
@@ -151,10 +151,10 @@ const toggleForceIcon = () => {
   };
 };
 
-// yrc part
+// dwrc part
 watch(() => store.getPlayerLrc, (_new, _old) => {
-  const isLineByLine = !store.yrcEnable || store.yrcTemp.length == 0 || store.yrcLoading;
-  if (!store.playerYrcShowPro || isLineByLine) {
+  const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading;
+  if (!store.playerDWRCShowPro || isLineByLine) {
     return;
   };
   const audio = document.querySelector('audio');
@@ -162,20 +162,20 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     return;
   };
   const now = audio.currentTime * 1000;
-  const yrc2 = document.getElementsByClassName("yrc-box")[0];
-  if (yrc2 == undefined) {
+  const dwrc2 = document.getElementsByClassName("dwrc-box")[0];
+  if (dwrc2 == undefined) {
     return;
   };
-  const outputDom = yrc2.querySelectorAll("#yrc-2-wrap span");
-  const inputDom = yrc2.querySelectorAll("#yrc-1-wrap span");
+  const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
+  const inputDom = dwrc2.querySelectorAll("#dwrc-1-wrap span");
   if (inputDom.length == 0 || outputDom.length == 0) {
     return;
   };
-  const yrcFiltered = store.yrcTemp.filter((i) => i[0] < now && now < i[0] + i[1]);
-  if (yrcFiltered.length == 0) {
+  const dwrcFiltered = store.dwrcTemp.filter((i) => i[0] < now && now < i[0] + i[1]);
+  if (dwrcFiltered.length == 0) {
     return;
   };
-  const nowLine = yrcFiltered[yrcFiltered.length - 1][2];
+  const nowLine = dwrcFiltered[dwrcFiltered.length - 1][2];
   for (let i = 0; i < nowLine.length; i++) {
     const [[start, duration], _a, _b, _c] = nowLine[i];
     const inputItem = inputDom[i];
@@ -225,7 +225,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
 
 <style lang="scss" scoped>
 // 逐字模块1
-.yrc-char {
+.dwrc-char {
   display: inline-block;
   opacity: 0.6;
   -webkit-transform: translateY(1px);
@@ -288,7 +288,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       transform 0.3s linear;
   }
 
-  &.yrc-style-s1 {
+  &.dwrc-style-s1 {
     opacity: 0.6;
     color: rgba(220, 220, 220, 1);
     transition:
@@ -297,7 +297,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       transform 0.3s linear;
   }
 
-  &.yrc-style-s2 {
+  &.dwrc-style-s2 {
     opacity: 1;
     color: rgba(255, 240, 245, 1);
     text-shadow: 0px 0px 6px rgba(255, 240, 245, 1),
@@ -359,7 +359,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
 }
 
 // 逐字模块2
-#yrc-2-wrap>span {
+#dwrc-2-wrap>span {
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
@@ -372,7 +372,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     width 0.3s linear;
 }
 
-#yrc-2-wrap {
+#dwrc-2-wrap {
   display: inline-block;
   position: absolute;
   width: auto;
@@ -453,7 +453,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
         display: inherit;
       }
 
-      .yrc-box {
+      .dwrc-box {
         justify-content: flex-start;
         position: relative;
         white-space: nowrap;
@@ -462,16 +462,16 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
         height: auto;
         z-index: 0;
 
-        .yrc-1,
-        .yrc-2 {
+        .dwrc-1,
+        .dwrc-2 {
           white-space: nowrap;
         }
 
-        .yrc-1 {
+        .dwrc-1 {
           z-index: 1;
         }
 
-        .yrc-2 {
+        .dwrc-2 {
           position: absolute;
           z-index: 1000;
         }

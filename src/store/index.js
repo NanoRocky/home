@@ -31,16 +31,16 @@ export const mainStore = defineStore("main", {
     playerOrder: "random", // 循环顺序 "list", "random"
     webSpeech: true, // 网页语音交互总开关（包含播报歌名功能）
     playerSpeechName: true, // 播报歌名
-    playerYrcShow: true, // 逐字歌词解析总开关
-    playerYrcShowPro: true, // 逐字效果增强开关
-    playerYrcATDB: true, // 允许接入 AMLL TTML Database
-    playerYrcATDBF: false, // 接入 AMLL TTML Database 时使用镜像加速
+    playerDWRCShow: true, // 逐字歌词解析总开关
+    playerDWRCShowPro: true, // 逐字效果增强开关
+    playerDWRCATDB: true, // 允许接入 AMLL TTML Database
+    playerDWRCATDBF: false, // 接入 AMLL TTML Database 时使用镜像加速
     playerCurrentTime: null, // 当前歌曲已播放时间
     playerDuration: null, // 当前歌曲总时长
-    yrcIndex: -1, // 逐字歌词进度存储
-    yrcTemp: [], // 逐字歌词缓存
-    yrcEnable: true,
-    yrcLoading: false,
+    dwrcIndex: -1, // 逐字歌词进度存储
+    dwrcTemp: [], // 逐字歌词缓存
+    dwrcEnable: true,
+    dwrcLoading: false,
   }),
   getters: {
     // 获取歌词
@@ -113,10 +113,10 @@ export const mainStore = defineStore("main", {
         'playerOrder',
         'webSpeech',
         'playerSpeechName',
-        'playerYrcShow',
-        'playerYrcShowPro',
-        'playerYrcATDB',
-        'playerYrcATDBF',
+        'playerDWRCShow',
+        'playerDWRCShowPro',
+        'playerDWRCATDB',
+        'playerDWRCATDBF',
         'seasonalEffects',
       ],
     },

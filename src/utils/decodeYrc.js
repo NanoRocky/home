@@ -4,7 +4,7 @@
  * @param {string} i - yrc input
  * @returns {[number,number,[[number,number],string,number,number][]]}
  */
-export function decodeYrc(i) {
+export function decodeDWQYRC(i) {
   return i
     .trim()
     .split("\n")
