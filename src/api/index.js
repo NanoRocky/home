@@ -29,12 +29,25 @@ const loadJSONP = (url, callbackName) => {
  */
 
 // 获取音乐播放列表
-export const getPlayerList = async (server, type, id, dwrc) => {
-  const res = await fetch(
-    `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
-  );
-  const data = await res.json();
-
+export const getPlayerList = async (server, type, id, serverse, idse) => {
+  let dataf = null;
+  if (serverse != null && idse != null) {
+    const res1 = await fetch(
+      `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
+    );
+    const res2 = await fetch(
+      `${import.meta.env.VITE_SONG_API}?server=${serverse}&type=${type}&id=${idse}`,
+    );
+    const data1 = await res1.json();
+    const data2 = await res2.json();
+    dataf = [...data2, ...data1];
+  } else {
+    const res = await fetch(
+      `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
+    );
+    dataf = await res.json();
+  };
+  const data = dataf;
   if (data[0].url.startsWith("@")) {
     // eslint-disable-next-line no-unused-vars
     const [handle, jsonpCallback, jsonpCallbackFunction, url] = data[0].url.split("@").slice(1);

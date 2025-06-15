@@ -35,7 +35,7 @@ export function decodeDWQYRC(i) {
                         lineIndex,
                         wordIndex
                     ]);
-                    wordIndex += 2;
+                    wordIndex += 1;
                 }
             }
         } else {
@@ -51,7 +51,7 @@ export function decodeDWQYRC(i) {
                         lineIndex,
                         wordIndex
                     ]);
-                    wordIndex += 2;
+                    wordIndex += 1;
                 };
             };
         };

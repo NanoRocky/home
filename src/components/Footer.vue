@@ -232,7 +232,9 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   transform: translateY(1px);
   -webkit-background-clip: text;
   background-clip: text;
-  font-family: MiSans-Regular;
+  font-family: MiSans VF;
+  font-weight: 450;
+  font-size: 1rem;
   transition:
     opacity 0.3s linear,
     color 0.5s linear,
@@ -361,6 +363,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
 // 逐字模块2
 #dwrc-2-wrap>span {
   display: inline-block;
+  transform: translateY(1px);
   white-space: nowrap;
   overflow: hidden;
   width: 0;
@@ -381,7 +384,9 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   text-shadow: 0 0 6px rgba(0, 191, 255, 0.9),
     0px 0px 2px rgba(176, 224, 230, 0.9),
     0px 0px 2px rgba(230, 230, 250, 0.9);
-  font-family: MiSans-Regular;
+  font-family: MiSans VF;
+  font-weight: 450;
+  font-size: 1rem;
   overflow: hidden;
   white-space: nowrap;
   transition:
@@ -400,7 +405,9 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   text-shadow: 0 0 6px rgba(255, 240, 245, 1),
     0 0 2px rgba(255, 165, 0, 1),
     0 0 2px rgba(255, 179, 71, 1);
-  font-family: MiSans-Regular;
+  font-family: MiSans VF;
+  font-weight: 450;
+  font-size: 1rem;
   transition:
     opacity 0.3s linear,
     color 0.5s linear;
@@ -417,7 +424,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   line-height: 46px;
   text-align: center;
   z-index: 0;
-  font-size: 18px;
+  font-size: 1rem;
   // 文字不换行
   word-break: keep-all;
   white-space: nowrap;
@@ -495,7 +502,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       display: inline-block;
       padding: 0 10px;
       white-space: nowrap;
-      font-size: 18px;
+      font-size: 1rem;
       opacity: 0.6;
       transition: opacity 0.3s, color 0.3s;
     }
@@ -514,7 +521,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     background: rgb(0 0 0 / 25%);
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .fade-enter-active,
