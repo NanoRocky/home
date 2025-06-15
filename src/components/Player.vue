@@ -47,6 +47,10 @@ const props = defineProps({
     type: String,
     default: "netease", //'netease' | 'tencent'
   },
+  songServerSE: {
+    type: String,
+    default: null,
+  },
   // 播放类型 ( song-歌曲, playlist-播放列表, album-专辑, search-搜索, artist-艺术家 )
   songType: {
     type: String,
@@ -56,6 +60,10 @@ const props = defineProps({
   songId: {
     type: String,
     default: "3035221869",
+  },
+  songIdSE: {
+    type: String,
+    default: null,
   },
   // 列表是否默认折叠
   listFolded: {
@@ -77,7 +85,7 @@ const listHeight = computed(() => {
 onMounted(() => {
   nextTick(() => {
     try {
-      getPlayerList(props.songServer, props.songType, props.songId).then((res) => {
+      getPlayerList(props.songServer, props.songType, props.songId, props.songServerSE, props.songIdSE).then((res) => {
         // 更改播放器加载状态
         store.musicIsOk = true;
         // 生成歌单
