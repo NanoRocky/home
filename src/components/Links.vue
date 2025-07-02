@@ -14,9 +14,9 @@
         clickable: true,
         bulletElement: 'div',
       }" :mousewheel="true">
-      <SwiperSlide v-for="site in siteLinksList" :key="site">
+      <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-'+siteIndex">
         <el-row class="link-all" :gutter="20">
-          <el-col v-for="(item, index) in site" :span="8" :key="item">
+          <el-col v-for="(item, index) in site" :span="8" :key="'item-'+index">
             <div class="item cards" :style="index < 3 ? 'margin-bottom: 20px' : null" @click="jumpLink(item)">
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
@@ -31,7 +31,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Icon } from "@vicons/utils";
 // 可前往 https://www.xicons.org 自行挑选并在此处引入
 import {
@@ -47,13 +47,20 @@ import { Pagination, Mousewheel } from "swiper/modules";
 import siteLinks from "@/assets/siteLinks.json";
 
 const store = mainStore();
+const siteLinksData = siteLinks as SiteLink[];
+declare const $openList: () => void;
+
+interface SiteLink {
+  icon: keyof typeof siteIcon;
+  name: string;
+  link: string;
+}
 
 // 计算网站链接
 const siteLinksList = computed(() => {
-  const result = [];
-  for (let i = 0; i < siteLinks.length; i += 6) {
-    const subArr = siteLinks.slice(i, i + 6);
-    result.push(subArr);
+  const result: SiteLink[][] = [];
+  for (let i = 0; i < siteLinksData.length; i += 6) {
+    result.push(siteLinksData.slice(i, i + 6));
   };
   return result;
 });
@@ -80,7 +87,7 @@ const siteIcon = {
 };
 
 // 链接跳转
-const jumpLink = (data) => {
+const jumpLink = (data: SiteLink) => {
   if (data.name === "音乐" && store.musicClick) {
     if (typeof $openList === "function") $openList();
   } else {

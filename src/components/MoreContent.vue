@@ -2,6 +2,9 @@
   <div class="more-content">喵喵喵~</div>
 </template>
 
+<script setup lang="ts">
+</script>
+
 <style lang="scss" scoped>
 .more-content {
   display: flex;
