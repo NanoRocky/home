@@ -3,9 +3,9 @@
     <Transition name="fade" mode="out-in">
       <div v-if="!store.playerState || !store.playerLrcShow" class="power">
         <span>
-          <span :class="startYear < fullYear ? 'c-hidden' : 'hidden'">Copyright&nbsp;</span>
+          <span :class="ShowStartYear ? 'c-hidden' : 'hidden'">Copyright&nbsp;</span>
           &copy;
-          <span v-if="startYear < fullYear" class="site-start">
+          <span v-if="ShowStartYear" class="site-start">
             {{ startYear }}
             -
           </span>
@@ -29,8 +29,8 @@
             &amp;&nbsp;{{ siteMps }}
           </a>
           <!-- 不妨碍再整个活儿 -->
-          <a v-if="sideMICP" href="https://icp.gov.moe/?keyword=20257739" target="_blank">
-            &amp;&nbsp;{{ sideMICP }}
+          <a v-if="siteMICP" href="https://icp.gov.moe/?keyword=20257739" target="_blank">
+            &amp;&nbsp;{{ siteMICP }}
           </a>
         </span>
       </div>
@@ -50,11 +50,11 @@
             </Icon>
             <span class="dwrc-box">
               <span class="dwrc-2 lrc-text text-hidden" id="dwrc-2-wrap">
-                <span v-for="i in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
               </span>
               <span class="dwrc-1 lrc-text text-hidden" id="dwrc-1-wrap">
-                <span v-for="i in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`" :class="[
+                <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`" :class="[
                   'dwrc-char',
                   i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                   i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
@@ -73,7 +73,8 @@
         </Transition>
         <Transition name="fade" mode="out-in" v-else>
           <!-- 逐行模块 -->
-          <div class="lrc-all" :key="store.getPlayerLrc">
+          <div class="lrc-all" :key="store.getPlayerLrc.length > 0 ?
+            `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}` : '猫猫正在翻找歌词...'">
             <music-one theme="filled" size="18" fill="#efefef" />
             &nbsp;
             <Icon size="20" style="transform: rotate(-18deg);" class="paws-3">
@@ -92,7 +93,7 @@
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ProgressBar from "@/components/ProgressBar.vue";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { MusicOne } from "@icon-park/vue-next";
@@ -114,13 +115,16 @@ const forceShowIcon = ref(false);
 
 // 加载配置数据
 // const siteStartDate = ref(import.meta.env.VITE_SITE_START);
-const startYear = ref(
+const startYear = ref<number | null>(
   import.meta.env.VITE_SITE_START?.length >= 4 ?
-    import.meta.env.VITE_SITE_START.substring(0, 4) : null
+    parseInt(import.meta.env.VITE_SITE_START.substring(0, 4)) : null
 );
+const ShowStartYear = computed(() => {
+  return startYear.value !== null && startYear.value < fullYear;
+});
 const siteIcp = ref(import.meta.env.VITE_SITE_ICP);
 const siteMps = ref(import.meta.env.VITE_SITE_MPS);
-const sideMICP = ref(import.meta.env.VITE_SITE_MICP);
+const siteMICP = ref(import.meta.env.VITE_SITE_MICP);
 const siteAuthor = ref(import.meta.env.VITE_SITE_AUTHOR);
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
@@ -153,17 +157,18 @@ const toggleForceIcon = () => {
 
 // dwrc part
 watch(() => store.getPlayerLrc, (_new, _old) => {
-  const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading;
+  type DwrcItem = [number, number, any[]];
+  const isLineByLine = !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
   if (!store.playerDWRCShowPro || isLineByLine) {
     return;
   };
   const audio = document.querySelector('audio');
-  if (audio == undefined) {
+  if (!audio) {
     return;
   };
   const now = audio.currentTime * 1000;
-  const dwrc2 = document.getElementsByClassName("dwrc-box")[0];
-  if (dwrc2 == undefined) {
+  const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
+  if (!dwrc2) {
     return;
   };
   const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
@@ -171,14 +176,17 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   if (inputDom.length == 0 || outputDom.length == 0) {
     return;
   };
-  const dwrcFiltered = store.dwrcTemp.filter((i) => i[0] < now && now < i[0] + i[1]);
+  const dwrcFiltered = (store.dwrcTemp as DwrcItem[]).filter(
+    (i) => i[0] < now && now < i[0] + i[1]
+  );
   if (dwrcFiltered.length == 0) {
     return;
   };
   const nowLine = dwrcFiltered[dwrcFiltered.length - 1][2];
   for (let i = 0; i < nowLine.length; i++) {
-    const [[start, duration], _a, _b, _c] = nowLine[i];
-    const inputItem = inputDom[i];
+    const item = nowLine[i] as [[number, number], any, any, any];
+    const [[start, duration], _a, _b, _c] = item;
+    const inputItem = inputDom[i] as HTMLElement;
     if (!inputItem || inputItem.hasAttribute('data-start')) {
       return;
     };
@@ -188,11 +196,11 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       inputItem.removeAttribute('data-start');
       return;
     };
-    const outputItem = outputDom[i];
-    const animateOptions = {
+    const outputItem = outputDom[i] as HTMLElement;
+    const animateOptions: KeyframeAnimationOptions = {
       delay: Math.max(0, start - now),
       duration: duration,
-      fill: "forwards",
+      fill: "forwards" as FillMode,
       easing: "linear",
     };
     outputItem.style.transform = "translateY(-1px)";
@@ -217,7 +225,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
         }
       );
     };
-    inputItem.setAttribute("data-start", true);
+    inputItem.setAttribute("data-start", "true");
   };
 });
 

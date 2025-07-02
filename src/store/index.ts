@@ -3,13 +3,13 @@ import { defineStore } from "pinia";
 export const mainStore = defineStore("main", {
   state: () => ({
     imgLoadStatus: false, // 壁纸加载状态
-    innerWidth: null, // 当前窗口宽度
+    innerWidth: null as number | null, // 当前窗口宽度
     coverType: "1", // 壁纸种类
     seasonalEffects: true, // 季节特效
     siteStartShow: true, // 建站日期显示
     musicClick: true, // 音乐链接是否跳转
     musicIsOk: false, // 音乐是否加载完成
-    musicVolume: 0.7, // 音乐音量;
+    musicVolume: 0.7 as number, // 音乐音量
     musicOpenState: false, // 音乐面板开启状态
     backgroundShow: false, // 壁纸展示状态
     boxOpenState: false, // 盒子开启状态
@@ -19,9 +19,9 @@ export const mainStore = defineStore("main", {
     setV: false, // 不知道
     playerState: false, // 当前播放状态
     playerCanplay: false, // 当前音乐是否完成加载
-    playerTitle: null, // 当前播放歌曲名
-    playerArtist: null, // 当前播放歌手名
-    playerAlbum: null, // 当前播放专辑名
+    playerTitle: null as string | null, // 当前播放歌曲名
+    playerArtist: null as string | null, // 当前播放歌手名
+    playerAlbum: null as string | null, // 当前播放专辑名
     playerLrc: [[true, "猫猫正在翻找歌词..."]], // 当前播放歌词
     playerLrcShow: true, // 是否显示底栏歌词
     footerBlur: true, // 底栏模糊
@@ -35,10 +35,10 @@ export const mainStore = defineStore("main", {
     playerDWRCShowPro: true, // 逐字效果增强开关
     playerDWRCATDB: true, // 允许接入 AMLL TTML Database
     playerDWRCATDBF: false, // 接入 AMLL TTML Database 时使用镜像加速
-    playerCurrentTime: null, // 当前歌曲已播放时间
-    playerDuration: null, // 当前歌曲总时长
-    dwrcIndex: -1, // 逐字歌词进度存储
-    dwrcTemp: [], // 逐字歌词缓存
+    playerCurrentTime: null as number | null, // 当前歌曲已播放时间
+    playerDuration: null as number | null, // 当前歌曲总时长
+    dwrcIndex: -1 as number | null, // 逐字歌词进度存储
+    dwrcTemp: [] as any[], // 逐字歌词缓存
     dwrcEnable: true,
     dwrcLoading: false,
   }),
