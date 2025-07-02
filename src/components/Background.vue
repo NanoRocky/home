@@ -11,19 +11,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import initSnowfall from "@/utils/season/snow";
 import initFirefly from "@/utils/season/firefly";
-import { ref } from 'vue';
+import { initLantern } from "@/utils/season/lantern";
+import { ref, h } from 'vue';
 import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
-const bgUrl = ref(null);
-const imgTimeout = ref(null);
+const bgUrl = ref<string>("");
+const imgTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 const emit = defineEmits(["loadComplete"]);
+const key = import.meta.env.VITE_SFILE_SKEY as string | undefined;
 
 // 自定义壁纸
 // 酪灰的小批注：这里增加了从配置文件读取壁纸数的功能，使得在增加壁纸时不需要重新编译项目，只需修改这个 json 文件内的值
@@ -32,10 +34,8 @@ let bgImageCount = 24; // PC 版壁纸
 let bgImageCountP = 24; // 移动版壁纸
 let bgRandom = 0;
 let bgRandomp = 0;
-let confUrlS = null;
+let confUrlS: string = "";
 let sest = 0;
-
-const key = import.meta.env.VITE_SFILE_SKEY;
 
 // 加载 config.json
 async function loadConfig() {
@@ -60,7 +60,7 @@ async function loadConfig() {
 };
 
 // 检测设备类型
-const detectDevice = () => {
+const detectDevice = (): 'mobile' | 'tablet' | 'pc' => {
   const userAgent = navigator.userAgent.toLowerCase();
   if (/mobile|android|iphone|ipad|ipod|windows phone/.test(userAgent)) {
     if (/ipad|tablet|playbook|silk|kindle/.test(userAgent)) {
@@ -74,7 +74,7 @@ const detectDevice = () => {
 };
 
 // 更换壁纸链接
-const changeBg = (type) => {
+const changeBg = (type: number) => {
   (async () => {
     await loadConfig(); // 加载配置文件
     const deviceType = detectDevice(); // 加载设备类型
@@ -179,11 +179,11 @@ const imgLoadError = async () => {
 watch(
   () => store.coverType,
   (value) => {
-    changeBg(value);
+    changeBg(Number(value));
   },
 );
 
-const SeasonStyle = async (type) => {
+const SeasonStyle = async (type: number) => {
   if (store.seasonalEffects) {
     const month = new Date().getMonth() + 1; // 当前月份，1-12
     if (type == 0) {
@@ -191,7 +191,7 @@ const SeasonStyle = async (type) => {
       if ([12, 1, 2].includes(month)) {
         initSnowfall();
       } else if ([1, 2].includes(month)) {
-        await import("@/utils/season/lantern");
+        initLantern();
       } else if ([7, 8, 9].includes(month)) {
         initFirefly();
       } else {
@@ -200,7 +200,7 @@ const SeasonStyle = async (type) => {
     } else if (type == 1) {
       initSnowfall();
     } else if (type == 2) {
-      await import("@/utils/season/lantern");
+      initLantern();
     } else if (type == 3) {
       initFirefly();
     } else {
@@ -212,13 +212,15 @@ const SeasonStyle = async (type) => {
 
 onMounted(async () => {
   // 加载壁纸
-  changeBg(store.coverType);
+  changeBg(Number(store.coverType));
   // 加载季节特效
   SeasonStyle(0);
 });
 
 onBeforeUnmount(() => {
-  clearTimeout(imgTimeout.value);
+  if (imgTimeout.value) {
+    clearTimeout(imgTimeout.value);
+  };
 });
 </script>
 

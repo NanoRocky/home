@@ -9,16 +9,16 @@ import { gwg } from "@/utils/authServer";
 const loadJSONP = (url, callbackName) => {
   return new Promise((resolve, reject) => {
     // 定义 JSONP 回调函数
-    window[callbackName] = (data) => {
+    (window as any)[callbackName] = (data: any) => {
       resolve(data); // 解析 JSON 数据
-      delete window[callbackName]; // 清理全局变量，防止污染
+      delete (window as any)[callbackName]; // 清理全局变量，防止污染
     };
     // 创建 script 标签
     const script = document.createElement('script');
     script.src = url;
     script.onerror = () => {
       reject(new Error('JSONP 请求失败'));
-      delete window[callbackName]; // 出错时也要清理
+      delete (window as any)[callbackName]; // 出错时也要清理
     };
     document.body.appendChild(script);
   });
@@ -30,7 +30,7 @@ const loadJSONP = (url, callbackName) => {
 
 // 获取音乐播放列表
 export const getPlayerList = async (server, type, id, serverse, idse) => {
-  let dataf = null;
+  let dataf: any[] = [];
   if (serverse != null && idse != null) {
     const res1 = await fetch(
       `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
@@ -48,20 +48,16 @@ export const getPlayerList = async (server, type, id, serverse, idse) => {
     dataf = await res.json();
   };
   const data = dataf;
-  if (data[0].url.startsWith("@")) {
-    // eslint-disable-next-line no-unused-vars
+  if (data.length > 0 && data[0]?.url?.startsWith("@")) {
     const [handle, jsonpCallback, jsonpCallbackFunction, url] = data[0].url.split("@").slice(1);
     const jsonpData = await fetchJsonp(url).then((res) => res.json());
-    const domain = (
-      jsonpData.req_0.data.sip.find((i) => !i.startsWith("http://ws")) ||
-      jsonpData.req_0.data.sip[0]
-    ).replace("http://", "https://");
-
+    const sipList = jsonpData.req_0?.data?.sip || [];
+    const domain = (sipList.find((i: string) => !i.startsWith("http://ws")) || sipList[0] || "").replace("http://", "https://");
     return data.map((v, i) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
       album: v.album || import.meta.env.VITE_SITE_NAME,
-      url: domain + jsonpData.req_0.data.midurlinfo[i].purl,
+      url: domain + (jsonpData.req_0?.data?.midurlinfo[i]?.purl || ""),
       cover: v.cover || v.pic,
       lrc: v.lrc,
     }));
@@ -168,7 +164,7 @@ export const getOtherWeather = async () => {
 
 // 获取小米天气 API
 // 这个接口或许会比上面两个稳的多，但是它需要自己定位并转换 Adcode ...
-export const getXMWeather = async () => {
+export const getXMWeather = async (city) => {
   const res = await fetch(`https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?latitude=0&longitude=0&isLocated=true&locationKey=weathercn%3A${city}&days=2&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07&locale=zh_cn&alpha=false&isGlobal=false`);
   return await res.json();
 };

@@ -9,7 +9,7 @@
 
 import { md5 as d } from "js-md5";
 
-let x = null, y = null;
+let x: number | null = null, y: number | null = null;
 const f = () => Math.floor(Date.now() / 1000);
 const o = (v) => v.toString(16);
 
@@ -17,13 +17,13 @@ async function gst() {
     // 为什么这里要整一个模块用于获取网络时间呢...
     // 因为客户端时间不可信，即使客户端会自动对时，也很难避免差个几十秒的情况...
     // 而下面的签名 Token，有效期设置的都是几秒级别，所以优先使用网络时间。
-    if (!x) {
+    if (!x || !y) {
         try {
             const { timestamp: t } = await (await fetch("https://nanorocky.top/time/")).json();
-            x = t;
-            y = f();
+            x = t as number;
+            y = f() as number;
         } catch (error) {
-            x = y = f();
+            x = y = f() as number;
         };
     };
     return x + (f() - y);
@@ -62,13 +62,13 @@ export async function gasC(u, s) {
 export async function gasDH(u, s) {
     const ul = new URL(u), p = ul.pathname, t = await gst();
     ul.searchParams.set("sign", d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`));
-    ul.searchParams.set("t", t);
+    ul.searchParams.set("t", t.toString());
     return ul.toString();
 };
 
 export async function gasDI(u, s) {
     const ul = new URL(u), p = ul.pathname, t = o(await gst());
     ul.searchParams.set("sign", d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`));
-    ul.searchParams.set("t", t);
+    ul.searchParams.set("t", t.toString());
     return ul.toString();
 };

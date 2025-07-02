@@ -30,7 +30,7 @@
   </Transition>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { helloInit } from "@/utils/getTime.js";
 import { HamburgerButton, CloseSmall } from "@icon-park/vue-next";
 import { mainStore } from "@/store";

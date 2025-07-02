@@ -12,8 +12,16 @@ const initSnowfall = () => {
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  const snowflakes = [];
-  let animationFrameId;
+  interface snowflakes {
+    x: number;
+    y: number;
+    opacity: number;
+    speedX: number;
+    speedY: number;
+    radius: number;
+  };
+  const snowflakes: snowflakes[] = [];
+  let animationFrameId: number | null = null;
 
   const createSnowflakes = () => {
     const snowflakeCount = 50; // 减少雪花数量
@@ -30,6 +38,7 @@ const initSnowfall = () => {
   };
 
   const drawSnowflakes = () => {
+    if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
     ctx.beginPath();

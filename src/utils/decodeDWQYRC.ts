@@ -4,9 +4,9 @@
  * @param {string} i - yrc or qrc input
  * @returns {[number, number, [[number, number], string, number, number][]][]}
  */
-export function decodeDWQYRC(i) {
+export function decodeDWQYRC(i: string): LineItem[] {
     const lines = i.trim().split("\n").filter(line => !/^\[ch:\d+\]/.test(line.trim()));
-    const output = [];
+    const output: LineItem[] = [];
     for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         const rawLine = lines[lineIndex].trim();
         if (/^\[[a-z]+:.+\]$/i.test(rawLine)) continue;
@@ -20,7 +20,7 @@ export function decodeDWQYRC(i) {
         if (!/(\(\d+,\d+(?:,\d+)?\))/.test(content)) continue;
         const timeBeforeText = /^\(\d+,\d+(?:,\d+)?\)/.test(content);
         const parts = content.split(/(\(\d+,\d+(?:,\d+)?\))/).filter(Boolean);
-        const stack = [];
+        const stack: WordItem[] = [];
         let wordIndex = 1;
         if (timeBeforeText) {
             for (let i = 0; i < parts.length - 1; i += 2) {
@@ -36,8 +36,8 @@ export function decodeDWQYRC(i) {
                         wordIndex
                     ]);
                     wordIndex += 1;
-                }
-            }
+                };
+            };
         } else {
             for (let i = 0; i < parts.length - 1; i += 2) {
                 const textPart = parts[i];
@@ -62,3 +62,16 @@ export function decodeDWQYRC(i) {
     };
     return output;
 };
+
+type WordItem = [
+    position: [number, number],
+    text: string,
+    lineIndex: number,
+    wordIndex: number
+];
+
+type LineItem = [
+    start: number,
+    duration: number,
+    stack: WordItem[]
+];

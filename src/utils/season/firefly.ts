@@ -12,8 +12,16 @@ const initFirefly = () => {
   document.body.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  const fireflies = [];
-  let animationFrameId;
+  interface Firefly {
+    x: number;
+    y: number;
+    opacity: number;
+    speedX: number;
+    speedY: number;
+    radius: number;
+  };
+  const fireflies: Firefly[] = [];
+  let animationFrameId: number | null = null;
 
   const createFireflies = () => {
     const fireflyCount = 48; // 萤火虫数量
@@ -30,6 +38,7 @@ const initFirefly = () => {
   };
 
   const drawFireflies = () => {
+    if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
     ctx.beginPath();
