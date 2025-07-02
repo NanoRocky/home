@@ -1,17 +1,17 @@
 import { isEqual } from "lodash-es";
 
-let mainCursor;
+let mainCursor: Cursor | null = null;
 
-const lerp = (a, b, n) => {
+const lerp = (a: number, b: number, n: number) => {
   if (Math.round(a) === b) {
     return b;
   }
   return (1 - n) * a + n * b;
 };
 
-const getStyle = (el, attr) => {
+const getStyle = (el: HTMLElement, attr: string) => {
   try {
-    return window.getComputedStyle ? window.getComputedStyle(el)[attr] : el.currentStyle[attr];
+    return window.getComputedStyle ? window.getComputedStyle(el)[attr as any] : (el as any).currentStyle[attr];
   } catch (e) {
     console.error(e);
   }
@@ -24,6 +24,14 @@ const cursorInit = () => {
 };
 
 class Cursor {
+  pos: {
+    curr: { x: number; y: number } | null;
+    prev: { x: number; y: number } | null;
+  };
+  pt: string[];
+  cursor: HTMLDivElement | null = null;
+  scr: HTMLStyleElement | null = null;
+
   constructor() {
     this.pos = {
       curr: null,
@@ -35,7 +43,8 @@ class Cursor {
     this.render();
   }
 
-  move(left, top) {
+  move(left: number, top: number) {
+    if (!this.cursor) return;
     this.cursor.style["left"] = `${left}px`;
     this.cursor.style["top"] = `${top}px`;
   }
@@ -49,16 +58,23 @@ class Cursor {
       document.body.append(this.cursor);
     }
 
-    var el = document.getElementsByTagName("*");
-    for (let i = 0; i < el.length; i++)
-      if (getStyle(el[i], "cursor") == "pointer") this.pt.push(el[i].outerHTML);
-
-    document.body.appendChild((this.scr = document.createElement("style")));
+    const el = document.getElementsByTagName("*");
+    for (let i = 0; i < el.length; i++) {
+      if (getStyle(el[i] as HTMLElement, "cursor") === "pointer") {
+        this.pt.push(el[i].outerHTML);
+      };
+    };
+    this.scr = document.createElement("style");
+    document.body.appendChild(this.scr);
     this.scr.innerHTML = `* {cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' width='10px' height='10px'><circle cx='4' cy='4' r='4' fill='white' /></svg>") 4 4, auto !important}`;
   }
   refresh() {
-    this.scr.remove();
-    this.cursor.classList.remove("active");
+    if (this.scr) {
+      this.scr.remove();
+    }
+    if (this.cursor) {
+      this.cursor.classList.remove("active");
+    }
     this.pos = {
       curr: null,
       prev: null,
@@ -77,24 +93,34 @@ class Cursor {
         x: e.clientX - 8,
         y: e.clientY - 8,
       };
-      this.cursor.classList.remove("hidden");
+      if (this.cursor) {
+        this.cursor.classList.remove("hidden");
+      }
       this.render();
     };
-    document.onmouseenter = () => this.cursor.classList.remove("hidden");
-    document.onmouseleave = () => this.cursor.classList.add("hidden");
-    document.onmousedown = () => this.cursor.classList.add("active");
-    document.onmouseup = () => this.cursor.classList.remove("active");
+    document.onmouseenter = () => {
+      if (this.cursor) this.cursor.classList.remove("hidden");
+    };
+    document.onmouseleave = () => {
+      if (this.cursor) this.cursor.classList.add("hidden");
+    };
+    document.onmousedown = () => {
+      if (this.cursor) this.cursor.classList.add("active");
+    };
+    document.onmouseup = () => {
+      if (this.cursor) this.cursor.classList.remove("active");
+    };
   }
 
   render() {
-    if (this.pos.prev) {
+    if (this.pos.prev && this.pos.curr) {
       this.pos.prev.x = lerp(this.pos.prev.x, this.pos.curr.x, 0.35);
       this.pos.prev.y = lerp(this.pos.prev.y, this.pos.curr.y, 0.35);
       this.move(this.pos.prev.x, this.pos.prev.y);
-    } else {
+    } else if (this.pos.curr) {
       this.pos.prev = this.pos.curr;
     }
-    if (!isEqual(this.pos.curr, this.pos.prev)) {
+    if (this.pos.prev && this.pos.curr && !isEqual(this.pos.curr, this.pos.prev)) {
       requestAnimationFrame(() => this.render());
     }
   }

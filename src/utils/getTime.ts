@@ -72,8 +72,8 @@ export const getTimeCapsule = () => {
 // 欢迎提示
 export const helloInit = (store) => {
   const hour = new Date().getHours();
-  let hello = null;
-  let hellosound = null;
+  let hello: string | null = null;
+  let hellosound: string | null = null;
   stopSpeech();
   if (hour < 5) {
     hello = "凌晨好，该睡了啦！";

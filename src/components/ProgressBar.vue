@@ -2,7 +2,7 @@
     <div v-if="store.footerProgressBar" class="progress-bar">
         <div class="progress" :class="{ dragging: isDragging }"
             :style="{ width: isDragging ? `${dragProgress}%` : `${progressBarWidth}%` }">
-            <img v-if="showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
+            <img v-if="showProgressIcon" src="https://filec.nanorocky.top/home/images/icon/ProgressBar.ico"
                 class="progress-icon" draggable="false" @mousedown="handleMouseDown"
                 @touchstart.prevent="handleTouchStart" ref="icon" />
             <!-- <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false"
