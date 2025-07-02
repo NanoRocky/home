@@ -4,14 +4,14 @@
       @error.once="imgLoadError" @animationend="imgAnimationEnd" />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
-      <a v-if="store.backgroundShow && store.coverType != '3'" class="down" target="_blank">
+      <a v-if="store.backgroundShow" class="down" target="_blank">
         已禁用
       </a>
     </Transition>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
@@ -22,19 +22,20 @@ import { ref, h } from 'vue';
 import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
-const bgUrl = ref<string>("");
-const imgTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
+const bgUrl = ref(null);
+const imgTimeout = ref(null);
 const emit = defineEmits(["loadComplete"]);
-const key = import.meta.env.VITE_SFILE_SKEY as string | undefined;
+const key = import.meta.env.VITE_SFILE_SKEY;
+const isLoading = ref(false);
 
 // 自定义壁纸
 // 酪灰的小批注：这里增加了从配置文件读取壁纸数的功能，使得在增加壁纸时不需要重新编译项目，只需修改这个 json 文件内的值
 // 设置一个默认值，防止在无法加载 JSON 文件时壁纸失效。应该尽量保证壁纸数始终不小于这个默认值
-let bgImageCount = 24; // PC 版壁纸
-let bgImageCountP = 24; // 移动版壁纸
+let bgImageCount= 24; // PC 版壁纸
+let bgImageCountP= 24; // 移动版壁纸
 let bgRandom = 0;
 let bgRandomp = 0;
-let confUrlS: string = "";
+let confUrlS = null;
 let sest = 0;
 
 // 加载 config.json
@@ -52,15 +53,17 @@ async function loadConfig() {
     bgImageCountP = Math.max(data.bgImageCountP, 1);
     bgRandom = Math.floor(Math.random() * bgImageCount + 1);
     bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+    return true;
   } catch (error) {
     console.error('无法加载壁纸配置文件:', error);
     bgRandom = Math.floor(Math.random() * bgImageCount + 1);
     bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+    return true;
   };
 };
 
 // 检测设备类型
-const detectDevice = (): 'mobile' | 'tablet' | 'pc' => {
+const detectDevice = () => {
   const userAgent = navigator.userAgent.toLowerCase();
   if (/mobile|android|iphone|ipad|ipod|windows phone/.test(userAgent)) {
     if (/ipad|tablet|playbook|silk|kindle/.test(userAgent)) {
@@ -74,10 +77,14 @@ const detectDevice = (): 'mobile' | 'tablet' | 'pc' => {
 };
 
 // 更换壁纸链接
-const changeBg = (type: number) => {
-  (async () => {
-    await loadConfig(); // 加载配置文件
-    const deviceType = detectDevice(); // 加载设备类型
+const changeBg = async (type) => {
+  if (isLoading.value) return;
+  isLoading.value = true;
+    (async () => {
+  try {
+    const configLoaded = await loadConfig();
+    const deviceType = await detectDevice();
+    if (!configLoaded) return;
     if (type == 0) {
       // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
       // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
@@ -131,8 +138,12 @@ const changeBg = (type: number) => {
     } else if (type == 5) {
       bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
     };
+  } finally {
+    isLoading.value = false;
+  };
   })();
 };
+
 
 // 图片加载完成
 const imgLoadComplete = () => {
@@ -178,12 +189,13 @@ const imgLoadError = async () => {
 // 监听壁纸切换
 watch(
   () => store.coverType,
-  (value) => {
-    changeBg(Number(value));
+  async (value) => {
+    await changeBg(Number(value));
   },
+  { immediate: true }
 );
 
-const SeasonStyle = async (type: number) => {
+const SeasonStyle = async (type) => {
   if (store.seasonalEffects) {
     const month = new Date().getMonth() + 1; // 当前月份，1-12
     if (type == 0) {
@@ -212,9 +224,9 @@ const SeasonStyle = async (type: number) => {
 
 onMounted(async () => {
   // 加载壁纸
-  changeBg(Number(store.coverType));
+  await changeBg(Number(store.coverType));
   // 加载季节特效
-  SeasonStyle(0);
+  await SeasonStyle(0);
 });
 
 onBeforeUnmount(() => {

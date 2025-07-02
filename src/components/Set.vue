@@ -97,7 +97,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { CheckSmall, CloseSmall, SuccessPicture } from "@icon-park/vue-next";
 import DevSet  from "@/components/DevSet.vue";
 import { mainStore } from "@/store";

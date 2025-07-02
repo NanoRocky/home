@@ -14,7 +14,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { MusicOne } from "@icon-park/vue-next";
 import { Icon } from "@vicons/utils";
 import { Paw, ReloadCircle } from "@vicons/ionicons5";
@@ -27,12 +27,12 @@ import { throttle } from "lodash";
 const store = mainStore();
 const showProgressIcon = ref(false);
 const isSeeking = ref(false);
-const audio = ref(null);
-const icon = ref(null);
-const touchIdentifier = ref(null);
+const audio = ref<HTMLAudioElement | null>(null);
+const icon = ref<HTMLElement | null>(null);
+const touchIdentifier = ref<number | null>(null);
 const isDragging = ref(false);
 const dragProgress = ref(0);
-let dragTimer = null;
+let dragTimer: ReturnType<typeof setTimeout> | null = null;
 
 const props = defineProps({
     forceShowIcon: {
@@ -44,7 +44,7 @@ const props = defineProps({
 // 进度计算
 const progressBarWidth = computed(() => {
     if (!store.playerState) return 0;
-    return (store.playerCurrentTime / store.playerDuration) * 100;
+    return (store.playerCurrentTime! / store.playerDuration!) * 100;
 });
 
 // 鼠标事件处理
@@ -64,11 +64,11 @@ const handleMouseLeave = () => {
     };
 };
 
-const handleMouseDown = (e) => {
+const handleMouseDown = (e: MouseEvent) => {
     isDragging.value = true;
     isSeeking.value = true;
     const progressBar = document.querySelector('.progress-bar');
-    const rect = progressBar.getBoundingClientRect();
+    const rect = progressBar!.getBoundingClientRect();
     const initialX = e.clientX - rect.left;
     dragProgress.value = (initialX / rect.width) * 100;
 };
@@ -86,10 +86,10 @@ const onMouseUp = () => {
     }, 1000);
 };
 
-const onMouseMove = throttle((e) => {
+const onMouseMove = throttle((e: MouseEvent) => {
     if (!isDragging.value) return;
     const progressBar = document.querySelector('.progress-bar');
-    const rect = progressBar.getBoundingClientRect();
+    const rect = progressBar!.getBoundingClientRect();
     let offsetX = e.clientX - rect.left;
     offsetX = Math.max(0, Math.min(rect.width, offsetX));
     dragProgress.value = (offsetX / rect.width) * 100;
@@ -100,24 +100,24 @@ const onMouseMove = throttle((e) => {
 }, 16);
 
 // 触摸事件处理
-const handleTouchStart = (e) => {
+const handleTouchStart = (e: TouchEvent) => {
     if (e.touches.length > 1) return;
     isDragging.value = true;
     isSeeking.value = true;
     touchIdentifier.value = e.touches[0].identifier;
     const progressBar = document.querySelector('.progress-bar');
-    const rect = progressBar.getBoundingClientRect();
+    const rect = progressBar!.getBoundingClientRect();
     const initialX = e.touches[0].clientX - rect.left;
     dragProgress.value = (initialX / rect.width) * 100;
 };
 
-const onTouchMove = throttle((e) => {
+const onTouchMove = throttle((e: TouchEvent) => {
     if (!isDragging.value || touchIdentifier.value === null) return;
     const touch = Array.from(e.touches).find(t => t.identifier === touchIdentifier.value);
     if (!touch) return;
     e.preventDefault();
     const progressBar = document.querySelector('.progress-bar');
-    const rect = progressBar.getBoundingClientRect();
+    const rect = progressBar!.getBoundingClientRect();
     let offsetX = touch.clientX - rect.left;
     offsetX = Math.max(0, Math.min(rect.width, offsetX));
     dragProgress.value = (offsetX / rect.width) * 100;
