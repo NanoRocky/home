@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import socialLinks from "@/assets/socialLinks.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 

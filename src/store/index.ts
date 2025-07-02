@@ -4,7 +4,7 @@ export const mainStore = defineStore("main", {
   state: () => ({
     imgLoadStatus: false, // 壁纸加载状态
     innerWidth: null as number | null, // 当前窗口宽度
-    coverType: "1", // 壁纸种类
+    coverType: 1 as number, // 壁纸种类
     seasonalEffects: true, // 季节特效
     siteStartShow: true, // 建站日期显示
     musicClick: true, // 音乐链接是否跳转

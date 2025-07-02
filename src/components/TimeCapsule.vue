@@ -26,27 +26,31 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { HourglassFull } from "@icon-park/vue-next";
 import { getTimeCapsule, siteDateStatistics } from "@/utils/getTime.js";
 import { mainStore } from "@/store";
+import { onMounted, onBeforeUnmount, ref } from "vue";
 const store = mainStore();
 
 // 进度条数据
 const timeData = ref(getTimeCapsule());
 const startDate = ref(import.meta.env.VITE_SITE_START);
-const startDateText = ref(null);
-const timeInterval = ref(null);
+const startDateText = ref<string | null>(null);
+const timeInterval = ref<number | null>(null);
 
 onMounted(() => {
-  timeInterval.value = setInterval(() => {
+  timeInterval.value = window.setInterval(() => {
     timeData.value = getTimeCapsule();
     if (startDate.value) startDateText.value = siteDateStatistics(new Date(startDate.value));
   }, 1000);
 });
 
 onBeforeUnmount(() => {
-  clearInterval(timeInterval.value);
+  if (timeInterval.value !== null) {
+    clearInterval(timeInterval.value);
+    timeInterval.value = null;
+  }
 });
 </script>
 

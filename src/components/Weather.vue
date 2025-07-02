@@ -19,11 +19,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { getTXAdcode, getTXWeather, getTXAdcodeS, getTXWeatherS, getGDAdcode, getGDAdcodeI, getGDWeather, getIPV4Addr, getIPV6Addr, getOtherWeather, getHXHWeather, getXMWeather } from "@/api";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+
+import type {
+  AdCode,
+  WeatherInfo,
+  TXAdCodeResponse,
+  TXWeatherResponse,
+  GDAdCodeResponse,
+  GDAdcodeIResponse,
+  GDWeatherResponse
+} from "@/typings/weather";
+
 const store = mainStore();
 
 // 加载密钥
@@ -32,7 +43,10 @@ const txskey = import.meta.env.VITE_TX_WEATHER_SKEY; // 选择性对腾讯天气
 const gdkey = import.meta.env.VITE_GD_WEATHER_KEY; // 高德天气密钥
 
 // 天气数据
-const weatherData = reactive({
+const weatherData = reactive<{
+  adCode: AdCode;
+  weather: WeatherInfo;
+}>({
   adCode: {
     city: null, // 城市
     adcode: null, // 城市编码
@@ -72,7 +86,7 @@ const getTXW = async () => {
   if (!txskey) {
     console.log("正在使用腾讯天气接口");
     // 获取 Adcode
-    const adCode = await getTXAdcode(txkey);
+    const adCode = (await getTXAdcode(txkey)) as TXAdCodeResponse;
     if (String(adCode.status) !== "0") {
       if (store.webSpeech) {
         stopSpeech();
@@ -87,7 +101,7 @@ const getTXW = async () => {
       adcode: adCode.result.ad_info.adcode,
     };
     // 获取天气信息
-    const txWeather = await getTXWeather(txkey, weatherData.adCode.adcode);
+    const txWeather = (await getTXWeather(txkey, weatherData.adCode.adcode)) as TXWeatherResponse;
     if (String(txWeather.status) !== "0") {
       if (store.webSpeech) {
         stopSpeech();
@@ -116,7 +130,7 @@ const getTXW = async () => {
   } else {
     console.log("正在使用腾讯天气接口，鉴权模式已启用");
     // 获取 Adcode
-    const adCode = await getTXAdcodeS(txkey, txskey);
+    const adCode = (await getTXAdcodeS(txkey, txskey)) as TXAdCodeResponse;
     if (String(adCode?.status) !== "0") {
       if (store.webSpeech) {
         stopSpeech();
@@ -131,7 +145,7 @@ const getTXW = async () => {
       adcode: adCode.result.ad_info.adcode,
     };
     // 获取天气信息
-    const txWeather = await getTXWeatherS(txkey, weatherData.adCode.adcode, txskey);
+    const txWeather = (await getTXWeatherS(txkey, weatherData.adCode.adcode, txskey)) as TXWeatherResponse;
     if (String(txWeather.status) !== "0") {
       if (store.webSpeech) {
         stopSpeech();
@@ -162,12 +176,12 @@ const getTXW = async () => {
 
 const getGDW = async () => {
   // 获取 Adcode
-  const adCode = await getGDAdcode(gdkey);
-  let adCodei = null;
+  const adCode = (await getGDAdcode(gdkey)) as GDAdCodeResponse;
+  let adCodei: GDAdcodeIResponse | null = null;
   if (String(adCode?.infocode) !== "10000" || String(adCode?.status) !== "1") {
     console.log("检测到高德接口 IP 获取失败，调用额外接口获取 IPV4 地址...");
     const ipV4addr = await getIPV4Addr();
-    adCodei = await getGDAdcodeI(ipV4addr.ip, gdkey);
+    adCodei = (await getGDAdcodeI(ipV4addr.ip, gdkey)) as GDAdcodeIResponse;
     if (String(adCodei?.infocode) !== "10000" || String(adCodei?.status) !== "1") {
       if (store.webSpeech) {
         stopSpeech();
@@ -181,16 +195,16 @@ const getGDW = async () => {
   if (!adCodei) {
     weatherData.adCode = {
       city: adCode.city || adCode.province || "未知地区",
-      adcode: adCode.adcode,
+      adcode: adCode.adcode || null,
     };
   } else {
     weatherData.adCode = {
       city: adCodei.city || adCodei.province || "未知地区",
-      adcode: adCodei.adcode,
+      adcode: adCodei.adcode || null,
     };
   };
   // 获取天气信息
-  const result = await getGDWeather(gdkey, weatherData.adCode.adcode);
+  const result = (await getGDWeather(gdkey, weatherData.adCode.adcode)) as GDWeatherResponse;
   if (String(result?.status) !== "1" || String(result?.infocode) !== "10000") {
     if (store.webSpeech) {
       stopSpeech();
@@ -213,6 +227,7 @@ const getOW = async () => {
   const data = result.result;
   weatherData.adCode = {
     city: data.city.City || "未知地区",
+    adcode: null
   };
   weatherData.weather = {
     weather: data.condition.day_weather,
@@ -235,6 +250,7 @@ const getHXHW = async () => {
   };
   weatherData.adCode = {
     city: result.city || "未知地区",
+    adcode: null
   };
   weatherData.weather = {
     weather: result.data.type || result.data.night.type,

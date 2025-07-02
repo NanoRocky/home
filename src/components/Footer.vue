@@ -168,7 +168,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   };
   const now = audio.currentTime * 1000;
   const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
-  if (!dwrc2) {
+  if (!dwrc2 || dwrc2 == undefined) {
     return;
   };
   const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
