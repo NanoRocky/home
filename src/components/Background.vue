@@ -1,6 +1,6 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
-    <img v-show="store.imgLoadStatus" :src="bgUrl" class="bg" alt="cover" @load="imgLoadComplete"
+    <img v-show="store.imgLoadStatus" :src="bgUrl!" class="bg" alt="cover" @load="imgLoadComplete"
       @error.once="imgLoadError" @animationend="imgAnimationEnd" />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script setup lang="js">
+<script setup lang="ts">
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
@@ -22,8 +22,8 @@ import { ref, h } from 'vue';
 import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
-const bgUrl = ref(null);
-const imgTimeout = ref(null);
+const bgUrl = ref<null | string>(null);
+const imgTimeout = ref<null | NodeJS.Timeout>(null);
 const emit = defineEmits(["loadComplete"]);
 const key = import.meta.env.VITE_SFILE_SKEY;
 const isLoading = ref(false);
@@ -35,7 +35,7 @@ let bgImageCount= 24; // PC 版壁纸
 let bgImageCountP= 24; // 移动版壁纸
 let bgRandom = 0;
 let bgRandomp = 0;
-let confUrlS = null;
+let confUrlS = null as null | string;
 let sest = 0;
 
 // 加载 config.json
