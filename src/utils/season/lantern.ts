@@ -4,12 +4,21 @@
  * make to ts by NanoRocky
  * Released under the MIT License.
  */
-// 灯笼特效初始化函数
+
+import { mainStore } from "@/store";
+let styleElement: HTMLStyleElement | null = null;
+let lanternContainer: HTMLDivElement | null = null;
+
+// 初始化灯笼特效
 export function initLantern() {
-    // 创建样式元素
-    const style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = `
+  const store = mainStore();
+  store.showLantern = true;
+  if (styleElement || lanternContainer) {
+    closeLantern();
+  };
+  styleElement = document.createElement('style');
+  styleElement.type = 'text/css';
+  styleElement.innerHTML = `
     .j-china-lantern .lantern__warpper {
       position: fixed;
       top: 12px;
@@ -153,11 +162,9 @@ export function initLantern() {
       }
     }
   `;
-
-    // 创建灯笼容器
-    const lanternContainer = document.createElement('div');
-    lanternContainer.className = 'j-china-lantern';
-    lanternContainer.innerHTML = `
+  lanternContainer = document.createElement('div');
+  lanternContainer.className = 'j-china-lantern';
+  lanternContainer.innerHTML = `
     <div class="lantern__warpper">
       <div class="lantern__box">
         <div class="lantern__line"></div>
@@ -187,14 +194,20 @@ export function initLantern() {
       </div>
     </div>
   `;
-
-    // 添加到文档
-    document.head.appendChild(style);
-    document.body.appendChild(lanternContainer);
-
-    // 返回清理函数
-    return () => {
-        if (style.parentNode) style.parentNode.removeChild(style);
-        if (lanternContainer.parentNode) lanternContainer.parentNode.removeChild(lanternContainer);
-    };
+  document.head.appendChild(styleElement);
+  document.body.appendChild(lanternContainer);
 }
+
+// 关闭灯笼特效
+export function closeLantern() {
+  if (styleElement && styleElement.parentNode === document.head) {
+    document.head.removeChild(styleElement);
+    styleElement = null;
+  };
+  if (lanternContainer && lanternContainer.parentNode === document.body) {
+    document.body.removeChild(lanternContainer);
+    lanternContainer = null;
+  };
+  const store = mainStore();
+  store.showLantern = false;
+};
