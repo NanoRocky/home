@@ -149,6 +149,7 @@ export default ({ mode }: { mode: string }): UserConfig => {
                     pure_funcs: ["console.log"],
                 },
             },
+            chunkSizeWarningLimit: 1024,
         },
         publicDir: "public",
     });

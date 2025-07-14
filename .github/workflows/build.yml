@@ -1,46 +1,41 @@
-# Dev 分支推送部署预览
-## 仅部署 Win 端
-name: Build Dev
-
+name: Build and Deploy Preview
+permissions:
+  contents: read
+  actions: write
 on:
   push:
     branches:
+      - EFU
       - dev
-      - master
-
 jobs:
   release:
     name: Build Website
     runs-on: windows-latest
-
     steps:
-      # 检出 Git 仓库
-      - name: Check out git repository
-        uses: actions/checkout@v4.2.2
-      # 安装 Node.js
-      - name: Install Node.js
-        uses: actions/setup-node@v4.2.0
+      - name: Checkout repository
+        uses: actions/checkout@v4.3.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: "18.x"
-      # 复制环境变量文件
-      - name: Copy .env.example
+          node-version: "22.x"
+          cache: "npm"
+      - name: Configure environment
         run: |
           if (-not (Test-Path .env)) {
             Copy-Item .env.example .env
+            Write-Host "Created .env from example"
           } else {
-            Write-Host ".env file already exists. Skipping the copy step."
+            Write-Host ".env already exists"
           }
-      # 安装项目依赖
-      - name: Install Dependencies
-        run: npm install
-      # 构建程序
+      - name: Install dependencies
+        run: npm ci --prefer-offline
       - name: Build Website
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      # 上传构建产物
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4.7.1
         with:
           name: Home
           path: dist
+          retention-days: 3
