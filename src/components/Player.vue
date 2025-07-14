@@ -549,7 +549,7 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
 .aplayer {
   width: 80%;
   border-radius: 6px;
-  font-family: "HarmonyOS_Regular", sans-serif !important;
+  font-family: "MiSans VF", sans-serif !important;
 
   :deep(.aplayer-body) {
     background-color: transparent;
@@ -569,7 +569,7 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         overflow: initial;
 
         .aplayer-title {
-          font-size: 16px;
+          font-size: 1rem;
           margin-right: 6px;
         }
 

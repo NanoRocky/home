@@ -2,7 +2,7 @@
     <div v-if="store.footerProgressBar" class="progress-bar">
         <div class="progress" :class="{ dragging: isDragging }"
             :style="{ width: isDragging ? `${dragProgress}%` : `${progressBarWidth}%` }">
-            <img v-if="showProgressIcon" src="https://filec.nanorocky.top/home/images/icon/ProgressBar.ico"
+            <img v-if="showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
                 class="progress-icon" draggable="false" @mousedown="handleMouseDown"
                 @touchstart.prevent="handleTouchStart" ref="icon" />
             <!-- <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false"
@@ -25,7 +25,8 @@ import { throttle } from "lodash";
 
 
 const store = mainStore();
-const showProgressIcon = ref(false);
+const showProgressIcon = ref(false); // 【状态】 进度条图标显示状态
+const showProgressIconState = ref(0); // 【状态】 0: 未悬停不显示，1: 已悬停显示，2: 始终显示
 const isSeeking = ref(false);
 const audio = ref<HTMLAudioElement | null>(null);
 const icon = ref<HTMLElement | null>(null);
@@ -33,13 +34,6 @@ const touchIdentifier = ref<number | null>(null);
 const isDragging = ref(false);
 const dragProgress = ref(0);
 let dragTimer: ReturnType<typeof setTimeout> | null = null;
-
-const props = defineProps({
-    forceShowIcon: {
-        type: Boolean,
-        default: false
-    }
-});
 
 // 进度计算
 const progressBarWidth = computed(() => {
@@ -49,18 +43,20 @@ const progressBarWidth = computed(() => {
 
 // 鼠标事件处理
 const handleMouseEnter = () => {
-    if (!props.forceShowIcon) {
+    if (showProgressIconState.value === 2) {
         showProgressIcon.value = true;
     } else {
+        showProgressIconState.value = 1;
         showProgressIcon.value = true;
     };
 };
 
 const handleMouseLeave = () => {
-    if (!props.forceShowIcon) {
-        showProgressIcon.value = false;
-    } else {
+    if (showProgressIconState.value === 2) {
         showProgressIcon.value = true;
+    } else {
+        showProgressIconState.value = 0;
+        showProgressIcon.value = false;
     };
 };
 
@@ -147,12 +143,14 @@ watch(() => store.playerState, (_acc, _now) => {
 });
 
 // 监听外部强制开关
-watch(() => props.forceShowIcon, (val) => {
-    if (val) {
+watch(() => store.forceShowBarIcon, (value) => {
+    if (value) {
+        showProgressIconState.value = 2;
         showProgressIcon.value = true;
     } else {
+        showProgressIconState.value = 0;
         showProgressIcon.value = false;
-    }
+    };
 });
 
 onMounted(() => nextTick(() => {

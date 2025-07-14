@@ -15,9 +15,9 @@
 import { mainStore } from "@/store";
 import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
-import initSnowfall from "@/utils/season/snow";
-import initFirefly from "@/utils/season/firefly";
-import { initLantern } from "@/utils/season/lantern";
+import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
+import { initFirefly, closeFirefly } from "@/utils/season/firefly";
+import { initLantern, closeLantern } from "@/utils/season/lantern";
 import { ref, h } from 'vue';
 import { gasC } from "@/utils/authServer";
 
@@ -31,12 +31,13 @@ const isLoading = ref(false);
 // 自定义壁纸
 // 酪灰的小批注：这里增加了从配置文件读取壁纸数的功能，使得在增加壁纸时不需要重新编译项目，只需修改这个 json 文件内的值
 // 设置一个默认值，防止在无法加载 JSON 文件时壁纸失效。应该尽量保证壁纸数始终不小于这个默认值
-let bgImageCount= 24; // PC 版壁纸
-let bgImageCountP= 24; // 移动版壁纸
+let bgImageCount = 24; // PC 版壁纸
+let bgImageCountP = 24; // 移动版壁纸
 let bgRandom = 0;
 let bgRandomp = 0;
 let confUrlS = null;
 let sest = 0;
+let sBGCountN = null;
 
 // 加载 config.json
 async function loadConfig() {
@@ -51,13 +52,22 @@ async function loadConfig() {
     const data = await response.json();
     bgImageCount = Math.max(data.bgImageCount, 1);
     bgImageCountP = Math.max(data.bgImageCountP, 1);
-    bgRandom = Math.floor(Math.random() * bgImageCount + 1);
-    bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
-    return true;
+    if (sBGCountN != null && sBGCountN <= bgImageCount && sBGCountN > 0) {
+      bgRandom = sBGCountN;
+      bgRandomp = sBGCountN;
+      sBGCountN = null;
+      return true;
+    } else {
+      bgRandom = Math.floor(Math.random() * bgImageCount + 1);
+      bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+      sBGCountN = null;
+      return true;
+    };
   } catch (error) {
     console.error('无法加载壁纸配置文件:', error);
     bgRandom = Math.floor(Math.random() * bgImageCount + 1);
     bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+    sBGCountN = null;
     return true;
   };
 };
@@ -80,67 +90,67 @@ const detectDevice = () => {
 const changeBg = async (type) => {
   if (isLoading.value) return;
   isLoading.value = true;
-    (async () => {
-  try {
-    const configLoaded = await loadConfig();
-    const deviceType = await detectDevice();
-    if (!configLoaded) return;
-    if (type == 0) {
-      // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
-      // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
-      if (deviceType === 'mobile') {
-        if (key) {
-          const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-          bgUrl.value = await gasC(bgUrlS, key);
+  (async () => {
+    try {
+      const configLoaded = await loadConfig();
+      const deviceType = await detectDevice();
+      if (!configLoaded) return;
+      if (type == 0) {
+        // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
+        // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
+        if (deviceType === 'mobile') {
+          if (key) {
+            const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+            bgUrl.value = await gasC(bgUrlS, key);
+          } else {
+            bgUrl.value = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+          };
+        } else if (deviceType === 'tablet' || deviceType === 'pc') {
+          if (key) {
+            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+            bgUrl.value = await gasC(bgUrlS, key);
+          } else {
+            bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+          };
         } else {
-          bgUrl.value = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+          if (key) {
+            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+            bgUrl.value = await gasC(bgUrlS, key);
+          } else {
+            bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+          };
         };
-      } else if (deviceType === 'tablet' || deviceType === 'pc') {
-        if (key) {
-          const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-          bgUrl.value = await gasC(bgUrlS, key);
+      } else if (type == 1) {
+        if (deviceType === 'mobile') {
+          const bgfmRandom = Math.floor(Math.random() * 2 + 1);
+          if (bgfmRandom == 1) {
+            bgUrl.value = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
+          } else {
+            bgUrl.value = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
+          };
+        } else if (deviceType === 'tablet' || deviceType === 'pc') {
+          bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
         } else {
-          bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+          bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
         };
-      } else {
-        if (key) {
-          const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-          bgUrl.value = await gasC(bgUrlS, key);
+      } else if (type == 2) {
+        if (deviceType === 'mobile') {
+          bgUrl.value = `https://img.moehu.org/pics.php?id=sjpic`;
+        } else if (deviceType === 'tablet' || deviceType === 'pc') {
+          bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
         } else {
-          bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+          bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
         };
+      } else if (type == 3) {
+        bgUrl.value = "https://img.moehu.org/pic.php?id=kemonomimi";
+      } else if (type == 4) {
+        bgUrl.value = "https://img.moehu.org/pic.php?id=gqbz";
+      } else if (type == 5) {
+        bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
       };
-    } else if (type == 1) {
-      if (deviceType === 'mobile') {
-        const bgfmRandom = Math.floor(Math.random() * 2 + 1);
-        if (bgfmRandom == 1) {
-          bgUrl.value = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
-        } else {
-          bgUrl.value = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
-        };
-      } else if (deviceType === 'tablet' || deviceType === 'pc') {
-        bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
-      } else {
-        bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
-      };
-    } else if (type == 2) {
-      if (deviceType === 'mobile') {
-        bgUrl.value = `https://img.moehu.org/pics.php?id=sjpic`;
-      } else if (deviceType === 'tablet' || deviceType === 'pc') {
-        bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
-      } else {
-        bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
-      };
-    } else if (type == 3) {
-      bgUrl.value = "https://img.moehu.org/pic.php?id=kemonomimi";
-    } else if (type == 4) {
-      bgUrl.value = "https://img.moehu.org/pic.php?id=gqbz";
-    } else if (type == 5) {
-      bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
+    } finally {
+      isLoading.value = false;
     };
-  } finally {
-    isLoading.value = false;
-  };
   })();
 };
 
@@ -195,29 +205,63 @@ watch(
   { immediate: true }
 );
 
-const SeasonStyle = async (type) => {
-  if (store.seasonalEffects) {
-    const month = new Date().getMonth() + 1; // 当前月份，1-12
-    if (type == 0) {
-      if (sest == 1) return;
-      if ([12, 1, 2].includes(month)) {
+const SeasonStyle = async (type, state, where) => {
+  const month = new Date().getMonth() + 1; // 当前月份，1-12
+  if (type == 0) {
+    if (sest == 1 && state == true && where == 'normal') return;
+    if ([12, 1, 2].includes(month)) {
+      if (state == true) {
         initSnowfall();
-      } else if ([1, 2].includes(month)) {
-        initLantern();
-      } else if ([7, 8, 9].includes(month)) {
-        initFirefly();
+      } else if (state == false) {
+        closeSnowfall();
       } else {
         return;
       };
-    } else if (type == 1) {
-      initSnowfall();
-    } else if (type == 2) {
-      initLantern();
-    } else if (type == 3) {
-      initFirefly();
+    } else if ([1, 2].includes(month)) {
+      if (state == true) {
+        initLantern();
+      } else if (state == false) {
+        closeLantern();
+      } else {
+        return;
+      };
+    } else if ([7, 8, 9].includes(month)) {
+      if (state == true) {
+        initFirefly();
+      } else if (state == false) {
+        closeFirefly();
+      } else {
+        return;
+      };
     } else {
       return;
     };
+  } else if (type == 1) {
+    if (state == true) {
+      initSnowfall();
+    } else if (state == false) {
+      closeSnowfall();
+    } else {
+      return;
+    };
+  } else if (type == 2) {
+    if (state == true) {
+      initLantern();
+    } else if (state == false) {
+      closeLantern();
+    } else {
+      return;
+    };
+  } else if (type == 3) {
+    if (state == true) {
+      initFirefly();
+    } else if (state == false) {
+      closeFirefly();
+    } else {
+      return;
+    };
+  } else {
+    return;
   };
   sest = 1;
 };
@@ -226,13 +270,33 @@ onMounted(async () => {
   // 加载壁纸
   await changeBg(Number(store.coverType));
   // 加载季节特效
-  await SeasonStyle(0);
+  if (store.seasonalEffects) { await SeasonStyle(0, true, 'normal') } else { sest = 1 };
 });
 
 onBeforeUnmount(() => {
   if (imgTimeout.value) {
     clearTimeout(imgTimeout.value);
   };
+});
+
+watch(() => store.seasonalEffects, async (value) => {
+  if (sest == 0) return;
+  if (value) {
+    await SeasonStyle(0, true, 'userChange');
+  } else {
+    await SeasonStyle(0, false, 'userChange');
+    await SeasonStyle(1, false, 'userChange');
+    await SeasonStyle(2, false, 'userChange');
+    await SeasonStyle(3, false, 'userChange');
+  };
+});
+
+watch(() => store.sBGCount, async (value) => {
+  if (store.coverType != 0 || value == null || value == 0) return;
+  sBGCountN = value;
+  console.log(sBGCountN);
+  await changeBg(Number(store.coverType));
+  store.setSBGCount(null);
 });
 </script>
 

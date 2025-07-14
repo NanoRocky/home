@@ -1,46 +1,52 @@
 import { defineStore } from "pinia";
 
 export const mainStore = defineStore("main", {
+  // 这些变量，非有能力的开发者请只操作【开关】项来实现个性化的默认设置，其余变量勿动！
   state: () => ({
-    imgLoadStatus: false, // 壁纸加载状态
-    innerWidth: null as number | null, // 当前窗口宽度
-    coverType: 1 as number, // 壁纸种类
-    seasonalEffects: true, // 季节特效
-    siteStartShow: true, // 建站日期显示
-    musicClick: true, // 音乐链接是否跳转
-    musicIsOk: false, // 音乐是否加载完成
-    musicVolume: 0.7 as number, // 音乐音量
-    musicOpenState: false, // 音乐面板开启状态
-    backgroundShow: false, // 壁纸展示状态
-    boxOpenState: false, // 盒子开启状态
-    mobileOpenState: false, // 移动端开启状态
-    mobileFuncState: false, // 移动端功能区开启状态
-    setOpenState: false, // 设置页面开启状态
-    setV: false, // 不知道
-    playerState: false, // 当前播放状态
-    playerCanplay: false, // 当前音乐是否完成加载
-    playerTitle: null as string | null, // 当前播放歌曲名
-    playerArtist: null as string | null, // 当前播放歌手名
-    playerAlbum: null as string | null, // 当前播放专辑名
-    playerLrc: [[true, "猫猫正在翻找歌词..."]], // 当前播放歌词
-    playerLrcShow: true, // 是否显示底栏歌词
-    footerBlur: true, // 底栏模糊
-    footerProgressBar: true, // 是否显示底栏进度条
-    playerAutoplay: true, // 是否自动播放
-    playerLoop: "all", // 循环播放 "all", "one", "none"
-    playerOrder: "random", // 循环顺序 "list", "random"
-    webSpeech: true, // 网页语音交互总开关（包含播报歌名功能）
-    playerSpeechName: true, // 播报歌名
-    playerDWRCShow: true, // 逐字歌词解析总开关
-    playerDWRCShowPro: true, // 逐字效果增强开关
-    playerDWRCATDB: true, // 允许接入 AMLL TTML Database
-    playerDWRCATDBF: false, // 接入 AMLL TTML Database 时使用镜像加速
-    playerCurrentTime: null as number | null, // 当前歌曲已播放时间
-    playerDuration: null as number | null, // 当前歌曲总时长
-    dwrcIndex: -1 as number | null, // 逐字歌词进度存储
-    dwrcTemp: [] as any[], // 逐字歌词缓存
-    dwrcEnable: true,
-    dwrcLoading: false,
+    imgLoadStatus: false, // 【状态】壁纸加载状态
+    innerWidth: null as number | null, // 【状态】当前窗口宽度
+    coverType: 1 as number, // 【开关】壁纸种类
+    sBGCount: null as string | null, // 【状态】使用内置壁纸时用于临时指定壁纸的接口
+    seasonalEffects: true, // 【开关】季节特效
+    siteStartShow: true, // 【开关】建站日期显示
+    musicClick: true, // 【开关】音乐链接是否跳转
+    musicIsOk: false, // 【状态】音乐是否加载完成
+    musicVolume: 0.7 as number, // 【开关】音乐音量
+    musicOpenState: false, // 【状态】音乐面板开启状态
+    backgroundShow: false, // 【状态】壁纸展示状态
+    boxOpenState: false, // 【状态】盒子开启状态
+    mobileOpenState: false, // 【状态】移动端开启状态
+    mobileFuncState: false, // 【状态】移动端功能区开启状态
+    setOpenState: false, // 【状态】设置页面开启状态
+    setV: false, // 【状态】开发者模式
+    playerState: false, // 【状态】当前播放状态
+    playerCanplay: false, // 【状态】当前音乐是否完成加载
+    playerTitle: null as string | null, // 【缓存】当前播放歌曲名
+    playerArtist: null as string | null, // 【缓存】当前播放歌手名
+    playerAlbum: null as string | null, // 【缓存】当前播放专辑名
+    playerLrc: [[true, "猫猫正在翻找歌词..."]], // 【缓存】当前播放歌词
+    playerLrcShow: true, // 【开关】是否显示底栏歌词
+    footerBlur: true, // 【开关】底栏模糊
+    footerProgressBar: true, // 【开关】是否显示底栏进度条
+    playerAutoplay: true, // 【开关】是否自动播放
+    playerLoop: "all", // 【开关】循环播放 "all", "one", "none"
+    playerOrder: "random", // 【开关】循环顺序 "list", "random"
+    webSpeech: true, // 【开关】网页语音交互总开关（包含播报歌名功能）
+    playerSpeechName: true, // 【开关】播报歌名
+    playerDWRCShow: true, // 【开关】逐字歌词解析总开关
+    playerDWRCShowPro: true, // 【开关】逐字效果增强开关
+    playerDWRCATDB: true, // 【开关】允许接入 AMLL TTML Database
+    playerDWRCATDBF: false, // 【开关】接入 AMLL TTML Database 时使用镜像加速
+    playerCurrentTime: null as number | null, // 【缓存】当前歌曲已播放时间
+    playerDuration: null as number | null, // 【缓存】当前歌曲总时长
+    dwrcIndex: -1 as number | null, // 【缓存】逐字歌词进度存储
+    dwrcTemp: [] as any[], // 【缓存】逐字歌词
+    dwrcEnable: true, // 【状态】调用逐字歌词
+    dwrcLoading: false, // 【状态】逐字歌词加载
+    forceShowBarIcon: false, // 【开关】进度图标常驻
+    showFirefly: false, // 【状态】萤火虫特效
+    showSnowfall: false, // 【状态】雪花特效
+    showLantern: false, // 【状态】灯笼特效
   }),
   getters: {
     // 获取歌词
@@ -93,6 +99,14 @@ export const mainStore = defineStore("main", {
     // 更改壁纸加载状态
     setImgLoadStatus(value) {
       this.imgLoadStatus = value;
+    },
+    // 使用内置壁纸时用于临时指定壁纸的接口
+    setSBGCount(value) {
+      if (this.coverType == 0) {
+        this.sBGCount = value;
+      } else {
+        return 'not use';
+      };
     },
   },
   persist: [

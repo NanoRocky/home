@@ -7,7 +7,7 @@
   "home": "https://imsyy.top",
   "efuh": "https://nanorocky.top",
   "private": true,
-  "version": "4.3.0.beta [EFU]",
+  "version": "4.3.0.pre [EFU]",
   "type": "module",
   "scripts": {
     "dev": "vite --host",

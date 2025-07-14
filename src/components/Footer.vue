@@ -36,7 +36,7 @@
       </div>
       <div v-else class="lrc" @dblclick="toggleForceIcon">
         <!-- 音乐进度条 -->
-        <ProgressBar v-if="store.footerProgressBar" :forceShowIcon="forceShowIcon" />
+        <ProgressBar v-if="store.footerProgressBar" />
         <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
           v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)">
           <!-- &amp; -->
@@ -111,7 +111,6 @@ const scrollPosition = ref(0);
 const currentLine = ref(0);
 const audio = ref(null);
 const icon = ref(null);
-const forceShowIcon = ref(false);
 
 // 加载配置数据
 // const siteStartDate = ref(import.meta.env.VITE_SITE_START);
@@ -137,12 +136,12 @@ const siteUrl = computed(() => {
 });
 
 const toggleForceIcon = () => {
-  forceShowIcon.value = !forceShowIcon.value;
+  store.forceShowBarIcon = !store.forceShowBarIcon;
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `${forceShowIcon.value ? '诶？' : '进度 ICON 常驻已禁用'}`,
+    message: `${store.forceShowBarIcon ? '诶？' : '进度 ICON 常驻已禁用'}`,
   });
-  if (forceShowIcon.value) {
+  if (store.forceShowBarIcon) {
     stopSpeech();
     const voice = import.meta.env.VITE_TTS_Voice;
     const vstyle = import.meta.env.VITE_TTS_Style;
@@ -241,8 +240,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   -webkit-background-clip: text;
   background-clip: text;
   font-family: MiSans VF;
-  font-weight: 450;
-  font-size: 1rem;
+  font-weight: 520;
+  font-size: 1.05rem;
   transition:
     opacity 0.3s linear,
     color 0.5s linear,
@@ -393,8 +392,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     0px 0px 2px rgba(176, 224, 230, 0.9),
     0px 0px 2px rgba(230, 230, 250, 0.9);
   font-family: MiSans VF;
-  font-weight: 450;
-  font-size: 1rem;
+  font-weight: 520;
+  font-size: 1.05rem;
   overflow: hidden;
   white-space: nowrap;
   transition:
@@ -414,8 +413,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     0 0 2px rgba(255, 165, 0, 1),
     0 0 2px rgba(255, 179, 71, 1);
   font-family: MiSans VF;
-  font-weight: 450;
-  font-size: 1rem;
+  font-weight: 520;
+  font-size: 1.05rem;
   transition:
     opacity 0.3s linear,
     color 0.5s linear;
@@ -510,7 +509,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       display: inline-block;
       padding: 0 10px;
       white-space: nowrap;
-      font-size: 1rem;
+      font-size: 1.05rem;
       opacity: 0.6;
       transition: opacity 0.3s, color 0.3s;
     }

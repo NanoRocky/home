@@ -23,7 +23,7 @@
           <el-switch v-model="musicClick" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
         <div class="item">
-          <span class="text">显示季节特效（此开关刷新后生效）</span>
+          <span class="text">显示季节特效</span>
           <el-switch v-model="seasonalEffects" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
         <div class="item">
@@ -102,6 +102,7 @@ import { CheckSmall, CloseSmall, SuccessPicture } from "@icon-park/vue-next";
 import DevSet  from "@/components/DevSet.vue";
 import { mainStore } from "@/store";
 import { storeToRefs } from "pinia";
+import config from "@/../package.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 
 const store = mainStore();
@@ -126,7 +127,7 @@ const {
 } = storeToRefs(store);
 
 // 默认选中项
-const activeName = ref("1");
+const activeName = ref("0");
 
 // 壁纸切换
 const radioChange = () => {
