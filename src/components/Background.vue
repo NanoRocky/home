@@ -294,7 +294,6 @@ watch(() => store.seasonalEffects, async (value) => {
 watch(() => store.sBGCount, async (value) => {
   if (store.coverType != 0 || value == null || value == 0) return;
   sBGCountN = value;
-  console.log(sBGCountN);
   await changeBg(Number(store.coverType));
   store.setSBGCount(null);
 });
