@@ -2,7 +2,7 @@
   <div class="mobileset" v-if="store.mobileOpenState" @mouseenter="closeShow = true" @mouseleave="closeShow = false"
     @click.stop>
     <transition name="el-fade-in-linear">
-      <close-one class="close" theme="filled" size="28" fill="#ffffff60" v-show="closeShow"
+      <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
         @click="store.setOpenState = false" />
     </transition>
     <el-row>
@@ -13,7 +13,7 @@
         </div>
         <!-- 移动端设置菜单 -->
         <div class="title">
-          <setting-two theme="filled" size="28" fill="#ffffff60" />
+          <setting-two theme="filled" size="28" fill="var(--text-color)" />
           <span class="name">全局设置</span>
         </div>
         <div class="mobileset-scrollable">
@@ -29,7 +29,7 @@
   </div>
   <div class="set" v-else @mouseenter="closeShow = true" @mouseleave="closeShow = false" @click.stop>
     <transition name="el-fade-in-linear">
-      <close-one class="close" theme="filled" size="28" fill="#ffffff60" v-show="closeShow"
+      <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)" v-show="closeShow"
         @click="store.setOpenState = false" />
     </transition>
     <el-row :gutter="40">
@@ -53,7 +53,7 @@
       <!-- 桌面端设置菜单 -->
       <el-col :span="12" class="right">
         <div class="title">
-          <setting-two theme="filled" size="28" fill="#ffffff60" />
+          <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
           <span class="name">全局设置</span>
         </div>
         <div class="set-scrollable">
@@ -126,7 +126,7 @@ const jumpTo = (url) => {
   transform: translate(-50%, -50%);
   width: 80%;
   height: 80%;
-  background: rgb(255 255 255 / 40%);
+  background: var(--set-background-color);
   border-radius: 6px;
   padding: 40px;
 
@@ -288,7 +288,7 @@ const jumpTo = (url) => {
   transform: translate(-50%, -50%);
   width: 82%;
   height: 86%;
-  background: rgb(255 255 255 / 40%);
+  background: var(--set-background-color);
   border-radius: 6px;
   padding: 36px;
 

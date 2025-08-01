@@ -72,6 +72,26 @@ watch(
   },
 );
 
+// 监听主题变化
+watch(
+  () => store.theme,
+  (theme) => {
+    if (theme === "light") {
+      document.documentElement.dataset.theme = "light";
+    } else if (theme === "dark") {
+      document.documentElement.dataset.theme = "dark";
+    } else {
+      const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+      if (darkThemeMq.matches) {
+        document.documentElement.dataset.theme = "dark";
+      } else {
+        document.documentElement.dataset.theme = "light";
+      }
+    }
+  },
+  { immediate: true }
+);
+
 onMounted(() => {
   // 自定义鼠标
   cursorInit();

@@ -5,7 +5,7 @@
         class="close"
         theme="filled"
         size="28"
-        fill="#ffffff60"
+        fill="var(--close-icon-color)"
         v-show="closeShow"
         @click="store.boxOpenState = false"
       />
@@ -15,7 +15,7 @@
         class="setting"
         theme="filled"
         size="28"
-        fill="#ffffff60"
+        fill="var(--close-icon-color)"
         v-show="closeShow"
         @click="store.setOpenState = true"
       />

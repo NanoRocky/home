@@ -108,6 +108,7 @@ watch(
     align-items: center;
     animation: fade 0.5s;
     max-width: 460px;
+    color: rgba(245, 245, 245, 1);
 
     .logo-img {
       border-radius: 50%;
@@ -122,11 +123,13 @@ watch(
 
       .bg {
         font-size: 5rem;
+        color: rgba(245, 245, 245, 1);
       }
 
       .sm {
         margin-left: 6px;
         font-size: 2rem;
+        color: rgba(255, 240, 245, 1);
 
         @media (min-width: 721px) and (max-width: 789px) {
           display: none;

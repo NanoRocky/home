@@ -59,6 +59,7 @@ const togglesocial = () => {
 
     .tip {
       display: none !important;
+      color: var(--social-font-color);
     }
   }
 
@@ -86,6 +87,7 @@ const togglesocial = () => {
   }
 
   .tip {
+    color: var(--social-font-color);
     display: none;
     margin-right: 12px;
     animation: fade 0.5s;
@@ -93,12 +95,13 @@ const togglesocial = () => {
 
   @media (min-width: 768px) {
     &:hover {
-      background-color: #00000040;
+      background-color: var(--social-background-color);
       -webkit-backdrop-filter: blur(5px);
       backdrop-filter: blur(5px);
 
       .tip {
         display: block;
+        color: var(--social-font-color);
       }
     }
   }

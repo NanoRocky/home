@@ -144,7 +144,7 @@ onMounted(() => {
         grouping: true,
         icon: h(PlayWrong, {
           theme: "filled",
-          fill: "#efefef",
+          fill: "var(--music-aplayer-message-icon-color)",
         }),
       });
       if (store.webSpeech) {
@@ -175,7 +175,7 @@ const onPlay = () => {
     grouping: true,
     icon: h(MusicOne, {
       theme: "filled",
-      fill: "#efefef",
+      fill: "var(--music-aplayer-list-icon-color)",
     }),
   });
 
@@ -325,7 +325,7 @@ const loadMusicError = () => {
     grouping: true,
     icon: h(PlayWrong, {
       theme: "filled",
-      fill: "#EFEFEF",
+      fill: "var(--music-aplayer-message-icon-color)",
       duration: 2000,
     }),
   });
@@ -560,7 +560,7 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
 
     .aplayer-info {
       margin-left: 0;
-      background-color: #ffffff40;
+      background-color: var(--music-player-list-bgc);
       border-color: transparent !important;
 
       .aplayer-music {
@@ -574,7 +574,7 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         }
 
         .aplayer-author {
-          color: #efefef;
+          color: var(--text-color);
         }
       }
 
@@ -597,7 +597,7 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         }
 
         p {
-          color: #efefef;
+          color: var(--text-color);
         }
 
         .aplayer-lrc-current {
@@ -626,18 +626,18 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         border-color: transparent;
 
         &.aplayer-list-light {
-          background: #ffffff40;
+          background: var(--music-player-list-bgc);
           border-radius: 6px;
         }
 
         &:hover {
-          background: #ffffff26 !important;
+          background: var(--music-player-list-hover-bgc) !important;
           border-radius: 6px !important;
         }
 
         .aplayer-list-index,
         .aplayer-list-author {
-          color: #efefef;
+          color: var(--text-color);
         }
       }
     }
