@@ -1,7 +1,7 @@
 <template>
   <div class="time-capsule">
     <div class="title">
-      <hourglass-full theme="two-tone" size="24" :fill="['#efefef', '#00000020']" />
+      <hourglass-full theme="two-tone" size="24" :fill="['var(--time-icon-one-color)', 'var(--time-icon-two-color)']" />
       <span>时光胶囊</span>
     </div>
     <div v-if="timeData" class="all-capsule">

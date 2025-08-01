@@ -6,6 +6,8 @@ GitHub：https://github.com/imsyy/home
 */
 
 @charset "utf-8";
+@use "@/style/light-theme.scss" as light-theme;
+@use "@/style/dark-theme.scss" as dark-theme;
 
 /*全局样式*/
 
@@ -17,7 +19,6 @@ body {
   // height: 100dvh;
   margin: 0;
   padding: 0;
-  background-color: #333;
   overflow: hidden;
   font-family: "MiSans VF", sans-serif;
   font-weight: 330;
@@ -32,7 +33,6 @@ p {
   -webkit-user-select: none;
   user-select: none;
   text-decoration: none;
-  color: #fff;
   box-sizing: border-box;
 
   &:hover {
@@ -93,23 +93,7 @@ a:hover {
   z-index: 0;
 }
 
-// 卡片样式
-.cards {
-  border-radius: 6px;
-  background-color: #00000040;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  transform: scale(1);
-  transition:
-    backdrop-filter 0.3s,
-    transform 0.3s;
-  &:hover {
-    transform: scale(1.01);
-  }
-  &:active {
-    transform: scale(0.98);
-  }
-}
+
 
 // 文字超出
 .text-hidden {
@@ -120,8 +104,6 @@ a:hover {
 
 // 弹窗样式
 .el-message {
-  --el-message-bg-color: #00000040 !important;
-  --el-message-text-color: #efefef !important;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border-radius: 25px !important;
@@ -139,14 +121,14 @@ a:hover {
 .el-progress-bar {
   .el-progress-bar__outer {
     border-radius: 6px;
-    background-color: #00000020;
+    background-color: var(--el-progress-bar-in-color);
     .el-progress-bar__inner {
-      background-color: #efefef;
+      background-color: var(--el-progress-bar-out-color);
       border-radius: 6px;
       text-align: center;
       font-family: "UnidreamLED";
       span {
-        color: #564d59;
+        color: var(--el-progress-bar-span-color);
         font-size: 0.9rem;
       }
     }
@@ -155,7 +137,7 @@ a:hover {
 
 // Tooltip 样式
 .el-popper.is-dark {
-  background: #ffffff60 !important;
+  // background: #ffffff60 !important;
   border: 1px solid transparent !important;
 }
 
@@ -167,12 +149,10 @@ a:hover {
   .el-card__header {
     font-weight: bold;
     padding: 16px 20px !important;
-    background-color: #ffffff30 !important;
     border-bottom: 1px solid transparent !important;
   }
   .el-card__body {
     padding: 0 !important;
-    background-color: #ffffff10 !important;
   }
 }
 

@@ -1,0 +1,99 @@
+[data-theme="dark"] {
+    --background-color: rgba(15, 15, 15, 1);
+    --text-color: rgba(245, 245, 245, 1);
+    --card-background-color: rgba(15, 15, 15, 0.2);
+    --link-card-hover-color: rgba(15, 15, 15, 0.5); // rgb(0 0 0 / 40%);
+    --social-background-color: rgba(15, 15, 15, 0.2);
+    --social-font-color: rgba(245, 245, 245, 1);
+    --tooltip-background-color: rgba(15, 15, 15, 0.6);
+    --player-control-color: rgba(245, 245, 245, 1);
+    --player-control-hover-bg-color: rgba(245, 245, 245, 0.2);
+    --player-slider-main-color: rgba(245, 245, 245, 0.8); // #efefef
+    --player-slider-runway-color: rgba(15, 15, 15, 0.3); // #ffffff40
+    --close-icon-color: rgba(245, 245, 245, 0.2);
+    --music-card-background-color: rgba(245, 245, 245, 0.4);
+    --music-smcard-background-color: rgba(245, 245, 245, 0.3);
+    --music-smcard-background-hover-color: rgba(245, 245, 245, 0.6);
+    --music-player-background-color: rgba(15, 15, 15, 0.5);
+    --music-player-list-bgc: rgba(245, 245, 245, 0.2);
+    --music-player-list-hover-bgc: rgba(245, 245, 245, 0.3);
+    --music-aplayer-list-icon-color: #efefef;
+    --music-aplayer-message-icon-color: #EFEFEF;
+    --footer-background-color: rgba(15, 15, 15, 0.2); // rgb(0 0 0 / 25%)
+    --footer-text-color: rgba(245, 245, 245, 1);
+    --footer-dwrc-shadow-first-color: rgba(255, 240, 245, 0.9);
+    --footer-dwrc-start-color: rgba(220, 220, 220, 0.7);
+    --footer-dwrc-end-color: rgba(255, 240, 245, 1);
+    --footer-dwrc-two-color: rgba(255, 240, 245, 0.9);
+    --footer-music-icon-color: #fff0f5ff; // 
+    --footer-music-paw-icon-color: rgba(255, 240, 245, 0.9);
+    --time-icon-one-color: #efefef;
+    --time-icon-two-color: #00000020;
+    --el-progress-bar-in-color: rgba(15, 15, 15, 0.2);
+    --el-progress-bar-out-color: rgba(245, 245, 245, 0.8);
+    --el-progress-bar-span-color: rgba(15, 15, 15, 0.9);
+    --set-background-color: rgba(245, 245, 245, 0.4);
+    --set-coll-background-color: rgba(245, 245, 245, 0.3);
+    --set-coll-background-ck-color: rgba(245, 245, 245, 0.1);
+    --set-radio-border-color: rgba(245, 245, 245, 0.5);
+    --set-radio-border-ck-color: rgba(245, 245, 245, 0.9);
+    --set-radio-bg-color: rgba(245, 245, 245, 0.1);
+    --set-radio-bg-ck-color: rgba(245, 245, 245, 0.3);
+
+
+    a,
+    p {
+        color: var(--text-color);
+    }
+
+    // 卡片样式
+    .cards {
+        border-radius: 6px;
+        background-color: rgba(15, 15, 15, 0.2);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        transform: scale(1);
+        transition:
+            backdrop-filter 0.3s,
+            transform 0.3s;
+
+        &:hover {
+            transform: scale(1.01);
+        }
+
+        &:active {
+            transform: scale(0.98);
+        }
+    }
+}
+
+// Common styles
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+
+.el-message {
+    --el-message-bg-color: var(--card-background-color) !important;
+    --el-message-text-color: var(--text-color) !important;
+}
+
+.el-popper.is-dark {
+    background: var(--tooltip-background-color) !important;
+}
+
+.el-card {
+    .el-card__header {
+        background-color: rgba(from var(--card-background-color) r g b / 0.2) !important;
+    }
+
+    .el-card__body {
+        background-color: rgba(from var(--card-background-color) r g b / 0.1) !important;
+    }
+}
+
+a {
+    color: var(--text-color);
+}

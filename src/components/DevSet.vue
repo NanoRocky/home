@@ -196,17 +196,21 @@ const handleSetWallpaper = () => {
 
 <style lang="scss" scoped>
 .devsettings {
+    .text {
+        color: var(--text-color);
+    }
+
     .collapse {
         border-radius: 8px;
-        --el-collapse-content-bg-color: #ffffff10;
+        --el-collapse-content-bg-color: var(--set-coll-background-ck-color);
         border-color: transparent;
         overflow: hidden;
 
         :deep(.el-collapse-item__header) {
-            background-color: #ffffff30;
-            color: #fff;
+            background-color: var(--set-coll-background-color);
+            color: var(--text-color);
             font-size: 15px;
-            padding-left: 18px;
+            padding-left: 15px;
             border-color: transparent;
         }
 
@@ -214,7 +218,7 @@ const handleSetWallpaper = () => {
             border-color: transparent;
 
             .el-collapse-item__content {
-                padding: 20px;
+                padding: 18px;
 
                 .item {
                     display: flex;
@@ -225,30 +229,36 @@ const handleSetWallpaper = () => {
 
                     .el-switch__core {
                         border-color: transparent;
-                        background-color: #ffffff30;
+                        background-color: var(--set-radio-bg-ck-color);
                     }
 
                     .el-button {
+                        margin: 8px 12px;
+                        border: 2px solid transparent;
+                        border-radius: 6px;
                         border-color: transparent;
-                        background-color: #ffffff30;
+                        background-color: var(--set-radio-bg-ck-color);
                         transition: all 0.1s ease;
                         position: relative;
                         overflow: hidden;
                         transform: scale(1);
+                        color: var(--text-color);
                     }
 
                     .el-button.active {
                         border-color: transparent;
-                        background-color: #ffffff30;
-                        border: 2px solid #eeeeee !important;
+                        background-color: var(--set-radio-bg-ck-color);
+                        border: 2px solid var(--set-radio-border-color) !important;
                         transition: all 0.1s ease;
                         position: relative;
                         overflow: hidden;
                         transform: scale(1);
+                        color: var(--text-color);
                     }
 
                     .el-button:active {
                         transform: scale(0.9);
+                        color: var(--text-color);
                         border: 1.5px solid rgba(176, 224, 230, 1) !important;
                     }
 
@@ -271,6 +281,7 @@ const handleSetWallpaper = () => {
                     .upver {
                         font-size: 0.75rem;
                         font-family: MiSans VF;
+                        color: var(--text-color);
                     }
                 }
 
@@ -279,32 +290,32 @@ const handleSetWallpaper = () => {
 
                     .el-radio {
                         margin: 10px 16px;
-                        background: #ffffff26;
+                        background: var(--set-radio-bg-color);
                         border: 2px solid transparent;
                         border-radius: 8px;
 
                         .el-radio__label {
-                            color: #fff;
+                            color: var(--text-color);
                         }
 
                         .el-radio__inner {
-                            background: #ffffff06 !important;
-                            border: 2px solid #eeeeee !important;
+                            background: var(--set-radio-bg-color) !important;
+                            border: 2px solid var(--set-radio-border-color) !important;
                         }
 
                         &.is-checked {
-                            background: #ffffff06 !important;
-                            border: 2px solid #eeeeee !important;
+                            background: var(--set-radio-bg-ck-color) !important;
+                            border: 2px solid var(--set-radio-border-color) !important;
                         }
 
                         .is-checked {
                             .el-radio__inner {
-                                background-color: #ffffff30 !important;
-                                border-color: #fff !important;
+                                background-color: var(--set-radio-bg-ck-color) !important;
+                                border-color: var(--set-radio-border-ck-color) !important;
                             }
 
                             &+.el-radio__label {
-                                color: #fff !important;
+                                color: var(--text-color) !important;
                             }
                         }
                     }

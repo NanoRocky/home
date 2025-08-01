@@ -4,7 +4,7 @@
     <!-- 打开音乐面板 -->
     <Transition name="el-fade-in-linear">
       <div class="open-music" v-show="openMusicShow && store.musicIsOk" @click="store.musicOpenState = true">
-        <music-menu theme="filled" size="18" fill="#efefef" />
+        <music-menu theme="filled" size="18" fill="var(--player-control-color)" />
         <span>打开音乐播放器</span>
       </div>
     </Transition>

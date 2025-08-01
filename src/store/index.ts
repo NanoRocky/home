@@ -47,6 +47,7 @@ export const mainStore = defineStore("main", {
     showFirefly: false, // 【状态】萤火虫特效
     showSnowfall: false, // 【状态】雪花特效
     showLantern: false, // 【状态】灯笼特效
+    theme: "system", // 【开关】主题
   }),
   getters: {
     // 获取歌词
@@ -132,6 +133,7 @@ export const mainStore = defineStore("main", {
         'playerDWRCATDB',
         'playerDWRCATDBF',
         'seasonalEffects',
+        'theme',
       ],
     },
     {

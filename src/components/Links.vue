@@ -1,10 +1,11 @@
 <template>
   <div v-if="siteLinks[0]" class="links">
     <div class="line">
-      <Icon size="20">
-        <Link />
-      </Icon>
-      <span class="title text-hidden" v-if="store.mobileOpenState" @click="store.setOpenState = !store.setOpenState">网站列表</span>
+        <Icon size="20" class="iconl">
+          <Link />
+        </Icon>
+      <span class="title text-hidden" v-if="store.mobileOpenState"
+        @click="store.setOpenState = !store.setOpenState">网站列表</span>
       <span class="title" v-else>网站列表</span>
     </div>
     <!-- 网站列表 -->
@@ -14,9 +15,9 @@
         clickable: true,
         bulletElement: 'div',
       }" :mousewheel="true">
-      <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-'+siteIndex">
+      <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
-          <el-col v-for="(item, index) in site" :span="8" :key="'item-'+index">
+          <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">
             <div class="item cards" :style="index < 3 ? 'margin-bottom: 20px' : null" @click="jumpLink(item)">
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
@@ -104,11 +105,17 @@ const jumpLink = (data: SiteLink) => {
     display: flex;
     align-items: center;
     animation: fade 0.5s;
+    color: rgba(245, 245, 245, 1);
+
+    .iconl {
+      color: rgba(245, 245, 245, 1);
+    }
 
     .title {
       margin-left: 8px;
       font-size: 1.15rem;
-      text-shadow: 0 0 5px #00000050;
+      text-shadow: 0 0 5px rgba(15, 15, 15, 0.6);
+      color: rgba(245, 245, 245, 1);
     }
   }
 
@@ -130,7 +137,7 @@ const jumpLink = (data: SiteLink) => {
       justify-content: center;
 
       :deep(.swiper-pagination-bullet) {
-        background-color: #fff;
+        background-color: rgba(245, 245, 245, 1);
         width: 20px;
         height: 4px;
         margin: 0 4px;
@@ -164,7 +171,7 @@ const jumpLink = (data: SiteLink) => {
 
       &:hover {
         transform: scale(1.02);
-        background: rgb(0 0 0 / 40%);
+        background: var(--link-card-hover-color);
         transition: 0.3s;
       }
 
