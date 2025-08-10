@@ -18,7 +18,6 @@ const store = mainStore();
 let showDWRCRunning = 0;
 let lastTimestamp = Date.now();
 let nowLineStart = -1;
-let nowLineIndex = ref(-1);
 
 type PlayerInstance = {
   aplayer: APlayerType;
@@ -162,7 +161,6 @@ onMounted(() => {
 const onPlay = () => {
   if (!player.value) return;
   console.log("播放");
-  nowLineIndex.value = -1;
   playIndex.value = player.value.aplayer.index;
   const currentTrack = playList.value[playIndex.value];
   if (!currentTrack) {
@@ -390,7 +388,6 @@ const fetchDWRC = async (dwrcUrl: string) => {
 function onLoadStart() {
   // 逐字获取模块
   if (!player.value) return;
-  nowLineIndex.value = -1;
   try {
     if (player.value == null || player.value.aplayer == null) {
       return;
@@ -419,13 +416,7 @@ function onLoadStart() {
 
 const onTimeUp = () => {
   if (!player.value) return;
-  const lastTime = store.playerCurrentTime;
-  const newTime = player.value.audioStatus.playedTime;
-  if (lastTime && Math.abs(newTime - lastTime) > 1) {
-    store.lyricSeekVersion++;
-    nowLineIndex.value = -1;
-  };
-  store.playerCurrentTime = newTime;
+  store.playerCurrentTime = player.value.audioStatus.playedTime;
   store.playerDuration = player.value.audioStatus.duration;
   if (showDWRCRunning == 0 && player.value != null && player.value.aplayer != null) {
     requestAnimationFrame(syncDWRCLrc);
@@ -442,64 +433,112 @@ function updatePositionState() {
 function syncDWRCLrc() {
   showDWRCRunning = 1;
   try {
-    if (!player.value || !player.value.aplayer) {
+    if (player.value == null || player.value.aplayer == null || !player.value) {
       return requestAnimationFrame(syncDWRCLrc);
-    };
-    const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length === 0 || store.dwrcLoading;
-    const now = player.value.audioStatus.playedTime * 1000;
-    if (isLineByLine) {
-      const lyrics = player.value.aplayer.lyrics[playIndex.value];
-      const playerLyricIndex = player.value.aplayer.lyricIndex;
-      if (!lyrics || !lyrics[playerLyricIndex]) {
-        const lrc = "猫猫正在翻找歌词...";
-        if (store.playerLrc.length !== 1 || store.playerLrc[0][4] !== lrc) {
-          store.setPlayerLrc([[true, 1, 0, 0, lrc]]);
-        };
-      } else {
-        let lrc = lyrics[playerLyricIndex][1];
-        if (lrc === "Loading") lrc = "猫猫正在翻找歌词...";
-        else if (lrc === "Not available" || lrc === "Not availible") lrc = "猫猫没有找到这首歌的歌词诶qwq";
-        if (store.playerLrc.length !== 1 || store.playerLrc[0][4] !== lrc || store.playerLrc[0][2] !== playerLyricIndex) {
-          store.setPlayerLrc([[true, 1, playerLyricIndex, 0, lrc]]);
-        };
-      };
     } else {
-      const dwrc = store.dwrcTemp;
-      if (nowLineIndex.value === -1) {
-        let foundIndex = -1;
-        for (let i = 0; i < dwrc.length; i++) {
-          if (dwrc[i][0] <= now) {
-            foundIndex = i;
+      const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading;
+      if (isLineByLine) {
+        // 逐行模块
+        const lyrics = player.value.aplayer.lyrics[playIndex.value];
+        const playerLyricIndex = player.value.aplayer.lyricIndex;
+        if (lyrics === undefined || lyrics[playerLyricIndex] === undefined) {
+          const lrc = "猫猫正在翻找歌词...";
+          const output: [boolean, number, number, number, string][] = [[true, 1, playerLyricIndex, 0, lrc]];
+          if (store.playerLrc.toString() != output.toString()) {
+            store.setPlayerLrc(output);
+          };
+        } else {
+          let lrc = lyrics[playerLyricIndex][1];
+          if (lrc === "Loading") {
+            lrc = "猫猫正在翻找歌词...";
+          } else if (lrc === "Not available" && !store.playerDWRCATDB) {
+            lrc = "猫猫没有找到这首歌的歌词诶qwq";
+          } else if (lrc === "Not availible") {
+            // 哈哈哈又是你（）
+            const plrcUrl = player.value.aplayer.audio[player.value.aplayer.index]["lrc"];
+            const songUrlInfw = new URLSearchParams(new URL(plrcUrl).search);
+            const songIdlrc = songUrlInfw.get("id");
+            const songServerlrc = songUrlInfw.get("server")!.toString();
+            if (!songIdlrc) {
+              lrc = "猫猫没有找到这首歌的歌词诶qwq";
+            } else {
+              const songUrlInfwurl = store.playerDWRCATDBF
+                ? {
+                  netease: `https://ghfast.top/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songIdlrc}.lrc`,
+                  tencent: `https://ghfast.top/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songIdlrc}.lrc`,
+                }
+                : {
+                  netease: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songIdlrc}.lrc`,
+                  tencent: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songIdlrc}.lrc`,
+                };
+              if (!["netease", "tencent"].includes(songServerlrc)) {
+                lrc = "猫猫没有找到这首歌的歌词诶qwq";
+              } else {
+                const amllUrllrc = songUrlInfwurl[songServerlrc].replace("${songIdlrc}", songIdlrc);
+                fetch(amllUrllrc)
+                  .then((response) => {
+                    if (response.status === 404 || !response.ok) {
+                      lrc = "猫猫没有找到这首歌的歌词诶qwq";
+                    } else {
+                      // 加载 AMLL 逐行歌词 [酪灰写这段代码时脑子没带,纯瞎写的,测试不周,一般也用不到...有异常记得反馈!]
+                      response.text().then((text) => {
+                        const lines = text.split('\n');
+                        const lyrics = lines.map((line) => {
+                          const match = line.match(/\[(\d{2}):(\d{2}\.\d{3})\](.*)/);
+                          if (match) {
+                            const minutes = parseInt(match[1], 10);
+                            const seconds = parseFloat(match[2]);
+                            const time = minutes * 60 + seconds;
+                            const lyric = match[3];
+                            return [time, lyric];
+                          };
+                          return null;
+                        }).filter(line => line !== null);
+                        player.value!.aplayer.lyrics[playIndex.value] = lyrics;
+                        const playerLyricIndex = player.value!.aplayer.lyricIndex;
+                        const lrc = lyrics[playerLyricIndex][1].toString();
+                        const output: [boolean, number, number, number, string][] = [[true, 1, playerLyricIndex, 0, lrc]];
+                        if (store.playerLrc.toString() != output.toString()) {
+                          store.setPlayerLrc(output);
+                        };
+                      });
+                    };
+                  })
+                  .catch(() => {
+                    lrc = "猫猫没有找到这首歌的歌词诶qwq";
+                  });
+              };
+            };
           } else {
-            break;
+            const output: [boolean, number, number, number, string][] = [[true, 1, playerLyricIndex, 0, lrc]];
+            if (store.playerLrc.toString() != output.toString()) {
+              store.setPlayerLrc(output);
+            };
           };
         };
-        nowLineIndex.value = foundIndex;
       } else {
-        if (nowLineIndex.value + 1 < dwrc.length && now >= dwrc[nowLineIndex.value + 1][0]) {
-          nowLineIndex.value++;
+        // 逐字模块
+        const now = player.value.audioStatus.playedTime * 1000;
+        const dwrcFiltered = store.dwrcTemp.filter((i) => i[0] < now);
+        const dwrcLyric: [boolean, number, number, number, string][] =
+          dwrcFiltered.length > 0
+            ? dwrcFiltered.slice(-1)[0][2].map((it) => {
+              const [[start, duration], word, line, row] = it;
+              const isCurrent = now >= start && now <= start + duration;
+              const isSungLyrics = start + duration < now;
+              const lessdur = start + duration - now;
+              return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto"];
+            })
+            : [[true, 1, 0, 0, `${store.playerTitle} - ${store.playerArtist}`]];
+        if (store.playerLrc.toString() != dwrcLyric.toString()) {
+          store.setPlayerLrc(dwrcLyric);
         };
       };
-      const currentLine = nowLineIndex.value !== -1 ? dwrc[nowLineIndex.value] : null;
-      let dwrcLyric: any[];
-      if (currentLine) {
-        dwrcLyric = currentLine[2].map((it: any) => {
-          const [[start, duration], word, line, row] = it;
-          const isCurrent = now >= start && now <= start + duration;
-          const isSungLyrics = start + duration < now;
-          const lessdur = start + duration - now;
-          return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto"];
-        });
-      } else {
-        dwrcLyric = [[true, 1, 0, 0, `${store.getPlayerData.name || 'Loading...'} - ${store.getPlayerData.artist || 'NanoRocky'}`]];
-      };
-      store.setPlayerLrc(dwrcLyric);
     };
   } catch (error) {
-    console.error("Error in syncDWRCLrc:", error);
-  } finally {
-    requestAnimationFrame(syncDWRCLrc);
+    console.error(error);
   };
+  return requestAnimationFrame(syncDWRCLrc);
 };
 
 // 暴露子组件方法
