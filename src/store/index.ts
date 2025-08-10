@@ -44,6 +44,7 @@ export const mainStore = defineStore("main", {
     dwrcTemp: [] as any[], // 【缓存】逐字歌词
     dwrcEnable: true, // 【状态】调用逐字歌词
     dwrcLoading: false, // 【状态】逐字歌词加载
+    lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
     forceShowBarIcon: false, // 【开关】进度图标常驻
     showFirefly: false, // 【状态】萤火虫特效
     showSnowfall: false, // 【状态】雪花特效

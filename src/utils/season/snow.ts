@@ -53,9 +53,9 @@ const initSnowfall = () => {
       snowflakes.push({
         x: Math.random() * canvas!.width,
         y: Math.random() * canvas!.height,
-        opacity: Math.random() * 0.7 + 0.3,
-        speedX: Math.random() * 0.6 + 0.2,
-        speedY: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.3 + 0.2,
+        speedX: Math.random() * 0.3 + 0.2,
+        speedY: Math.random() * 1.2 + 0.3,
         radius: Math.random() * 2 + 1,
         angle: Math.random() * Math.PI * 2,
       });

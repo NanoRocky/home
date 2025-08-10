@@ -42,10 +42,11 @@
           <!-- &amp; -->
           <!-- 逐字模块山 -->
           <div class="lrc-all"
-            :key="store.playerLrc.length != 0 ? `lrc-line-${store.playerLrc[0][2]}` : `lrc-line-null`">
+            :key="store.playerLrc.length != 0 ? `lrc-line-${store.playerLrc[0][2]}-${store.lyricSeekVersion}` : `lrc-line-null`">
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
             &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg);" class="paws-1" color="var(--footer-music-paw-icon-color)">
+            <Icon size="20" style="transform: rotate(-18deg);" class="paws-1"
+              color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>
             <span class="dwrc-box">
@@ -77,7 +78,8 @@
             `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}` : '猫猫正在翻找歌词...'">
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
             &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg);" class="paws-3" color="var(--footer-music-paw-icon-color)">
+            <Icon size="20" style="transform: rotate(-18deg);" class="paws-3"
+              color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>
             <span class="lrc-text text-hidden" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
@@ -187,13 +189,13 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     const [[start, duration], _a, _b, _c] = item;
     const inputItem = inputDom[i] as HTMLElement;
     if (!inputItem || inputItem.hasAttribute('data-start')) {
-      return;
+      continue;
     };
     const computedStyle = window.getComputedStyle(inputItem);
     const width = parseFloat(computedStyle.width);
     if (isNaN(width)) {
       inputItem.removeAttribute('data-start');
-      return;
+      continue;
     };
     const outputItem = outputDom[i] as HTMLElement;
     const animateOptions: KeyframeAnimationOptions = {

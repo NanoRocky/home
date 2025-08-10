@@ -56,8 +56,8 @@ const initFirefly = () => {
         x: Math.random() * canvas!.width,
         y: Math.random() * canvas!.height,
         opacity: Math.random(),
-        speedX: Math.random() * 1.5 - 0.75,
-        speedY: Math.random() * 1.5 - 0.75,
+        speedX: Math.random() * 1.2 - 0.35,
+        speedY: Math.random() * 1.2 - 0.35,
         radius: Math.random() * 2 + 1,
       });
     }

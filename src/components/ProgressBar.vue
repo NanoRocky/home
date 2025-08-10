@@ -7,7 +7,7 @@
                 @touchstart.prevent="handleTouchStart" ref="icon" />
             <!-- <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false"
                 :onmousedown="handleMouseDown" @touchstart.prevent="handleTouchStart" ref="icon" /> -->
-            <Icon v-if="!store.playerCanplay" size="32" color="black" class="ReloadCircle">
+            <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
                 <ReloadCircle />
             </Icon>
         </div>
