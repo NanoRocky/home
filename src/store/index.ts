@@ -8,6 +8,7 @@ export const mainStore = defineStore("main", {
     coverType: 1 as number, // 【开关】壁纸种类
     sBGCount: null as string | null, // 【状态】使用内置壁纸时用于临时指定壁纸的接口
     seasonalEffects: true, // 【开关】季节特效
+    msgNameShow: true, // 【开关】信息区域显示自定义名而非原本的 URL
     siteStartShow: true, // 【开关】建站日期显示
     musicClick: true, // 【开关】音乐链接是否跳转
     musicIsOk: false, // 【状态】音乐是否加载完成
@@ -141,6 +142,7 @@ export const mainStore = defineStore("main", {
       pick: [
         // 会话性存储，这里的变量在重新打开页面时恢复默认值，多个窗口不互通，用于存储一些特殊的仅本次生效的设置
         'setV',
+        'msgNameShow'
       ],
     },
   ],

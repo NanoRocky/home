@@ -39,6 +39,7 @@
     --set-radio-border-ck-color: rgba(245, 245, 245, 0.9);
     --set-radio-bg-color: rgba(245, 245, 245, 0.1);
     --set-radio-bg-ck-color: rgba(245, 245, 245, 0.3);
+    --set-tooltip-effect: dark;
 
 
     a,
@@ -80,8 +81,9 @@ body {
     --el-message-text-color: var(--text-color) !important;
 }
 
-.el-popper.is-dark {
+.el-popper.is-color {
     background: var(--tooltip-background-color) !important;
+    color: var(--text-color) !important;
 }
 
 .el-card {

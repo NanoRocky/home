@@ -41,7 +41,15 @@ const store = mainStore();
 const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
 // 站点链接
 const siteUrl = computed(() => {
-  const url = import.meta.env.VITE_SITE_MAIN_NAME;
+  let mns: string | null = null;
+  if (store.msgNameShow) {
+    mns = import.meta.env.VITE_SITE_MAIN_NAME  ||  import.meta.env.VITE_SITE_URL || "nanorocky.top";
+    // 这里并没有处理显示自定义内容后的分段点，因为这个点看着也不错，有种写字时封笔的感觉，就不处理啦~
+    // 才不是懒的！（x）
+  } else {
+    mns = import.meta.env.VITE_SITE_URL || "nanorocky.top";
+  };
+  const url = mns;
   if (!url) return "nanorocky.top".split(".");
   // 判断协议前缀
   if (url.startsWith("http://") || url.startsWith("https://")) {

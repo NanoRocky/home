@@ -39,13 +39,13 @@
           <span class="sm">.{{ siteUrl[1] }}</span>
         </div>
         <div class="version">
-          <el-tooltip content="Version" placement="top" :show-arrow="false">
+          <el-tooltip content="Version" placement="top" effect="color" :show-arrow="false">
             <div class="num" @dblclick="toggleVer">v&nbsp;{{ config.version }}</div>
           </el-tooltip>
-          <el-tooltip content="Powered by imsyy" placement="top" :show-arrow="false">
+          <el-tooltip content="Powered by imsyy" placement="top" effect="color" :show-arrow="false">
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
-          <el-tooltip content="Extension Function Updates by NanoRocky" placement="top" :show-arrow="false">
+          <el-tooltip content="Extension Function Updates by NanoRocky" placement="top" effect="color" :show-arrow="false">
             <file-editing-one class="github" theme="outline" size="24" @click="jumpTo(config.efug)" />
           </el-tooltip>
         </div>
@@ -204,6 +204,10 @@ const jumpTo = (url) => {
         .num {
           font-size: 1rem;
           font-family: "字魂萌趣软糖体";
+        }
+
+        .el-popper{
+          background: linear-gradient(90deg, rgb(159, 229, 151), rgb(204, 229, 129));
         }
 
         .github {

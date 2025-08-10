@@ -135,6 +135,7 @@ const {
   seasonalEffects,
   setV,
   theme,
+  msgNameShow,
 } = storeToRefs(store);
 
 // 默认选中项
