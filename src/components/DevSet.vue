@@ -29,7 +29,14 @@
                     </el-form>
                 </div>
             </el-collapse-item>
-            <el-collapse-item title="检查版本更新" name="3">
+            <el-collapse-item title="个性化设置" name="3">
+                <div class="item">
+                    <span class="text">信息区域显示自定义名</span>
+                    <el-switch v-model="msgNameShow" inline-prompt :active-icon="CheckSmall"
+                        :inactive-icon="CloseSmall" />
+                </div>
+            </el-collapse-item>
+            <el-collapse-item title="检查版本更新" name="4">
                 <div class="item">
                     <div class="upver">版本号 v{{ versionInfo.version }}，{{ versTypeT }}，{{ versionInfo.channel }} 渠道，by {{
                         versionInfo.upa }} 。
@@ -75,6 +82,8 @@ const {
     footerProgressBar,
     seasonalEffects,
     setV,
+    theme,
+    msgNameShow,
 } = storeToRefs(store);
 
 const versionInfo = parseVersion(config.version);

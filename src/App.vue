@@ -73,6 +73,18 @@ watch(
 );
 
 // 监听主题变化
+const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+
+const handleThemeChange = (e) => {
+  if (store.theme === "system") {
+    if (e.matches) {
+      document.documentElement.dataset.theme = "dark";
+    } else {
+      document.documentElement.dataset.theme = "light";
+    }
+  }
+};
+
 watch(
   () => store.theme,
   (theme) => {
@@ -81,18 +93,15 @@ watch(
     } else if (theme === "dark") {
       document.documentElement.dataset.theme = "dark";
     } else {
-      const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-      if (darkThemeMq.matches) {
-        document.documentElement.dataset.theme = "dark";
-      } else {
-        document.documentElement.dataset.theme = "light";
-      }
+      handleThemeChange(darkThemeMq);
     }
   },
   { immediate: true }
 );
 
 onMounted(() => {
+  darkThemeMq.addEventListener("change", handleThemeChange);
+
   // 自定义鼠标
   cursorInit();
 
@@ -143,6 +152,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", getWidth);
+  darkThemeMq.removeEventListener("change", handleThemeChange);
 });
 </script>
 
