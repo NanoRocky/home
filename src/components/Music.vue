@@ -7,7 +7,7 @@
     v-show="store.musicOpenState"
   >
     <div class="btns">
-      <span @click="openMusicList()">音乐列表</span>
+      <span @click="store.musicBoxOpenState = true">音乐列表</span>
       <span @click="store.musicOpenState = false">回到一言</span>
     </div>
     <div class="control">
@@ -45,7 +45,7 @@
   </div>
   <!-- 音乐列表弹窗 -->
   <Transition name="fade" mode="out-in">
-    <div class="music-list" v-show="musicListShow" @click="closeMusicList()">
+    <div class="music-list" v-show="musicListShow" @click="store.musicBoxOpenState = false">
       <Transition name="zoom">
         <div class="list" v-show="musicListShow" @click.stop>
           <close-one
@@ -53,7 +53,7 @@
             theme="filled"
             size="28"
             fill="var(--close-icon-color)"
-            @click="closeMusicList()"
+            @click="store.musicBoxOpenState = false"
           />
           <Player
             ref="playerRef"
@@ -190,6 +190,17 @@ watch(
   (value) => {
     store.musicVolume = value;
     playerRef.value!.changeVolume(store.musicVolume);
+  },
+);
+
+watch(
+  () => store.musicBoxOpenState,
+  (value) => {
+    if (value) {
+      openMusicList();
+    } else {
+      closeMusicList();
+    };
   },
 );
 </script>

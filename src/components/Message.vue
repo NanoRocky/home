@@ -51,12 +51,12 @@ const siteUrl = computed(() => {
   };
   const url = mns;
   if (!url) return "nanorocky.top".split(".");
+  let urlFormat = url;
   // 判断协议前缀
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    const urlFormat = url.replace(/^(https?:\/\/)/, "");
-    return urlFormat.split(".");
-  };
-  return url.split(".");
+  urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
+  const domainOnly = urlFormat.split('/')[0];
+  const hostname = domainOnly.split(':')[0];
+  return hostname.split(".");
 });
 
 // 简介区域文字

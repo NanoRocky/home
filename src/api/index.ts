@@ -1,12 +1,12 @@
 // import axios from "axios";
 import fetchJsonp from "fetch-jsonp";
-import { gwg } from "@/utils/authServer";
+import { gwg, gwgt } from "@/utils/authServer";
 
 /**
  * JSONP 请求模块
  */
 // JSONP 请求函数，并返回 JSON 【关于为什么要有这个呢...请腾讯自觉扫一下（x）】
-const loadJSONP = (url, callbackName) => {
+const loadJSONP = (url:string, callbackName:string) => {
   return new Promise((resolve, reject) => {
     // 定义 JSONP 回调函数
     (window as any)[callbackName] = (data: any) => {
@@ -29,7 +29,7 @@ const loadJSONP = (url, callbackName) => {
  */
 
 // 获取音乐播放列表
-export const getPlayerList = async (server, type, id, serverse, idse) => {
+export const getPlayerList = async (server:string, type:string, id:string, serverse:string, idse:string) => {
   let dataf: any[] = [];
   if (serverse != null && idse != null) {
     const res1 = await fetch(
@@ -87,50 +87,50 @@ export const getHitokoto = async () => {
  * 天气
  */
 // 获取腾讯地理位置信息（JSONP 方式）
-export const getTXAdcode = async (key) => {
+export const getTXAdcode = async (key:string) => {
   const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   const url = `https://apis.map.qq.com/ws/location/v1/ip?key=${key}&output=jsonp&callback=${callback}`;
   return await loadJSONP(url, callback);
 };
 
 // 获取腾讯地理天气信息（JSONP 方式）
-export const getTXWeather = async (key, adcode) => {
+export const getTXWeather = async (key:string, adcode:string) => {
   const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   const url = `https://apis.map.qq.com/ws/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=jsonp&callback=${callback}`;
   return await loadJSONP(url, callback);
 };
 
 // 获取腾讯地理位置信息（鉴权模式 JSONP 方式）
-export const getTXAdcodeS = async (key, skey) => {
+export const getTXAdcodeS = async (key:string, skey:string) => {
   const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   const url = `https://apis.map.qq.com/ws/location/v1/ip?key=${key}&output=jsonp&callback=${callback}`;
-  const urls = await gwg(url, skey);
+  const urls = await gwgt(url, skey);
   return await loadJSONP(urls, callback);
 };
 
 // 获取腾讯地理天气信息（鉴权模式 JSONP 方式）
-export const getTXWeatherS = async (key, adcode, skey) => {
+export const getTXWeatherS = async (key:string, adcode:string, skey:string) => {
   const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   const url = `https://apis.map.qq.com/ws/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=jsonp&callback=${callback}`;
-  const urls = await gwg(url, skey);
+  const urls = await gwgt(url, skey);
   return await loadJSONP(urls, callback);
 };
 
 
 // 获取高德地理位置信息
-export const getGDAdcode = async (key) => {
+export const getGDAdcode = async (key:string) => {
   const res = await fetch(`https://restapi.amap.com/v3/ip?key=${key}`);
   return await res.json();
 };
 
 // 获取高德地理位置信息（带IP）
-export const getGDAdcodeI = async (ipv4, key) => {
+export const getGDAdcodeI = async (ipv4:string, key:string) => {
   const res = await fetch(`https://restapi.amap.com/v3/ip?ip=${ipv4}&key=${key}`);
   return await res.json();
 };
 
 // 获取高德地理天气信息
-export const getGDWeather = async (key, city) => {
+export const getGDWeather = async (key:string, city:string) => {
   const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`);
   return await res.json();
 };
@@ -164,7 +164,7 @@ export const getOtherWeather = async () => {
 
 // 获取小米天气 API
 // 这个接口或许会比上面两个稳的多，但是它需要自己定位并转换 Adcode ...
-export const getXMWeather = async (city) => {
+export const getXMWeather = async (city:string) => {
   const res = await fetch(`https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?latitude=0&longitude=0&isLocated=true&locationKey=weathercn%3A${city}&days=2&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07&locale=zh_cn&alpha=false&isGlobal=false`);
   return await res.json();
 };

@@ -89,8 +89,9 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data: SiteLink) => {
-  if (data.name === "音乐" && store.musicClick) {
-    if (typeof $openList === "function") $openList();
+  if (data.name === "音乐" && store.musicClick && store.musicIsOk) {
+    store.musicBoxOpenState = !store.musicBoxOpenState;
+    return;
   } else {
     window.open(data.link, "_blank");
   };

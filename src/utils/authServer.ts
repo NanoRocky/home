@@ -10,8 +10,7 @@
 import { md5 as d } from "js-md5";
 
 let x: number | null = null, y: number | null = null;
-const f = () => Math.floor(Date.now() / 1000);
-const o = (v) => v.toString(16);
+const f = () => Math.floor(Date.now() / 1000), o = (v) => v.toString(16);
 
 async function gst() {
     // 为什么这里要整一个模块用于获取网络时间呢...
@@ -29,44 +28,50 @@ async function gst() {
     return x + (f() - y);
 };
 
-export async function gwp(u, s, b) {
+export async function gwp(u:string, s:string, b:Record<string, any>) {
     // 备注：POST 方法需要传入 body ！
     const { origin: ul, pathname: p } = new URL(u);
     return `${ul}${p}?sig=${d(`${p}?${Object.keys(b).sort().map(key => `${key}=${JSON.stringify(b[key])}`).join("&")}${s}`).toLowerCase()}`;
 };
 
-
-export async function gwg(u, s) {
+export async function gwg(u:string, s:string) {
     const { origin: ul, pathname: p } = new URL(u), q = new URLSearchParams(new URL(u).search);
     q.set("sig", d(`${p}?${[...q.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => `${key}=${value}`).join("&")}${s}`).toLowerCase());
     return `${ul}${p}?${q.toString()}`;
 };
 
-export async function gasA(p, s) {
+export async function gwgt(u:string, s:string) {
+    // 脱裤子放屁，这个模块硬加一个时间戳参与计算签名使得每次调用时的签名密钥看起来不一样，但只是看起来有用。
+    // 因为鹅厂位置服务不校验时间戳，也不关心签名有效期，所以只是纯看起来有用而已（）
+    const { origin: ul, pathname: p } = new URL(u), q = new URLSearchParams(new URL(u).search);
+    q.set("time", (await gst()).toString());
+    q.set("sig", d(`${p}?${[...q.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => `${key}=${value}`).join("&")}${s}`).toLowerCase());
+    return `${ul}${p}?${q.toString()}`;
+};
+
+export async function gasA(p:string, s:string) {
     const t = await gst(), r = Math.random().toString(36).substring(2, 12);
     return [t, r, "0", d(`${p}-${t}-${r}-0-${s}`)].join("-");
 };
 
-export async function gasB(u, s) {
-    const { origin: ul, pathname: p } = new URL(u);
-    const t = new Date((await gst()) * 1000 + 8 * 3600 * 1000).toISOString().replace(/[-T:]|(\..*)/g, "").substring(0, 12);
+export async function gasB(u:string, s:string) {
+    const { origin: ul, pathname: p } = new URL(u), t = new Date((await gst()) * 1000 + 8 * 3600 * 1000).toISOString().replace(/[-T:]|(\..*)/g, "").substring(0, 12);
     return `${ul}/${t}/${d(`${s}${t}/${p.startsWith('/') ? p.slice(1) : p}`)}/${p.startsWith('/') ? p.slice(1) : p}`;
 };
 
-export async function gasC(u, s) {
-    const { origin: ul, pathname: p } = new URL(u);
-    const t = o((await gst()));
+export async function gasC(u:string, s:string) {
+    const { origin: ul, pathname: p } = new URL(u), t = o((await gst()));
     return `${ul}/${d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`)}/${t}/${p.startsWith('/') ? p.slice(1) : p}`;
 };
 
-export async function gasDH(u, s) {
+export async function gasDH(u:string, s:string) {
     const ul = new URL(u), p = ul.pathname, t = await gst();
     ul.searchParams.set("sign", d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`));
     ul.searchParams.set("t", t.toString());
     return ul.toString();
 };
 
-export async function gasDI(u, s) {
+export async function gasDI(u:string, s:string) {
     const ul = new URL(u), p = ul.pathname, t = o(await gst());
     ul.searchParams.set("sign", d(`${s}/${p.startsWith('/') ? p.slice(1) : p}${t}`));
     ul.searchParams.set("t", t.toString());
