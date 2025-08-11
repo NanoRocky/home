@@ -127,14 +127,16 @@ const siteIcp = ref(import.meta.env.VITE_SITE_ICP);
 const siteMps = ref(import.meta.env.VITE_SITE_MPS);
 const siteMICP = ref(import.meta.env.VITE_SITE_MICP);
 const siteAuthor = ref(import.meta.env.VITE_SITE_AUTHOR);
+
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
-  if (!url) return "https://nanorocky.top";
+  if (!url) return "nanorocky.top".split(".");
+  let urlFormat = url;
   // 判断协议前缀
-  if (!url.startsWith("http://") && !url.startsWith("https://")) {
-    return "//" + url;
-  };
-  return url;
+  urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
+  const domainOnly = urlFormat.split('/')[0];
+  const hostname = domainOnly.split(':')[0];
+  return hostname.split(".");
 });
 
 const toggleForceIcon = () => {

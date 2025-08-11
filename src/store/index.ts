@@ -11,6 +11,7 @@ export const mainStore = defineStore("main", {
     msgNameShow: true, // 【开关】信息区域显示自定义名而非原本的 URL
     siteStartShow: true, // 【开关】建站日期显示
     musicClick: true, // 【开关】音乐链接是否跳转
+    musicBoxOpenState: false, // 【状态】音乐盒子开启状态
     musicIsOk: false, // 【状态】音乐是否加载完成
     musicVolume: 0.7 as number, // 【开关】音乐音量
     musicOpenState: false, // 【状态】音乐面板开启状态
@@ -49,7 +50,7 @@ export const mainStore = defineStore("main", {
     showFirefly: false, // 【状态】萤火虫特效
     showSnowfall: false, // 【状态】雪花特效
     showLantern: false, // 【状态】灯笼特效
-    theme: "system", // 【开关】主题
+    theme: "dark", // 【开关】主题
   }),
   getters: {
     // 获取歌词

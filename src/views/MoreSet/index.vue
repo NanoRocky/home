@@ -45,7 +45,8 @@
           <el-tooltip content="Powered by imsyy" placement="top" effect="color" :show-arrow="false">
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
-          <el-tooltip content="Extension Function Updates by NanoRocky" placement="top" effect="color" :show-arrow="false">
+          <el-tooltip content="Extension Function Updates by NanoRocky" placement="top" effect="color"
+            :show-arrow="false">
             <file-editing-one class="github" theme="outline" size="24" @click="jumpTo(config.efug)" />
           </el-tooltip>
         </div>
@@ -79,12 +80,12 @@ let chuover = 0;
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
   if (!url) return "nanorocky.top".split(".");
+  let urlFormat = url;
   // 判断协议前缀
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    const urlFormat = url.replace(/^(https?:\/\/)/, "");
-    return urlFormat.split(".");
-  }
-  return url.split(".");
+  urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
+  const domainOnly = urlFormat.split('/')[0];
+  const hostname = domainOnly.split(':')[0];
+  return hostname.split(".");
 });
 
 const toggleVer = () => {
@@ -206,7 +207,7 @@ const jumpTo = (url) => {
           font-family: "字魂萌趣软糖体";
         }
 
-        .el-popper{
+        .el-popper {
           background: linear-gradient(90deg, rgb(159, 229, 151), rgb(204, 229, 129));
         }
 

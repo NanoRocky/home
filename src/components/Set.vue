@@ -98,7 +98,7 @@
         </div>
       </el-collapse-item>
       <el-collapse-item title="其他设置" name="7">
-        <div>暂时没有其它啦qwq</div>
+        <div class="text">暂时没有其它啦qwq</div>
       </el-collapse-item>
       <el-collapse-item v-if="setV" title="开发设置" name="8">
         <DevSet />
