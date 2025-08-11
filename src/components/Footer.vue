@@ -21,12 +21,14 @@
         </span>
         <!-- 站点备案 -->
         <span>
+          <template v-if="siteIcp">&nbsp;&amp;&nbsp;</template>
           <a v-if="siteIcp" href="https://beian.miit.gov.cn" target="_blank">
-            &amp;&nbsp;{{ siteIcp }}
+            {{ siteIcp }}
           </a>
+          <template v-if="siteMps">&nbsp;&amp;&nbsp;</template>
           <!-- 这备那备的真的很扫（bushi） -->
           <a v-if="siteMps" href="https://beian.mps.gov.cn" target="_blank">
-            &amp;&nbsp;{{ siteMps }}
+            {{ siteMps }}
           </a>
         </span>
       </div>
