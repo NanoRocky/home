@@ -101,6 +101,15 @@ const getTXW = async () => {
       adcode: adCode.result.ad_info.adcode,
     };
     // 获取天气信息
+    if (weatherData.adCode.adcode == null) {
+      if (store.webSpeech) {
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("天气加载失败.mp3");
+      };
+      throw "猫猫无法找到当前地区的天气信息qwq";
+    };
     const txWeather = (await getTXWeather(txkey, weatherData.adCode.adcode)) as TXWeatherResponse;
     if (String(txWeather.status) !== "0") {
       if (store.webSpeech) {
@@ -145,6 +154,15 @@ const getTXW = async () => {
       adcode: adCode.result.ad_info.adcode,
     };
     // 获取天气信息
+    if (weatherData.adCode.adcode == null) {
+      if (store.webSpeech) {
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("天气加载失败.mp3");
+      };
+      throw "猫猫无法找到当前地区的天气信息qwq";
+    };
     const txWeather = (await getTXWeatherS(txkey, weatherData.adCode.adcode, txskey)) as TXWeatherResponse;
     if (String(txWeather.status) !== "0") {
       if (store.webSpeech) {
@@ -204,6 +222,15 @@ const getGDW = async () => {
     };
   };
   // 获取天气信息
+  if (weatherData.adCode.adcode == null) {
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("天气加载失败.mp3");
+    };
+    throw "猫猫无法找到当前地区的天气信息qwq";
+  };
   const result = (await getGDWeather(gdkey, weatherData.adCode.adcode)) as GDWeatherResponse;
   if (String(result?.status) !== "1" || String(result?.infocode) !== "10000") {
     if (store.webSpeech) {
@@ -256,7 +283,7 @@ const getHXHW = async () => {
     weather: result.data.type || result.data.night.type,
     temperature: getTemperature(result.data.low || result.data.night.low, result.data.high || result.data.night.high),
     winddirection: result.data.fengxiang || result.data.night.fengxiang,
-    windpower: (!result.data.fengli || result.data.fengli.trim() === '级')? result.data.night?.fengli || '未知' : result.data.fengli,
+    windpower: (!result.data.fengli || result.data.fengli.trim() === '级') ? result.data.night?.fengli || '未知' : result.data.fengli,
   };
 };
 
