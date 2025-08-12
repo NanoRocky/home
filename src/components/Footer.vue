@@ -19,19 +19,34 @@
             {{ config.author }}
           </a>
         </span>
+        <span class="hidden">
+          &amp;&nbsp;Update&nbsp;by
+          <a :href="config.efug" target="_blank">
+            {{ config.efua }}
+          </a>
+        </span>
         <!-- 站点备案 -->
         <span>
-          <a v-if="siteIcp" href="https://beian.miit.gov.cn" target="_blank">
-            &amp;&nbsp; {{ siteIcp }}
-          </a>
+          <span v-if="siteIcp">
+            &amp;&nbsp;
+            <a v-if="siteIcp" href="https://beian.miit.gov.cn" target="_blank">
+              {{ siteIcp }}
+            </a>
+          </span>
           <!-- 这备那备的真的很扫（bushi） -->
-          <a v-if="siteMps" href="https://beian.mps.gov.cn" target="_blank">
-            &amp;&nbsp;{{ siteMps }}
-          </a>
+          <span v-if="siteMps">
+            &amp;&nbsp;
+            <a v-if="siteMps" href="https://beian.mps.gov.cn" target="_blank">
+              {{ siteMps }}
+            </a>
+          </span>
           <!-- 不妨碍再整个活儿 -->
-          <a v-if="siteMICP" href="https://icp.gov.moe/?keyword=20257739" target="_blank">
-            &amp;&nbsp;{{ siteMICP }}
-          </a>
+          <span v-if="siteMICP">
+            &amp;&nbsp;
+            <a v-if="siteMICP" href="https://icp.gov.moe/?keyword=20257739" target="_blank">
+              {{ siteMICP }}
+            </a>
+          </span>
         </span>
       </div>
       <div v-else class="lrc" @dblclick="toggleForceIcon">

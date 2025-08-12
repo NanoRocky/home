@@ -43,6 +43,7 @@ export async function gwg(u:string, s:string) {
 export async function gwgt(u:string, s:string) {
     // 脱裤子放屁，这个模块硬加一个时间戳参与计算签名使得每次调用时的签名密钥看起来不一样，但只是看起来有用。
     // 因为鹅厂位置服务不校验时间戳，也不关心签名有效期，所以只是纯看起来有用而已（）
+    // 看它啥时候能良心发现叭（）
     const { origin: ul, pathname: p } = new URL(u), q = new URLSearchParams(new URL(u).search);
     q.set("time", (await gst()).toString());
     q.set("sig", d(`${p}?${[...q.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => `${key}=${value}`).join("&")}${s}`).toLowerCase());
