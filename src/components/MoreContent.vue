@@ -26,7 +26,6 @@ onMounted(async () => {
     const baseUrl = "https://filep.nanorocky.top/home/images/msg/";
     const imgUrl = `${baseUrl}MSG${msgpRandomp}.png`;
     if (key) {
-      // 假设 gasC 是异步函数
       msgP.value = await gasC(imgUrl, key);
     } else {
       msgP.value = imgUrl;
