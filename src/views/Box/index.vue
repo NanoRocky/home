@@ -46,6 +46,7 @@ const closeShow = ref(false);
   max-width: 50%;
   position: relative;
   animation: fade 0.5s;
+  overflow: hidden;
 
   &:hover {
     transform: scale(1);
@@ -78,6 +79,7 @@ const closeShow = ref(false);
   .content {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     padding: 30px;
     width: 100%;
     height: 100%;

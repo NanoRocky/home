@@ -50,7 +50,7 @@ export const mainStore = defineStore("main", {
     showFirefly: false, // 【状态】萤火虫特效
     showSnowfall: false, // 【状态】雪花特效
     showLantern: false, // 【状态】灯笼特效
-    theme: "auto", // 【开关】主题
+    theme: "system", // 【开关】主题，"system"/"time"/"bg"/"light"/"dark"。
   }),
   getters: {
     // 获取歌词
