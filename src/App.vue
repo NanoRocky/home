@@ -3,7 +3,7 @@
   <!-- 加载 -->
   <Loading />
   <!-- 壁纸 -->
-  <Background @loadComplete="loadComplete" />
+  <Background @loadComplete="loadComplete" @imageLoaded="onImageLoaded" />
   <!-- 主界面 -->
   <Transition name="fade" mode="out-in">
     <main id="main" v-if="store.imgLoadStatus">
@@ -45,8 +45,10 @@ import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { getColor } from "@/utils/getColor";
 
 const store = mainStore();
+const timeThemeInterval = ref<any>(null);
 
 // 页面宽度
 const getWidth = () => {
@@ -75,26 +77,58 @@ watch(
 // 监听主题变化
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 
-const handleThemeChange = (e) => {
+const handleThemeChange = (e?: any) => {
   if (store.theme === "system") {
-    if (e.matches) {
-      document.documentElement.dataset.theme = "dark";
-    } else {
-      document.documentElement.dataset.theme = "light";
-    }
+    const isDark = e ? e.matches : darkThemeMq.matches;
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
   }
+};
+
+const onImageLoaded = (img: HTMLImageElement) => {
+  if (store.theme === 'bg') {
+    getColor(img)
+      .then((theme) => {
+        document.documentElement.dataset.theme = theme;
+      })
+      .catch((err) => {
+        console.error(err);
+        ElMessage.error("背景主题切换失败，已回退到跟随系统");
+        store.theme = "system";
+      });
+  };
 };
 
 watch(
   () => store.theme,
   (theme) => {
+    if (timeThemeInterval.value) {
+      clearInterval(timeThemeInterval.value);
+      timeThemeInterval.value = null;
+    };
     if (theme === "light") {
       document.documentElement.dataset.theme = "light";
     } else if (theme === "dark") {
       document.documentElement.dataset.theme = "dark";
-    } else {
-      handleThemeChange(darkThemeMq);
-    }
+    } else if (theme === "system") {
+      handleThemeChange();
+    } else if (theme === "time") {
+      const setTimeTheme = () => {
+        const now = new Date();
+        const hour = now.getHours();
+        if (hour >= 19 || hour < 6) {
+          document.documentElement.dataset.theme = "dark";
+        } else {
+          document.documentElement.dataset.theme = "light";
+        };
+      };
+      setTimeTheme();
+      timeThemeInterval.value = setInterval(setTimeTheme, 60000);
+    } else if (theme === "bg") {
+      const bgImg = document.querySelector('.bg') as HTMLImageElement;
+      if (bgImg && bgImg.complete) {
+        onImageLoaded(bgImg);
+      };
+    };
   },
   { immediate: true }
 );
@@ -153,6 +187,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", getWidth);
   darkThemeMq.removeEventListener("change", handleThemeChange);
+  if (timeThemeInterval.value) {
+    clearInterval(timeThemeInterval.value);
+  }
 });
 </script>
 

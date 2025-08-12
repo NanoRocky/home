@@ -1,7 +1,7 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <img v-show="store.imgLoadStatus" :src="bgUrl" class="bg" alt="cover" @load="imgLoadComplete"
-      @error.once="imgLoadError" @animationend="imgAnimationEnd" />
+      @error.once="imgLoadError" @animationend="imgAnimationEnd" crossorigin="anonymous" />
     <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -24,7 +24,7 @@ import { gasC } from "@/utils/authServer";
 const store = mainStore();
 const bgUrl = ref(null);
 const imgTimeout = ref(null);
-const emit = defineEmits(["loadComplete"]);
+const emit = defineEmits(["loadComplete", "imageLoaded"]);
 const key = import.meta.env.VITE_SFILE_SKEY;
 const isLoading = ref(false);
 
@@ -156,7 +156,8 @@ const changeBg = async (type) => {
 
 
 // 图片加载完成
-const imgLoadComplete = () => {
+const imgLoadComplete = (event) => {
+  emit("imageLoaded", event.target);
   imgTimeout.value = setTimeout(
     () => {
       store.setImgLoadStatus(true);

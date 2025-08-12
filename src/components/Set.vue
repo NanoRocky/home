@@ -15,9 +15,11 @@
       </el-collapse-item>
       <el-collapse-item title="主题设置" name="2">
         <div class="item">
-          <span class="text">主题模式</span>
+          <span class="text">主题模式</span><br><br>
           <el-radio-group v-model="theme" size="small" text-color="#FFFFFF">
             <el-radio value="system" border>跟随系统</el-radio>
+            <el-radio value="time" border>跟随时间</el-radio>
+            <el-radio value="bg" border>跟随背景</el-radio>
             <el-radio value="light" border>浅色模式</el-radio>
             <el-radio value="dark" border>深色模式</el-radio>
           </el-radio-group>

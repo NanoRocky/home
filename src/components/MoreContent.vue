@@ -45,30 +45,37 @@ onMounted(async () => {
   justify-content: center;
   margin-top: 20px;
   width: 100%;
-  height: 100%;
+  max-height: 100%;
+  flex: 1;
 
   .greeting {
-    font-size: 1rem;
-    font-weight: bold;
-    width: 95%;
+    font-family: MiSans VF;
+    font-weight: 520;
+    font-size: 1.05rem;
+    width: 100%;
     text-align: center;
     padding: 0 10px;
+    color: var(--text-color);
   }
 
   .msg-image {
-    width: 95%;
-    max-height: 75%;
+    width: auto;
+    height: auto;
+    max-height: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: flex-end;
     overflow: hidden;
     position: relative;
 
     .msgp {
+      width: auto;
+      height: auto;
       max-width: 100%;
       max-height: 100%;
+      opacity: 0.9;
       object-fit: contain;
-      object-position: top;
+      object-position: bottom;
     }
   }
 
