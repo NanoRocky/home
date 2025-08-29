@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
+import { createResetPlugin } from '@/store/plugins/piniaResetPlugin'
+import type { MainState } from "@/typings/store";
 
 export const mainStore = defineStore("main", {
   // 这些变量，非有能力的开发者请只操作【开关】项来实现个性化的默认设置，其余变量勿动！
-  state: () => ({
+  state: (): MainState => ({
     imgLoadStatus: false, // 【状态】壁纸加载状态
     innerWidth: null as number | null, // 【状态】当前窗口宽度
     coverType: 1 as number, // 【开关】壁纸种类
@@ -110,6 +112,13 @@ export const mainStore = defineStore("main", {
         this.sBGCount = value;
       } else {
         return 'not use';
+      };
+    },
+    resetStore() {
+      const initialState = JSON.parse(JSON.stringify(this.$state));
+      this.$reset = () => {
+        this.$patch(JSON.parse(JSON.stringify(initialState)));
+        this.$state = JSON.parse(JSON.stringify(initialState));
       };
     },
   },

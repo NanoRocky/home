@@ -8,16 +8,27 @@ import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 // swiper
 import "swiper/css";
+import { createResetPlugin } from '@/store/plugins/piniaResetPlugin'
 
 const app = createApp(App);
 const pinia = createPinia();
 
-pinia.use(piniaPluginPersistedstate);
 export default pinia;
+pinia.use(piniaPluginPersistedstate);
+pinia.use(createResetPlugin());
 
 app.use(pinia);
 app.mount("#app");
 const store = mainStore();
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("set") === "reset") {
+  localStorage.removeItem("main");
+  sessionStorage.removeItem("main");
+  store.resetStore();
+  store.$reset();
+  window.location.href = window.location.pathname;
+};
 
 // PWA
 navigator.serviceWorker.addEventListener("controllerchange", async () => {
