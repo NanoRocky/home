@@ -22,7 +22,7 @@ export interface MainState {
     playerTitle: string | null;
     playerArtist: string | null;
     playerAlbum: string | null;
-    playerLrc: [boolean, string][];
+    playerLrc: [boolean, string, string, string, string, string, string][] | [boolean, string, string, string, string, string][] | [boolean, string, string, string, string][] | [boolean, string][];
     playerLrcShow: boolean;
     footerBlur: boolean;
     footerProgressBar: boolean;
