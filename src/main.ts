@@ -53,16 +53,13 @@ const setupset = () => setTimeout(() => {
       store.coverType = Number(urlParams.get("bg"));
     };
     if (urlParams.get("bgc") && (store.coverType == 0 || urlParams.get("bg") == "0")) {
-      store.sBGCount = Number(urlParams.get("bgc"));
+      store.sBGCount = String(urlParams.get("bgc"));
     };
     if (urlParams.get("devs")) {
       store.setV = Boolean(urlParams.get("devs"));
     };
     if (urlParams.get("pap")) {
       store.playerAutoplay = Boolean(urlParams.get("pap"));
-    };
-    if (urlParams.get("theme")) {
-      store.theme = urlParams.get("theme");
     };
   } else {
     setupset();
