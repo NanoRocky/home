@@ -36,7 +36,12 @@
                         :inactive-icon="CloseSmall" />
                 </div>
             </el-collapse-item>
-            <el-collapse-item title="检查版本更新" name="4">
+            <el-collapse-item title="重置" name="4">
+                <div class="item">
+                    <el-button plain class="el-button" @click="resetSettings()">重置所有设置</el-button>
+                </div>
+            </el-collapse-item>
+            <el-collapse-item title="检查版本更新" name="5">
                 <div class="item">
                     <div class="upver">版本号 v{{ versionInfo.version }}，{{ versTypeT }}，{{ versionInfo.channel }} 渠道，by {{
                         versionInfo.upa }} 。
@@ -87,7 +92,7 @@ const {
 } = storeToRefs(store);
 
 const versionInfo = parseVersion(config.version);
-
+let chuores = 0;
 const versTypeT = computed(() => {
     switch (versionInfo.type) {
         case 'preview':
@@ -158,6 +163,39 @@ const toggleEffect = (type: 'snow' | 'firefly' | 'lantern') => {
 const form = reactive({
     wallpaperId: ''
 })
+
+const resetSettings = () => {
+    chuores = chuores + 1;
+    if (chuores === 3) {
+        ElMessage({
+            dangerouslyUseHTMLString: true,
+            message: `正在恢复默认配置，请稍后...`,
+        });
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("重置2.mp3");
+        store.resetStore();
+    } else if (chuores > 3) {
+        ElMessage({
+            dangerouslyUseHTMLString: true,
+            message: `正在加载初始设置，请稍后...`,
+        });
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("重置3.mp3");
+    } else {
+        ElMessage({
+            dangerouslyUseHTMLString: true,
+            message: `确定要重置所有设置吗？操作将在点击 3 次后执行。`,
+        });
+        stopSpeech();
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
+        SpeechLocal("重置1.mp3");
+    };
+};
 
 const handleSetWallpaper = () => {
     if (store.coverType != 0) {

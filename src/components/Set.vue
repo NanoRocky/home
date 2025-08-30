@@ -4,12 +4,12 @@
       <el-collapse-item title="个性壁纸" name="1">
         <div class="bg-set">
           <el-radio-group v-model="coverType" text-color="#ffffff" @change="radioChange">
-            <el-radio value="0" size="large" border>酪灰的收藏图库</el-radio>
-            <el-radio value="1" size="large" border>随机 Furry</el-radio>
-            <el-radio value="2" size="large" border>随机 二次元</el-radio>
-            <el-radio value="3" size="large" border>随 机 猫 耳</el-radio>
-            <el-radio value="4" size="large" border>随 机 风 景</el-radio>
-            <el-radio value="5" size="large" border>必应每日随机图</el-radio>
+            <el-radio value=0 size="large" border>酪灰的收藏图库</el-radio>
+            <el-radio value=1 size="large" border>随机 Furry</el-radio>
+            <el-radio value=2 size="large" border>随机 二次元</el-radio>
+            <el-radio value=3 size="large" border>随 机 猫 耳</el-radio>
+            <el-radio value=4 size="large" border>随 机 风 景</el-radio>
+            <el-radio value=5 size="large" border>必应每日随机图</el-radio>
           </el-radio-group>
         </div>
       </el-collapse-item>
@@ -149,7 +149,7 @@ const radioChange = () => {
     message: "壁纸更换成功啦喵！",
     icon: h(SuccessPicture, {
       theme: "filled",
-      fill: "#efefef",
+      fill: "var(--el-message-icon-color)",
     }),
   });
   if (store.webSpeech) {

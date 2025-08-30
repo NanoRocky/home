@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { MainState } from "@/typings/store";
+import { validationPlugin, validationRules } from "@/store/plugins/validation";
 
 export const storeState: MainState = {
   // 这些变量，非有能力的开发者请只操作【开关】项来实现个性化的默认设置，其余变量勿动！
