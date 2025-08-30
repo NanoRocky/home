@@ -26,7 +26,7 @@ const extractVersionType = (tag: string): string => {
 };
 
 const cleanVersion = (version: string): string => {
-    let cleaned = version.replace(/^[^\d]+/i, '');
+    const cleaned = version.replace(/^[^\d]+/i, '');
     const versionParts: string[] = [];
     const parts = cleaned.split('.');
     for (const part of parts) {

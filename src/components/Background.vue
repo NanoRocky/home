@@ -180,7 +180,7 @@ const imgLoadError = async () => {
     message: "壁纸加载失败惹喵...已临时切换回默认！",
     icon: h(Error, {
       theme: "filled",
-      fill: "#efefef",
+      fill: "var(--el-message-icon-color)",
     }),
   });
   if (key) {
