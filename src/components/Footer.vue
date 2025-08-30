@@ -145,13 +145,18 @@ const siteAuthor = ref(import.meta.env.VITE_SITE_AUTHOR);
 
 const siteUrl = computed(() => {
   const url = import.meta.env.VITE_SITE_URL;
-  if (!url) return "nanorocky.top".split(".");
-  let urlFormat = url;
-  // 判断协议前缀
-  urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
-  const domainOnly = urlFormat.split('/')[0];
-  const hostname = domainOnly.split(':')[0];
-  return hostname.split(".");
+  if (!url) return "https://nanorocky.top/";
+  let fullUrl = url;
+  if (!/^https?:\/\//i.test(url)) {
+    fullUrl = "https://" + url;
+  };
+  fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
+  try {
+    const urlObj = new URL(fullUrl);
+    return urlObj.toString();
+  } catch (e) {
+    return "https://nanorocky.top/";
+  };
 });
 
 const toggleForceIcon = () => {

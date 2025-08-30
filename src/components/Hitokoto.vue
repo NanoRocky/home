@@ -47,7 +47,7 @@ const getHitokotoData = async () => {
       message: "一言信息加载失败惹喵qwq...",
       icon: h(Error, {
         theme: "filled",
-        fill: "#efefef",
+        fill: "var(--el-message-icon-color)",
       }),
     });
     hitokotoData.text = "猫猫思考不出来惹qwq";

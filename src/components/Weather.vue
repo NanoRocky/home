@@ -351,7 +351,7 @@ const onError = (message) => {
     message,
     icon: h(Error, {
       theme: "filled",
-      fill: "#efefef",
+      fill: "var(--el-message-icon-color)",
     }),
   });
   console.error(message);

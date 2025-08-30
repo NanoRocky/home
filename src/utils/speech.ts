@@ -61,6 +61,10 @@ export function Speech(
       try {
         const speechapi = import.meta.env.VITE_TTS_API;
         const key = import.meta.env.VITE_TTS_SKEY;
+        if (!speechapi || speechapi === "" || speechapi === null) {
+          console.error("语音服务API未配置。");
+          return;
+        };
         if (!key) {
           speechapiUrlS = speechapi;
         } else {
