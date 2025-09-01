@@ -62,3 +62,26 @@ export interface GDWeatherResponse {
         windpower: string;
     }>;
 }
+
+export interface XMAdcodeItem {
+    _id: number;
+    province_id: number;
+    name: string;
+    city_num: string;
+}
+
+export interface XMWeatherStatusItem {
+    code: number;
+    wea: string;
+}
+
+export interface XMWeatherStatusData {
+    weatherinfo: XMWeatherStatusItem[];
+}
+
+export interface XMBeaufortLevel {
+    level: number;
+    minSpeed: number;
+    maxSpeed: number;
+    description: string;
+}

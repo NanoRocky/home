@@ -20,7 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { getTXAdcode, getTXWeather, getTXAdcodeS, getTXWeatherS, getGDAdcode, getGDAdcodeI, getGDWeather, getIPV4Addr, getIPV6Addr, getOtherWeather, getHXHWeather, getXMWeather } from "@/api";
+import { getTXAdcode, getTXWeather, getTXAdcodeS, getTXWeatherS, getGDAdcode, getGDAdcodeI, getGDWeather, getIPV4Addr, getIPV6Addr, getOtherWeather, getHXHWeather, getXMWeather, getIPV4AddrLocation } from "@/api";
+import { getXMWT } from "@/utils/xiaomiWeather";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
@@ -32,7 +33,10 @@ import type {
   TXWeatherResponse,
   GDAdCodeResponse,
   GDAdcodeIResponse,
-  GDWeatherResponse
+  GDWeatherResponse,
+  XMAdcodeItem,
+  XMWeatherStatusItem,
+  XMWeatherStatusData
 } from "@/typings/weather";
 
 const store = mainStore();
@@ -288,7 +292,13 @@ const getHXHW = async () => {
 };
 
 const getXMW = async () => {
-  // 待补（）
+  const xmw = await getXMWT();
+  if (!xmw) {
+    throw "猫猫无法找到当前地区的天气信息qwq";
+  } else {
+    weatherData.adCode = xmw.adCode;
+    weatherData.weather = xmw.weather;
+  };
 };
 
 // 获取天气数据
@@ -298,9 +308,13 @@ const getWeatherData = async () => {
     if (!gdkey && !txkey) {
       console.log("未配置天气接口密钥，使用备用天气接口");
       try {
-        await getHXHW();
+        await getXMW();
       } catch (error) {
-        await getOW();
+        try {
+          await getHXHW();
+        } catch (error) {
+          await getOW();
+        };
       };
     } else if (!txkey) {
       // 调用高德天气 API
@@ -310,9 +324,13 @@ const getWeatherData = async () => {
       } catch (error) {
         console.error("高德天气接口获取失败，尝试调用备用接口");
         try {
-          await getHXHW();
+          await getXMW();
         } catch (error) {
-          await getOW();
+          try {
+            await getHXHW();
+          } catch (error) {
+            await getOW();
+          };
         };
       };
     } else {
@@ -326,9 +344,13 @@ const getWeatherData = async () => {
         } catch (error) {
           console.error("高德天气接口获取失败，尝试调用备用接口");
           try {
-            await getHXHW();
+            await getXMW();
           } catch (error) {
-            await getOW();
+            try {
+              await getHXHW();
+            } catch (error) {
+              await getOW();
+            };
           };
         };
       };

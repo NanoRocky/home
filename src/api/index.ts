@@ -153,13 +153,13 @@ export const getGDWeather = async (key, city) => {
 
 // 补充的获取 IPV4 地址的 API
 export const getIPV4Addr = async () => {
-  const res = await fetch(`https://api4.ipify.org?format=json`);
+  const res = await fetch(`https://v4.yinghualuo.cn/bejson?format=json`);
   return await res.json();
 };
 
 // 补充的获取 IPV6 地址的 API
 export const getIPV6Addr = async () => {
-  const res = await fetch(`https://api6.ipify.org?format=json`);
+  const res = await fetch(`https://v6.yinghualuo.cn/bejson?format=json`);
   return await res.json();
 };
 
@@ -178,9 +178,22 @@ export const getOtherWeather = async () => {
   return await res.json();
 };
 
+// ------
+// 由于这些非公开接口没有 CORS 不允许跨域，必须使用中转。如果您希望使用这个接口，记得捐赠酪灰，帮助其承担服务器费用！
+// 这些接口有着较为严格的速率限制，所以有时会出现不可用的问题。如果追求稳定性，请务必自行申请腾讯或高德的 KEY 使用他们的专业服务！
+
 // 获取小米天气 API
-// 这个接口或许会比上面两个稳的多，但是它需要自己定位并转换 Adcode ...
 export const getXMWeather = async (city) => {
-  const res = await fetch(`https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?latitude=0&longitude=0&isLocated=true&locationKey=weathercn%3A${city}&days=2&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07&locale=zh_cn&alpha=false&isGlobal=false`);
+  // const res = await fetch(`https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?latitude=0&longitude=0&isLocated=true&locationKey=weathercn%3A${city}&days=2&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07&locale=zh_cn&alpha=false&isGlobal=false`);
+  const res = await fetch(`https://api.nanorocky.top/xmw/?city=weathercn%3A${city}`);
   return await res.json();
 };
+
+// 获取 IPV4 地址的地理位置信息 API
+export const getIPV4AddrLocation = async (ipv4) => {
+  // const res = await fetch(`https://ip.taobao.com/outGetIpInfo?ip=${ipv4}&accessKey=alibaba-inc`);
+  const res = await fetch(`https://api.nanorocky.top/tbipinfo/?ip=${ipv4}`);
+  return await res.json();
+};
+
+// ------
