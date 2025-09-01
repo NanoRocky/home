@@ -147,6 +147,21 @@ export default ({ mode }: { mode: string }): UserConfig => {
                     pure_funcs: ["console.log"],
                 },
             },
+            rollupOptions: {
+                output: {
+                    manualChunks(id) {
+                        if (id.includes('node_modules')) {
+                            return 'vendor';
+                        };
+                        if (id.includes('xiaomi_weather_adcode.json') || id.includes('xiaomi_weather_status.json')) {
+                            return 'xiaomi_weather_data';
+                        };
+                        if (id.includes('siteLinks.json') || id.includes('socialLinks.json')) {
+                            return 'custom_data';
+                        };
+                    }
+                }
+            },
             chunkSizeWarningLimit: 1024,
         },
         publicDir: "public",
