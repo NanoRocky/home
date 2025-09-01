@@ -50,7 +50,7 @@ export async function getXMWT() {
             const vstyle = import.meta.env.VITE_TTS_Style;
             SpeechLocal("位置信息获取失败.mp3");
         };
-        throw "猫猫无法识别访问区域qwq";
+        throw "天气信息获取失败";
     };
     // 获取位置信息
     const location = await getIPV4AddrLocation(ipv4addr.ip);
@@ -61,7 +61,7 @@ export async function getXMWT() {
             const vstyle = import.meta.env.VITE_TTS_Style;
             SpeechLocal("位置信息获取失败.mp3");
         };
-        throw "猫猫无法识别访问区域qwq";
+        throw "天气信息获取失败";
     };
     // 加载 Adcode
     weatherData.adCode = {
@@ -75,7 +75,7 @@ export async function getXMWT() {
             const vstyle = import.meta.env.VITE_TTS_Style;
             SpeechLocal("天气加载失败.mp3");
         };
-        throw "猫猫无法找到当前地区的天气信息qwq";
+        throw "天气信息获取失败";
     };
     // 获取天气信息
     const xmWeather = await getXMWeather(weatherData.adCode.adcode);
@@ -100,7 +100,7 @@ export async function getXMWT() {
             const vstyle = import.meta.env.VITE_TTS_Style;
             SpeechLocal("天气加载失败.mp3");
         };
-        throw "猫猫无法找到当前地区的天气信息qwq";
+        throw "天气信息获取失败";
     };
 };
 
