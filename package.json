@@ -24,7 +24,7 @@
     "@worstone/vue-aplayer": "^1.0.7",
     "aplayer": "^1.10.1",
     "autoprefixer": "^10.4.21",
-    "axios": "^1.11.0",
+    "axios": "^1.12.0",
     "cssnano": "^7.1.1",
     "dayjs": "^1.11.18",
     "element-plus": "^2.11.1",
