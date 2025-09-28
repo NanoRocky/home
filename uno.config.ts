@@ -5,9 +5,7 @@ export default defineConfig({
     presets: [
         presetMini(),
         presetAttributify(),
-        presetIcons({
-            warn: true,
-        }),
+        presetIcons(),
         presetTypography(),
     ],
     rules: [
