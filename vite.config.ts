@@ -6,6 +6,7 @@ import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import viteCompression from "vite-plugin-compression2";
+import UnoCSS from 'unocss/vite';
 import type { UserConfig } from "vite";
 
 // https://vitejs.dev/config/
@@ -14,6 +15,7 @@ export default ({ mode }: { mode: string }): UserConfig => {
     return defineConfig({
         plugins: [
             vue(),
+            UnoCSS(),
             AutoImport({
                 imports: ["vue"],
                 resolvers: [ElementPlusResolver()],

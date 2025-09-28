@@ -37,8 +37,9 @@
         "src/**/*.js",
         "src/typings/**/*.d.ts",
         "*",
-        "postcss.config.js",
-        "vite.config.ts"
+        "postcss.config.ts",
+        "vite.config.ts",
+        "uno.config.ts"
     ],
     "exclude": [
         "node_modules"
