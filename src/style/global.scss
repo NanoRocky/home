@@ -2,7 +2,7 @@
 
 // 响应式布局
 @mixin changeWidth($maxWidth: 1200px) {
-  .container {
+  .page-container {
     max-width: $maxWidth;
   }
 }
@@ -30,7 +30,7 @@
 /* 小于720px时 */
 @media (max-width: 720px) {
   // 隐藏元素
-  .xs-hidden {
+  .is-xs-hidden {
     display: none;
   }
 }

@@ -65,11 +65,11 @@
               <paw />
             </Icon>
             <span class="dwrc-box">
-              <span class="dwrc-2 lrc-text text-hidden" id="dwrc-2-wrap">
+              <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap">
                 <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
               </span>
-              <span class="dwrc-1 lrc-text text-hidden" id="dwrc-1-wrap">
+              <span class="dwrc-1 lrc-text text-truncate-ellipsis" id="dwrc-1-wrap">
                 <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`" :class="[
                   'dwrc-char',
                   i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
@@ -97,7 +97,7 @@
               color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>
-            <span class="lrc-text text-hidden" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
+            <span class="lrc-text text-truncate-ellipsis" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
             <Icon size="20" style="transform: rotate(18deg);" class="paws-4" color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>

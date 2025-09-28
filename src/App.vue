@@ -7,7 +7,7 @@
   <!-- 主界面 -->
   <Transition name="fade" mode="out-in">
     <main id="main" v-if="store.imgLoadStatus">
-      <div class="container" v-show="!store.backgroundShow">
+      <div class="page-container" v-show="!store.backgroundShow">
         <section class="all" v-show="!store.setOpenState">
           <MainLeft />
           <MainRight v-show="!store.boxOpenState" />
@@ -205,7 +205,7 @@ onBeforeUnmount(() => {
   animation: fade-blur-main-in 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   animation-delay: 0.5s;
 
-  .container {
+  .page-container {
     width: 100%;
     height: 100%;
     margin: 0 auto;
@@ -274,7 +274,7 @@ onBeforeUnmount(() => {
     overflow-y: auto;
     overflow-x: hidden;
 
-    .container {
+    .page-container {
       height: 650px;
 
       .more {
@@ -305,7 +305,7 @@ onBeforeUnmount(() => {
     overflow-x: auto;
     overflow: hidden;
 
-    .container {
+    .page-container {
       width: 360px;
     }
 

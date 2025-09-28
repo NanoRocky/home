@@ -4,7 +4,7 @@
         <Icon size="20" class="iconl">
           <Link />
         </Icon>
-      <span class="title text-hidden" v-if="store.mobileOpenState"
+      <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
         @click="store.setOpenState = !store.setOpenState">网站列表</span>
       <span class="title" v-else>网站列表</span>
     </div>
@@ -22,7 +22,7 @@
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>
-              <span class="name text-hidden">{{ item.name }}</span>
+              <span class="name text-truncate-ellipsis">{{ item.name }}</span>
             </div>
           </el-col>
         </el-row>

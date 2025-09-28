@@ -21,6 +21,7 @@
     "@eslint/js": "^9.36.0",
     "@types/node": "^24.5.2",
     "@types/node-fetch": "^2.6.13",
+    "@unocss/preset-wind3": "^66.5.2",
     "@worstone/vue-aplayer": "^1.0.7",
     "aplayer": "^1.10.1",
     "autoprefixer": "^10.4.21",
