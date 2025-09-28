@@ -53,7 +53,7 @@ class Cursor {
     if (!this.cursor) {
       this.cursor = document.createElement("div");
       this.cursor.id = "cursor";
-      this.cursor.classList.add("xs-hidden");
+      this.cursor.classList.add("is-xs-hidden");
       this.cursor.classList.add("hidden");
       document.body.append(this.cursor);
     }

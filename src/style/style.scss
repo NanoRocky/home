@@ -96,7 +96,7 @@ a:hover {
 
 
 // 文字超出
-.text-hidden {
+.text-truncate-ellipsis {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

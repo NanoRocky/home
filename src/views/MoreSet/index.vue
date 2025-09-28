@@ -7,7 +7,7 @@
     </transition>
     <el-row>
       <el-col class="left">
-        <div class="logo text-hidden">
+        <div class="logo text-truncate-ellipsis">
           <span class="bg">{{ siteUrl[0] }}</span>
           <span class="sm">.{{ siteUrl[1] }}</span>
         </div>
@@ -34,7 +34,7 @@
     </transition>
     <el-row :gutter="40">
       <el-col :span="12" class="left">
-        <div class="logo text-hidden">
+        <div class="logo text-truncate-ellipsis">
           <span class="bg">{{ siteUrl[0] }}</span>
           <span class="sm">.{{ siteUrl[1] }}</span>
         </div>
