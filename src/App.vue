@@ -250,7 +250,7 @@ onBeforeUnmount(() => {
     left: calc(50% - 28px);
     width: 56px;
     height: 34px;
-    background: rgb(0 0 0 / 20%);
+    background: var(--card-background-color);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-radius: 6px;

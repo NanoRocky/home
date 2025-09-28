@@ -39,6 +39,7 @@ const siteUrl = computed(() => {
   .logo {
     width: 100%;
     font-family: "字魂元气酪酪体";
+    color: var(--background-color);
     font-size: 2.25rem;
     position: fixed;
     top: 6%;

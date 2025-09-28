@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { Float, MusicOne, PlayWrong } from "@icon-park/vue-next";
-import { getPlayerList } from "@/api";
+import { getPlayerList, testGitHubConnectivity } from "@/api";
 import { mainStore } from "@/store";
 import APlayer from "@worstone/vue-aplayer";
 import type { APlayer as APlayerType } from '@worstone/vue-aplayer';
@@ -17,7 +17,7 @@ import { decodeDWQYRC } from "@/utils/decodeDWQYRC";
 const store = mainStore();
 let showDWRCRunning = 0;
 let lastTimestamp = Date.now();
-let nowLineStart = -1;
+let nowLineStart: number = -1;
 let nowLineIndex = ref(-1);
 
 type PlayerInstance = {
@@ -381,6 +381,30 @@ const fetchDWRC = async (dwrcUrl: string) => {
     store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
     store.dwrcLoading = false;
   } catch (e) {
+    if (store.playerDWRCATDBF) {
+      const songUrlInfUrlse = {
+        netease: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      };
+      if (!songServer || !["netease", "tencent"].includes(songServer)) {
+        return;
+      };
+      try {
+        const amllUrlse = songUrlInfUrlse[songServer].replace("${songIdlrc}", songId);
+        const amllSourcese = await fetch(amllUrlse);
+        const amllTextse = await amllSourcese.text();
+        store.dwrcEnable = true;
+        const decodedse = decodeDWQYRC(amllTextse);
+        store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
+        store.dwrcLoading = false;
+        return;
+      } catch (e) {
+        store.dwrcEnable = false;
+        store.dwrcTemp = [];
+        store.dwrcLoading = false;
+      };
+      return;
+    };
     store.dwrcEnable = false;
     store.dwrcTemp = [];
     store.dwrcLoading = false;

@@ -197,3 +197,27 @@ export const getIPV4AddrLocation = async (ipv4) => {
 };
 
 // ------
+
+/**
+ * Github 测试
+ */
+export const testGitHubConnectivity = async (): Promise<number> => {
+  const testUrl = 'https://raw.githubusercontent.com/NanoRocky/home/blob/EFU/public/images/icon/github.png';
+  const timeout = 3000;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const response = await fetch(testUrl, {
+      method: 'HEAD',
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if (response.ok) {
+      return 1;
+    } else {
+      return 0;
+    }
+  } catch (error) {
+    return 0;
+  }
+};
