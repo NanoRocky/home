@@ -46,5 +46,7 @@ export interface MainState {
     showFirefly: boolean;
     showSnowfall: boolean;
     showLantern: boolean;
+    showProgressIcon: boolean;
+    showProgressIconState: number;
     theme: "system" | "time" | "bg" | "light" | "dark";
 };

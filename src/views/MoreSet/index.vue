@@ -13,7 +13,7 @@
         </div>
         <!-- 移动端设置菜单 -->
         <div class="title">
-          <setting-two theme="filled" size="28" fill="var(--text-color)" />
+          <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
           <span class="name">全局设置</span>
         </div>
         <div class="mobileset-scrollable">

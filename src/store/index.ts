@@ -51,6 +51,8 @@ export const storeState: MainState = {
   showFirefly: false, // 【状态】萤火虫特效
   showSnowfall: false, // 【状态】雪花特效
   showLantern: false, // 【状态】灯笼特效
+  showProgressIcon: false, // 【状态】进度条图标显示状态
+  showProgressIconState: 0, // 【状态】进度条图标持续显示状态，0: 未悬停不显示，1: 已悬停显示，2: 始终显示
   theme: "system", // 【开关】主题，"system"/"time"/"bg"/"light"/"dark"。
 };
 

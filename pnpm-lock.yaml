@@ -24,9 +24,6 @@ importers:
       '@types/node-fetch':
         specifier: ^2.6.13
         version: 2.6.13
-      '@unocss/preset-wind3':
-        specifier: ^66.5.2
-        version: 66.5.2
       '@worstone/vue-aplayer':
         specifier: ^1.0.7
         version: 1.0.7(typescript@5.9.2)
