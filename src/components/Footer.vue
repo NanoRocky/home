@@ -3,7 +3,7 @@
     <Transition name="fade" mode="out-in">
       <div v-if="!store.playerState || !store.playerLrcShow" class="power">
         <span>
-          <span :class="ShowStartYear ? 'c-hidden' : 'hidden'">Copyright&nbsp;</span>
+          <span :class="ShowStartYear ? 'c-hidden' : 'o-hidden'">Copyright&nbsp;</span>
           &copy;
           <span v-if="ShowStartYear" class="site-start">
             {{ startYear }}
@@ -13,13 +13,13 @@
           <a href="https://nanorocky.top/">{{ siteAuthor }}</a>
         </span>
         <!-- 以下信息请不要修改哦 -->
-        <span class="hidden">
+        <span class="o-hidden">
           &amp;&nbsp;Made&nbsp;by
           <a :href="config.github" target="_blank">
             {{ config.author }}
           </a>
         </span>
-        <span class="hidden">
+        <span class="o-hidden">
           &amp;&nbsp;Update&nbsp;by
           <a :href="config.efug" target="_blank">
             {{ config.efua }}
@@ -603,7 +603,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   }
 
   @media (max-width: 480px) {
-    .hidden {
+    .o-hidden {
       display: none;
     }
   }
