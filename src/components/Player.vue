@@ -114,6 +114,28 @@ const listHeight = computed(() => {
   return props.listMaxHeight + "px";
 });
 
+// 监听播放顺序
+watch(
+  () => store.playerOrder,
+  (newOrder) => {
+    if (!player.value) return;
+    if (player.value) {
+      player.value.aplayer.order = newOrder;
+    };
+  },
+);
+
+// 监听循环模式
+watch(
+  () => store.playerLoop,
+  (newLoop) => {
+    if (!player.value) return;
+    if (player.value) {
+      player.value.aplayer.loop = newLoop;
+    };
+  },
+);
+
 // 初始化播放器
 onMounted(() => {
   nextTick(() => {
@@ -457,6 +479,7 @@ const onTimeUp = () => {
 };
 
 function updatePositionState() {
+  if (!player.value) return;
   navigator.mediaSession.setPositionState({
     duration: player.value!.audioStatus.duration,
     position: player.value!.audioStatus.playedTime,

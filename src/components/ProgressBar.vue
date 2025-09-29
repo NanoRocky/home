@@ -2,10 +2,10 @@
     <div v-if="store.footerProgressBar" class="progress-bar">
         <div class="progress" :class="{ dragging: isDragging }"
             :style="{ width: isDragging ? `${dragProgress}%` : `${progressBarWidth}%` }">
-            <img v-if="showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
+            <img v-if="store.showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
                 class="progress-icon" draggable="false" @mousedown="handleMouseDown"
                 @touchstart.prevent="handleTouchStart" ref="icon" />
-            <!-- <img v-if="showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false"
+            <!-- <img v-if="store.showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false"
                 :onmousedown="handleMouseDown" @touchstart.prevent="handleTouchStart" ref="icon" /> -->
             <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
                 <ReloadCircle />
@@ -25,8 +25,6 @@ import { throttle } from "lodash";
 
 
 const store = mainStore();
-const showProgressIcon = ref(false); // 【状态】 进度条图标显示状态
-const showProgressIconState = ref(0); // 【状态】 0: 未悬停不显示，1: 已悬停显示，2: 始终显示
 const isSeeking = ref(false);
 const audio = ref<HTMLAudioElement | null>(null);
 const icon = ref<HTMLElement | null>(null);
@@ -43,20 +41,20 @@ const progressBarWidth = computed(() => {
 
 // 鼠标事件处理
 const handleMouseEnter = () => {
-    if (showProgressIconState.value === 2) {
-        showProgressIcon.value = true;
+    if (store.showProgressIconState === 2) {
+        store.showProgressIcon = true;
     } else {
-        showProgressIconState.value = 1;
-        showProgressIcon.value = true;
+        store.showProgressIconState = 1;
+        store.showProgressIcon = true;
     };
 };
 
 const handleMouseLeave = () => {
-    if (showProgressIconState.value === 2) {
-        showProgressIcon.value = true;
+    if (store.showProgressIconState === 2) {
+        store.showProgressIcon = true;
     } else {
-        showProgressIconState.value = 0;
-        showProgressIcon.value = false;
+        store.showProgressIconState = 0;
+        store.showProgressIcon = false;
     };
 };
 
@@ -145,11 +143,11 @@ watch(() => store.playerState, (_acc, _now) => {
 // 监听外部强制开关
 watch(() => store.forceShowBarIcon, (value) => {
     if (value) {
-        showProgressIconState.value = 2;
-        showProgressIcon.value = true;
+        store.showProgressIconState = 2;
+        store.showProgressIcon = true;
     } else {
-        showProgressIconState.value = 0;
-        showProgressIcon.value = false;
+        store.showProgressIconState = 0;
+        store.showProgressIcon = false;
     };
 });
 
@@ -194,7 +192,7 @@ onBeforeUnmount(() => {
         width: 100%;
         opacity: 1;
         background-color: rgba(138, 43, 226, 1);
-        transition: width 0.1s linear;
+        transition: width 0.2s linear;
         position: relative;
         user-select: none;
 
@@ -238,7 +236,7 @@ onBeforeUnmount(() => {
             cursor: grab;
             transform: translateX(var(--progress-icon-x, 0)) translateZ(0);
             will-change: transform;
-            transition: transform 0.1s linear;
+            transition: width 0.2s linear;
 
             &:active {
                 cursor: grabbing;
