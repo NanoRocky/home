@@ -3,7 +3,9 @@
   <div class="message">
     <!-- Logo -->
     <div class="logo">
-      <img class="logo-img" :src="siteLogo" alt="logo" />
+      <a :href="ositeUrl" target="_blank">
+        <img class="logo-img" :src="siteLogo" alt="logo" />
+      </a>
       <div :class="{ name: true, 'text-truncate-ellipsis': true, long: siteUrl[0].length >= 6 }">
         <span class="bg">{{ siteUrl[0] }}</span>
         <span class="sm">.{{ siteUrl[1] }}</span>
@@ -43,7 +45,7 @@ const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
 const siteUrl = computed(() => {
   let mns: string | null = null;
   if (store.msgNameShow) {
-    mns = import.meta.env.VITE_SITE_MAIN_NAME  ||  import.meta.env.VITE_SITE_URL || "nanorocky.top";
+    mns = import.meta.env.VITE_SITE_MAIN_NAME || import.meta.env.VITE_SITE_URL || "nanorocky.top";
     // 这里并没有处理显示自定义内容后的分段点，因为这个点看着也不错，有种写字时封笔的感觉，就不处理啦~
     // 才不是懒的！（x）
   } else {
@@ -58,6 +60,9 @@ const siteUrl = computed(() => {
   const hostname = domainOnly.split(':')[0];
   return hostname.split(".");
 });
+
+const ositeUrl = import.meta.env.VITE_OSITE_URL;
+
 
 // 简介区域文字
 const descriptionText = reactive({

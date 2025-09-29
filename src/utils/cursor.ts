@@ -94,14 +94,17 @@ class Cursor {
         y: e.clientY - 8,
       };
       if (this.cursor) {
+        this.cursor.classList.remove("is-xs-hidden");
         this.cursor.classList.remove("hidden");
       }
       this.render();
     };
     document.onmouseenter = () => {
+      if (this.cursor) this.cursor.classList.remove("is-xs-hidden");
       if (this.cursor) this.cursor.classList.remove("hidden");
     };
     document.onmouseleave = () => {
+      if (this.cursor) this.cursor.classList.add("is-xs-hidden");
       if (this.cursor) this.cursor.classList.add("hidden");
     };
     document.onmousedown = () => {

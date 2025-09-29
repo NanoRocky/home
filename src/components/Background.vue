@@ -2,7 +2,7 @@
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <img v-show="store.imgLoadStatus" :src="bgUrl" class="bg" alt="cover" @load="imgLoadComplete"
       @error.once="imgLoadError" @animationend="imgAnimationEnd" crossorigin="anonymous" />
-    <div :class="store.backgroundShow ? 'gray hidden' : 'gray'" />
+    <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
         已禁用
@@ -342,7 +342,7 @@ watch(() => store.sBGCount, async (value) => {
 
     transition: 1.5s;
 
-    &.hidden {
+    &.o-hidden {
       opacity: 0;
       transition: 1.5s;
     }
