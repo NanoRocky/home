@@ -1,5 +1,6 @@
 import { gasA, gasC } from "@/utils/authServer";
 
+
 let currentAudio: HTMLAudioElement | null = null;
 let audioQueue: string[] = [];
 let isPlaying = false;

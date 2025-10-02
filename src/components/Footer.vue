@@ -166,15 +166,19 @@ const toggleForceIcon = () => {
     message: `${store.forceShowBarIcon ? '诶？' : '进度 ICON 常驻已禁用'}`,
   });
   if (store.forceShowBarIcon) {
-    stopSpeech();
-    const voice = import.meta.env.VITE_TTS_Voice;
-    const vstyle = import.meta.env.VITE_TTS_Style;
-    SpeechLocal("启用进度图标常驻.mp3");
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("启用进度图标常驻.mp3");
+    };
   } else {
-    stopSpeech();
-    const voice = import.meta.env.VITE_TTS_Voice;
-    const vstyle = import.meta.env.VITE_TTS_Style;
-    SpeechLocal("禁用进度图标常驻.mp3");
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("禁用进度图标常驻.mp3");
+    };
   };
 };
 
