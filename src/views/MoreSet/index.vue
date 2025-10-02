@@ -95,20 +95,24 @@ const toggleVer = () => {
       dangerouslyUseHTMLString: true,
       message: `怎么还在戳哇喂！有那么神秘喵...？`,
     });
-    stopSpeech();
-    const voice = import.meta.env.VITE_TTS_Voice;
-    const vstyle = import.meta.env.VITE_TTS_Style;
-    SpeechLocal("戳戳版本.mp3");
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("戳戳版本.mp3");
+    };
     store.setV = true;
   } else {
     ElMessage({
       dangerouslyUseHTMLString: true,
       message: `诶？是在找...什喵神秘的东西嘛？`,
     });
-    stopSpeech();
-    const voice = import.meta.env.VITE_TTS_Voice;
-    const vstyle = import.meta.env.VITE_TTS_Style;
-    SpeechLocal("戳版本.mp3");
+    if (store.webSpeech) {
+      stopSpeech();
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
+      SpeechLocal("戳版本.mp3");
+    };
   };
 };
 

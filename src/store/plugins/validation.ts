@@ -47,10 +47,12 @@ export const validationPlugin = ({ store }: PiniaPluginContext) => {
                     message: `不支持将变量 '${String(key)}' 的值设置为 '${newValue}'，已阻止更改。`,
                 });
                 setTimeout(() => {
-                    stopSpeech();
-                    const voice = import.meta.env.VITE_TTS_Voice;
-                    const vstyle = import.meta.env.VITE_TTS_Style;
-                    SpeechLocal("变量异常.mp3");
+                    if (store.webSpeech) {
+                        stopSpeech();
+                        const voice = import.meta.env.VITE_TTS_Voice;
+                        const vstyle = import.meta.env.VITE_TTS_Style;
+                        SpeechLocal("变量异常.mp3");
+                    };
                 }, 300);
             };
         };

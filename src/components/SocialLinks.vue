@@ -14,19 +14,23 @@
 <script setup lang="ts">
 import socialLinks from "@/assets/socialLinks.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { mainStore } from "@/store";
 
 // 社交链接提示
 const socialTip = ref("Find NanoRocky");
+const store = mainStore();
 
 const togglesocial = () => {
   ElMessage({
     dangerouslyUseHTMLString: true,
     message: `来扩列喵？`,
   });
-  stopSpeech();
-  const voice = import.meta.env.VITE_TTS_Voice;
-  const vstyle = import.meta.env.VITE_TTS_Style;
-  SpeechLocal("戳戳社.mp3");
+  if (store.webSpeech) {
+    stopSpeech();
+    const voice = import.meta.env.VITE_TTS_Voice;
+    const vstyle = import.meta.env.VITE_TTS_Style;
+    SpeechLocal("戳戳社.mp3");
+  };
 };
 </script>
 

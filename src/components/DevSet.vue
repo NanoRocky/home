@@ -171,29 +171,35 @@ const resetSettings = () => {
             dangerouslyUseHTMLString: true,
             message: `正在恢复默认配置，请稍后...`,
         });
-        stopSpeech();
-        const voice = import.meta.env.VITE_TTS_Voice;
-        const vstyle = import.meta.env.VITE_TTS_Style;
-        SpeechLocal("重置2.mp3");
+        if (store.webSpeech) {
+            stopSpeech();
+            const voice = import.meta.env.VITE_TTS_Voice;
+            const vstyle = import.meta.env.VITE_TTS_Style;
+            SpeechLocal("重置2.mp3");
+        };
         store.resetStore();
     } else if (chuores > 3) {
         ElMessage({
             dangerouslyUseHTMLString: true,
             message: `正在加载初始设置，请稍后...`,
         });
-        stopSpeech();
-        const voice = import.meta.env.VITE_TTS_Voice;
-        const vstyle = import.meta.env.VITE_TTS_Style;
-        SpeechLocal("重置3.mp3");
+        if (store.webSpeech) {
+            stopSpeech();
+            const voice = import.meta.env.VITE_TTS_Voice;
+            const vstyle = import.meta.env.VITE_TTS_Style;
+            SpeechLocal("重置3.mp3");
+        };
     } else {
         ElMessage({
             dangerouslyUseHTMLString: true,
             message: `确定要重置所有设置吗？操作将在点击 3 次后执行。`,
         });
-        stopSpeech();
-        const voice = import.meta.env.VITE_TTS_Voice;
-        const vstyle = import.meta.env.VITE_TTS_Style;
-        SpeechLocal("重置1.mp3");
+        if (store.webSpeech) {
+            stopSpeech();
+            const voice = import.meta.env.VITE_TTS_Voice;
+            const vstyle = import.meta.env.VITE_TTS_Style;
+            SpeechLocal("重置1.mp3");
+        };
     };
 };
 

@@ -28,10 +28,12 @@ if (urlParams.get("set") === "reset") {
     dangerouslyUseHTMLString: true,
     message: `正在恢复默认配置，请稍后...`,
   });
-  stopSpeech();
-  const voice = import.meta.env.VITE_TTS_Voice;
-  const vstyle = import.meta.env.VITE_TTS_Style;
-  SpeechLocal("重置2.mp3");
+  if (store.webSpeech) {
+    stopSpeech();
+    const voice = import.meta.env.VITE_TTS_Voice;
+    const vstyle = import.meta.env.VITE_TTS_Style;
+    SpeechLocal("重置2.mp3");
+  };
   store.resetStore();
 };
 
