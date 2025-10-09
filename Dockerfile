@@ -11,7 +11,7 @@ RUN npm run build
 <<<<<<< HEAD
 FROM node:22.17.0
 =======
-FROM node:24.4.1-alpine
+FROM node:24.9.0-alpine
 >>>>>>> 70ac3473352debd6420c5e72f31ee58e9ce3836e
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
