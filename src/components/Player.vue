@@ -494,6 +494,7 @@ function syncDWRCLrc() {
     };
     const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length === 0 || store.dwrcLoading;
     const now = player.value.audioStatus.playedTime * 1000;
+    const lineSwitchNow = now + 200; // 提前 100ms 用于行切换
     if (isLineByLine) {
       const lyrics = player.value.aplayer.lyrics[playIndex.value];
       const playerLyricIndex = player.value.aplayer.lyricIndex;
@@ -515,7 +516,8 @@ function syncDWRCLrc() {
       if (nowLineIndex.value === -1) {
         let foundIndex = -1;
         for (let i = 0; i < dwrc.length; i++) {
-          if (dwrc[i][0] <= now) {
+          if (dwrc[i][0] <= lineSwitchNow) {
+            // now -> lineSwitchNow
             foundIndex = i;
           } else {
             break;
@@ -523,17 +525,21 @@ function syncDWRCLrc() {
         };
         nowLineIndex.value = foundIndex;
       } else {
-        if (nowLineIndex.value + 1 < dwrc.length && now >= dwrc[nowLineIndex.value + 1][0]) {
+        if (nowLineIndex.value + 1 < dwrc.length && lineSwitchNow >= dwrc
+        [nowLineIndex.value + 1][0]) {
+          // now -> lineSwitchNow
           nowLineIndex.value++;
         };
       };
       const currentLine = nowLineIndex.value !== -1 ? dwrc[nowLineIndex.value] : null;
       let dwrcLyric: any[];
       if (currentLine) {
+        const fadeOutDuration = 300;
         dwrcLyric = currentLine[2].map((it: any) => {
           const [[start, duration], word, line, row] = it;
-          const isCurrent = now >= start && now <= start + duration;
-          const isSungLyrics = start + duration < now;
+          const isDuringFadeOut = now > start + duration && now <= start + duration + fadeOutDuration;
+          const isCurrent = (now >= start && now <= start + duration) || isDuringFadeOut;
+          const isSungLyrics = start + duration < now && !isDuringFadeOut;
           const lessdur = start + duration - now;
           return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto"];
         });
