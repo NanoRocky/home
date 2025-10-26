@@ -75,6 +75,7 @@
                   i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                   i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
                   i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                  i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
                   i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1'
                 ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
@@ -262,7 +263,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
 // 逐字模块1
 .dwrc-char {
   display: inline-block;
-  opacity: 0.6;
+  opacity: 1;
   -webkit-transform: translateY(1px);
   transform: translateY(1px);
   -webkit-background-clip: text;
@@ -271,7 +272,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   font-weight: 520;
   font-size: 1.05rem;
   transition:
-    opacity 0.3s linear,
+    // opacity 0.3s linear,
     color 0.5s linear,
     transform 0.3s linear;
 
@@ -298,9 +299,9 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   }
 
   &.fade-out {
-    opacity: 1;
-    -webkit-transform: translateY(-1px);
-    transform: translateY(-1px);
+    opacity: 1 !important;
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
     text-shadow: 0px 0px 6px var(--footer-dwrc-shadow-first-color),
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
@@ -318,7 +319,19 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     opacity: 1;
     -webkit-transform: translateY(-1px);
     transform: translateY(-1px);
-    animation: pulse 1s ease-in-out forwards;
+    animation: pulse 1.2s ease-in-out forwards !important;
+    transition:
+      color 0.5s linear,
+      opacity 0.3s linear,
+      transform 0.3s linear;
+  }
+
+  &.long-tone-out {
+    opacity: 1 !important;
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+    animation: pulse-out 0.7s ease-in-out forwards !important;
+    animation-iteration-count: 1;
     transition:
       color 0.5s linear,
       opacity 0.3s linear,
@@ -404,6 +417,36 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       0px 0px 12px rgba(255, 192, 203, 1),
       0px 0px 16px rgba(255, 182, 193, 1),
       0px 0px 16px rgba(255, 192, 203, 1);
+  }
+}
+
+@keyframes pulse-out {
+  from {
+    color: var(--footer-dwrc-end-color);
+    opacity: 1;
+    text-shadow: 3px 3px 7px var(--footer-dwrc-shadow-first-color),
+      0px 0px 4px rgba(255, 182, 193, 0.3),
+      0px 0px 4px rgba(255, 192, 203, 0.3),
+      0px 0px 8px rgba(255, 182, 193, 0.3),
+      0px 0px 8px rgba(255, 192, 203, 0.3),
+      0px 0px 12px rgba(255, 182, 193, 1),
+      0px 0px 12px rgba(255, 192, 203, 1),
+      0px 0px 16px rgba(255, 182, 193, 1),
+      0px 0px 16px rgba(255, 192, 203, 1);
+  }
+
+  to {
+    color: var(--footer-dwrc-start-color);
+    opacity: 1;
+    text-shadow: 0px 0px 3px var(--footer-dwrc-shadow-first-color),
+      0px 0px 0px rgba(255, 182, 193, 0.3),
+      0px 0px 0px rgba(255, 192, 203, 0.3),
+      0px 0px 0px rgba(255, 182, 193, 0.3),
+      0px 0px 0px rgba(255, 192, 203, 0.3),
+      0px 0px 0px rgba(255, 182, 193, 1),
+      0px 0px 0px rgba(255, 192, 203, 1),
+      0px 0px 0px rgba(255, 182, 193, 1),
+      0px 0px 0px rgba(255, 192, 203, 1);
   }
 }
 
