@@ -54,8 +54,8 @@ const getHitokotoData = async () => {
     hitokotoData.from = "酪灰";
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
+      const voice = envConfig.VITE_TTS_Voice;
+      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("一言加载失败.mp3");
     };
   }

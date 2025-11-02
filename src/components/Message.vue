@@ -40,16 +40,16 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 const store = mainStore();
 
 // 主页站点logo
-const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
+const siteLogo = envConfig.VITE_SITE_MAIN_LOGO;
 // 站点链接
 const siteUrl = computed(() => {
   let mns: string | null = null;
   if (store.msgNameShow) {
-    mns = import.meta.env.VITE_SITE_MAIN_NAME || import.meta.env.VITE_SITE_URL || "nanorocky.top";
+    mns = envConfig.VITE_SITE_MAIN_NAME || envConfig.VITE_SITE_URL || "nanorocky.top";
     // 这里并没有处理显示自定义内容后的分段点，因为这个点看着也不错，有种写字时封笔的感觉，就不处理啦~
     // 才不是懒的！（x）
   } else {
-    mns = import.meta.env.VITE_SITE_URL || "nanorocky.top";
+    mns = envConfig.VITE_SITE_URL || "nanorocky.top";
   };
   const url = mns;
   if (!url) return "nanorocky.top".split(".");
@@ -61,13 +61,13 @@ const siteUrl = computed(() => {
   return hostname.split(".");
 });
 
-const ositeUrl = import.meta.env.VITE_OSITE_URL;
+const ositeUrl = envConfig.VITE_OSITE_URL;
 
 
 // 简介区域文字
 const descriptionText = reactive({
-  hello: import.meta.env.VITE_DESC_HELLO,
-  text: import.meta.env.VITE_DESC_TEXT,
+  hello: envConfig.VITE_DESC_HELLO,
+  text: envConfig.VITE_DESC_TEXT,
 });
 
 // 切换右侧功能区
@@ -85,8 +85,8 @@ const changeBox = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
+      const voice = envConfig.VITE_TTS_Voice;
+      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("分辨率不足.mp3");
     };
   };
@@ -97,17 +97,17 @@ watch(
   () => store.boxOpenState,
   (value) => {
     if (value) {
-      descriptionText.hello = import.meta.env.VITE_DESC_HELLO_OTHER;
-      descriptionText.text = import.meta.env.VITE_DESC_TEXT_OTHER;
+      descriptionText.hello = envConfig.VITE_DESC_HELLO_OTHER;
+      descriptionText.text = envConfig.VITE_DESC_TEXT_OTHER;
       if (store.webSpeech) {
         stopSpeech();
-        const voice = import.meta.env.VITE_TTS_Voice;
-        const vstyle = import.meta.env.VITE_TTS_Style;
+        const voice = envConfig.VITE_TTS_Voice;
+        const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("惊讶.mp3");
       };
     } else {
-      descriptionText.hello = import.meta.env.VITE_DESC_HELLO;
-      descriptionText.text = import.meta.env.VITE_DESC_TEXT;
+      descriptionText.hello = envConfig.VITE_DESC_HELLO;
+      descriptionText.text = envConfig.VITE_DESC_TEXT;
     };
   },
 );

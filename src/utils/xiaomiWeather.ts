@@ -46,8 +46,8 @@ export async function getXMWT() {
     if (ipv4addr.ip == null || !ipv4addr) {
         if (store.webSpeech) {
             stopSpeech();
-            const voice = import.meta.env.VITE_TTS_Voice;
-            const vstyle = import.meta.env.VITE_TTS_Style;
+            const voice = envConfig.VITE_TTS_Voice;
+            const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("位置信息获取失败.mp3");
         };
         throw "天气信息获取失败";
@@ -57,8 +57,8 @@ export async function getXMWT() {
     if (String(location?.code) !== "0" || !location?.data.region || !location?.data.city) {
         if (store.webSpeech) {
             stopSpeech();
-            const voice = import.meta.env.VITE_TTS_Voice;
-            const vstyle = import.meta.env.VITE_TTS_Style;
+            const voice = envConfig.VITE_TTS_Voice;
+            const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("位置信息获取失败.mp3");
         };
         throw "天气信息获取失败";
@@ -71,8 +71,8 @@ export async function getXMWT() {
     if (weatherData.adCode.adcode == null) {
         if (store.webSpeech) {
             stopSpeech();
-            const voice = import.meta.env.VITE_TTS_Voice;
-            const vstyle = import.meta.env.VITE_TTS_Style;
+            const voice = envConfig.VITE_TTS_Voice;
+            const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("天气加载失败.mp3");
         };
         throw "天气信息获取失败";
@@ -96,8 +96,8 @@ export async function getXMWT() {
     } catch (e) {
         if (store.webSpeech) {
             stopSpeech();
-            const voice = import.meta.env.VITE_TTS_Voice;
-            const vstyle = import.meta.env.VITE_TTS_Style;
+            const voice = envConfig.VITE_TTS_Voice;
+            const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("天气加载失败.mp3");
         };
         throw "天气信息获取失败";

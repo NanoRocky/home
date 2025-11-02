@@ -93,11 +93,11 @@ const volumeNum = ref(store.musicVolume ? store.musicVolume : 0.7);
 const musicListShow = ref(false);
 const playerRef = ref<InstanceType<typeof Player> | null>(null);
 const playerData = reactive({
-  server: import.meta.env.VITE_SONG_SERVER,
-  type: import.meta.env.VITE_SONG_TYPE,
-  id: import.meta.env.VITE_SONG_ID,
-  serverse: import.meta.env.VITE_SONG_SERVER_SECOND,
-  idse: import.meta.env.VITE_SONG_ID_SECOND,
+  server: envConfig.VITE_SONG_SERVER,
+  type: envConfig.VITE_SONG_TYPE,
+  id: envConfig.VITE_SONG_ID,
+  serverse: envConfig.VITE_SONG_SERVER_SECOND,
+  idse: envConfig.VITE_SONG_ID_SECOND,
 });
 
 // 开启播放列表

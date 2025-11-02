@@ -49,8 +49,8 @@ export const validationPlugin = ({ store }: PiniaPluginContext) => {
                 setTimeout(() => {
                     if (store.webSpeech) {
                         stopSpeech();
-                        const voice = import.meta.env.VITE_TTS_Voice;
-                        const vstyle = import.meta.env.VITE_TTS_Style;
+                        const voice = envConfig.VITE_TTS_Voice;
+                        const vstyle = envConfig.VITE_TTS_Style;
                         SpeechLocal("变量异常.mp3");
                     };
                 }, 300);

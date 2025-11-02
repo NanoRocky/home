@@ -172,8 +172,8 @@ onMounted(() => {
       });
       if (store.webSpeech) {
         stopSpeech();
-        const voice = import.meta.env.VITE_TTS_Voice;
-        const vstyle = import.meta.env.VITE_TTS_Style;
+        const voice = envConfig.VITE_TTS_Voice;
+        const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("播放器加载失败.mp3");
       };
     };
@@ -223,8 +223,8 @@ const onPlay = () => {
   if (store.webSpeech) {
     if (store.playerSpeechName) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
+      const voice = envConfig.VITE_TTS_Voice;
+      const vstyle = envConfig.VITE_TTS_Style;
       Speech(
         "正在播放，“" +
         store.getPlayerData.artist +
@@ -331,16 +331,16 @@ const loadMusicError = () => {
     notice = "猫猫“不会唱”这首歌啦qwq，将在 2 秒后播放下一首歌曲";
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
+      const voice = envConfig.VITE_TTS_Voice;
+      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("歌曲加载失败.mp3");
     };
   } else {
     notice = "播音室出现了一点小故障，请稍后再试qwq";
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
+      const voice = envConfig.VITE_TTS_Voice;
+      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("播放器未知异常.mp3");
     };
   };
