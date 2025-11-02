@@ -29,7 +29,7 @@ const loadJSONP = (url, callbackName) => {
  */
 
 // 获取音乐播放列表
-export const getPlayerList = async (server, type, id, serverse, idse) => {
+export const getPlayerList = async (server, type, id, serverse, idse, playerTrLrc) => {
   let dataf: any[] = [], data3: any[] = [], data1: any[] = [], data2: any[] = [];
   if (serverse != null && idse != null) {
     try {
@@ -75,7 +75,7 @@ export const getPlayerList = async (server, type, id, serverse, idse) => {
       album: v.album || import.meta.env.VITE_SITE_NAME,
       url: domain + (jsonpData.req_0?.data?.midurlinfo[i]?.purl || ""),
       cover: v.cover || v.pic,
-      lrc: v.lrc,
+      lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
     }));
   } else {
     return data.map((v) => ({
@@ -84,7 +84,7 @@ export const getPlayerList = async (server, type, id, serverse, idse) => {
       album: v.album || import.meta.env.VITE_SITE_NAME,   // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
       url: v.url,
       cover: v.cover || v.pic,
-      lrc: v.lrc,
+      lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
     }));
   }
 };
