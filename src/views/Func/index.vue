@@ -61,7 +61,7 @@ const currentTime = ref < CurrentTime > ({
 const timeInterval = ref < number | null > (null);
 
 // 播放器 id
-const playerHasId = import.meta.env.VITE_SONG_ID;
+const playerHasId = envConfig.VITE_SONG_ID;
 
 // 更新时间
 const updateTimeData = () => {

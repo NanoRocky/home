@@ -34,7 +34,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
   if (serverse != null && idse != null) {
     try {
       const res1 = await fetch(
-        `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
+        `${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
       );
       data1 = await res1.json();
     } catch (e) {
@@ -43,7 +43,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
     };
     try {
       const res2 = await fetch(
-        `${import.meta.env.VITE_SONG_API}?server=${serverse}&type=${type}&id=${idse}`,
+        `${envConfig.VITE_SONG_API}?server=${serverse}&type=${type}&id=${idse}`,
       );
       data2 = await res2.json();
     } catch (e) {
@@ -54,7 +54,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
   } else {
     try {
       const res1 = await fetch(
-        `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
+        `${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
       );
       data3 = await res1.json();
     } catch (e) {
@@ -72,7 +72,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
     return data.map((v, i) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
-      album: v.album || import.meta.env.VITE_SITE_NAME,
+      album: v.album || envConfig.VITE_SITE_NAME,
       url: domain + (jsonpData.req_0?.data?.midurlinfo[i]?.purl || ""),
       cover: v.cover || v.pic,
       lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
@@ -81,7 +81,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
     return data.map((v) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
-      album: v.album || import.meta.env.VITE_SITE_NAME,   // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
+      album: v.album || envConfig.VITE_SITE_NAME,   // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
       url: v.url,
       cover: v.cover || v.pic,
       lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,

@@ -131,21 +131,21 @@ const audio = ref(null);
 const icon = ref(null);
 
 // 加载配置数据
-// const siteStartDate = ref(import.meta.env.VITE_SITE_START);
+// const siteStartDate = ref(envConfig.VITE_SITE_START);
 const startYear = ref<number | null>(
-  import.meta.env.VITE_SITE_START?.length >= 4 ?
-    parseInt(import.meta.env.VITE_SITE_START.substring(0, 4)) : null
+  envConfig.VITE_SITE_START?.length >= 4 ?
+    parseInt(envConfig.VITE_SITE_START.substring(0, 4)) : null
 );
 const ShowStartYear = computed(() => {
   return startYear.value !== null && startYear.value < fullYear;
 });
-const siteIcp = ref(import.meta.env.VITE_SITE_ICP);
-const siteMps = ref(import.meta.env.VITE_SITE_MPS);
-const siteMICP = ref(import.meta.env.VITE_SITE_MICP);
-const siteAuthor = ref(import.meta.env.VITE_SITE_AUTHOR);
+const siteIcp = ref(envConfig.VITE_SITE_ICP);
+const siteMps = ref(envConfig.VITE_SITE_MPS);
+const siteMICP = ref(envConfig.VITE_SITE_MICP);
+const siteAuthor = ref(envConfig.VITE_SITE_AUTHOR);
 
 const siteUrl = computed(() => {
-  const url = import.meta.env.VITE_SITE_URL;
+  const url = envConfig.VITE_SITE_URL;
   if (!url) return "https://nanorocky.top/";
   let fullUrl = url;
   if (!/^https?:\/\//i.test(url)) {
@@ -169,15 +169,15 @@ const toggleForceIcon = () => {
   if (store.forceShowBarIcon) {
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
+      const voice = envConfig.VITE_TTS_Voice;
+      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("启用进度图标常驻.mp3");
     };
   } else {
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
+      const voice = envConfig.VITE_TTS_Voice;
+      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("禁用进度图标常驻.mp3");
     };
   };

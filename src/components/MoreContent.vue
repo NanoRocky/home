@@ -16,7 +16,7 @@ import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 
 const store = mainStore();
-const key = import.meta.env.VITE_SFILE_SKEY;
+const key = envConfig.VITE_SFILE_SKEY;
 const msgP = ref<string | null>(null);
 const getRandomMsg = () => Math.floor(Math.random() * 1) + 1;
 
