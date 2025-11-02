@@ -88,6 +88,10 @@
           <span class="text">逐字效果增强开关</span>
           <el-switch v-model="playerDWRCShowPro" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
         </div>
+        <div class="item">
+          <span class="text">逐行歌词翻译显示开关</span>
+          <el-switch v-model="playerTrLrc" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+        </div>
       </el-collapse-item>
       <el-collapse-item title="语音设置" name="6">
         <div class="item">
@@ -129,6 +133,7 @@ const {
   playerLoop,
   webSpeech,
   playerSpeechName,
+  playerTrLrc,
   playerDWRCShow,
   playerDWRCShowPro,
   playerDWRCATDB,

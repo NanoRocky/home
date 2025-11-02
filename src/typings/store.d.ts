@@ -31,6 +31,7 @@ export interface MainState {
     playerOrder: "list" | "random";
     webSpeech: boolean;
     playerSpeechName: boolean;
+    playerTrLrc: boolean;
     playerDWRCShow: boolean;
     playerDWRCShowPro: boolean;
     playerDWRCATDB: boolean;

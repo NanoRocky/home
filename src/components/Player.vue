@@ -140,7 +140,7 @@ watch(
 onMounted(() => {
   nextTick(() => {
     try {
-      getPlayerList(props.songServer, props.songType, props.songId, props.songServerSE, props.songIdSE).then((res) => {
+      getPlayerList(props.songServer, props.songType, props.songId, props.songServerSE, props.songIdSE, store.playerTrLrc).then((res) => {
         // 更改播放器加载状态
         store.musicIsOk = true;
         // 生成歌单
