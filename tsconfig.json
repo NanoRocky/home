@@ -29,12 +29,12 @@
         "noEmit": true
     },
     "include": [
-        "src/**/*",
-        "src/**/*.ts",
-        "src/**/*.d.ts",
-        "src/**/*.vue",
-        "src/**/*.js",
-        "src/typings/**/*.d.ts",
+        "./src/**/*",
+        "./src/**/*.ts",
+        "./src/**/*.d.ts",
+        "./src/**/*.vue",
+        "./src/**/*.js",
+        "./src/typings/**/*.d.ts",
         "*",
         "postcss.config.ts",
         "vite.config.ts",
