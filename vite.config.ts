@@ -146,7 +146,7 @@ export default ({ mode }: { mode: string }): UserConfig => {
             minify: "terser",
             terserOptions: {
                 compress: {
-                    pure_funcs: ["console.log"],
+                    pure_funcs: ["console.debug"],
                 },
             },
             rollupOptions: {
