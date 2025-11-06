@@ -36,6 +36,7 @@ export interface MainState {
     playerDWRCShowPro: boolean;
     playerDWRCATDB: boolean;
     playerDWRCATDBF: boolean;
+    playerDWRCPilfer: boolean;
     playerCurrentTime: number | null;
     playerDuration: number | null;
     dwrcIndex: number | null;
