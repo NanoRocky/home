@@ -375,62 +375,116 @@ const fetchDWRC = async (dwrcUrl: string) => {
     store.dwrcTemp = [];
     store.dwrcLoading = false;
   };
-  // 接入 AMLL TTML Database
+  // 额外处理
   const songUrlInf = new URLSearchParams(new URL(dwrcUrl).search);
   const songId = songUrlInf.get("id");
   const songServer = songUrlInf.get("server");
   if (!songId) {
     return;
   };
-  const songUrlInfUrl = store.playerDWRCATDBF
-    ? {
-      netease: `https://ghfast.top/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-      tencent: `https://ghfast.top/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-    }
-    : {
-      netease: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-      tencent: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-    };
-  if (!songServer || !["netease", "tencent"].includes(songServer)) {
-    return;
-  };
-  try {
-    const amllUrl = songUrlInfUrl[songServer].replace("${songIdlrc}", songId);
-    const amllSource = await fetch(amllUrl);
-    const amllText = await amllSource.text();
-    store.dwrcEnable = true;
-    const decoded = decodeDWQYRC(amllText);
-    store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
-    store.dwrcLoading = false;
-  } catch (e) {
-    if (store.playerDWRCATDBF) {
-      const songUrlInfUrlse = {
+  const baseUrl = `${new URL(dwrcUrl).origin}${new URL(dwrcUrl).pathname}`;
+  // 接入 AMLL TTML Database
+  if (store.playerDWRCATDB) {
+    const songUrlInfUrl = store.playerDWRCATDBF
+      ? {
+        netease: `https://ghfast.top/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://ghfast.top/https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      }
+      : {
         netease: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
         tencent: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
       };
-      if (!songServer || !["netease", "tencent"].includes(songServer)) {
-        return;
+    if (!songServer || !["netease", "tencent"].includes(songServer)) {
+      return;
+    };
+    try {
+      const amllUrl = songUrlInfUrl[songServer].replace("${songIdlrc}", songId);
+      const amllSource = await fetch(amllUrl);
+      const amllText = await amllSource.text();
+      store.dwrcEnable = true;
+      const decoded = decodeDWQYRC(amllText);
+      store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
+      store.dwrcLoading = false;
+    } catch (e) {
+      if (store.playerDWRCATDBF) {
+        const songUrlInfUrlse = {
+          netease: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+          tencent: `https://raw.githubusercontent.com/Steve-xmh/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+        };
+        if (songServer || ["netease", "tencent"].includes(songServer)) {
+          try {
+            const amllUrlse = songUrlInfUrlse[songServer].replace("${songIdlrc}", songId);
+            const amllSourcese = await fetch(amllUrlse);
+            const amllTextse = await amllSourcese.text();
+            store.dwrcEnable = true;
+            const decodedse = decodeDWQYRC(amllTextse);
+            store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
+            store.dwrcLoading = false;
+            return;
+          } catch (e) {
+            store.dwrcEnable = false;
+            store.dwrcTemp = [];
+            store.dwrcLoading = false;
+          };
+        };
       };
-      try {
-        const amllUrlse = songUrlInfUrlse[songServer].replace("${songIdlrc}", songId);
-        const amllSourcese = await fetch(amllUrlse);
-        const amllTextse = await amllSourcese.text();
-        store.dwrcEnable = true;
-        const decodedse = decodeDWQYRC(amllTextse);
-        store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
-        store.dwrcLoading = false;
-        return;
-      } catch (e) {
+    };
+  };
+  // 偷东西
+  if (store.playerDWRCPilfer && baseUrl && store.dwrcEnable != true) {
+    try {
+      const currentAudio = player.value!.aplayer.audio[player.value!.aplayer.index];
+      const currentName = currentAudio.name?.trim();
+      const currentArtist = currentAudio.artist?.trim();
+      const currentServer = songServer === "netease" ? "tencent" : "netease";
+      const pilferUrl = `${baseUrl}?server=${currentServer}&type=search&id=0&dwrc=true&keyword=${encodeURIComponent(currentName)}`;
+      const resp = await fetch(pilferUrl);
+      const data = await resp.json();
+      if (Array.isArray(data) && data.length > 0) {
+        const match = data.find(
+          (item) =>
+            item.name?.trim() === currentName &&
+            item.artist?.trim() === currentArtist
+        );
+        if (match && match.lrc) {
+          let lrcUrl = match.lrc;
+          const urlObj = new URL(lrcUrl);
+          const dwrcParam = urlObj.searchParams.get("dwrc");
+          if (dwrcParam === null) {
+            urlObj.searchParams.append("dwrc", "true");
+          } else if (dwrcParam === "false") {
+            urlObj.searchParams.set("dwrc", "true");
+          };
+          lrcUrl = urlObj.toString();
+          console.log(
+            `当前正在播放 ${songServer} 来源的《${store.getPlayerData.name}》- '${store.getPlayerData.artist}'，猫猫已成功从 ${currentServer} 偷到逐字歌词~`,
+          );
+          const pilferSource = await fetch(lrcUrl);
+          const pilferText = await pilferSource.text();
+          const decoded = decodeDWQYRC(pilferText);
+          store.dwrcEnable = true;
+          store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
+          store.dwrcLoading = false;
+          return;
+        } else {
+          store.dwrcEnable = false;
+          store.dwrcTemp = [];
+          store.dwrcLoading = false;
+        };
+      } else {
         store.dwrcEnable = false;
         store.dwrcTemp = [];
         store.dwrcLoading = false;
       };
-      return;
-    };
-    store.dwrcEnable = false;
-    store.dwrcTemp = [];
-    store.dwrcLoading = false;
+    } catch (e) {
+      store.dwrcEnable = false;
+      store.dwrcTemp = [];
+      store.dwrcLoading = false;
+    }
   };
+  store.dwrcEnable = false;
+  store.dwrcTemp = [];
+  store.dwrcLoading = false;
 };
 
 function onLoadStart() {

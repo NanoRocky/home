@@ -36,12 +36,19 @@
                         :inactive-icon="CloseSmall" />
                 </div>
             </el-collapse-item>
-            <el-collapse-item title="重置" name="4">
+            <el-collapse-item title="歌词设置" name="4">
+                <div class="item">
+                    <span class="text">拆东墙补西墙</span>
+                    <el-switch v-model="playerDWRCPilfer" inline-prompt :active-icon="CheckSmall"
+                        :inactive-icon="CloseSmall" />
+                </div>
+            </el-collapse-item>
+            <el-collapse-item title="重置" name="5">
                 <div class="item">
                     <el-button plain class="el-button" @click="resetSettings()">重置所有设置</el-button>
                 </div>
             </el-collapse-item>
-            <el-collapse-item title="检查版本更新" name="5">
+            <el-collapse-item title="检查版本更新" name="6">
                 <div class="item">
                     <div class="upver">版本号 v{{ versionInfo.version }}，{{ versTypeT }}，{{ versionInfo.channel }} 渠道，by {{
                         versionInfo.upa }} 。
@@ -89,6 +96,7 @@ const {
     setV,
     theme,
     msgNameShow,
+    playerDWRCPilfer
 } = storeToRefs(store);
 
 const versionInfo = parseVersion(config.version);

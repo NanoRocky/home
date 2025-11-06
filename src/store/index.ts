@@ -41,6 +41,7 @@ export const storeState: MainState = {
   playerDWRCShowPro: true, // 【开关】逐字效果增强开关
   playerDWRCATDB: true, // 【开关】允许接入 AMLL TTML Database
   playerDWRCATDBF: false, // 【开关】接入 AMLL TTML Database 时使用镜像加速
+  playerDWRCPilfer: true, // 【开关】拆东墙补西墙
   playerCurrentTime: null as number | null, // 【缓存】当前歌曲已播放时间
   playerDuration: null as number | null, // 【缓存】当前歌曲总时长
   dwrcIndex: -1 as number | null, // 【缓存】逐字歌词进度存储
@@ -162,6 +163,7 @@ export const mainStore = defineStore("main", {
         'playerDWRCShowPro',
         'playerDWRCATDB',
         'playerDWRCATDBF',
+        'playerDWRCPilfer',
         'seasonalEffects',
         'theme',
       ],
