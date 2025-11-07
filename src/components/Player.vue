@@ -461,7 +461,6 @@ const fetchDWRC = async (dwrcUrl: string) => {
             urlObj.searchParams.set("dwrc", "true");
           };
           lrcUrl = urlObj.toString();
-          console.log(`偷到歌词，正在载入..`);
           const pilferSource = await fetch(lrcUrl);
           const pilferText = await pilferSource.text();
           const decoded = decodeDWQYRC(pilferText);
