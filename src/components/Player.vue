@@ -401,11 +401,20 @@ const fetchDWRC = async (dwrcUrl: string) => {
     try {
       const amllUrl = songUrlInfUrl[songServer].replace("${songIdlrc}", songId);
       const amllSource = await fetch(amllUrl);
-      const amllText = await amllSource.text();
-      const decoded = decodeDWQYRC(amllText);
-      store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
-      store.dwrcLoading = false;
-      store.dwrcEnable = true;
+      if (amllSource.status === 404) {
+        store.dwrcTemp = [];
+        store.dwrcLoading = false;
+        store.dwrcEnable = false;
+      } else if (!amllSource.ok) {
+        throw new Error(`AMLL TTML Database 调用失败...`);
+      } else {
+        const amllText = await amllSource.text();
+        const decoded = decodeDWQYRC(amllText);
+        store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
+        store.dwrcLoading = false;
+        store.dwrcEnable = true;
+        return;
+      };
     } catch (e) {
       if (store.playerDWRCATDBF) {
         const songUrlInfUrlse = {
@@ -416,12 +425,22 @@ const fetchDWRC = async (dwrcUrl: string) => {
           try {
             const amllUrlse = songUrlInfUrlse[songServer].replace("${songIdlrc}", songId);
             const amllSourcese = await fetch(amllUrlse);
-            const amllTextse = await amllSourcese.text();
-            const decodedse = decodeDWQYRC(amllTextse);
-            store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
-            store.dwrcLoading = false;
-            store.dwrcEnable = true;
-            return;
+            if (amllSourcese.status === 404) {
+              store.dwrcTemp = [];
+              store.dwrcLoading = false;
+              store.dwrcEnable = false;
+            } else if (!amllSourcese.ok) {
+              store.dwrcTemp = [];
+              store.dwrcLoading = false;
+              store.dwrcEnable = false;
+            } else {
+              const amllTextse = await amllSourcese.text();
+              const decodedse = decodeDWQYRC(amllTextse);
+              store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
+              store.dwrcLoading = false;
+              store.dwrcEnable = true;
+              return;
+            };
           } catch (e) {
             store.dwrcTemp = [];
             store.dwrcLoading = false;
