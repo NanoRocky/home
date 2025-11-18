@@ -2165,8 +2165,8 @@ packages:
     resolution: {integrity: sha512-7Vv6asjS4gMOuILabD3l739tsaxFQmC+a7pLZm02zyvs8p977bL3zEgq3yDk5rn9B0PbYgIv++jmHcuUab4RhA==}
     engines: {node: '>=18'}
 
-  core-js-compat@3.46.0:
-    resolution: {integrity: sha512-p9hObIIEENxSV8xIu+V68JjSeARg6UVMG5mR+JEUguG3sI6MsiS1njz2jHmyJDvA+8jX/sytkBHup6kxhM9law==}
+  core-js-compat@3.47.0:
+    resolution: {integrity: sha512-IGfuznZ/n7Kp9+nypamBhvwdwLsW6KC8IOaURw2doAK5e98AG3acVLdh0woOnEqCfUtS+Vu882JE4k/DAm3ItQ==}
 
   cosmiconfig@9.0.0:
     resolution: {integrity: sha512-itvL5h8RETACmOTFc4UfIyB2RfEHi71Ax6E/PivVxq9NseKbOWpeyHEOIbmAw1rs8Ak0VursQNww7lf7YtUwzg==}
@@ -2651,8 +2651,8 @@ packages:
   glob-to-regexp@0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
 
-  glob@11.0.3:
-    resolution: {integrity: sha512-2Nim7dha1KVkaiF4q6Dj+ngPPMdfvLJEOpZk/jKiUAkqKebpGAWQXAq9z1xu9HKu5lWfqw/FASuccEjyznjPaA==}
+  glob@11.1.0:
+    resolution: {integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==}
     engines: {node: 20 || >=22}
     hasBin: true
 
@@ -4980,7 +4980,7 @@ snapshots:
       babel-plugin-polyfill-corejs2: 0.4.14(@babel/core@7.28.5)
       babel-plugin-polyfill-corejs3: 0.13.0(@babel/core@7.28.5)
       babel-plugin-polyfill-regenerator: 0.6.5(@babel/core@7.28.5)
-      core-js-compat: 3.46.0
+      core-js-compat: 3.47.0
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6427,7 +6427,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-define-polyfill-provider': 0.6.5(@babel/core@7.28.5)
-      core-js-compat: 3.46.0
+      core-js-compat: 3.47.0
     transitivePeerDependencies:
       - supports-color
 
@@ -6560,7 +6560,7 @@ snapshots:
     dependencies:
       is-what: 5.5.0
 
-  core-js-compat@3.46.0:
+  core-js-compat@3.47.0:
     dependencies:
       browserslist: 4.28.0
 
@@ -7168,7 +7168,7 @@ snapshots:
 
   glob-to-regexp@0.4.1: {}
 
-  glob@11.0.3:
+  glob@11.1.0:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 4.1.1
@@ -8897,7 +8897,7 @@ snapshots:
       common-tags: 1.8.2
       fast-json-stable-stringify: 2.1.0
       fs-extra: 9.1.0
-      glob: 11.0.3
+      glob: 11.1.0
       lodash: 4.17.21
       pretty-bytes: 5.6.0
       rollup: 2.79.2
