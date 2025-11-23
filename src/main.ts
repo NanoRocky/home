@@ -21,13 +21,13 @@ const pinia = createPinia();
 export default pinia;
 pinia.use(piniaPluginPersistedstate);
 pinia.use(validationPlugin);
+app.use(pinia);
 
 const mountApp = () => {
   const appEl = document.getElementById("app");
   if (appEl) {
     appEl.style.display = "block";
   };
-  app.use(pinia);
   app.mount("#app");
   const store = mainStore();
 
