@@ -102,6 +102,20 @@ export default ({ mode }: { mode: string }): UserConfig => {
         server: {
             port: 3000,
             open: true,
+            proxy: {
+                // 高德天气代理
+                '/api-gd': {
+                    target: 'https://restapi.amap.com',
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/api-gd/, ''),
+                },
+                // 腾讯天气代理
+                '/api-tx': {
+                    target: 'https://apis.map.qq.com',
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/api-tx/, ''),
+                },
+            }
         },
         resolve: {
             alias: [
