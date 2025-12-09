@@ -105,19 +105,41 @@ export const getHitokoto = async () => {
 /**
  * 天气
  */
-// 获取腾讯地理位置信息（JSONP 方式）
+// 判断是否为开发环境
+//const isDev = import.meta.env.MODE === 'development';
+
+// 定义 Base URL
+// 开发环境用 /api-tx，生产环境用 https://apis.map.qq.com
+//const TX_BASE_URL = isDev ? '/api-tx/ws' : 'https://apis.map.qq.com/ws';
+// 开发环境用 /api-gd，生产环境用 https://restapi.amap.com
+//const GD_BASE_URL = isDev ? '/api-gd/v3' : 'https://restapi.amap.com/v3';
+
+// 1. 获取腾讯地理位置信息 (改用 Fetch + 代理)
 export const getTXAdcode = async (key) => {
-  const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-  const url = `https://apis.map.qq.com/ws/location/v1/ip?key=${key}&output=jsonp&callback=${callback}`;
-  return await loadJSONP(url, callback);
+  // 注意：腾讯位置服务现在推荐用 WebServiceAPI (ws) 而不是 JSONP
+  const res = await fetch(`${TX_BASE_URL}/location/v1/ip?key=${key}&output=json`);
+  return await res.json();
 };
 
-// 获取腾讯地理天气信息（JSONP 方式）
+// 2. 获取腾讯地理天气信息 (改用 Fetch + 代理)
 export const getTXWeather = async (key, adcode) => {
-  const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-  const url = `https://apis.map.qq.com/ws/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=jsonp&callback=${callback}`;
-  return await loadJSONP(url, callback);
+  const res = await fetch(`${TX_BASE_URL}/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=json`);
+  return await res.json();
 };
+
+// 获取腾讯地理位置信息（JSONP 方式） 原代码
+//export const getTXAdcode = async (key) => {
+  //const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+  //const url = `https://apis.map.qq.com/ws/location/v1/ip?key=${key}&output=jsonp&callback=${callback}`;
+  //return await loadJSONP(url, callback);
+//};
+
+// 获取腾讯地理天气信息（JSONP 方式）
+//export const getTXWeather = async (key, adcode) => {
+  //const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+  //const url = `https://apis.map.qq.com/ws/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=jsonp&callback=${callback}`;
+  //return await loadJSONP(url, callback);
+//};
 
 // 获取腾讯地理位置信息（鉴权模式 JSONP 方式）
 export const getTXAdcodeS = async (key, skey) => {
@@ -138,19 +160,22 @@ export const getTXWeatherS = async (key, adcode, skey) => {
 
 // 获取高德地理位置信息
 export const getGDAdcode = async (key) => {
-  const res = await fetch(`https://restapi.amap.com/v3/ip?key=${key}`);
+  //const res = await fetch(`https://restapi.amap.com/v3/ip?key=${key}`);  原代码
+  const res = await fetch(`${GD_BASE_URL}/ip?key=${key}`);
   return await res.json();
 };
 
 // 获取高德地理位置信息（带IP）
 export const getGDAdcodeI = async (ipv4, key) => {
-  const res = await fetch(`https://restapi.amap.com/v3/ip?ip=${ipv4}&key=${key}`);
+  //const res = await fetch(`https://restapi.amap.com/v3/ip?ip=${ipv4}&key=${key}`);
+  const res = await fetch(`${GD_BASE_URL}/ip?ip=${ipv4}&key=${key}`);
   return await res.json();
 };
 
 // 获取高德地理天气信息
 export const getGDWeather = async (key, city) => {
-  const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`);
+  //const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`);
+  const res = await fetch(`${GD_BASE_URL}/weather/weatherInfo?key=${key}&city=${city}`);
   return await res.json();
 };
 
