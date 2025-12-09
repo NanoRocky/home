@@ -43,7 +43,7 @@ const siteLogo = envConfig.VITE_SITE_MAIN_LOGO;
 
 // 站点链接
 const siteUrl = computed(() => {
-  let mns: string | null = null; 
+  let mns: string | null = null;
   if (store.msgNameShow) {
     mns = envConfig.VITE_SITE_MAIN_NAME || envConfig.VITE_SITE_URL || "imsyy.top";
   } else {
@@ -63,7 +63,7 @@ const siteUrl = computed(() => {
     return hostname.split(".");
   } else {
     // 如果是纯名称（无点号），直接返回数组的第一项，第二项为 null
-    return [url, null];
+    return [url, ""];
   }
 });
 
