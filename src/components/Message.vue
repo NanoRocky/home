@@ -120,11 +120,11 @@ watch(
 
 /* 1.在此处引入你的本地字体 */
 /* 请将 '你的中文字体文件名.ttf' 修改为你 public/font/ 文件夹下的实际文件名 */
-@font-face {
-  font-family: 'MyCustomChineseFont';
-  src: url('/font/ZcoolKuaiLe.ttf'); 
-  font-display: swap;
-}
+//@font-face {
+  //font-family: 'MyCustomChineseFont';
+  //src: url('/font/ZcoolKuaiLe.ttf'); 
+  //font-display: swap;
+//}
 
 .message {
   .logo {
@@ -145,7 +145,7 @@ watch(
       padding-left: 22px;
       transform: translateY(-8px);
       /* 2.修改字体栈：优先使用英文手写体，如果遇到中文则使用你的本地中文字体 */
-      font-family: "Pacifico-Regular", "MyCustomChineseFont", sans-serif;
+      font-family: "Pacifico-Regular", "ZcoolKuaiLe";
 
       .bg {
         font-size: 5rem;
@@ -201,7 +201,7 @@ watch(
         p {
           &:nth-of-type(1) {
             /* 简介里的 Hello 文字也应用同样的混合字体逻辑 */
-            font-family: "Pacifico-Regular", "MyCustomChineseFont", sans-serif;
+            font-family: "Pacifico-Regular", "ZcoolKuaiLe";
           }
         }
       }
