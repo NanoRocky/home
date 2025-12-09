@@ -41,40 +41,23 @@ const store = mainStore();
 const siteLogo = envConfig.VITE_SITE_MAIN_LOGO;
 // 站点链接
 const siteUrl = computed(() => {
-  // 1. 优先读取自定义名称 (如果有设置且开关开启)
-  if (store.msgNameShow && envConfig.VITE_SITE_MAIN_NAME) {
-    return envConfig.VITE_SITE_MAIN_NAME.split(".");
-  }
-  // 2. 否则读取 URL
-  const url = envConfig.VITE_SITE_URL || "imsyy.top";
+  let mns: string | null = null;
+  if (store.msgNameShow) {
+    mns = envConfig.VITE_SITE_MAIN_NAME  ||  envConfig.VITE_SITE_URL || "imsyy.top";
+    // 这里并没有处理显示自定义内容后的分段点，因为这个点看着也不错，有种写字时封笔的感觉，就不处理啦~
+    // 才不是懒的！（x）
+  } else {
+    mns = envConfig.VITE_SITE_URL || "imsyy.top";
+  };
+  const url = mns;
+  if (!url) return "imsyy.top".split(".");
   let urlFormat = url;
-  // 去掉协议
+  // 判断协议前缀
   urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
-  // 去掉路径和参数
   const domainOnly = urlFormat.split('/')[0];
-  // 去掉端口
   const hostname = domainOnly.split(':')[0];
   return hostname.split(".");
 });
-  
-//const siteUrl = computed(() => {
-  //let mns: string | null = null;
-  //if (store.msgNameShow) {
-    //mns = envConfig.VITE_SITE_MAIN_NAME  ||  envConfig.VITE_SITE_URL || "imsyy.top";
-    // 这里并没有处理显示自定义内容后的分段点，因为这个点看着也不错，有种写字时封笔的感觉，就不处理啦~
-    // 才不是懒的！（x）
-  //} else {
-    //mns = envConfig.VITE_SITE_URL || "imsyy.top";
-  //};
-  //const url = mns;
-  //if (!url) return "imsyy.top".split(".");
-  //let urlFormat = url;
-  // 判断协议前缀
-  //urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
-  //const domainOnly = urlFormat.split('/')[0];
-  //const hostname = domainOnly.split(':')[0];
-  //return hostname.split(".");
-//});
 
 // 简介区域文字
 const descriptionText = reactive({
