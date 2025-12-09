@@ -106,13 +106,13 @@ export const getHitokoto = async () => {
  * 天气
  */
 // 判断是否为开发环境
-//const isDev = import.meta.env.MODE === 'development';
+const isDev = import.meta.env.MODE === 'development';
 
 // 定义 Base URL
 // 开发环境用 /api-tx，生产环境用 https://apis.map.qq.com
-//const TX_BASE_URL = isDev ? '/api-tx/ws' : 'https://apis.map.qq.com/ws';
+const TX_BASE_URL = isDev ? '/api-tx/ws' : 'https://apis.map.qq.com/ws';
 // 开发环境用 /api-gd，生产环境用 https://restapi.amap.com
-//const GD_BASE_URL = isDev ? '/api-gd/v3' : 'https://restapi.amap.com/v3';
+const GD_BASE_URL = isDev ? '/api-gd/v3' : 'https://restapi.amap.com/v3';
 
 // 1. 获取腾讯地理位置信息 (改用 Fetch + 代理)
 export const getTXAdcode = async (key) => {
