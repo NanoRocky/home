@@ -107,9 +107,11 @@ if (!import.meta.env.VITE_CONFIG_TURN || import.meta.env.VITE_CONFIG_TURN != "tr
     });
 } else {
   if (config.author != 'imsyy' || config.efua != 'NanoRocky') {
-    console.error(`Warning: Somethings error ... , please delete and re-download the project package.`);
+    console.warn(`Warning: Somethings error ... , The original author information for this project has been modified. If this was not done by you, please delete the file and download the project code package again. If this was done by you, please do not modify or remove the original author information. Thank you! Of course, you can also choose to ignore this message.`);
+    console.log('Original repository link: https://github.com/NanoRocky/home/blob/EFU/');
   } else if (envConfig.VITE_SITE_AUTHOR != "酪灰") {
     console.error(`Warning: This version is not permitted for public use. Please use the public version.`);
+    console.log('Original repository link: https://github.com/NanoRocky/home/blob/EFU/');
   } else {
     mountApp();
   };
