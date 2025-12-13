@@ -180,7 +180,7 @@ onMounted(() => {
   const styleTitle2 = "font-size:12px;color: rgb(244,167,89);";
   const styleContent = "color: rgb(30,152,255);";
   const title1 = "酪灰の主页";
-  const content = `\n\n版本: ${config.version}`;
+  const content = `\n\n版本: ${config.version}\n主页: ${config.home}\nGithub: ${config.github}\nUpdate: ${config.efug}\n当前为酪灰维护版本。`;
   console.info(`%c${title1} %c${content}`, styleTitle1, styleContent);
 });
 
