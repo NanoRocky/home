@@ -5,24 +5,35 @@ on:
   push:
     branches:
       - EFU
-      - dev
+      # - dev
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   release:
     name: Build Website
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: "24.x"
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Cache pnpm store
+        uses: actions/cache@v5
         with:
-          version: 10
+          path: |
+            ~\.pnpm-store
+            node_modules\.cache
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Configure environment
         run: |
           if (-not (Test-Path .env)) {
@@ -37,8 +48,32 @@ jobs:
         run: pnpm run build
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Verify build output
+        shell: pwsh
+        run: |
+          if (-not (Test-Path dist)) {
+            Write-Error "Build failed: dist directory not found"
+            exit 1
+          }
+          $fileCount = (Get-ChildItem -Path dist -Recurse -File).Count
+          if ($fileCount -eq 0) {
+            Write-Error "Build failed: dist directory is empty"
+            exit 1
+          }
+          Write-Host "✓ Build successful: $fileCount files generated in dist/"
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-logs-${{ github.run_number }}
+          path: |
+            **/*.log
+            .env
+            node_modules/.vite/deps/_metadata.json
+          retention-days: 7
+          if-no-files-found: warn
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Home
           path: dist
