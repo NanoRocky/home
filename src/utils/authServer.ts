@@ -18,7 +18,7 @@ async function gst() {
     // 而下面的签名 Token，有效期设置的都是几秒级别，所以优先使用网络时间。
     if (!x || !y) {
         try {
-            const { timestamp: t } = await (await fetch("https://nanorocky.top/time/")).json();
+            const { timestamp: t } = await (await fetch("https://api.nanorocky.top/time/")).json();
             x = t as number;
             y = f() as number;
         } catch (error) {

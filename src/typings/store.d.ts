@@ -3,6 +3,7 @@ export interface MainState {
     innerWidth: number | null;
     coverType: number;
     sBGCount: string | null;
+    autoBGSwitchInterval : number;
     seasonalEffects: boolean;
     msgNameShow: boolean;
     siteStartShow: boolean;

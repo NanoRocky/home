@@ -1,149 +1,204 @@
+import { removeLyricMetadata } from '@/utils/removeLyricMetadata';
 
-type LrcLine = { time: number; text: string; raw: string; isMeta: boolean };
-type PilferWord = { start: number; dur: number; flag?: number; text: string };
-type PilferLine = { start: number; dur: number; words: PilferWord[]; raw: string; isMeta: boolean };
-type LyricFormat = 'YRC' | 'QRC' | 'UNKNOWN';
+type LyricEntry = {
+    index: number;
+    normalized: string;
+    startMs: number | null;
+};
 
-function parseLrcTimeToMs(mmssxx: string): number | null {
-    const m = mmssxx.match(/\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/);
-    if (!m) return null;
-    return parseInt(m[1], 10) * 60000 + parseInt(m[2], 10) * 1000 + (m[3] ? parseInt(m[3].padEnd(3, '0'), 10) : 0);
-}
+const punctuationAndSpace = /[\s!"#$%&'()*+,\-.\/:;<=>?@[\]^_`{|}~·！？。，、；：“”‘’（）【】《》〈〉—…～]/g;
 
-function isMetaLineRaw(line: string): boolean {
-    const s = line.trim();
-    return /^\[(ti|ar|al|by|offset|ch)\s*:/i.test(s) ||
-        (/^\[(\d{1,2}:\d{2})/.test(s) && /作词|作曲|编曲|吉他|配唱|混音|出品人|监制/i.test(s));
-}
+const normalizeLyricLine = (line: string): string => {
+    const stripped = line
+        .replace(/\[[^\]]*\]/g, '') // 去除方括号内的标签与时间
+        .replace(/\(\d+(?:,\d+)*\)/g, '') // 去除逐字时间戳
+        .normalize('NFKC')
+        .toLowerCase();
+    return stripped.replace(punctuationAndSpace, '');
+};
 
-function parseLrcLines(lrc: string): LrcLine[] {
-    return lrc.split(/\r?\n/).map(raw => {
-        const timeMatch = raw.match(/\[(\d{1,2}:\d{2}(?:\.\d{1,3})?)\]/);
-        const isMeta = isMetaLineRaw(raw);
-        const text = raw.replace(/\[.+?\]/g, '').trim();
-        const time = timeMatch ? parseLrcTimeToMs(`[${timeMatch[1]}]`) ?? -1 : -1;
-        return { time, text, raw, isMeta };
+const parseStartTimeMs = (line: string): number | null => {
+    const lrcMatch = line.match(/\[(\d{1,2}):(\d{1,2})(?:[.:](\d{1,3}))?\]/);
+    if (lrcMatch) {
+        const minutes = Number(lrcMatch[1]);
+        const seconds = Number(lrcMatch[2]);
+        const fraction = lrcMatch[3] ? Number(lrcMatch[3]) : 0;
+        const fractionMs = lrcMatch[3] && lrcMatch[3].length === 3 ? fraction : fraction * 10;
+        return minutes * 60_000 + seconds * 1_000 + fractionMs;
+    }
+
+    const bracketMatch = line.match(/\[(\d+),\s*(\d+)\]/);
+    if (bracketMatch) {
+        return Number(bracketMatch[1]);
+    }
+
+    const singleNumMatch = line.match(/\[(\d+)\]/);
+    if (singleNumMatch) {
+        return Number(singleNumMatch[1]);
+    }
+
+    const parenMatch = line.match(/\((\d+)(?:,\d+)*\)/);
+    if (parenMatch) {
+        return Number(parenMatch[1]);
+    }
+
+    return null;
+};
+
+const buildEntries = (cleanedText: string): LyricEntry[] => {
+    const lines = cleanedText.split(/\r?\n/);
+    const entries: LyricEntry[] = [];
+
+    lines.forEach((line, index) => {
+        const normalized = normalizeLyricLine(line);
+        if (!normalized) return;
+        entries.push({ index, normalized, startMs: parseStartTimeMs(line) });
     });
-}
 
-function normalizeForMatch(text: string): string {
-    return text.replace(/[^\p{L}\p{N}\s]/gu, '').replace(/\s+/g, ' ').trim().toLowerCase();
-}
+    return entries;
+};
 
-function parseQRCContent(content: string): PilferWord[] {
-    const words: PilferWord[] = [];
-    const re = /([^()]*)(\(\d+,\d+\))/g;
-    let lastIndex = 0;
-    let match;
-    while ((match = re.exec(content)) !== null) {
-        if (match.index > lastIndex) {
-            words.push({ text: content.substring(lastIndex, match.index), start: -1, dur: -1 });
+const findCleanStartIndex = (originalLines: string[], cleanedLines: string[]): number => {
+    if (!cleanedLines.length) return 0;
+    const first = cleanedLines[0];
+    for (let i = 0; i < originalLines.length; i++) {
+        if (originalLines[i] === first) {
+            return i;
         }
-        const timeMatch = match[2].match(/\((\d+),(\d+)\)/);
-        if (timeMatch) {
-            words.push({ text: match[1], start: parseInt(timeMatch[1]), dur: parseInt(timeMatch[2]) });
-        }
-        lastIndex = match.index + match[0].length;
     }
-    if (lastIndex < content.length) {
-        words.push({ text: content.substring(lastIndex), start: -1, dur: -1 });
-    }
-    return words;
-}
+    return 0;
+};
 
-function parsePilferedRaw(raw: string): { lines: PilferLine[], format: LyricFormat } {
-    const lines = raw.split(/\r?\n/);
-    let format: LyricFormat = 'UNKNOWN';
+const formatLrcTimestamp = (ms: number): string => {
+    const clamped = Math.max(0, Math.round(ms));
+    const centi = Math.round(clamped / 10); // 转为百分秒
+    const minutes = Math.floor(centi / 6000);
+    const seconds = Math.floor((centi % 6000) / 100);
+    const centiseconds = centi % 100;
+    return `[${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds
+        .toString()
+        .padStart(2, '0')}]`;
+};
 
-    const pilferLines = lines.map(rawLine => {
-        const trimmed = rawLine.trim();
-        if (!trimmed || isMetaLineRaw(trimmed)) {
-            return { start: -1, dur: -1, words: [], raw: rawLine, isMeta: true };
-        }
+const adjustLineWithOffset = (line: string, offset: number): string | null => {
+    if (offset === 0) return line;
 
-        const lineMatch = trimmed.match(/^\[(\d+),(\d+)\](.*)$/);
-        if (!lineMatch) return { start: -1, dur: -1, words: [], raw: rawLine, isMeta: true };
-
-        const [, start, dur, content] = lineMatch;
-        let words: PilferWord[] = [];
-
-        if (format === 'UNKNOWN' && content) {
-            if (/\([^)]+\)[^()]+/.test(content)) format = 'YRC';
-            else if (/[^()]+\([^)]+\)/.test(content) || /\(\d+,\d+\)/.test(content)) format = 'QRC';
-        }
-
-        if (format === 'QRC') {
-            words = parseQRCContent(content);
-        } else { // YRC or fallback
-            const wordRe = /\((\d+),(\d+)(,(\d+))?\)([^()]+)/g;
-            let match;
-            while ((match = wordRe.exec(content)) !== null) {
-                words.push({ start: parseInt(match[1]), dur: parseInt(match[2]), flag: match[4] ? parseInt(match[4]) : 0, text: match[5] });
-            }
-        }
-        return { start: parseInt(start), dur: parseInt(dur), words, raw: rawLine, isMeta: false };
-    }).filter((l): l is PilferLine => l !== null);
-
-    return { lines: pilferLines, format };
-}
-
-function buildPilferedRaw(lines: PilferLine[], format: LyricFormat): string {
-    return lines.map(line => {
-        if (line.isMeta) return line.raw;
-        const wordsStr = line.words.map(w => {
-            if (w.start === -1) return w.text;
-            const timeTuple = w.flag !== undefined ? `(${w.start},${w.dur},${w.flag})` : `(${w.start},${w.dur})`;
-            return format === 'QRC' ? `${w.text}${timeTuple}` : `${timeTuple}${w.text}`;
-        }).join('');
-        return `[${line.start},${line.dur}]${wordsStr}`;
-    }).join('\n');
-}
-
-export function alignPilferedLyrics(originalLrc: string, pilferedRaw: string, minConsecutiveMatch = 3): string {
-    const origLyricLines = parseLrcLines(originalLrc).filter(l => !l.isMeta && l.text);
-    const { lines: pilferedLines, format } = parsePilferedRaw(pilferedRaw);
-    const pilferedLyricLines = pilferedLines.filter(l => !l.isMeta && l.words.length > 0);
-
-    if (origLyricLines.length < minConsecutiveMatch || pilferedLyricLines.length < minConsecutiveMatch) {
-        return pilferedRaw;
+    const start = parseStartTimeMs(line);
+    if (start !== null && start + offset < 0) {
+        return null; // 整行时间轴为负，直接丢弃
     }
 
-    const normOrig = origLyricLines.map(l => normalizeForMatch(l.text));
-    const normPilfered = pilferedLyricLines.map(l => normalizeForMatch(l.words.map(w => w.text).join('')));
+    let updated = line;
 
-    let bestAnchor: { origIndex: number; pilferIndex: number } | null = null;
-    for (let i = 0; i <= normOrig.length - minConsecutiveMatch; i++) {
-        for (let j = 0; j <= normPilfered.length - minConsecutiveMatch; j++) {
-            let match = true;
-            for (let k = 0; k < minConsecutiveMatch; k++) {
-                if (normOrig[i + k] !== normPilfered[j + k]) {
-                    match = false;
-                    break;
-                }
-            }
-            if (match) {
-                bestAnchor = { origIndex: i, pilferIndex: j };
+    // 调整 LRC 时间戳
+    updated = updated.replace(/\[(\d{1,2}):(\d{1,2})(?:[.:](\d{1,3}))?\]/g, (_match, mm, ss, ff = '0') => {
+        const minutes = Number(mm);
+        const seconds = Number(ss);
+        const fraction = ff ? Number(ff) : 0;
+        const fractionMs = ff && ff.length === 3 ? fraction : fraction * 10;
+        const newMs = minutes * 60_000 + seconds * 1_000 + fractionMs + offset;
+        return newMs < 0 ? '' : formatLrcTimestamp(newMs);
+    });
+
+    // 调整 YRC/QRC 行首时间戳
+    updated = updated.replace(/\[(\d+),\s*(\d+)\]/g, (_match, startStr, duration) => {
+        const newStart = Number(startStr) + offset;
+        return newStart < 0 ? '' : `[${newStart},${duration}]`;
+    });
+
+    // 调整单一毫秒时间戳
+    updated = updated.replace(/\[(\d+)\]/g, (_match, startStr) => {
+        const newStart = Number(startStr) + offset;
+        return newStart < 0 ? '' : `[${newStart}]`;
+    });
+
+    // 调整逐字的小括号时间戳（仅调整第一个值）
+    updated = updated.replace(/\((\d+(?:,\d+)*)\)/g, (_match, body) => {
+        const parts = body.split(',');
+        const newStart = Number(parts[0]) + offset;
+        if (newStart < 0) return '';
+        parts[0] = String(newStart);
+        return `(${parts.join(',')})`;
+    });
+
+    return updated;
+};
+
+export function alignPilferedLyrics(pilferLyric: string, originalLineLyric?: string): string | null {
+    if (!pilferLyric || typeof pilferLyric !== 'string') {
+        return null;
+    }
+
+    if (!originalLineLyric || !originalLineLyric.trim()) {
+        return pilferLyric; // 原歌词为空，直接使用偷来的逐字
+    }
+
+    const cleanedSource = removeLyricMetadata(originalLineLyric);
+    if (!cleanedSource.trim()) {
+        return pilferLyric; // 原歌词只有元数据，直接使用偷来的逐字
+    }
+
+    const cleanedPilfer = removeLyricMetadata(pilferLyric);
+
+    const sourceEntries = buildEntries(cleanedSource);
+    const pilferEntries = buildEntries(cleanedPilfer);
+
+    if (!sourceEntries.length || !pilferEntries.length) {
+        return pilferLyric;
+    }
+
+    const requiredMatchCount = Math.min(4, sourceEntries.length);
+    let matchedIndex = -1;
+
+    for (let i = 0; i <= pilferEntries.length - requiredMatchCount; i++) {
+        let matched = true;
+        for (let j = 0; j < requiredMatchCount; j++) {
+            if (sourceEntries[j].normalized !== pilferEntries[i + j].normalized) {
+                matched = false;
                 break;
             }
         }
-        if (bestAnchor) break;
+        if (matched) {
+            matchedIndex = i;
+            break;
+        }
     }
 
-    if (!bestAnchor) return pilferedRaw;
+    if (matchedIndex === -1) {
+        return null; // 找不到匹配，直接丢弃偷来的歌词
+    }
 
-    const offset = origLyricLines[bestAnchor.origIndex].time - pilferedLyricLines[bestAnchor.pilferIndex].start;
+    const sourceStart = sourceEntries[0].startMs ?? 0;
+    const pilferStart = pilferEntries[matchedIndex].startMs ?? 0;
+    let offset = sourceStart - pilferStart;
 
-    const adjustedLines = pilferedLines.map(line => {
-        if (line.isMeta) return line;
-        const newLineStart = line.start + offset;
-        const newWords = line.words.map(w => ({ ...w, start: w.start !== -1 ? w.start + offset : -1 }));
-        return { ...line, start: newLineStart, words: newWords };
-    });
+    // 小于 1.5s 的偏移忽略
+    if (Math.abs(offset) < 1500) {
+        offset = 0;
+    }
 
-    const firstLyricTime = adjustedLines.find(l => !l.isMeta)?.start;
-    const finalLines = (firstLyricTime !== undefined && firstLyricTime < 0)
-        ? adjustedLines.filter(l => !l.isMeta || (l.raw && l.raw.includes('[ti:')))
-        : adjustedLines;
+    const originalPilferLines = pilferLyric.split(/\r?\n/);
+    const cleanedPilferLines = cleanedPilfer.split(/\r?\n/);
+    const cleanStartIndex = findCleanStartIndex(originalPilferLines, cleanedPilferLines);
+    const linesToRemove = pilferEntries[matchedIndex].index; // 需要移除的前置有效歌词行数
 
-    return buildPilferedRaw(finalLines, format);
+    const trimmedLines = [
+        ...originalPilferLines.slice(0, cleanStartIndex),
+        ...originalPilferLines.slice(cleanStartIndex + linesToRemove),
+    ];
+
+    if (offset === 0) {
+        return trimmedLines.join('\n');
+    }
+
+    const adjustedLines: string[] = [];
+    for (const line of trimmedLines) {
+        const updated = adjustLineWithOffset(line, offset);
+        if (updated !== null) {
+            adjustedLines.push(updated);
+        }
+    }
+
+    return adjustedLines.join('\n');
 }
+

@@ -13,6 +13,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Background: typeof import('./components/Background.vue')['default']
+    copy: typeof import('./components/Player copy.vue')['default']
     DevSet: typeof import('./components/DevSet.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCol: typeof import('element-plus/es')['ElCol']
@@ -47,6 +48,7 @@ declare module 'vue' {
 // For TSX support
 declare global {
   const Background: typeof import('./components/Background.vue')['default']
+  const copy: typeof import('./components/Player copy.vue')['default']
   const DevSet: typeof import('./components/DevSet.vue')['default']
   const ElButton: typeof import('element-plus/es')['ElButton']
   const ElCol: typeof import('element-plus/es')['ElCol']

@@ -1,12 +1,7 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
-    <!-- 当前壁纸层 -->
-    <img v-show="store.imgLoadStatus" :src="currentBgUrl" :class="['bg', 'current', { 'blur-out': isTransitioning }]"
-      alt="cover" @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd"
-      crossorigin="anonymous" />
-    <!-- 新壁纸层 -->
-    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover"
-      crossorigin="anonymous" />
+    <img v-show="store.imgLoadStatus" :src="bgUrl" class="bg" alt="cover" @load="imgLoadComplete"
+      @error.once="imgLoadError" @animationend="imgAnimationEnd" crossorigin="anonymous" />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -23,16 +18,12 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
 import { initLantern, closeLantern } from "@/utils/season/lantern";
-import { ref, h, nextTick } from 'vue';
+import { ref, h } from 'vue';
 import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
-const currentBgUrl = ref(null);
-const nextBgUrl = ref(null);
-const isTransitioning = ref(false);
-const isBlurringIn = ref(false);
+const bgUrl = ref(null);
 const imgTimeout = ref(null);
-const autoBGSwitchTimer = ref(null); // 定时切换定时器
 const emit = defineEmits(["loadComplete", "imageLoaded"]);
 const key = envConfig.VITE_SFILE_SKEY;
 const isLoading = ref(false);
@@ -104,115 +95,63 @@ const changeBg = async (type) => {
       const configLoaded = await loadConfig();
       const deviceType = await detectDevice();
       if (!configLoaded) return;
-
-      let newBgUrl = null;
-
       if (type == 0) {
-        // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png
-        // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
+        // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
+        // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
         if (deviceType === 'mobile') {
           if (key) {
             const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
+            bgUrl.value = await gasC(bgUrlS, key);
           } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+            bgUrl.value = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
           };
         } else if (deviceType === 'tablet' || deviceType === 'pc') {
           if (key) {
             const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
+            bgUrl.value = await gasC(bgUrlS, key);
           } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+            bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
           };
         } else {
           if (key) {
             const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
+            bgUrl.value = await gasC(bgUrlS, key);
           } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+            bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
           };
         };
       } else if (type == 1) {
         if (deviceType === 'mobile') {
           const bgfmRandom = Math.floor(Math.random() * 2 + 1);
           if (bgfmRandom == 1) {
-            newBgUrl = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
+            bgUrl.value = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
           } else {
-            newBgUrl = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
+            bgUrl.value = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
           };
         } else if (deviceType === 'tablet' || deviceType === 'pc') {
-          newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
+          bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
         } else {
-          newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
+          bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
         };
       } else if (type == 2) {
         if (deviceType === 'mobile') {
-          newBgUrl = `https://img.moehu.org/pics.php?id=sjpic`;
+          bgUrl.value = `https://img.moehu.org/pics.php?id=sjpic`;
         } else if (deviceType === 'tablet' || deviceType === 'pc') {
-          newBgUrl = `https://img.moehu.org/pic.php?id=pc`;
+          bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
         } else {
-          newBgUrl = `https://img.moehu.org/pic.php?id=pc`;
+          bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
         };
       } else if (type == 3) {
-        newBgUrl = "https://img.moehu.org/pic.php?id=kemonomimi";
+        bgUrl.value = "https://img.moehu.org/pic.php?id=kemonomimi";
       } else if (type == 4) {
-        newBgUrl = "https://img.moehu.org/pic.php?id=gqbz";
+        bgUrl.value = "https://img.moehu.org/pic.php?id=gqbz";
       } else if (type == 5) {
-        newBgUrl = "https://uapis.cn/api/bing.php?rand=true";
+        bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
       };
-
-      // 预加载新壁纸
-      await preloadImage(newBgUrl);
     } finally {
       isLoading.value = false;
     };
   })();
-};
-
-// 预加载图片并执行过渡动画
-const preloadImage = (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      // 图片加载完成后,执行过渡动画
-      performTransition(url);
-      resolve();
-    };
-    img.onerror = () => {
-      reject(new Error('图片加载失败'));
-    };
-    img.src = url;
-  });
-};
-
-// 执行过渡动画
-const performTransition = async (newUrl) => {
-  // 如果是第一次加载,直接设置
-  if (!currentBgUrl.value) {
-    currentBgUrl.value = newUrl;
-    return;
-  }
-
-  // 开始过渡
-  nextBgUrl.value = newUrl;
-  isTransitioning.value = true;
-  isBlurringIn.value = false;
-
-  // 等待DOM更新,确保新图层已渲染但保持初始模糊状态
-  await nextTick();
-
-  // 稍微延迟后开始淡入动画,确保初始状态已应用
-  setTimeout(() => {
-    isBlurringIn.value = true;
-  }, 30);
-
-  // 等待过渡完全完成后再切换 (1.6s transform是最长的，再加100ms缓冲)
-  setTimeout(() => {
-    currentBgUrl.value = newUrl;
-    isTransitioning.value = false;
-    isBlurringIn.value = false;
-    nextBgUrl.value = null;
-  }, 1700);
 };
 
 
@@ -236,7 +175,7 @@ const imgAnimationEnd = () => {
 
 // 图片显示失败
 const imgLoadError = async () => {
-  console.error("壁纸加载失败：", currentBgUrl.value);
+  console.error("壁纸加载失败：", bgUrl.value);
   ElMessage({
     message: "壁纸加载失败惹喵...已临时切换回默认！",
     icon: h(Error, {
@@ -246,9 +185,9 @@ const imgLoadError = async () => {
   });
   if (key) {
     const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-    currentBgUrl.value = await gasC(bgUrlS, key);
+    bgUrl.value = await gasC(bgUrlS, key);
   } else {
-    currentBgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+    bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
   };
   if (store.webSpeech) {
     stopSpeech();
@@ -328,63 +267,16 @@ const SeasonStyle = async (type, state, where) => {
   sest = 1;
 };
 
-// 定时切换壁纸功能
-const setupAutoSwitch = () => {
-  // 清除现有定时器
-  if (autoBGSwitchTimer.value) {
-    clearInterval(autoBGSwitchTimer.value);
-    autoBGSwitchTimer.value = null;
-  }
-
-  // 获取定时切换设置值
-  const switchMode = store.autoBGSwitchInterval || 0;
-
-  // 根据模式设置间隔时间（毫秒）
-  const intervals = {
-    0: 0,      // 不自动切换
-    1: 15000,   // 15秒
-    2: 30000,  // 30秒
-    3: 45000   // 45秒
-  };
-
-  const interval = intervals[switchMode];
-
-  // 如果间隔为0，不启动定时器
-  if (interval === 0) {
-    return;
-  }
-
-  // 启动定时器
-  autoBGSwitchTimer.value = setInterval(async () => {
-    // 只在coverType为0（自定义壁纸）时自动切换
-    if (store.coverType == 0) {
-      // 随机切换下一张壁纸
-      const deviceType = await detectDevice();
-      if (deviceType === 'mobile') {
-        bgRandomp = (bgRandomp % bgImageCountP) + 1;
-      } else {
-        bgRandom = (bgRandom % bgImageCount) + 1;
-      }
-      await changeBg(0);
-    }
-  }, interval);
-};
-
 onMounted(async () => {
   // 加载壁纸
   await changeBg(Number(store.coverType));
   // 加载季节特效
   if (store.seasonalEffects) { await SeasonStyle(0, true, 'normal') } else { sest = 1 };
-  // 启动定时切换
-  setupAutoSwitch();
 });
 
 onBeforeUnmount(() => {
   if (imgTimeout.value) {
     clearTimeout(imgTimeout.value);
-  };
-  if (autoBGSwitchTimer.value) {
-    clearInterval(autoBGSwitchTimer.value);
   };
 });
 
@@ -405,11 +297,6 @@ watch(() => store.sBGCount, async (value) => {
   sBGCountN = value;
   await changeBg(Number(store.coverType));
   store.setSBGCount(null);
-});
-
-// 监听定时切换设置变化
-watch(() => store.autoBGSwitchInterval, () => {
-  setupAutoSwitch();
 });
 </script>
 
@@ -436,41 +323,11 @@ watch(() => store.autoBGSwitchInterval, () => {
     object-fit: cover;
     backface-visibility: hidden;
     filter: blur(20px) brightness(0.3);
-    transform: scale(1);
-    will-change: filter, opacity, transform;
     transition:
-      filter 1.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-      opacity 1.4s cubic-bezier(0.33, 0, 0.2, 1),
-      transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1);
-
-    // 当前壁纸层 - 首次加载时的动画
-    &.current {
-      animation: fade-blur-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      animation-delay: 0.45s;
-
-      // 切换时的模糊淡出效果
-      &.blur-out {
-        filter: blur(50px) brightness(0.25);
-        opacity: 0;
-        transform: scale(1.05);
-      }
-    }
-
-    // 新壁纸层 - 初始状态是模糊+透明
-    &.next {
-      filter: blur(50px) brightness(0.25);
-      opacity: 0;
-      transform: scale(1.08);
-      animation: none;
-      z-index: 2;
-
-      // 淡入时逐渐清晰
-      &.blur-in {
-        filter: blur(20px) brightness(0.3);
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
+      filter 0.3s,
+      transform 0.3s;
+    animation: fade-blur-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    animation-delay: 0.45s;
   }
 
   .gray {

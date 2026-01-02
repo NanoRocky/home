@@ -19,6 +19,10 @@ export const validationRules = {
         allowed: ["system", "time", "bg", "light", "dark"],
         defaultValue: "system",
     },
+    autoBGSwitchInterval: {
+        allowed: [0, 1, 2, 3],
+        defaultValue: 0,
+    },
 };
 
 /**
