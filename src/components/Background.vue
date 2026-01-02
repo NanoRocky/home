@@ -199,7 +199,18 @@ const imgLoadError = async (bgIndex) => {
     }),
   });
 
-  let defaultBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+  // 生成新的随机备用壁纸链接
+  const deviceType = detectDevice();
+  let defaultBgUrl = '';
+
+  if (deviceType === 'mobile') {
+    const fallbackRandomP = Math.floor(Math.random() * bgImageCountP + 1);
+    defaultBgUrl = `https://filep.nanorocky.top/home/images/phone/backgroundphone${fallbackRandomP}.webp`;
+  } else {
+    const fallbackRandom = Math.floor(Math.random() * bgImageCount + 1);
+    defaultBgUrl = `https://filep.nanorocky.top/home/images/background${fallbackRandom}.webp`;
+  }
+
   if (key) {
     defaultBgUrl = await gasC(defaultBgUrl, key);
   }
