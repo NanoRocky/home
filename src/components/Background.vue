@@ -1,7 +1,9 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
-    <img v-show="store.imgLoadStatus" :src="bgUrl" class="bg" alt="cover" @load="imgLoadComplete"
-      @error.once="imgLoadError" @animationend="imgAnimationEnd" crossorigin="anonymous" />
+    <img :class="['bg', { 'show-bg': bg1.show }]" :src="bg1.url" alt="cover" @load="imgLoadComplete(1, $event)"
+      @error.once="imgLoadError(1)" @transitionend="imgAnimationEnd" crossorigin="anonymous" />
+    <img :class="['bg', { 'show-bg': bg2.show }]" :src="bg2.url" alt="cover" @load="imgLoadComplete(2, $event)"
+      @error.once="imgLoadError(2)" @transitionend="imgAnimationEnd" crossorigin="anonymous" />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -18,11 +20,23 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
 import { initLantern, closeLantern } from "@/utils/season/lantern";
-import { ref, h } from 'vue';
+import { ref, h, reactive } from 'vue';
 import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
-const bgUrl = ref(null);
+
+// 壁纸数据
+const bg1 = reactive({
+  url: '',
+  show: false,
+});
+const bg2 = reactive({
+  url: '',
+  show: false,
+});
+// 当前显示的壁纸
+let currentBg = 1;
+
 const imgTimeout = ref(null);
 const emit = defineEmits(["loadComplete", "imageLoaded"]);
 const key = envConfig.VITE_SFILE_SKEY;
@@ -90,92 +104,93 @@ const detectDevice = () => {
 const changeBg = async (type) => {
   if (isLoading.value) return;
   isLoading.value = true;
-  (async () => {
-    try {
-      const configLoaded = await loadConfig();
-      const deviceType = await detectDevice();
-      if (!configLoaded) return;
-      if (type == 0) {
-        // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
-        // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
-        if (deviceType === 'mobile') {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-            bgUrl.value = await gasC(bgUrlS, key);
-          } else {
-            bgUrl.value = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-          };
-        } else if (deviceType === 'tablet' || deviceType === 'pc') {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-            bgUrl.value = await gasC(bgUrlS, key);
-          } else {
-            bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-          };
-        } else {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-            bgUrl.value = await gasC(bgUrlS, key);
-          } else {
-            bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-          };
-        };
-      } else if (type == 1) {
-        if (deviceType === 'mobile') {
-          const bgfmRandom = Math.floor(Math.random() * 2 + 1);
-          if (bgfmRandom == 1) {
-            bgUrl.value = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
-          } else {
-            bgUrl.value = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
-          };
-        } else if (deviceType === 'tablet' || deviceType === 'pc') {
-          bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
-        } else {
-          bgUrl.value = "https://uapis.cn/api/imgapi/furry/img4k.php";
-        };
-      } else if (type == 2) {
-        if (deviceType === 'mobile') {
-          bgUrl.value = `https://img.moehu.org/pics.php?id=sjpic`;
-        } else if (deviceType === 'tablet' || deviceType === 'pc') {
-          bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
-        } else {
-          bgUrl.value = `https://img.moehu.org/pic.php?id=pc`;
-        };
-      } else if (type == 3) {
-        bgUrl.value = "https://img.moehu.org/pic.php?id=kemonomimi";
-      } else if (type == 4) {
-        bgUrl.value = "https://img.moehu.org/pic.php?id=gqbz";
-      } else if (type == 5) {
-        bgUrl.value = "https://uapis.cn/api/bing.php?rand=true";
-      };
-    } finally {
-      isLoading.value = false;
-    };
-  })();
+
+  try {
+    const configLoaded = await loadConfig();
+    if (!configLoaded) return;
+
+    const deviceType = detectDevice();
+    let newBgUrl = '';
+
+    // 根据类型和设备获取新的壁纸 URL
+    if (type == 0) {
+      if (deviceType === 'mobile') {
+        newBgUrl = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+      } else {
+        newBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+      }
+      if (key) {
+        newBgUrl = await gasC(newBgUrl, key);
+      }
+    } else if (type == 1) {
+      if (deviceType === 'mobile') {
+        const bgfmRandom = Math.floor(Math.random() * 2 + 1);
+        newBgUrl = bgfmRandom === 1 ? 'https://uapis.cn/api/imgapi/furry/imgs4k.php' : 'https://uapis.cn/api/imgapi/furry/szs8k.php';
+      } else {
+        newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
+      }
+    } else if (type == 2) {
+      if (deviceType === 'mobile') {
+        newBgUrl = 'https://img.moehu.org/pics.php?id=sjpic';
+      } else {
+        newBgUrl = 'https://img.moehu.org/pic.php?id=pc';
+      }
+    } else if (type == 3) {
+      newBgUrl = "https://img.moehu.org/pic.php?id=kemonomimi";
+    } else if (type == 4) {
+      newBgUrl = "https://img.moehu.org/pic.php?id=gqbz";
+    } else if (type == 5) {
+      newBgUrl = "https://uapis.cn/api/bing.php?rand=true";
+    }
+
+    // 更新壁纸 URL
+    if (currentBg === 1) {
+      bg2.url = newBgUrl;
+    } else {
+      bg1.url = newBgUrl;
+    }
+
+  } catch (error) {
+    console.error("更换壁纸链接时出错:", error);
+    imgLoadError(currentBg === 1 ? 2 : 1);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
-
 // 图片加载完成
-const imgLoadComplete = (event) => {
+const imgLoadComplete = (bgIndex, event) => {
+  if (imgTimeout.value) {
+    clearTimeout(imgTimeout.value);
+  }
+  imgTimeout.value = setTimeout(() => {
+    store.setImgLoadStatus(true);
+    if (bgIndex === 1) {
+      bg1.show = true;
+      bg2.show = false;
+      currentBg = 1;
+    } else {
+      bg2.show = true;
+      bg1.show = false;
+      currentBg = 2;
+    }
+  }, 300);
   emit("imageLoaded", event.target);
-  imgTimeout.value = setTimeout(
-    () => {
-      store.setImgLoadStatus(true);
-    },
-    Math.floor(Math.random() * (600 - 300 + 1)) + 300,
-  );
 };
 
 // 图片动画完成
-const imgAnimationEnd = () => {
-  console.log("壁纸加载且动画完成");
-  // 加载完成事件
-  emit("loadComplete");
+const imgAnimationEnd = (event) => {
+  // 确保是新图片（带有 'show-bg' 类）的 'opacity' 过渡完成时才触发
+  if (event.target.classList.contains('show-bg') && event.propertyName === 'opacity') {
+    console.log("壁纸动画完成");
+    emit("loadComplete");
+  }
 };
 
+
 // 图片显示失败
-const imgLoadError = async () => {
-  console.error("壁纸加载失败：", bgUrl.value);
+const imgLoadError = async (bgIndex) => {
+  console.error("壁纸加载失败：", bgIndex === 1 ? bg1.url : bg2.url);
   ElMessage({
     message: "壁纸加载失败惹喵...已临时切换回默认！",
     icon: h(Error, {
@@ -183,27 +198,30 @@ const imgLoadError = async () => {
       fill: "var(--el-message-icon-color)",
     }),
   });
+
+  let defaultBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
   if (key) {
-    const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-    bgUrl.value = await gasC(bgUrlS, key);
+    defaultBgUrl = await gasC(defaultBgUrl, key);
+  }
+
+  if (bgIndex === 1) {
+    bg1.url = defaultBgUrl;
   } else {
-    bgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-  };
+    bg2.url = defaultBgUrl;
+  }
+
   if (store.webSpeech) {
     stopSpeech();
-    const voice = envConfig.VITE_TTS_Voice;
-    const vstyle = envConfig.VITE_TTS_Style;
     SpeechLocal("壁纸加载失败.mp3");
-  };
+  }
 };
 
 // 监听壁纸切换
 watch(
   () => store.coverType,
-  async (value) => {
-    await changeBg(Number(value));
-  },
-  { immediate: true }
+  (value) => {
+    changeBg(Number(value));
+  }
 );
 
 const SeasonStyle = async (type, state, where) => {
@@ -267,11 +285,15 @@ const SeasonStyle = async (type, state, where) => {
   sest = 1;
 };
 
-onMounted(async () => {
-  // 加载壁纸
-  await changeBg(Number(store.coverType));
+onMounted(() => {
+  // 初始化壁纸
+  changeBg(Number(store.coverType));
   // 加载季节特效
-  if (store.seasonalEffects) { await SeasonStyle(0, true, 'normal') } else { sest = 1 };
+  if (store.seasonalEffects) {
+    SeasonStyle(0, true, 'normal');
+  } else {
+    sest = 1;
+  }
 });
 
 onBeforeUnmount(() => {
@@ -323,11 +345,13 @@ watch(() => store.sBGCount, async (value) => {
     object-fit: cover;
     backface-visibility: hidden;
     filter: blur(20px) brightness(0.3);
-    transition:
-      filter 0.3s,
-      transform 0.3s;
-    animation: fade-blur-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-    animation-delay: 0.45s;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out, filter 1.5s ease-in-out;
+
+    &.show-bg {
+      opacity: 1;
+      filter: blur(0) brightness(1);
+    }
   }
 
   .gray {
