@@ -1,9 +1,9 @@
 <template>
   <div v-if="siteLinks[0]" class="links">
     <div class="line">
-        <Icon size="20" class="iconl">
-          <Link />
-        </Icon>
+      <Icon size="20" class="iconl">
+        <Link />
+      </Icon>
       <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
         @click="store.setOpenState = !store.setOpenState">网站列表</span>
       <span class="title" v-else>网站列表</span>
@@ -14,7 +14,11 @@
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'div',
-      }" :mousewheel="true">
+      }" :mousewheel="{
+        forceToAxis: true,
+        releaseOnEdges: true,
+        sensitivity: 1
+      }">
       <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">

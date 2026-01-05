@@ -366,7 +366,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
   const dwrcText = await dwrcSource.text();
   store.dwrcIndex = playIndex.value;
   try {
-    const decoded = decodeDWQYRC(dwrcText);
+    const decoded = decodeDWQYRC(dwrcText, store.playerRMMetadata);
     store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
     store.dwrcLoading = false;
     store.dwrcEnable = true;
@@ -409,7 +409,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
         throw new Error(`AMLL TTML Database 调用失败...`);
       } else {
         const amllText = await amllSource.text();
-        const decoded = decodeDWQYRC(amllText);
+        const decoded = decodeDWQYRC(amllText, store.playerRMMetadata);
         store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
         store.dwrcLoading = false;
         store.dwrcEnable = true;
@@ -435,7 +435,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
               store.dwrcEnable = false;
             } else {
               const amllTextse = await amllSourcese.text();
-              const decodedse = decodeDWQYRC(amllTextse);
+              const decodedse = decodeDWQYRC(amllTextse, store.playerRMMetadata);
               store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
               store.dwrcLoading = false;
               store.dwrcEnable = true;
@@ -506,7 +506,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
           const sourceLrcText = await sourceLrcResp.text();
           const processedText = alignPilferedLyrics(pilferText, sourceLrcText);
           if (processedText) {
-            const decoded = decodeDWQYRC(processedText);
+            const decoded = decodeDWQYRC(processedText, store.playerRMMetadata);
             store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
             store.dwrcLoading = false;
             store.dwrcEnable = true;

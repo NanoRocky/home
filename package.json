@@ -37,7 +37,7 @@
     "js-md5": "^0.8.3",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.22",
-    "npm-check-updates": "^19.2.0",
+    "npm-check-updates": "^19.3.1",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "pinia-plugin-persistedstate-2": "^2.0.32",

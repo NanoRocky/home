@@ -330,11 +330,10 @@ const SeasonStyle = async (type, state, where) => {
 
 // 定时切换壁纸功能
 const setupAutoSwitch = () => {
-  // 清除现有定时器
   if (autoBGSwitchTimer.value) {
     clearInterval(autoBGSwitchTimer.value);
     autoBGSwitchTimer.value = null;
-  }
+  };
 
   // 获取定时切换设置值
   const switchMode = store.autoBGSwitchInterval || 0;
@@ -346,28 +345,21 @@ const setupAutoSwitch = () => {
     2: 30000,  // 30秒
     3: 45000   // 45秒
   };
-
   const interval = intervals[switchMode];
-
-  // 如果间隔为0，不启动定时器
   if (interval === 0) {
     return;
-  }
+  };
+
+  const switchBackground = async () => {
+    if (isLoading.value) return;
+    bgRandom = Math.floor(Math.random() * bgImageCount + 1);
+    bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+    sBGCountN = null;
+    await changeBg(Number(store.coverType));
+  };
 
   // 启动定时器
-  autoBGSwitchTimer.value = setInterval(async () => {
-    // 只在coverType为0（自定义壁纸）时自动切换
-    if (store.coverType == 0) {
-      // 随机切换下一张壁纸
-      const deviceType = await detectDevice();
-      if (deviceType === 'mobile') {
-        bgRandomp = (bgRandomp % bgImageCountP) + 1;
-      } else {
-        bgRandom = (bgRandom % bgImageCount) + 1;
-      }
-      await changeBg(0);
-    }
-  }, interval);
+  autoBGSwitchTimer.value = setInterval(switchBackground, interval);
 };
 
 onMounted(async () => {
@@ -407,7 +399,6 @@ watch(() => store.sBGCount, async (value) => {
   store.setSBGCount(null);
 });
 
-// 监听定时切换设置变化
 watch(() => store.autoBGSwitchInterval, () => {
   setupAutoSwitch();
 });
@@ -443,12 +434,10 @@ watch(() => store.autoBGSwitchInterval, () => {
       opacity 1.4s cubic-bezier(0.33, 0, 0.2, 1),
       transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1);
 
-    // 当前壁纸层 - 首次加载时的动画
     &.current {
       animation: fade-blur-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       animation-delay: 0.45s;
 
-      // 切换时的模糊淡出效果
       &.blur-out {
         filter: blur(50px) brightness(0.25);
         opacity: 0;
@@ -456,7 +445,6 @@ watch(() => store.autoBGSwitchInterval, () => {
       }
     }
 
-    // 新壁纸层 - 初始状态是模糊+透明
     &.next {
       filter: blur(50px) brightness(0.25);
       opacity: 0;
@@ -464,7 +452,6 @@ watch(() => store.autoBGSwitchInterval, () => {
       animation: none;
       z-index: 2;
 
-      // 淡入时逐渐清晰
       &.blur-in {
         filter: blur(20px) brightness(0.3);
         opacity: 1;

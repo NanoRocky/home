@@ -43,6 +43,8 @@ export const storeState: MainState = {
   playerDWRCATDB: true, // 【开关】允许接入 AMLL TTML Database
   playerDWRCATDBF: false, // 【开关】接入 AMLL TTML Database 时使用镜像加速
   playerDWRCPilfer: true, // 【开关】拆东墙补西墙
+  /* 这个移除元数据功能暂只能对非直接从 API 获得的歌词有效，因为它不经由 APlayer 处理，可以被拦截并替换。所以也就只支持逐字。 */
+  playerRMMetadata: false, // 【开关】移除歌词中的元数据
   playerCurrentTime: null as number | null, // 【缓存】当前歌曲已播放时间
   playerDuration: null as number | null, // 【缓存】当前歌曲总时长
   dwrcIndex: -1 as number | null, // 【缓存】逐字歌词进度存储
@@ -165,6 +167,7 @@ export const mainStore = defineStore("main", {
         'playerDWRCATDB',
         'playerDWRCATDBF',
         'playerDWRCPilfer',
+        'playerRMMetadata',
         'seasonalEffects',
         'theme',
       ],
