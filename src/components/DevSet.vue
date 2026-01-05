@@ -40,10 +40,10 @@
                 <div class="item">
                     <span class="text">壁纸自动切换</span><br><br>
                     <el-radio-group v-model="autoBGSwitchInterval" size="small" text-color="#FFFFFF">
-                        <el-radio value=0 border>禁用</el-radio>
-                        <el-radio value=1 border>15 秒</el-radio>
-                        <el-radio value=2 border>30 秒</el-radio>
-                        <el-radio value=3 border>45 秒</el-radio>
+                        <el-radio :value="0" border>禁用</el-radio>
+                        <el-radio :value="1" border>15 秒</el-radio>
+                        <el-radio :value="2" border>30 秒</el-radio>
+                        <el-radio :value="3" border>45 秒</el-radio>
                     </el-radio-group>
                 </div>
             </el-collapse-item>
