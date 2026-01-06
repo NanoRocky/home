@@ -14,11 +14,7 @@
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'div',
-      }" :mousewheel="{
-        forceToAxis: true,
-        releaseOnEdges: true,
-        sensitivity: 1
-      }">
+      }" :mousewheel="true">
       <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">
