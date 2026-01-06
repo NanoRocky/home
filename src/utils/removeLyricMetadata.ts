@@ -1,4 +1,59 @@
 import metadataKeywords from '@/assets/metadata_Keywords.json';
+import { gasC } from "@/utils/authServer";
+
+// 缓存变量
+let cachedKeywords: string[] | null = null;
+let isLoading = false;
+let serverOpen = true;
+
+/**
+ * 从 API 加载关键词列表,失败时使用本地备份
+ * 每次打开网站只调用一次,后续使用缓存
+ */
+async function loadKeywords(): Promise<string[]> {
+    if (cachedKeywords) {
+        return cachedKeywords;
+    };
+    if (isLoading) {
+        while (isLoading) {
+            await new Promise(resolve => setTimeout(resolve, 50));
+        };
+        return cachedKeywords || metadataKeywords;
+    };
+    if (!serverOpen) {
+        cachedKeywords = metadataKeywords;
+        return cachedKeywords;
+    };
+    isLoading = true;
+    try {
+        const response = await fetch('https://api.nanorocky.top/lrcmdkw/', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+            signal: AbortSignal.timeout(10000)
+        });
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.code === 200 && Array.isArray(result.data) && result.data.every(item => typeof item === 'string')) {
+                cachedKeywords = result.data;
+                console.log(`Successfully loaded ${result.count} keywords from API`);
+            } else {
+                console.warn('Invalid API response format, using local fallback');
+                cachedKeywords = metadataKeywords;
+            };
+        } else {
+            console.warn(`API returned status ${response.status}, using local fallback`);
+            cachedKeywords = metadataKeywords;
+        };
+    } catch (error) {
+        console.warn('Failed to load keywords from API, using local fallback:', error);
+        cachedKeywords = metadataKeywords;
+    } finally {
+        isLoading = false;
+    };
+    return cachedKeywords || metadataKeywords;
+}
 
 /**
  * 剔除歌词中的元数据信息
@@ -6,10 +61,11 @@ import metadataKeywords from '@/assets/metadata_Keywords.json';
  * @param lrcText 原始歌词文本
  * @returns 去除头部和尾部元数据后的歌词文本
  */
-export function removeLyricMetadata(lrcText: string): string {
+export async function removeLyricMetadata(lrcText: string): Promise<string> {
     if (!lrcText || typeof lrcText !== 'string') {
         return '';
     };
+    const keywords = await loadKeywords();
     const lines = lrcText.split('\n');
 
     /**
@@ -22,7 +78,7 @@ export function removeLyricMetadata(lrcText: string): string {
         };
         const temp = line.replace(/[\[\{]\w+[:\d,]*[\]\}]/g, '').replace(/\(\d+(?:,\d+)*\)/g, '');
         const pureText = temp.trim();
-        for (const keyword of metadataKeywords) {
+        for (const keyword of keywords) {
             if (pureText.includes(keyword)) {
                 return true;
             };
