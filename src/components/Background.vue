@@ -104,9 +104,7 @@ const changeBg = async (type) => {
       const configLoaded = await loadConfig();
       const deviceType = await detectDevice();
       if (!configLoaded) return;
-
       let newBgUrl = null;
-
       if (type == 0) {
         // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png
         // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸

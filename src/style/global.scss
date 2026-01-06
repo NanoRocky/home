@@ -1,5 +1,10 @@
 // scss 全局变量
 
+// 根元素过渡定义
+:root {
+  transition: --background-color 0.3s ease, --text-color 0.3s ease, --card-background-color 0.3s ease, --link-card-hover-color 0.3s ease, --social-background-color 0.3s ease, --social-font-color 0.3s ease, --tooltip-background-color 0.3s ease, --player-control-color 0.3s ease, --player-control-hover-bg-color 0.3s ease, --player-slider-main-color 0.3s ease, --player-slider-runway-color 0.3s ease, --close-icon-color 0.3s ease, --music-card-background-color 0.3s ease, --music-smcard-background-color 0.3s ease, --music-smcard-background-hover-color 0.3s ease, --music-player-background-color 0.3s ease, --music-player-list-bgc 0.3s ease, --music-player-list-hover-bgc 0.3s ease, --music-aplayer-list-icon-color 0.3s ease, --music-aplayer-message-icon-color 0.3s ease, --el-message-icon-color 0.3s ease, --footer-background-color 0.3s ease, --footer-text-color 0.3s ease, --footer-dwrc-shadow-first-color 0.3s ease, --footer-dwrc-start-color 0.3s ease, --footer-dwrc-end-color 0.3s ease, --footer-dwrc-two-color 0.3s ease, --footer-music-icon-color 0.3s ease, --footer-music-paw-icon-color 0.3s ease, --time-icon-one-color 0.3s ease, --time-icon-two-color 0.3s ease, --el-progress-bar-in-color 0.3s ease, --el-progress-bar-out-color 0.3s ease, --el-progress-bar-span-color 0.3s ease, --set-background-color 0.3s ease, --set-coll-background-color 0.3s ease, --set-coll-background-ck-color 0.3s ease, --set-radio-border-color 0.3s ease, --set-radio-border-ck-color 0.3s ease, --set-radio-bg-color 0.3s ease, --set-radio-bg-ck-color 0.3s ease;
+}
+
 // 响应式布局
 @mixin changeWidth($maxWidth: 1200px) {
   .page-container {
