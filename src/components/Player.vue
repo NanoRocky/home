@@ -366,7 +366,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
   const dwrcText = await dwrcSource.text();
   store.dwrcIndex = playIndex.value;
   try {
-    const decoded = decodeDWQYRC(dwrcText, store.playerRMMetadata);
+    const decoded = await decodeDWQYRC(dwrcText, store.playerRMMetadata);
     store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
     store.dwrcLoading = false;
     store.dwrcEnable = true;
@@ -409,7 +409,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
         throw new Error(`AMLL TTML Database 调用失败...`);
       } else {
         const amllText = await amllSource.text();
-        const decoded = decodeDWQYRC(amllText, store.playerRMMetadata);
+        const decoded = await decodeDWQYRC(amllText, store.playerRMMetadata);
         store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
         store.dwrcLoading = false;
         store.dwrcEnable = true;
@@ -435,7 +435,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
               store.dwrcEnable = false;
             } else {
               const amllTextse = await amllSourcese.text();
-              const decodedse = decodeDWQYRC(amllTextse, store.playerRMMetadata);
+              const decodedse = await decodeDWQYRC(amllTextse, store.playerRMMetadata);
               store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
               store.dwrcLoading = false;
               store.dwrcEnable = true;
@@ -512,9 +512,9 @@ const fetchDWRC = async (dwrcUrl: string) => {
           const originalLrcUrl = player.value!.aplayer.audio[player.value!.aplayer.index]["lrc"];
           const sourceLrcResp = await fetch(originalLrcUrl);
           const sourceLrcText = await sourceLrcResp.text();
-          const processedText = alignPilferedLyrics(pilferText, sourceLrcText);
+          const processedText = await alignPilferedLyrics(pilferText, sourceLrcText);
           if (processedText) {
-            const decoded = decodeDWQYRC(processedText, store.playerRMMetadata);
+            const decoded = await decodeDWQYRC(processedText, store.playerRMMetadata);
             store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
             store.dwrcLoading = false;
             store.dwrcEnable = true;

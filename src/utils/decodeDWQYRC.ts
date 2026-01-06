@@ -6,8 +6,8 @@ import { removeLyricMetadata } from '@/utils/removeLyricMetadata';
  * @param {string} i - yrc or qrc input
  * @returns {[number, number, [[number, number], string, number, number][]][]}
  */
-export function decodeDWQYRC(i: string, rmmd: boolean = false): LineItem[] {
-    if (rmmd) i = removeLyricMetadata(i);
+export async function decodeDWQYRC(i: string, rmmd: boolean = false): Promise<LineItem[]> {
+    if (rmmd) i = await removeLyricMetadata(i);
     const lines = i.trim().split("\n").filter(line => !/^\[ch:\d+\]/.test(line.trim()));
     const output: LineItem[] = [];
     for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {

@@ -169,21 +169,21 @@ const fuzzyMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): n
     return -1;
 };
 
-export function alignPilferedLyrics(
+export async function alignPilferedLyrics(
     pilferLyric: string,
     originalLineLyric?: string,
-): string | null {
+): Promise<string | null> {
     if (!pilferLyric || typeof pilferLyric !== 'string') {
         return null;
     };
     if (!originalLineLyric || !originalLineLyric.trim()) {
         return pilferLyric;
     };
-    const cleanedSource = removeLyricMetadata(originalLineLyric);
+    const cleanedSource = await removeLyricMetadata(originalLineLyric);
     if (!cleanedSource.trim()) {
         return pilferLyric;
     };
-    const cleanedPilfer = removeLyricMetadata(pilferLyric);
+    const cleanedPilfer = await removeLyricMetadata(pilferLyric);
     const sourceEntries = buildEntries(cleanedSource);
     const pilferEntries = buildEntries(cleanedPilfer);
     if (!sourceEntries.length || !pilferEntries.length) {
