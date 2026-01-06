@@ -455,6 +455,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
     store.dwrcEnable = false;
   };
   // 偷东西
+  // 偷东西
   if (store.playerDWRCPilfer && baseUrl && store.dwrcEnable != true) {
     try {
       const currentAudio = player.value!.aplayer.audio[player.value!.aplayer.index];
@@ -470,19 +471,23 @@ const fetchDWRC = async (dwrcUrl: string) => {
       if (list.length > 0) {
         const stripBrackets = (title?: string) => {
           if (!title) return '';
-          if (typeof title !== 'string' || title.length > 500) {
-            return '';
-          }
-          let result = title.replace(/<[^>]*>/g, '');
-          let iterations = 0;
-          const maxIterations = 10;
-          while (/[（(\[{<【《）)\]}>】》]/.test(result) && iterations < maxIterations) {
-            result = result.replace(/[（(\[{<【《][^（(\[{<【《）)\]}>】》]*[）)\]}>】》]/g, '');
-            iterations++;
+          let result = String(title);
+          const pairRegex = /[（(\[{<【《][^（(\[{<【《）)\]}>】》]*[）)\]}>】》]/g;
+          let depth = 0;
+          const MAX_DEPTH = 10;
+          while (depth < MAX_DEPTH) {
+            const previousResult = result;
+            result = result.replace(pairRegex, '');
+            if (result.length === previousResult.length) {
+              break;
+            };
+            depth++;
           };
+          result = result.replace(/[（(\[{<【《）)\]}>】》]/g, '');
           return result.replace(/\s+/g, ' ').trim();
         };
         const normalizeArtist = (name?: string) => {
+          if (!name) return '';
           return stripBrackets(name);
         };
         const normalizedCurrentName = stripBrackets(currentName);
