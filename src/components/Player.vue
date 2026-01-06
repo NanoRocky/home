@@ -470,17 +470,20 @@ const fetchDWRC = async (dwrcUrl: string) => {
       if (list.length > 0) {
         const stripBrackets = (title?: string) => {
           if (!title) return '';
-          let result = title;
-          while (/[（(\[{<【《）)\]}>】》]/.test(result)) {
-            result = result.replace(/[（(\[{<【《][^（(\[{<【《）)\]}>】》]*[）)\]}>】》]/g, '');
+          if (typeof title !== 'string' || title.length > 500) {
+            return '';
           }
+          let result = title.replace(/<[^>]*>/g, '');
+          let iterations = 0;
+          const maxIterations = 10;
+          while (/[（(\[{<【《）)\]}>】》]/.test(result) && iterations < maxIterations) {
+            result = result.replace(/[（(\[{<【《][^（(\[{<【《）)\]}>】》]*[）)\]}>】》]/g, '');
+            iterations++;
+          };
           return result.replace(/\s+/g, ' ').trim();
         };
         const normalizeArtist = (name?: string) => {
-          if (!name) return '';
-          let result = stripBrackets(name);
-          result = result.replace(/[（(\[{<【《][^（(\[{<【《）)\]}>】》]*[）)\]}>】》]/g, '');
-          return result.trim();
+          return stripBrackets(name);
         };
         const normalizedCurrentName = stripBrackets(currentName);
         const normalizedCurrentArtist = normalizeArtist(currentArtist);
