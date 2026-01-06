@@ -41,10 +41,13 @@ export interface MainState {
     playerRMMetadata: boolean;
     playerCurrentTime: number | null;
     playerDuration: number | null;
+    playerLyricMetadataByServer: boolean;
     dwrcIndex: number | null;
     dwrcTemp: any[];
     dwrcEnable: boolean;
     dwrcLoading: boolean;
+    LrcMetaDataLoading: boolean;
+    LrcMetaDataCache: string[] | null;
     lyricSeekVersion: number;
     forceShowBarIcon: boolean;
     showFirefly: boolean;

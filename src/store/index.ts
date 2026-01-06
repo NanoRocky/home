@@ -47,10 +47,13 @@ export const storeState: MainState = {
   playerRMMetadata: false, // 【开关】移除歌词中的元数据
   playerCurrentTime: null as number | null, // 【缓存】当前歌曲已播放时间
   playerDuration: null as number | null, // 【缓存】当前歌曲总时长
+  playerLyricMetadataByServer: true, // 【开关】从服务器获取歌词元数据关键词
   dwrcIndex: -1 as number | null, // 【缓存】逐字歌词进度存储
   dwrcTemp: [] as any[], // 【缓存】逐字歌词
   dwrcEnable: true, // 【状态】调用逐字歌词
   dwrcLoading: false, // 【状态】逐字歌词加载
+  LrcMetaDataLoading: false, // 【状态】歌词元数据加载
+  LrcMetaDataCache:  null as string[] | null, // 【缓存】歌词元数据关键词缓存
   lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
   forceShowBarIcon: false, // 【开关】进度图标常驻
   showFirefly: false, // 【状态】萤火虫特效
