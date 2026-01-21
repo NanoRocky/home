@@ -163,7 +163,7 @@ const changeBg = async (type) => {
       // 预加载新壁纸
       const result = await preloadImage(newBgUrl);
       if (!result.ok) {
-        console.error("壁纸加载失败：", currentBgUrl.value);
+        console.error("壁纸加载失败");
         ElMessage({
           message: "壁纸加载失败惹喵...已临时切换回默认！",
           icon: h(Error, {
@@ -300,7 +300,8 @@ const SeasonStyle = async (type, state, where) => {
       } else {
         return;
       };
-    } else if ([1, 2].includes(month)) {
+    };
+    if ([1, 2].includes(month)) {
       if (state == true) {
         initLantern();
       } else if (state == false) {
@@ -308,7 +309,8 @@ const SeasonStyle = async (type, state, where) => {
       } else {
         return;
       };
-    } else if ([7, 8, 9].includes(month)) {
+    };
+    if ([7, 8, 9].includes(month)) {
       if (state == true) {
         initFirefly();
       } else if (state == false) {
@@ -316,8 +318,6 @@ const SeasonStyle = async (type, state, where) => {
       } else {
         return;
       };
-    } else {
-      return;
     };
   } else if (type == 1) {
     if (state == true) {
