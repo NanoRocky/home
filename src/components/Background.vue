@@ -18,7 +18,7 @@
 
 <script setup lang="js">
 import { mainStore } from "@/store";
-import { Error } from "@icon-park/vue-next";
+import { Error as ErrorIcon } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
@@ -105,6 +105,28 @@ const changeBg = async (type) => {
       const deviceType = await detectDevice();
       if (!configLoaded) return;
       let newBgUrl = null;
+      const fallbackToLocal = async () => {
+        if (deviceType === 'mobile') {
+          if (key) {
+            const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+            newBgUrl = await gasC(bgUrlS, key);
+          } else {
+            newBgUrl = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+          };
+        } else {
+          if (key) {
+            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+            newBgUrl = await gasC(bgUrlS, key);
+          } else {
+            newBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+          };
+        };
+        if (!currentBgUrl.value) {
+          currentBgUrl.value = newBgUrl;
+        } else {
+          performTransition(newBgUrl);
+        };
+      };
       if (type == 0) {
         // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png
         // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
@@ -160,7 +182,10 @@ const changeBg = async (type) => {
       };
 
       // 预加载新壁纸
-      await preloadImage(newBgUrl);
+      const result = await preloadImage(newBgUrl);
+      if (!result.ok) {
+        await fallbackToLocal();
+      };
     } finally {
       isLoading.value = false;
     };
@@ -169,15 +194,15 @@ const changeBg = async (type) => {
 
 // 预加载图片并执行过渡动画
 const preloadImage = (url) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
       // 图片加载完成后,执行过渡动画
       performTransition(url);
-      resolve();
+      resolve({ ok: true });
     };
     img.onerror = () => {
-      reject(new Error('图片加载失败'));
+      resolve({ ok: false });
     };
     img.src = url;
   });
@@ -237,7 +262,7 @@ const imgLoadError = async () => {
   console.error("壁纸加载失败：", currentBgUrl.value);
   ElMessage({
     message: "壁纸加载失败惹喵...已临时切换回默认！",
-    icon: h(Error, {
+    icon: h(ErrorIcon, {
       theme: "filled",
       fill: "var(--el-message-icon-color)",
     }),
