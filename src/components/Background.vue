@@ -2,11 +2,9 @@
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
     <img v-show="store.imgLoadStatus" :src="currentBgUrl" :class="['bg', 'current', { 'blur-out': isTransitioning }]"
-      alt="cover" @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd"
-      crossorigin="anonymous" />
+      alt="cover" @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
     <!-- 新壁纸层 -->
-    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover"
-      crossorigin="anonymous" />
+    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -18,7 +16,7 @@
 
 <script setup lang="js">
 import { mainStore } from "@/store";
-import { Error as ErrorIcon } from "@icon-park/vue-next";
+import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
@@ -95,6 +93,33 @@ const detectDevice = () => {
   };
 };
 
+const getLocalBgUrl = async (deviceType) => {
+  // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png
+  // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
+  if (deviceType === 'mobile') {
+    if (key) {
+      const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+      return await gasC(bgUrlS, key);
+    } else {
+      return `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+    };
+  } else if (deviceType === 'tablet' || deviceType === 'pc') {
+    if (key) {
+      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+      return await gasC(bgUrlS, key);
+    } else {
+      return `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+    };
+  } else {
+    if (key) {
+      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+      return await gasC(bgUrlS, key);
+    } else {
+      return `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+    };
+  };
+};
+
 // 更换壁纸链接
 const changeBg = async (type) => {
   if (isLoading.value) return;
@@ -105,53 +130,8 @@ const changeBg = async (type) => {
       const deviceType = await detectDevice();
       if (!configLoaded) return;
       let newBgUrl = null;
-      const fallbackToLocal = async () => {
-        if (deviceType === 'mobile') {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
-          } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-          };
-        } else {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
-          } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-          };
-        };
-        if (!currentBgUrl.value) {
-          currentBgUrl.value = newBgUrl;
-        } else {
-          performTransition(newBgUrl);
-        };
-      };
       if (type == 0) {
-        // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png
-        // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
-        if (deviceType === 'mobile') {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
-          } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-          };
-        } else if (deviceType === 'tablet' || deviceType === 'pc') {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
-          } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-          };
-        } else {
-          if (key) {
-            const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-            newBgUrl = await gasC(bgUrlS, key);
-          } else {
-            newBgUrl = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-          };
-        };
+        newBgUrl = await getLocalBgUrl(deviceType);
       } else if (type == 1) {
         if (deviceType === 'mobile') {
           const bgfmRandom = Math.floor(Math.random() * 2 + 1);
@@ -180,11 +160,29 @@ const changeBg = async (type) => {
       } else if (type == 5) {
         newBgUrl = "https://uapis.cn/api/bing.php?rand=true";
       };
-
       // 预加载新壁纸
       const result = await preloadImage(newBgUrl);
       if (!result.ok) {
-        await fallbackToLocal();
+        console.error("壁纸加载失败：", currentBgUrl.value);
+        ElMessage({
+          message: "壁纸加载失败惹喵...已临时切换回默认！",
+          icon: h(Error, {
+            theme: "filled",
+            fill: "var(--el-message-icon-color)",
+          }),
+        });
+        newBgUrl = await getLocalBgUrl(deviceType);
+        if (!currentBgUrl.value) {
+          currentBgUrl.value = newBgUrl;
+        } else {
+          performTransition(newBgUrl);
+        };
+        if (store.webSpeech) {
+          stopSpeech();
+          const voice = envConfig.VITE_TTS_Voice;
+          const vstyle = envConfig.VITE_TTS_Style;
+          SpeechLocal("壁纸加载失败.mp3");
+        };
       };
     } finally {
       isLoading.value = false;
@@ -262,7 +260,7 @@ const imgLoadError = async () => {
   console.error("壁纸加载失败：", currentBgUrl.value);
   ElMessage({
     message: "壁纸加载失败惹喵...已临时切换回默认！",
-    icon: h(ErrorIcon, {
+    icon: h(Error, {
       theme: "filled",
       fill: "var(--el-message-icon-color)",
     }),
