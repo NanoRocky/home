@@ -4,7 +4,7 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 // Pinia 变量验证规则
 export const validationRules = {
     coverType: {
-        allowed: [0, 1, 2, 3, 4, 5],
+        allowed: [0, 1, 2, 3, 4, 5, 6],
         defaultValue: 1,
     },
     playerLoop: {

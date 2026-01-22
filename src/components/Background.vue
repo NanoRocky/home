@@ -134,6 +134,14 @@ const changeBg = async (type) => {
         newBgUrl = await getLocalBgUrl(deviceType);
       } else if (type == 1) {
         if (deviceType === 'mobile') {
+          newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=phone&tc=1`;
+        } else if (deviceType === 'tablet' || deviceType === 'pc') {
+          newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=pc&tc=1`;
+        } else {
+          newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=pc&tc=1`;
+        };
+      } else if (type == 2) {
+        if (deviceType === 'mobile') {
           const bgfmRandom = Math.floor(Math.random() * 2 + 1);
           if (bgfmRandom == 1) {
             newBgUrl = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
@@ -145,7 +153,7 @@ const changeBg = async (type) => {
         } else {
           newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
         };
-      } else if (type == 2) {
+      } else if (type == 3) {
         if (deviceType === 'mobile') {
           newBgUrl = `https://img.moehu.org/pics.php?id=sjpic`;
         } else if (deviceType === 'tablet' || deviceType === 'pc') {
@@ -153,11 +161,11 @@ const changeBg = async (type) => {
         } else {
           newBgUrl = `https://img.moehu.org/pic.php?id=pc`;
         };
-      } else if (type == 3) {
-        newBgUrl = "https://img.moehu.org/pic.php?id=kemonomimi";
       } else if (type == 4) {
-        newBgUrl = "https://img.moehu.org/pic.php?id=gqbz";
+        newBgUrl = "https://img.moehu.org/pic.php?id=kemonomimi";
       } else if (type == 5) {
+        newBgUrl = "https://img.moehu.org/pic.php?id=gqbz";
+      } else if (type == 6) {
         newBgUrl = "https://uapis.cn/api/bing.php?rand=true";
       };
       // 预加载新壁纸
