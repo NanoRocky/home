@@ -1,14 +1,17 @@
 import { defineStore } from "pinia";
 import type { MainState } from "@/typings/store";
+import i18n, { type LocaleKey, supportedLocales, getBrowserLanguage } from "@/locales";
 import { validationPlugin, validationRules } from "@/store/plugins/validation";
 
 export const storeState: MainState = {
   // 这些变量，非有能力的开发者请只操作【开关】项来实现个性化的默认设置，其余变量勿动！
   imgLoadStatus: false, // 【状态】壁纸加载状态
+  language: "auto", // 【开关】默认语言设置
+  langStatus: null as string | null, // 【状态】当前语言状态
   innerWidth: null as number | null, // 【状态】当前窗口宽度
   coverType: 1 as number, // 【开关】壁纸种类
   sBGCount: null as string | null, // 【状态】使用内置壁纸时用于临时指定壁纸的接口
-  autoBGSwitchInterval : 0 as number, // 【开关】自动切换壁纸设置
+  autoBGSwitchInterval: 0 as number, // 【开关】自动切换壁纸设置
   seasonalEffects: true, // 【开关】季节特效
   msgNameShow: true, // 【开关】信息区域显示自定义名而非原本的 URL
   siteStartShow: true, // 【开关】建站日期显示
@@ -53,7 +56,7 @@ export const storeState: MainState = {
   dwrcEnable: true, // 【状态】调用逐字歌词
   dwrcLoading: false, // 【状态】逐字歌词加载
   LrcMetaDataLoading: false, // 【状态】歌词元数据加载
-  LrcMetaDataCache:  null as string[] | null, // 【缓存】歌词元数据关键词缓存
+  LrcMetaDataCache: null as string[] | null, // 【缓存】歌词元数据关键词缓存
   lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
   forceShowBarIcon: false, // 【开关】进度图标常驻
   showFirefly: false, // 【状态】萤火虫特效
@@ -65,12 +68,9 @@ export const storeState: MainState = {
 };
 
 export const mainStore = defineStore("main", {
-  state: (): MainState => (
+  state: (): MainState =>
     // 主要状态，使用这个方法是为了添加重置功能..烦诶，pinia 你还得努力啊，你不努力那...那..那就不努力叭..哼唧（）
-    JSON.parse(
-      JSON.stringify(storeState)
-    )
-  ),
+    JSON.parse(JSON.stringify(storeState)),
   getters: {
     // 获取歌词
     getPlayerLrc(state) {
@@ -128,16 +128,32 @@ export const mainStore = defineStore("main", {
       if (this.coverType == 0) {
         this.sBGCount = value;
       } else {
-        return 'not use';
-      };
+        return "not use";
+      }
+    },
+    setLanguage(lang: string) {
+      this.language = lang;
+      if (lang === "auto") {
+        const langc = getBrowserLanguage() || "zh-CN";
+        i18n.global.locale.value = langc;
+        this.langStatus = langc;
+      } else if (supportedLocales.includes(lang as LocaleKey)) {
+        i18n.global.locale.value = lang as LocaleKey;
+        this.langStatus = lang;
+      } else {
+        this.language = "auto";
+        const langc = getBrowserLanguage() || "zh-CN";
+        i18n.global.locale.value = langc;
+        this.langStatus = langc;
+      }
     },
     // 重置所有设置
     resetStore() {
       this.$reset = () => {
-        console.log('正在恢复默认配置...');
+        console.log("正在恢复默认配置...");
         setTimeout(() => {
           this.$state = JSON.parse(JSON.stringify(storeState));
-          console.log('重置完成，页面即将刷新...');
+          console.log("重置完成，页面即将刷新...");
           setTimeout(() => {
             window.location.href = window.location.pathname;
           }, 1200);
@@ -152,35 +168,36 @@ export const mainStore = defineStore("main", {
       storage: localStorage,
       pick: [
         // 持久性存储，这里的变量永久存储于浏览器，用于存储用户的自定义设置
-        'coverType',
-        'musicVolume',
-        'siteStartShow',
-        'musicClick',
-        'playerLrcShow',
-        'footerBlur',
-        'footerProgressBar',
-        'playerAutoplay',
-        'playerLoop',
-        'playerOrder',
-        'webSpeech',
-        'playerSpeechName',
-        'playerTrLrc',
-        'playerDWRCShow',
-        'playerDWRCShowPro',
-        'playerDWRCATDB',
-        'playerDWRCATDBF',
-        'playerDWRCPilfer',
-        'playerRMMetadata',
-        'seasonalEffects',
-        'theme',
+        "coverType",
+        "musicVolume",
+        "siteStartShow",
+        "musicClick",
+        "playerLrcShow",
+        "footerBlur",
+        "footerProgressBar",
+        "playerAutoplay",
+        "playerLoop",
+        "playerOrder",
+        "webSpeech",
+        "playerSpeechName",
+        "playerTrLrc",
+        "playerDWRCShow",
+        "playerDWRCShowPro",
+        "playerDWRCATDB",
+        "playerDWRCATDBF",
+        "playerDWRCPilfer",
+        "playerRMMetadata",
+        "seasonalEffects",
+        "theme",
       ],
     },
     {
       storage: sessionStorage,
       pick: [
         // 会话性存储，这里的变量在重新打开页面时恢复默认值，多个窗口不互通，用于存储一些特殊的仅本次生效的设置
-        'setV',
-        'msgNameShow'
+        "setV",
+        "msgNameShow",
+        "language",
       ],
     },
   ],

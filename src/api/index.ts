@@ -14,10 +14,10 @@ const loadJSONP = (url, callbackName) => {
       delete (window as any)[callbackName]; // 清理全局变量，防止污染
     };
     // 创建 script 标签
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = url;
     script.onerror = () => {
-      reject(new Error('JSONP 请求失败'));
+      reject(new Error("JSONP 请求失败"));
       delete (window as any)[callbackName]; // 出错时也要清理
     };
     document.body.appendChild(script);
@@ -30,17 +30,18 @@ const loadJSONP = (url, callbackName) => {
 
 // 获取音乐播放列表
 export const getPlayerList = async (server, type, id, serverse, idse, playerTrLrc) => {
-  let dataf: any[] = [], data3: any[] = [], data1: any[] = [], data2: any[] = [];
+  let dataf: any[] = [],
+    data3: any[] = [],
+    data1: any[] = [],
+    data2: any[] = [];
   if (serverse != null && idse != null) {
     try {
-      const res1 = await fetch(
-        `${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
-      );
+      const res1 = await fetch(`${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`);
       data1 = await res1.json();
     } catch (e) {
       data1 = [];
       console.error("音乐源 1 请求失败:", e);
-    };
+    }
     try {
       const res2 = await fetch(
         `${envConfig.VITE_SONG_API}?server=${serverse}&type=${type}&id=${idse}`,
@@ -49,26 +50,28 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
     } catch (e) {
       data2 = [];
       console.error("音乐源 2 请求失败:", e);
-    };
-    dataf = [...data2 || [], ...data1 || []];
+    }
+    dataf = [...(data2 || []), ...(data1 || [])];
   } else {
     try {
-      const res1 = await fetch(
-        `${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
-      );
+      const res1 = await fetch(`${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`);
       data3 = await res1.json();
     } catch (e) {
       data3 = [];
       console.error("音乐源 1 请求失败:", e);
-    };
-    dataf = [...data3 || []];
-  };
+    }
+    dataf = [...(data3 || [])];
+  }
   const data = dataf;
   if (data.length > 0 && data[0]?.url?.startsWith("@")) {
     const [handle, jsonpCallback, jsonpCallbackFunction, url] = data[0].url.split("@").slice(1);
     const jsonpData = await fetchJsonp(url).then((res) => res.json());
     const sipList = jsonpData.req_0?.data?.sip || [];
-    const domain = (sipList.find((i: string) => !i.startsWith("http://ws")) || sipList[0] || "").replace("http://", "https://");
+    const domain = (
+      sipList.find((i: string) => !i.startsWith("http://ws")) ||
+      sipList[0] ||
+      ""
+    ).replace("http://", "https://");
     return data.map((v, i) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
@@ -81,7 +84,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
     return data.map((v) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
-      album: v.album || envConfig.VITE_SITE_NAME,   // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
+      album: v.album || envConfig.VITE_SITE_NAME, // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
       url: v.url,
       cover: v.cover || v.pic,
       lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
@@ -137,7 +140,6 @@ export const getTXWeatherS = async (key, adcode, skey) => {
   return await loadJSONP(urls, callback);
 };
 
-
 // 获取高德地理位置信息
 export const getGDAdcode = async (key) => {
   const res = await fetch(`https://restapi.amap.com/v3/ip?key=${key}`);
@@ -152,7 +154,9 @@ export const getGDAdcodeI = async (ipv4, key) => {
 
 // 获取高德地理天气信息
 export const getGDWeather = async (key, city) => {
-  const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`);
+  const res = await fetch(
+    `https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`,
+  );
   return await res.json();
 };
 
@@ -207,14 +211,15 @@ export const getIPV4AddrLocation = async (ipv4) => {
  * Github 测试
  */
 export const testGitHubConnectivity = async (): Promise<number> => {
-  const testUrl = 'https://raw.githubusercontent.com/NanoRocky/home/blob/EFU/public/images/icon/github.png';
+  const testUrl =
+    "https://raw.githubusercontent.com/NanoRocky/home/blob/EFU/public/images/icon/github.png";
   const timeout = 3000;
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     const response = await fetch(testUrl, {
-      method: 'HEAD',
-      signal: controller.signal
+      method: "HEAD",
+      signal: controller.signal,
     });
     clearTimeout(timeoutId);
     if (response.ok) {

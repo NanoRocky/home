@@ -52,36 +52,65 @@
       <div v-else class="lrc" @dblclick="toggleForceIcon">
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
-        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
-          v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)">
+        <Transition
+          name="fade"
+          mode="out-in"
+          :id="`lrc-line-${store.playerLrc[0][2]}`"
+          v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)"
+        >
           <!-- &amp; -->
           <!-- 逐字模块山 -->
-          <div class="lrc-all"
-            :key="store.playerLrc.length != 0 ? `lrc-line-${store.playerLrc[0][2]}-${store.lyricSeekVersion}` : `lrc-line-null`">
+          <div
+            class="lrc-all"
+            :key="
+              store.playerLrc.length != 0
+                ? `lrc-line-${store.playerLrc[0][2]}-${store.lyricSeekVersion}`
+                : `lrc-line-null`
+            "
+          >
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
             &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg);" class="paws-1"
-              color="var(--footer-music-paw-icon-color)">
+            <Icon
+              size="20"
+              style="transform: rotate(-18deg)"
+              class="paws-1"
+              color="var(--footer-music-paw-icon-color)"
+            >
               <paw />
             </Icon>
             <span class="dwrc-box">
               <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap">
-                <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                <span
+                  v-for="(i, index) in store.playerLrc"
+                  :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                  v-html="i[4]"
+                >
                 </span>
               </span>
               <span class="dwrc-1 lrc-text text-truncate-ellipsis" id="dwrc-1-wrap">
-                <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`" :class="[
-                  'dwrc-char',
-                  i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
-                  i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
-                  i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
-                  i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                  i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1'
-                ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                <span
+                  v-for="(i, index) in store.playerLrc"
+                  :key="`lrc-char-${i[2]}-${i[3]}`"
+                  :class="[
+                    'dwrc-char',
+                    i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
+                    i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
+                    i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                    i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
+                    i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
+                  ]"
+                  :id="`lrc-char-${i[2]}-${i[3]}`"
+                  v-html="i[4]"
+                >
                 </span>
               </span>
             </span>
-            <Icon size="20" style="transform: rotate(18deg);" class="paws-2" color="var(--footer-music-paw-icon-color)">
+            <Icon
+              size="20"
+              style="transform: rotate(18deg)"
+              class="paws-2"
+              color="var(--footer-music-paw-icon-color)"
+            >
               <paw />
             </Icon>
             &nbsp;
@@ -90,16 +119,35 @@
         </Transition>
         <Transition name="fade" mode="out-in" v-else>
           <!-- 逐行模块 -->
-          <div class="lrc-all" :key="store.getPlayerLrc.length > 0 ?
-            `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}` : '猫猫正在翻找歌词...'">
+          <div
+            class="lrc-all"
+            :key="
+              store.getPlayerLrc.length > 0
+                ? `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}`
+                : '猫猫正在翻找歌词...'
+            "
+          >
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
             &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg);" class="paws-3"
-              color="var(--footer-music-paw-icon-color)">
+            <Icon
+              size="20"
+              style="transform: rotate(-18deg)"
+              class="paws-3"
+              color="var(--footer-music-paw-icon-color)"
+            >
               <paw />
             </Icon>
-            <span class="lrc-text text-truncate-ellipsis" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
-            <Icon size="20" style="transform: rotate(18deg);" class="paws-4" color="var(--footer-music-paw-icon-color)">
+            <span
+              class="lrc-text text-truncate-ellipsis"
+              v-html="store.getPlayerLrc[0][4]"
+              :class="`lrc-char`"
+            />
+            <Icon
+              size="20"
+              style="transform: rotate(18deg)"
+              class="paws-4"
+              color="var(--footer-music-paw-icon-color)"
+            >
               <paw />
             </Icon>
             &nbsp;
@@ -120,6 +168,7 @@ import { Paw } from "@vicons/ionicons5";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
 import { ref, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
 import { throttle } from "lodash";
 
 const store = mainStore();
@@ -129,12 +178,14 @@ const scrollPosition = ref(0);
 const currentLine = ref(0);
 const audio = ref(null);
 const icon = ref(null);
+const { locale } = useI18n();
 
 // 加载配置数据
 // const siteStartDate = ref(envConfig.VITE_SITE_START);
 const startYear = ref<number | null>(
-  envConfig.VITE_SITE_START?.length >= 4 ?
-    parseInt(envConfig.VITE_SITE_START.substring(0, 4)) : null
+  envConfig.VITE_SITE_START?.length >= 4
+    ? parseInt(envConfig.VITE_SITE_START.substring(0, 4))
+    : null,
 );
 const ShowStartYear = computed(() => {
   return startYear.value !== null && startYear.value < fullYear;
@@ -142,7 +193,10 @@ const ShowStartYear = computed(() => {
 const siteIcp = ref(envConfig.VITE_SITE_ICP);
 const siteMps = ref(envConfig.VITE_SITE_MPS);
 const siteMICP = ref(envConfig.VITE_SITE_MICP);
-const siteAuthor = ref(envConfig.VITE_SITE_AUTHOR);
+const siteAuthor =
+  locale.value != "zh-CN" && envConfig.VITE_SITE_AUTHOR_EN
+    ? envConfig.VITE_SITE_AUTHOR_EN || envConfig.VITE_SITE_AUTHOR || "nanorocky"
+    : envConfig.VITE_SITE_AUTHOR || "nanorocky";
 
 const siteUrl = computed(() => {
   const url = envConfig.VITE_SITE_URL;
@@ -150,21 +204,21 @@ const siteUrl = computed(() => {
   let fullUrl = url;
   if (!/^https?:\/\//i.test(url)) {
     fullUrl = "https://" + url;
-  };
-  fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
+  }
+  fullUrl = fullUrl.replace(/^http:\/\//i, "https://");
   try {
     const urlObj = new URL(fullUrl);
     return urlObj.toString();
   } catch (e) {
     return "https://nanorocky.top/";
-  };
+  }
 });
 
 const toggleForceIcon = () => {
   store.forceShowBarIcon = !store.forceShowBarIcon;
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `${store.forceShowBarIcon ? '诶？' : '进度 ICON 常驻已禁用'}`,
+    message: `${store.forceShowBarIcon ? "诶？" : "进度 ICON 常驻已禁用"}`,
   });
   if (store.forceShowBarIcon) {
     if (store.webSpeech) {
@@ -172,91 +226,85 @@ const toggleForceIcon = () => {
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("启用进度图标常驻.mp3");
-    };
+    }
   } else {
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("禁用进度图标常驻.mp3");
-    };
-  };
+    }
+  }
 };
 
 // dwrc part
-watch(() => store.getPlayerLrc, (_new, _old) => {
-  type DwrcItem = [number, number, any[]];
-  const isLineByLine = !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
-  if (!store.playerDWRCShowPro || isLineByLine) {
-    return;
-  };
-  const audio = document.querySelector('audio');
-  if (!audio) {
-    return;
-  };
-  const now = audio.currentTime * 1000;
-  const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
-  if (!dwrc2 || dwrc2 == undefined) {
-    return;
-  };
-  const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
-  const inputDom = dwrc2.querySelectorAll("#dwrc-1-wrap span");
-  if (inputDom.length == 0 || outputDom.length == 0) {
-    return;
-  };
-  const dwrcFiltered = (store.dwrcTemp as DwrcItem[]).filter(
-    (i) => i[0] < now && now < i[0] + i[1]
-  );
-  if (dwrcFiltered.length == 0) {
-    return;
-  };
-  const nowLine = dwrcFiltered[dwrcFiltered.length - 1][2];
-  for (let i = 0; i < nowLine.length; i++) {
-    const item = nowLine[i] as [[number, number], any, any, any];
-    const [[start, duration], _a, _b, _c] = item;
-    const inputItem = inputDom[i] as HTMLElement;
-    if (!inputItem || inputItem.hasAttribute('data-start')) {
-      continue;
-    };
-    const computedStyle = window.getComputedStyle(inputItem);
-    const width = parseFloat(computedStyle.width);
-    if (isNaN(width)) {
-      inputItem.removeAttribute('data-start');
-      continue;
-    };
-    const outputItem = outputDom[i] as HTMLElement;
-    const animateOptions: KeyframeAnimationOptions = {
-      delay: Math.max(0, start - now),
-      duration: duration,
-      fill: "forwards" as FillMode,
-      easing: "linear",
-    };
-    outputItem.style.transform = "translateY(-1px)";
-    const outputAnimate = outputItem.animate(
-      [
-        { width: 0 },
-        { width: `${width}px` },
-      ],
-      animateOptions,
+watch(
+  () => store.getPlayerLrc,
+  (_new, _old) => {
+    type DwrcItem = [number, number, any[]];
+    const isLineByLine =
+      !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
+    if (!store.playerDWRCShowPro || isLineByLine) {
+      return;
+    }
+    const audio = document.querySelector("audio");
+    if (!audio) {
+      return;
+    }
+    const now = audio.currentTime * 1000;
+    const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
+    if (!dwrc2 || dwrc2 == undefined) {
+      return;
+    }
+    const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
+    const inputDom = dwrc2.querySelectorAll("#dwrc-1-wrap span");
+    if (inputDom.length == 0 || outputDom.length == 0) {
+      return;
+    }
+    const dwrcFiltered = (store.dwrcTemp as DwrcItem[]).filter(
+      (i) => i[0] < now && now < i[0] + i[1],
     );
-    outputAnimate.onfinish = () => {
-      outputItem.style.transform = "translateY(1px)";
-      outputItem.animate(
-        [
-          { transform: "translateY(-1px)" },
-          { transform: "translateY(1px)" },
-        ],
-        {
+    if (dwrcFiltered.length == 0) {
+      return;
+    }
+    const nowLine = dwrcFiltered[dwrcFiltered.length - 1][2];
+    for (let i = 0; i < nowLine.length; i++) {
+      const item = nowLine[i] as [[number, number], any, any, any];
+      const [[start, duration], _a, _b, _c] = item;
+      const inputItem = inputDom[i] as HTMLElement;
+      if (!inputItem || inputItem.hasAttribute("data-start")) {
+        continue;
+      }
+      const computedStyle = window.getComputedStyle(inputItem);
+      const width = parseFloat(computedStyle.width);
+      if (isNaN(width)) {
+        inputItem.removeAttribute("data-start");
+        continue;
+      }
+      const outputItem = outputDom[i] as HTMLElement;
+      const animateOptions: KeyframeAnimationOptions = {
+        delay: Math.max(0, start - now),
+        duration: duration,
+        fill: "forwards" as FillMode,
+        easing: "linear",
+      };
+      outputItem.style.transform = "translateY(-1px)";
+      const outputAnimate = outputItem.animate(
+        [{ width: 0 }, { width: `${width}px` }],
+        animateOptions,
+      );
+      outputAnimate.onfinish = () => {
+        outputItem.style.transform = "translateY(1px)";
+        outputItem.animate([{ transform: "translateY(-1px)" }, { transform: "translateY(1px)" }], {
           duration: 300,
           fill: "forwards",
           easing: "linear",
-        }
-      );
-    };
-    inputItem.setAttribute("data-start", "true");
-  };
-});
-
+        });
+      };
+      inputItem.setAttribute("data-start", "true");
+    }
+  },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -302,7 +350,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     opacity: 1 !important;
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
-    text-shadow: 0px 0px 6px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
     transition:
@@ -350,7 +399,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   &.dwrc-style-s2 {
     opacity: 1;
     color: var(--footer-dwrc-end-color);
-    text-shadow: 0px 0px 6px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
     transition:
@@ -376,7 +426,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   from {
     color: var(--footer-dwrc-start-color);
     opacity: 0.6;
-    text-shadow: 0px 0px 3px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 3px var(--footer-dwrc-shadow-first-color),
       0px 0px 0px rgba(176, 224, 230, 1),
       0px 0px 0px rgba(230, 230, 250, 1);
   }
@@ -384,7 +435,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   to {
     color: var(--footer-dwrc-end-color);
     opacity: 1;
-    text-shadow: 0px 0px 6px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
   }
@@ -394,7 +446,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   from {
     color: var(--footer-dwrc-start-color);
     opacity: 0.6;
-    text-shadow: 0px 0px 3px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 3px var(--footer-dwrc-shadow-first-color),
       0px 0px 0px rgba(255, 182, 193, 0.3),
       0px 0px 0px rgba(255, 192, 203, 0.3),
       0px 0px 0px rgba(255, 182, 193, 0.3),
@@ -408,7 +461,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   to {
     color: var(--footer-dwrc-end-color);
     opacity: 1;
-    text-shadow: 3px 3px 7px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      3px 3px 7px var(--footer-dwrc-shadow-first-color),
       0px 0px 4px rgba(255, 182, 193, 0.3),
       0px 0px 4px rgba(255, 192, 203, 0.3),
       0px 0px 8px rgba(255, 182, 193, 0.3),
@@ -424,7 +478,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   from {
     color: var(--footer-dwrc-end-color);
     opacity: 1;
-    text-shadow: 3px 3px 7px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      3px 3px 7px var(--footer-dwrc-shadow-first-color),
       0px 0px 4px rgba(255, 182, 193, 0.3),
       0px 0px 4px rgba(255, 192, 203, 0.3),
       0px 0px 8px rgba(255, 182, 193, 0.3),
@@ -438,7 +493,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   to {
     color: var(--footer-dwrc-start-color);
     opacity: 1;
-    text-shadow: 0px 0px 3px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 3px var(--footer-dwrc-shadow-first-color),
       0px 0px 0px rgba(255, 182, 193, 0.3),
       0px 0px 0px rgba(255, 192, 203, 0.3),
       0px 0px 0px rgba(255, 182, 193, 0.3),
@@ -451,7 +507,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
 }
 
 // 逐字模块2
-#dwrc-2-wrap>span {
+#dwrc-2-wrap > span {
   display: inline-block;
   transform: translateY(1px);
   white-space: nowrap;
@@ -471,7 +527,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   width: auto;
   opacity: 0.8;
   color: var(--footer-dwrc-two-color);
-  text-shadow: 0 0 6px rgba(0, 191, 255, 0.8),
+  text-shadow:
+    0 0 6px rgba(0, 191, 255, 0.8),
     0px 0px 2px rgba(176, 224, 230, 0.8),
     0px 0px 2px rgba(230, 230, 250, 0.8);
   font-family: MiSans VF;
@@ -493,7 +550,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   -webkit-background-clip: text;
   background-clip: text;
   color: var(--footer-dwrc-end-color);
-  text-shadow: 0 0 6px var(--footer-dwrc-shadow-first-color),
+  text-shadow:
+    0 0 6px var(--footer-dwrc-shadow-first-color),
     0 0 2px rgba(255, 165, 0, 1),
     0 0 2px rgba(255, 179, 71, 1);
   font-family: MiSans VF;
@@ -596,7 +654,9 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       white-space: nowrap;
       font-size: 1.05rem;
       opacity: 0.6;
-      transition: opacity 0.3s, color 0.3s;
+      transition:
+        opacity 0.3s,
+        color 0.3s;
     }
 
     .lrc-line.active {

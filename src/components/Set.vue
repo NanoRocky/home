@@ -16,7 +16,7 @@
       </el-collapse-item>
       <el-collapse-item title="主题设置" name="2">
         <div class="item">
-          <span class="text">主题模式</span><br><br>
+          <span class="text">主题模式</span><br /><br />
           <el-radio-group v-model="theme" size="small" text-color="#FFFFFF">
             <el-radio value="system" border>跟随系统</el-radio>
             <el-radio value="time" border>跟随时间</el-radio>
@@ -29,34 +29,70 @@
       <el-collapse-item title="个性化调整" name="3">
         <div class="item">
           <span class="text">建站日期显示</span>
-          <el-switch v-model="siteStartShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="siteStartShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">音乐点击是否打开面板</span>
-          <el-switch v-model="musicClick" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="musicClick"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">显示季节特效</span>
-          <el-switch v-model="seasonalEffects" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="seasonalEffects"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">底栏背景模糊</span>
-          <el-switch v-model="footerBlur" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="footerBlur"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">显示底栏音乐进度条</span>
-          <el-switch v-model="footerProgressBar" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="footerProgressBar"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item title="播放器配置" name="4">
         <div class="item">
           <span class="text">自动播放</span>
-          <el-switch v-model="playerAutoplay" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerAutoplay"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">随机播放</span>
-          <el-switch v-model="playerOrder" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall"
-            active-value="random" inactive-value="list" />
+          <el-switch
+            v-model="playerOrder"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+            active-value="random"
+            inactive-value="list"
+          />
         </div>
         <div class="item">
           <span class="text">循环模式</span>
@@ -70,46 +106,98 @@
       <el-collapse-item title="歌词设置" name="5">
         <div class="item">
           <span class="text">显示底栏歌词</span>
-          <el-switch v-model="playerLrcShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerLrcShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow" class="item">
-          <span class="text" white-space="pre">允许调用 AMLL TTML Database 加载网易云没有的歌词<br>&nbsp;&nbsp;&nbsp;（在 Github
-            不稳定的网络中可能导致歌词载入速度变慢）</span>
-          <el-switch v-model="playerDWRCATDB" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <span class="text" white-space="pre"
+            >允许调用 AMLL TTML Database 加载网易云没有的歌词<br />&nbsp;&nbsp;&nbsp;（在 Github
+            不稳定的网络中可能导致歌词载入速度变慢）</span
+          >
+          <el-switch
+            v-model="playerDWRCATDB"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow && playerDWRCATDB" class="item">
           <span class="text" white-space="pre">调用 AMLL TTML Database 时使用镜像加速</span>
-          <el-switch v-model="playerDWRCATDBF" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerDWRCATDBF"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow" class="item">
           <span class="text">逐字歌词解析总开关</span>
-          <el-switch v-model="playerDWRCShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerDWRCShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow && playerDWRCShow" class="item">
           <span class="text">逐字效果增强开关</span>
-          <el-switch v-model="playerDWRCShowPro" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerDWRCShowPro"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">移除逐字歌词中的元数据</span>
-          <el-switch v-model="playerRMMetadata" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerRMMetadata"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">拆东墙补西墙</span>
-          <el-switch v-model="playerDWRCPilfer" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerDWRCPilfer"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">逐行歌词翻译显示开关</span>
-          <el-switch v-model="playerTrLrc" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerTrLrc"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item title="语音设置" name="6">
         <div class="item">
           <span class="text">网页语音交互总开关</span>
-          <el-switch v-model="webSpeech" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="webSpeech"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="webSpeech" class="item">
           <span class="text">播报歌名</span>
-          <el-switch v-model="playerSpeechName" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerSpeechName"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item title="其他设置" name="7">
@@ -173,7 +261,7 @@ const radioChange = () => {
     const voice = envConfig.VITE_TTS_Voice;
     const vstyle = envConfig.VITE_TTS_Style;
     SpeechLocal("更换壁纸成功.mp3");
-  };
+  }
 };
 </script>
 
@@ -256,7 +344,7 @@ const radioChange = () => {
                 border-color: var(--set-radio-border-ck-color) !important;
               }
 
-              &+.el-radio__label {
+              & + .el-radio__label {
                 color: var(--text-color) !important;
               }
             }

@@ -1,36 +1,43 @@
 <template>
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <!-- 加载 -->
-  <Loading />
-  <!-- 壁纸 -->
-  <Background @loadComplete="loadComplete" @imageLoaded="onImageLoaded" />
-  <!-- 主界面 -->
-  <Transition name="fade" mode="out-in">
-    <main id="main" v-if="store.imgLoadStatus">
-      <div class="page-container" v-show="!store.backgroundShow">
-        <section class="all" v-show="!store.setOpenState">
-          <MainLeft />
-          <MainRight v-show="!store.boxOpenState" />
-          <Box v-show="store.boxOpenState" />
-        </section>
-        <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
-          <MoreSet />
-        </section>
-      </div>
-      <!-- 移动端菜单按钮 -->
-      <Icon class="menu" size="24" v-show="!store.backgroundShow"
-        @click="store.mobileOpenState = !store.mobileOpenState">
-        <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
-      </Icon>
-      <!-- 页脚 -->
-      <Transition name="fade" mode="out-in">
-        <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
-      </Transition>
-    </main>
-  </Transition>
+  <el-config-provider :locale="elLocale">
+    <!-- 加载 -->
+    <Loading />
+    <!-- 壁纸 -->
+    <Background @loadComplete="loadComplete" @imageLoaded="onImageLoaded" />
+    <!-- 主界面 -->
+    <Transition name="fade" mode="out-in">
+      <main id="main" v-if="store.imgLoadStatus">
+        <div class="page-container" v-show="!store.backgroundShow">
+          <section class="all" v-show="!store.setOpenState">
+            <MainLeft />
+            <MainRight v-show="!store.boxOpenState" />
+            <Box v-show="store.boxOpenState" />
+          </section>
+          <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
+            <MoreSet />
+          </section>
+        </div>
+        <!-- 移动端菜单按钮 -->
+        <Icon
+          class="menu"
+          size="24"
+          v-show="!store.backgroundShow"
+          @click="store.mobileOpenState = !store.mobileOpenState"
+        >
+          <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
+        </Icon>
+        <!-- 页脚 -->
+        <Transition name="fade" mode="out-in">
+          <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
+        </Transition>
+      </main>
+    </Transition>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { helloInit } from "@/utils/getTime.js";
 import { HamburgerButton, CloseSmall } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
@@ -46,8 +53,14 @@ import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { getColor } from "@/utils/getColor";
+import { useI18n } from "vue-i18n";
+import { ElConfigProvider } from "element-plus";
+import ep_zh_CN from "element-plus/es/locale/lang/zh-cn";
+import ep_en_US from "element-plus/es/locale/lang/en";
 
 const store = mainStore();
+const { locale } = useI18n();
+const elLocale = computed(() => (locale.value === "zh-CN" ? ep_zh_CN : ep_en_US));
 const timeThemeInterval = ref<any>(null);
 
 // 页面宽度
@@ -85,7 +98,7 @@ const handleThemeChange = (e?: any) => {
 };
 
 const onImageLoaded = (img: HTMLImageElement) => {
-  if (store.theme === 'bg') {
+  if (store.theme === "bg") {
     getColor(img)
       .then((theme) => {
         document.documentElement.dataset.theme = theme;
@@ -95,7 +108,7 @@ const onImageLoaded = (img: HTMLImageElement) => {
         ElMessage.error("背景主题切换失败，已回退到跟随系统");
         store.theme = "system";
       });
-  };
+  }
 };
 
 watch(
@@ -104,7 +117,7 @@ watch(
     if (timeThemeInterval.value) {
       clearInterval(timeThemeInterval.value);
       timeThemeInterval.value = null;
-    };
+    }
     if (theme === "light") {
       document.documentElement.dataset.theme = "light";
     } else if (theme === "dark") {
@@ -119,18 +132,18 @@ watch(
           document.documentElement.dataset.theme = "dark";
         } else {
           document.documentElement.dataset.theme = "light";
-        };
+        }
       };
       setTimeTheme();
       timeThemeInterval.value = setInterval(setTimeTheme, 60000);
     } else if (theme === "bg") {
-      const bgImg = document.querySelector('.bg') as HTMLImageElement;
+      const bgImg = document.querySelector(".bg") as HTMLImageElement;
       if (bgImg && bgImg.complete) {
         onImageLoaded(bgImg);
-      };
-    };
+      }
+    }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -151,7 +164,7 @@ onMounted(() => {
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("鼠标右键.mp3");
-    };
+    }
     return false;
   };
 
@@ -167,7 +180,7 @@ onMounted(() => {
         const voice = envConfig.VITE_TTS_Voice;
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("壁纸预览.mp3");
-      };
+      }
     }
   });
 
@@ -234,7 +247,6 @@ onBeforeUnmount(() => {
       z-index: 2;
       animation: fade 0.5s;
     }
-
 
     @media (max-width: 1200px) {
       padding: 0;
@@ -321,6 +333,5 @@ onBeforeUnmount(() => {
       overflow-y: hidden;
     }
   }
-
 }
 </style>
