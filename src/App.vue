@@ -55,11 +55,11 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { getColor } from "@/utils/getColor";
 import { useI18n } from "vue-i18n";
 import { ElConfigProvider } from "element-plus";
-import ep_zh_CN from "element-plus/es/locale/lang/zh-cn";
-import ep_en_US from "element-plus/es/locale/lang/en";
+import ep_zh_CN from "element-plus/dist/locale/zh-cn.mjs";
+import ep_en_US from "element-plus/dist/locale/en.mjs";
 
 const store = mainStore();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 const elLocale = computed(() => (locale.value === "zh-CN" ? ep_zh_CN : ep_en_US));
 const timeThemeInterval = ref<any>(null);
 
@@ -105,7 +105,7 @@ const onImageLoaded = (img: HTMLImageElement) => {
       })
       .catch((err) => {
         console.error(err);
-        ElMessage.error("背景主题切换失败，已回退到跟随系统");
+        ElMessage.error(t('app.themeChangeFailed'));
         store.theme = "system";
       });
   }
@@ -155,7 +155,7 @@ onMounted(() => {
   // 屏蔽右键
   document.oncontextmenu = () => {
     ElMessage({
-      message: "为了更好嘟体验，右键被猫猫吃掉啦！",
+      message: t('app.rightClickWarning'),
       grouping: true,
       duration: 2000,
     });
@@ -172,7 +172,7 @@ onMounted(() => {
   window.addEventListener("mousedown", (event) => {
     if (event.button == 1) {
       ElMessage({
-        message: `已停用壁纸预览状态，本站默认壁纸为酪灰的收藏小图库，版权归原主所有，只做装饰，不提供预览和下载喔~ 果咩纳塞！`,
+        message: t('app.wallpaperPreviewDisabled'),
         grouping: true,
       });
       if (store.webSpeech) {
@@ -192,8 +192,8 @@ onMounted(() => {
   const styleTitle1 = "font-size: 20px;font-weight: 600;color: rgb(244,167,89);";
   const styleTitle2 = "font-size:12px;color: rgb(244,167,89);";
   const styleContent = "color: rgb(30,152,255);";
-  const title1 = "酪灰の主页";
-  const content = `\n\n版本: ${config.version}\n主页: ${config.home}\nGithub: ${config.github}\nUpdate: ${config.efug}\n当前为酪灰维护版本。`;
+  const title1 = t('app.title');
+  const content = `\n\n${t('app.version')}${config.version}\n${t('app.home')}${config.home}\n${t('app.github')}${config.github}\n${t('app.update')}${config.efug}\n${t('app.maintainedBy')}`;
   console.info(`%c${title1} %c${content}`, styleTitle1, styleContent);
 });
 

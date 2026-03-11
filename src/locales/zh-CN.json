@@ -1,1 +1,338 @@
-{}
+{
+  "common": {
+    "enable": "开启",
+    "disable": "关闭",
+    "unknown": "未知",
+    "loading": "加载中...",
+    "error": "获取失败",
+    "warning": "警告",
+    "confirm": "确定",
+    "continue": "继续",
+    "cancel": "取消",
+    "on": "开",
+    "off": "关"
+  },
+  "app": {
+    "version": "版本: ",
+    "home": "主页: ",
+    "github": "Github: ",
+    "update": "Update: ",
+    "maintainedBy": "当前为酪灰维护版本。",
+    "title": "酪灰の主页",
+    "rightClickWarning": "为了更好嘟体验，右键被猫猫吃掉啦！",
+    "themeChangeFailed": "背景主题切换失败，已回退到跟随系统",
+    "wallpaperPreviewDisabled": "已停用壁纸预览状态，本站默认壁纸为酪灰的收藏小图库，版权归原主所有，只做装饰，不提供预览和下载喔~ 果咩纳塞！",
+    "wallpaperPreviewEnable": "开启壁纸预览",
+    "wallpaperPreviewDisable": "关闭壁纸预览"
+  },
+  "main": {
+    "devMode": "当前处于开发模式。",
+    "resettingConfig": "正在恢复默认配置，请稍后...",
+    "siteUpdated": "网站已更新，请刷新网页嗷！",
+    "noConfigWarningLog": "警告：您似乎没有启用配置文件，项目可能出现异常！请配置 .env 文件后再运行项目！",
+    "noConfigDetect": "检测到您似乎没有创建配置文件，项目可能出现异常！",
+    "canceled": "已取消",
+    "console": {
+      "authorWarning": "Warning: Somethings error ... , The original author information for this project has been modified. If this was not done by you, please delete the file and download the project code package again. If this was done by you, please do not modify or remove the original author information. Thank you! Of course, you can also choose to ignore this message.",
+      "repoLink": "Original repository link: https://github.com/NanoRocky/home/blob/EFU/",
+      "privateVersionWarning": "Warning: This version is not permitted for public use. Please use the public version."
+    }
+  },
+  "setting": {
+    "globalSettings": "全局设置",
+    "mobileSettingsMenu": "移动端设置菜单",
+    "desktopSettingsMenu": "桌面端设置菜单",
+    "wallpaperChangeSuccess": "壁纸更换成功啦喵！",
+    "noMoreOptions": "暂时没有其它啦qwq",
+    "tabs": {
+      "personalWallpaper": "个性壁纸",
+      "themeSettings": "主题设置",
+      "personalization": "个性化调整",
+      "playerConfig": "播放器配置",
+      "lyricSettings": "歌词设置",
+      "voiceSettings": "语音设置",
+      "otherSettings": "其他设置",
+      "devSettings": "开发设置"
+    },
+    "backgrounds": {
+      "0": "酪灰的收藏图库",
+      "1": "随 机 毛 五",
+      "2": "随机 Furry",
+      "3": "随机 二次元",
+      "4": "随 机 猫 耳",
+      "5": "随 机 风 景",
+      "6": "必应每日随机图"
+    },
+    "themes": {
+      "text": "主题模式",
+      "system": "跟随系统",
+      "time": "跟随时间",
+      "bg": "跟随背景",
+      "light": "浅色模式",
+      "dark": "深色模式"
+    },
+    "personalization": {
+      "siteStartShow": "建站日期显示",
+      "musicClick": "音乐点击是否打开面板",
+      "seasonalEffects": "显示季节特效",
+      "footerBlur": "底栏背景模糊",
+      "footerProgressBar": "显示底栏音乐进度条"
+    },
+    "player": {
+      "autoplay": "自动播放",
+      "randomOrder": "随机播放",
+      "loopMode": "循环模式",
+      "loopAll": "列表",
+      "loopOne": "单曲",
+      "loopNone": "不循环"
+    },
+    "lyric": {
+      "showFooterLyric": "显示底栏歌词",
+      "useAMLL": "允许调用 AMLL TTML Database 加载网易云没有的歌词",
+      "amllNetworkWarning": "（在 Github 不稳定的网络中可能导致歌词载入速度变慢）",
+      "useAMLLMirror": "调用 AMLL TTML Database 时使用镜像加速",
+      "enableDWRC": "逐字歌词解析总开关",
+      "enableDWRCPro": "逐字效果增强开关",
+      "removeMetadata": "移除逐字歌词中的元数据",
+      "pilfer": "拆东墙补西墙",
+      "translate": "逐行歌词翻译显示开关"
+    },
+    "voice": {
+      "enableSwitch": "网页语音交互总开关",
+      "announceSongName": "播报歌名",
+      "console": {
+        "apiNotConfigured": "语音服务API未配置。",
+        "requestCanceled": "Request canceled",
+        "error": "Error:"
+      }
+    },
+    "tooltips": {
+      "version": "Version",
+      "poweredBy": "Powered by imsyy",
+      "extensionUpdates": "Extension Function Updates by NanoRocky",
+      "sourceCode": "Github 源代码仓库",
+      "extensionUpdateRepo": "扩展功能更新仓库"
+    },
+    "easterEggs": {
+      "pokeMessage1": "怎么还在戳哇喂！有那么神秘喵...？",
+      "pokeMessage2": "诶？是在找...什喵神秘的东西嘛？"
+    },
+    "updateLog": {
+      "title": "更新日志"
+    }
+  },
+  "devSet": {
+    "seasonalEffects": "季节特效",
+    "winterSnow": "冬日飘雪",
+    "autumnFirefly": "秋萤火虫",
+    "springLantern": "春节灯笼",
+    "wallpaperAdjust": "壁纸调整",
+    "specifyWallpaper": "使用内置壁纸时临时指定壁纸",
+    "wallpaperIdEmpty": "壁纸号不能为空！",
+    "wallpaperIdNotNumber": "壁纸号必须为纯数字！",
+    "notBuiltinWallpaper": "当前使用非内置壁纸，不支持该功能！",
+    "personalization": "个性化设置",
+    "customName": "信息区域显示自定义名",
+    "advancedWallpaper": "壁纸高级设置",
+    "autoSwitch": "壁纸自动切换",
+    "sec": "秒",
+    "reset": "重置",
+    "resetAll": "重置所有设置",
+    "languageSettings": "语言设置",
+    "autoLang": "自动",
+    "channel": "渠道",
+    "checkUpdate": "检查版本更新",
+    "checkButton": "检查更新",
+    "versions": {
+      "preview": "预览版",
+      "dev": "开发版",
+      "early": "尝鲜版",
+      "stable": "正式版",
+      "unknown": "未知版本"
+    },
+    "updateFound": "发现新版本",
+    "console": {
+      "updateCheckFailed": "更新检查失败:",
+      "invalidGithubUrl": "无效的 GitHub 仓库 URL",
+      "githubApiError": "GitHub API 错误: "
+    },
+    "preview": "预览版",
+    "development": "开发版",
+    "beta": "尝鲜版",
+    "release": "正式版",
+    "unknownVersion": "未知版本",
+    "alreadyLatest": "当前已是最新版本！ v{version} ， {type} 。",
+    "newVersion": "发现新版本 v{version}，{type} ，快来体验吧！",
+    "checkError": "版本检测异常，稍后再试试叭~",
+    "restoringDefault": "正在恢复默认配置，请稍后...",
+    "loadingInitial": "正在加载初始设置，请稍后...",
+    "confirmReset": "确定要重置所有设置吗？操作将在点击 3 次后执行。",
+    "notSupportedCustom": "当前使用非内置壁纸，不支持该功能！",
+    "wallpaperEmpty": "壁纸号不能为空！",
+    "wallpaperNotNumber": "壁纸号必须为纯数字！",
+    "wallpaperSetSuccess": "已设置壁纸ID: {id}"
+  },
+  "music": {
+    "musicList": "音乐列表",
+    "backToHitokoto": "回到一言",
+    "partyNotStarted": "银趴未开始（？）",
+    "playerLoadFailed": "播音员消失惹，音乐加载失败qwq",
+    "playErrorNext": "播放歌曲出现错误，播放器将在 2s 后进行下一首",
+    "playError": "播放歌曲出现错误",
+    "playing": "正在播放，“",
+    "ofSong": "”的歌曲，《",
+    "lyricLoading": "歌词加载中...",
+    "progressIconDisabled": "进度 ICON 常驻已禁用",
+    "eh": "诶？",
+    "songLoadFailedNext": "猫猫“不会唱”这首歌啦qwq，将在 2 秒后播放下一首歌曲",
+    "studioError": "播音室出现了一点小故障，请稍后再试qwq",
+    "songErrorLog": "猫猫在播放歌曲: ",
+    "songErrorPostfix": " 出现错误...",
+    "lrcSearching": "猫猫正在翻找歌词...",
+    "lrcNotFound": "猫猫没有找到这首歌的歌词诶qwq"
+  },
+  "weather": {
+    "moduleName": "天气",
+    "failedToFetchData": "天气数据获取失败",
+    "failedToParseTemp": "无法解析温度数据",
+    "failedToFetchLocation": "位置信息获取失败",
+    "failedToLoadWeather": "天气加载失败",
+    "unknownRegion": "未知地区",
+    "windPowerUnit": "级",
+    "console": {
+      "weatherTencentLog1": "正在使用腾讯天气接口",
+      "weatherTencentLog2": "正在使用腾讯天气接口，鉴权模式已启用",
+      "weatherAMapLog": "检测到高德接口 IP 获取失败，调用额外接口获取 IPV4 地址...",
+      "calcTempError": "猫猫不会计算获得的温度数据qwq：",
+      "xiaomiWeatherLog": "正在使用小米天气接口",
+      "missingKeyUseBackup": "未配置天气接口密钥，使用备用天气接口",
+      "useAMap": "正在使用高德天气接口",
+      "aMapFailedUseBackup": "高德天气接口获取失败，尝试调用备用接口",
+      "tencentFailedUseAMap": "腾讯天气接口获取失败，尝试使用高德天气接口",
+      "weatherFetchFailed": "猫猫不知道今天的天气诶qwq："
+    }
+  },
+  "hitokoto": {
+    "openPlayer": "打开音乐播放器",
+    "failedToFetch": "一言获取失败",
+    "defaultText": "修猫正在思考ing...",
+    "defaultFrom": "酪灰"
+  },
+  "links": {
+    "title": "网站列表"
+  },
+  "message": {
+    "resolutionTooLow": "当前显示分辨率不足以打开拓展盒子啦qwq【这么“小”还想开impart！（bushi）】"
+  },
+  "timeCapsule": {
+    "days": "天",
+    "title": "时光胶囊",
+    "month": "本月",
+    "hours": "小时",
+    "year": "本年",
+    "passed": "已度过",
+    "day": "今日",
+    "remaining": "剩余",
+    "week": "本周",
+    "sitePassed": "本站已经苟活了 {years} 年 {months} 月 {days} 天"
+  },
+  "social": {
+    "defaultTip": "来扩列喵？"
+  },
+  "background": {
+    "loadConfigFailed": "无法加载壁纸配置文件:",
+    "loadFailedSwitched": "壁纸加载失败，已临时切换回默认",
+    "loadError": "壁纸加载失败",
+    "loadSuccess": "壁纸加载且动画完成"
+  },
+  "time": {
+    "year": "年",
+    "month": "月",
+    "day": "日",
+    "today": "今日",
+    "thisWeek": "本周",
+    "thisMonth": "本月",
+    "thisYear": "本年",
+    "weekdays": {
+      "sun": "星期日",
+      "mon": "星期一",
+      "tue": "星期二",
+      "wed": "星期三",
+      "thu": "星期四",
+      "fri": "星期五",
+      "sat": "星期六"
+    },
+    "greetings": {
+      "lateNight1": "凌晨好，该睡了啦！",
+      "morning1": "早上好，起的真早哦~",
+      "morning2": "早上好，又是新的一天~",
+      "forenoon": "上午好！",
+      "noon": "中午好，辛苦了一个上午，补充下能量吧~",
+      "afternoon": "下午好！",
+      "dusk": "傍晚好，吃顿美味的晚餐休息休息吧~",
+      "evening": "晚上好，娱乐一下，放松心情~",
+      "lateNight2": "深夜好！夜深了，晚安噢w",
+      "lateNight3": "深夜好！都快凌晨了啦，早点休息哦~"
+    },
+    "welcome": " 欢迎来到我的主页",
+    "todayIs": "今天是",
+    "holidays": {
+      "qingming": "清明节",
+      "wenchuan": "汶川大地震纪念日",
+      "kangzhan": "中国人民抗日战争纪念日",
+      "jiuyiba": "九·一八事变纪念日",
+      "nanjing": "南京大屠杀死难者国家公祭日"
+    }
+  },
+  "store": {
+    "console": {
+      "notSupportedChangeContext1": "不支持将变量 '",
+      "notSupportedChangeContext2": "' 的值设置为 '",
+      "notSupportedChangeContext3": "'，已阻止更改。",
+      "resetting": "正在恢复默认配置...",
+      "resetComplete": "重置完成，页面即将刷新..."
+    }
+  },
+  "api": {
+    "console": {
+      "jsonpFailed": "JSONP 请求失败",
+      "musicSource1Failed": "音乐源 1 请求失败:",
+      "musicSource2Failed": "音乐源 2 请求失败:"
+    }
+  },
+  "player": {
+    "console": {
+      "musicLoaded": "音乐加载完成",
+      "play": "播放",
+      "amllFail": "AMLL TTML Database 调用失败...",
+      "dwrcPilfering": "当前正在播放 {songServer} 来源的《{name}》- '{artist}'，猫猫已成功从 {currentServer} 偷到逐字歌词~"
+    }
+  },
+  "utils": {
+    "console": {
+      "canvasError": "无法获取 canvas 的 2d context",
+      "imageColorError": "无法处理图片以获取颜色",
+      "weatherError": "天气信息获取失败",
+      "weaUnknown": "未知天气",
+      "windUnknown": "未知风级",
+      "xiaomiIntf": "正在使用小米天气接口",
+      "areaUnknown": "未知地区"
+    }
+  },
+  "moreContent": {
+    "hello": "你好~"
+  },
+  "func": {
+    "day": "日",
+    "month": "月",
+    "year": "年"
+  },
+  "moreSet": {
+    "pokeMore": "怎么还在戳哇喂！有那么神秘喵...？",
+    "globalSettings": "全局设置",
+    "poke": "诶？是在找...什喵神秘的东西嘛？"
+  },
+  "validation": {
+    "invalidValue": "不支持将变量 '{key}' 的值设置为 '{value}'，已阻止更改。"
+  }
+}

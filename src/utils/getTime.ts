@@ -134,5 +134,5 @@ export const siteDateStatistics = (startDate) => {
     months += 12;
   }
 
-  return `本站已经苟活了 ${years} 年 ${months} 月 ${days} 天`;
+  return [years, months, days];
 };

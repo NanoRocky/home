@@ -1,5 +1,6 @@
 import { PiniaPluginContext } from "pinia";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import i18n from "@/locales";
 
 // Pinia 变量验证规则
 export const validationRules = {
@@ -45,10 +46,11 @@ export const validationPlugin = ({ store }: PiniaPluginContext) => {
       }
       if (!rule.allowed.includes(coercedValue)) {
         store.$patch({ [key]: oldValue });
-        console.error(`不支持将变量 '${String(key)}' 的值设置为 '${newValue}'，已阻止更改。`);
+        const errMsg = i18n.global.t('validation.invalidValue', { key: String(key), value: newValue });
+        console.error(errMsg);
         ElMessage({
           dangerouslyUseHTMLString: true,
-          message: `不支持将变量 '${String(key)}' 的值设置为 '${newValue}'，已阻止更改。`,
+          message: errMsg,
         });
         setTimeout(() => {
           if (store.webSpeech) {

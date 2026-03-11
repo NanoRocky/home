@@ -4,6 +4,7 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import xmAdcodeData from '@/assets/data/xiaomi_weather_adcode.json';
 import xmStatusData from '@/assets/data/xiaomi_weather_status.json';
 import { mainStore } from "@/store";
+import i18n from '@/locales';
 
 import type {
     AdCode,
@@ -39,7 +40,7 @@ const weatherData = reactive<{
 });
 
 export async function getXMWT() {
-    console.log("正在使用小米天气接口");
+    console.log(i18n.global.t('utils.console.xiaomiIntf'));
     const store = mainStore();
     // 获取 IP
     const ipv4addr = await getIPV4Addr();

@@ -39,7 +39,7 @@ import { mainStore } from "@/store";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { useI18n } from "vue-i18n";
 const store = mainStore();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 // 主页站点logo
 const siteLogo = envConfig.VITE_SITE_MAIN_LOGO;
@@ -74,15 +74,29 @@ const siteUrl = computed(() => {
 const ositeUrl = envConfig.VITE_OSITE_URL;
 
 // 简介区域文字
-const descriptionText = reactive({
-  hello:
-    locale.value != "zh-CN" && envConfig.VITE_DESC_HELLO_EN
-      ? envConfig.VITE_DESC_HELLO_EN || envConfig.VITE_DESC_HELLO
-      : envConfig.VITE_DESC_HELLO,
-  text:
-    locale.value != "zh-CN" && envConfig.VITE_DESC_TEXT_EN
-      ? envConfig.VITE_DESC_TEXT_EN || envConfig.VITE_DESC_TEXT
-      : envConfig.VITE_DESC_TEXT,
+const descriptionText = computed(() => {
+  if (store.boxOpenState) {
+    return {
+      hello:
+        locale.value != "zh-CN" && envConfig.VITE_DESC_HELLO_OTHER_EN
+          ? envConfig.VITE_DESC_HELLO_OTHER_EN || envConfig.VITE_DESC_HELLO_OTHER
+          : envConfig.VITE_DESC_HELLO_OTHER,
+      text:
+        locale.value != "zh-CN" && envConfig.VITE_DESC_TEXT_OTHER_EN
+          ? envConfig.VITE_DESC_TEXT_OTHER_EN || envConfig.VITE_DESC_TEXT_OTHER
+          : envConfig.VITE_DESC_TEXT_OTHER,
+    };
+  }
+  return {
+    hello:
+      locale.value != "zh-CN" && envConfig.VITE_DESC_HELLO_EN
+        ? envConfig.VITE_DESC_HELLO_EN || envConfig.VITE_DESC_HELLO
+        : envConfig.VITE_DESC_HELLO,
+    text:
+      locale.value != "zh-CN" && envConfig.VITE_DESC_TEXT_EN
+        ? envConfig.VITE_DESC_TEXT_EN || envConfig.VITE_DESC_TEXT
+        : envConfig.VITE_DESC_TEXT,
+  };
 });
 
 // 切换右侧功能区
@@ -91,7 +105,7 @@ const changeBox = () => {
     store.boxOpenState = !store.boxOpenState;
   } else {
     ElMessage({
-      message: "当前显示分辨率不足以打开拓展盒子啦qwq【这么“小”还想开impart！（bushi）】",
+      message: t('message.resolutionLow'),
       grouping: true,
       icon: h(Error, {
         theme: "filled",
@@ -112,29 +126,12 @@ watch(
   () => store.boxOpenState,
   (value) => {
     if (value) {
-      descriptionText.hello =
-        locale.value != "zh-CN" && envConfig.VITE_DESC_HELLO_OTHER_EN
-          ? envConfig.VITE_DESC_HELLO_OTHER_EN || envConfig.VITE_DESC_HELLO_OTHER
-          : envConfig.VITE_DESC_HELLO_OTHER;
-      descriptionText.text =
-        locale.value != "zh-CN" && envConfig.VITE_DESC_TEXT_OTHER_EN
-          ? envConfig.VITE_DESC_TEXT_OTHER_EN || envConfig.VITE_DESC_TEXT_OTHER
-          : envConfig.VITE_DESC_TEXT_OTHER;
       if (store.webSpeech) {
         stopSpeech();
         const voice = envConfig.VITE_TTS_Voice;
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("惊讶.mp3");
       }
-    } else {
-      descriptionText.hello =
-        locale.value != "zh-CN" && envConfig.VITE_DESC_HELLO_EN
-          ? envConfig.VITE_DESC_HELLO_EN || envConfig.VITE_DESC_HELLO
-          : envConfig.VITE_DESC_HELLO;
-      descriptionText.text =
-        locale.value != "zh-CN" && envConfig.VITE_DESC_TEXT_EN
-          ? envConfig.VITE_DESC_TEXT_EN || envConfig.VITE_DESC_TEXT
-          : envConfig.VITE_DESC_TEXT;
     }
   },
 );

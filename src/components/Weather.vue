@@ -12,10 +12,10 @@
     </span>
     <span class="sm-hidden">{{ weatherData.weather.windpower?.endsWith("级")
       ? weatherData.weather.windpower
-      : weatherData.weather.windpower + "级" }}&nbsp;</span>
+      : weatherData.weather.windpower + $t("weather.windPowerUnit") }}&nbsp;</span>
   </div>
   <div class="weather" v-else>
-    <span>猫猫不知道今天的天气诶qwq</span>
+    <span>{{ $t("weather.console.weatherFetchFailed").replace("：", "") }}</span>
   </div>
 </template>
 
@@ -25,6 +25,7 @@ import { getXMWT } from "@/utils/xiaomiWeather";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { useI18n } from "vue-i18n";
 
 import type {
   AdCode,
@@ -40,6 +41,7 @@ import type {
 } from "@/typings/weather";
 
 const store = mainStore();
+const { t } = useI18n();
 
 // 加载密钥
 const txkey = envConfig.VITE_TX_WEATHER_KEY; // 腾讯天气密钥
@@ -69,12 +71,12 @@ const getTemperature = (min, max) => {
     const cleanMin = parseFloat(min.toString().replace(/[^\d.-]/g, ""));
     const cleanMax = parseFloat(max.toString().replace(/[^\d.-]/g, ""));
     if (isNaN(cleanMin) || isNaN(cleanMax)) {
-      throw new Error("无法解析温度数据");
+      throw new Error(t('weather.failedToParseTemp'));
     };
     const average = (cleanMin + cleanMax) / 2;
     return Math.round(average);
   } catch (error) {
-    console.error("猫猫不会计算获得的温度数据qwq：", error);
+    console.error(t('weather.console.calcTempError'), error);
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
@@ -88,7 +90,7 @@ const getTemperature = (min, max) => {
 
 const getTXW = async () => {
   if (!txskey) {
-    console.log("正在使用腾讯天气接口");
+    console.log(t("weather.console.weatherTencentLog1"));
     // 获取 Adcode
     const adCode = (await getTXAdcode(txkey)) as TXAdCodeResponse;
     if (String(adCode.status) !== "0") {
@@ -98,10 +100,10 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("位置信息获取失败.mp3");
       };
-      throw "猫猫无法识别访问区域qwq";
+      throw t("weather.failedToFetchLocation");
     };
     weatherData.adCode = {
-      city: adCode.result.ad_info.district || adCode.result.ad_info.city || adCode.result.ad_info.province || "未知地区",
+      city: adCode.result.ad_info.district || adCode.result.ad_info.city || adCode.result.ad_info.province || t("weather.unknownRegion"),
       adcode: adCode.result.ad_info.adcode,
     };
     // 获取天气信息
@@ -112,7 +114,7 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("天气加载失败.mp3");
       };
-      throw "猫猫无法找到当前地区的天气信息qwq";
+      throw t("weather.failedToLoadWeather");
     };
     const txWeather = (await getTXWeather(txkey, weatherData.adCode.adcode)) as TXWeatherResponse;
     if (String(txWeather.status) !== "0") {
@@ -122,7 +124,7 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("天气加载失败.mp3");
       };
-      throw "猫猫无法找到当前地区的天气信息qwq";
+      throw t("weather.failedToLoadWeather");
     };
     const realtimeData = txWeather.result.realtime?.[0];
     if (!realtimeData?.infos) {
@@ -132,7 +134,7 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("天气加载失败.mp3");
       };
-      throw "猫猫无法找到当前地区的天气信息qwq";
+      throw t("weather.failedToLoadWeather");
     };
     weatherData.weather = {
       weather: realtimeData.infos.weather,
@@ -141,7 +143,7 @@ const getTXW = async () => {
       windpower: realtimeData.infos.wind_power,
     };
   } else {
-    console.log("正在使用腾讯天气接口，鉴权模式已启用");
+    console.log(t("weather.console.weatherTencentLog2"));
     // 获取 Adcode
     const adCode = (await getTXAdcodeS(txkey, txskey)) as TXAdCodeResponse;
     if (String(adCode?.status) !== "0") {
@@ -151,10 +153,10 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("位置信息获取失败.mp3");
       };
-      throw "猫猫无法识别访问区域qwq";
+      throw t("weather.failedToFetchLocation");
     };
     weatherData.adCode = {
-      city: adCode.result.ad_info.district || adCode.result.ad_info.city || adCode.result.ad_info.province || "未知地区",
+      city: adCode.result.ad_info.district || adCode.result.ad_info.city || adCode.result.ad_info.province || t("weather.unknownRegion"),
       adcode: adCode.result.ad_info.adcode,
     };
     // 获取天气信息
@@ -165,7 +167,7 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("天气加载失败.mp3");
       };
-      throw "猫猫无法找到当前地区的天气信息qwq";
+      throw t("weather.failedToLoadWeather");
     };
     const txWeather = (await getTXWeatherS(txkey, weatherData.adCode.adcode, txskey)) as TXWeatherResponse;
     if (String(txWeather.status) !== "0") {
@@ -175,7 +177,7 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("天气加载失败.mp3");
       };
-      throw "猫猫无法找到当前地区的天气信息qwq";
+      throw t("weather.failedToLoadWeather");
     };
     const realtimeData = txWeather.result.realtime?.[0];
     if (!realtimeData?.infos) {
@@ -185,7 +187,7 @@ const getTXW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("天气加载失败.mp3");
       };
-      throw "猫猫无法找到当前地区的天气信息qwq";
+      throw t("weather.failedToLoadWeather");
     };
     weatherData.weather = {
       weather: realtimeData.infos.weather,
@@ -201,7 +203,7 @@ const getGDW = async () => {
   const adCode = (await getGDAdcode(gdkey)) as GDAdCodeResponse;
   let adCodei: GDAdcodeIResponse | null = null;
   if (String(adCode?.infocode) !== "10000" || String(adCode?.status) !== "1") {
-    console.log("检测到高德接口 IP 获取失败，调用额外接口获取 IPV4 地址...");
+    console.log(t('weather.console.weatherAMapLog'));
     const ipV4addr = await getIPV4Addr();
     adCodei = (await getGDAdcodeI(ipV4addr.ip, gdkey)) as GDAdcodeIResponse;
     if (String(adCodei?.infocode) !== "10000" || String(adCodei?.status) !== "1") {
@@ -211,17 +213,17 @@ const getGDW = async () => {
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("位置信息获取失败.mp3");
       };
-      throw "猫猫无法识别访问区域qwq";
+      throw t("weather.failedToFetchLocation");
     };
   };
   if (!adCodei) {
     weatherData.adCode = {
-      city: adCode.city || adCode.province || "未知地区",
+      city: adCode.city || adCode.province || t("weather.unknownRegion"),
       adcode: adCode.adcode || null,
     };
   } else {
     weatherData.adCode = {
-      city: adCodei.city || adCodei.province || "未知地区",
+      city: adCodei.city || adCodei.province || t("weather.unknownRegion"),
       adcode: adCodei.adcode || null,
     };
   };
@@ -233,7 +235,7 @@ const getGDW = async () => {
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("天气加载失败.mp3");
     };
-    throw "猫猫无法找到当前地区的天气信息qwq";
+    throw t("weather.failedToLoadWeather");
   };
   const result = (await getGDWeather(gdkey, weatherData.adCode.adcode)) as GDWeatherResponse;
   if (String(result?.status) !== "1" || String(result?.infocode) !== "10000") {
@@ -243,7 +245,7 @@ const getGDW = async () => {
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("天气加载失败.mp3");
     };
-    throw "猫猫无法找到当前地区的天气信息qwq";
+    throw t("weather.failedToLoadWeather");
   };
   weatherData.weather = {
     weather: result.lives[0].weather,
@@ -257,7 +259,7 @@ const getOW = async () => {
   const result = await getOtherWeather();
   const data = result.result;
   weatherData.adCode = {
-    city: data.city.City || "未知地区",
+    city: data.city.City || t("weather.unknownRegion"),
     adcode: null
   };
   weatherData.weather = {
@@ -277,24 +279,24 @@ const getHXHW = async () => {
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("天气加载失败.mp3");
     };
-    throw "猫猫无法找到当前地区的天气信息qwq";
+    throw t("weather.failedToLoadWeather");
   };
   weatherData.adCode = {
-    city: result.city || "未知地区",
+    city: result.city || t("weather.unknownRegion"),
     adcode: null
   };
   weatherData.weather = {
     weather: result.data.type || result.data.night.type,
     temperature: getTemperature(result.data.low || result.data.night.low, result.data.high || result.data.night.high),
     winddirection: result.data.fengxiang || result.data.night.fengxiang,
-    windpower: (!result.data.fengli || result.data.fengli.trim() === '级') ? result.data.night?.fengli || '未知' : result.data.fengli,
+    windpower: (!result.data.fengli || result.data.fengli.trim() === '级') ? result.data.night?.fengli || t("common.unknown") : result.data.fengli,
   };
 };
 
 const getXMW = async () => {
   const xmw = await getXMWT();
   if (!xmw) {
-    throw "猫猫无法找到当前地区的天气信息qwq";
+    throw t("weather.failedToLoadWeather");
   } else {
     weatherData.adCode = xmw.adCode;
     weatherData.weather = xmw.weather;
@@ -306,7 +308,7 @@ const getWeatherData = async () => {
   try {
     // 获取地理位置信息
     if (!gdkey && !txkey) {
-      console.log("未配置天气接口密钥，使用备用天气接口");
+      console.log(t("weather.console.missingKeyUseBackup"));
       try {
         await getXMW();
       } catch (error) {
@@ -318,11 +320,11 @@ const getWeatherData = async () => {
       };
     } else if (!txkey) {
       // 调用高德天气 API
-      console.log("正在使用高德天气接口");
+      console.log(t("weather.console.useAMap"));
       try {
         await getGDW();
       } catch (error) {
-        console.error("高德天气接口获取失败，尝试调用备用接口");
+        console.error(t("weather.console.aMapFailedUseBackup"));
         try {
           await getXMW();
         } catch (error) {
@@ -338,11 +340,11 @@ const getWeatherData = async () => {
       try {
         await getTXW();
       } catch (error) {
-        console.error("腾讯天气接口获取失败，尝试使用高德天气接口");
+        console.error(t("weather.console.tencentFailedUseAMap"));
         try {
           await getGDW();
         } catch (error) {
-          console.error("高德天气接口获取失败，尝试调用备用接口");
+          console.error(t("weather.console.aMapFailedUseBackup"));
           try {
             await getXMW();
           } catch (error) {
@@ -356,8 +358,8 @@ const getWeatherData = async () => {
       };
     };
   } catch (error) {
-    console.error("猫猫不知道今天的天气诶qwq：" + error);
-    onError("猫猫不知道今天的天气诶qwq");
+    console.error(t("weather.console.weatherFetchFailed") + error);
+    onError(t("weather.console.weatherFetchFailed").replace("：", ""));
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;

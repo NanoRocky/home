@@ -11,14 +11,18 @@
       <el-col :span="12">
         <div class="right cards">
           <div class="time">
-            <div class="date">
-              <span>{{ currentTime.year }}&nbsp;年&nbsp;</span>
-              <span>{{ currentTime.month }}&nbsp;月&nbsp;</span>
-              <span>{{ currentTime.day }}&nbsp;日&nbsp;</span>
+            <div class="date" v-if="locale === 'zh-CN'">
+              <span>{{ currentTime.year }}&nbsp;{{ $t("func.year") }}&nbsp;</span>
+              <span>{{ currentTime.month }}&nbsp;{{ $t("func.month") }}&nbsp;</span>
+              <span>{{ currentTime.day }}&nbsp;{{ $t("func.day") }}&nbsp;</span>
+              <span class="sm-hidden">{{ currentTime.weekday }}</span>
+            </div>
+            <div class="date" v-else>
+              <span>{{ enDateText }}&nbsp;</span>
               <span class="sm-hidden">{{ currentTime.weekday }}</span>
             </div>
             <div class="text">
-              <span> {{ currentTime.hour }}:{{ currentTime.minute }}:{{ currentTime.second }}</span>
+              <span v-for="(char, index) in timeText" :key="index" :class="{ 'colon': char === ':', 'num': char !== ':' }">{{ char }}</span>
             </div>
           </div>
           <Weather />
@@ -29,14 +33,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { getCurrentTime } from "@/utils/getTime";
 import { mainStore } from "@/store";
 import Music from "@/components/Music.vue";
 import Hitokoto from "@/components/Hitokoto.vue";
 import Weather from "@/components/Weather.vue";
+import { useI18n } from "vue-i18n";
 
 const store = mainStore();
+const { locale } = useI18n();
 
 interface CurrentTime {
   year: number;
@@ -62,6 +68,19 @@ const timeInterval = ref < number | null > (null);
 
 // 播放器 id
 const playerHasId = envConfig.VITE_SONG_ID;
+
+// 处理时间格式为字符串数组
+const timeText = computed(() => {
+  return `${currentTime.value.hour}:${currentTime.value.minute}:${currentTime.value.second}`;
+});
+
+// 英文日期格式
+const enDateText = computed(() => {
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const mIndex = Number(currentTime.value.month) - 1;
+  const monthName = months[mIndex] || '';
+  return `${monthName} ${currentTime.value.day}, ${currentTime.value.year}`;
+});
 
 // 更新时间
 const updateTimeData = () => {
@@ -152,6 +171,7 @@ onBeforeUnmount(() => {
           text-overflow: ellipsis;
           overflow-x: hidden;
           white-space: nowrap;
+          font-variant-numeric: tabular-nums;
         }
 
         .text {
@@ -159,6 +179,19 @@ onBeforeUnmount(() => {
           font-size: 3.25rem;
           letter-spacing: 2px;
           font-family: "UnidreamLED";
+          font-variant-numeric: tabular-nums;
+          display: flex;
+          justify-content: center;
+
+          span {
+            text-align: center;
+          }
+          .num {
+            width: 0.48em;
+          }
+          .colon {
+            width: 0.25em;
+          }
         }
 
         @media (min-width: 1201px) and (max-width: 1280px) {

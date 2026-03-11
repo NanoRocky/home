@@ -12,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import socialLinks from "@/assets/socialLinks.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { mainStore } from "@/store";
@@ -19,11 +20,12 @@ import { mainStore } from "@/store";
 // 社交链接提示
 const socialTip = ref("Find NanoRocky");
 const store = mainStore();
+const { t } = useI18n();
 
 const togglesocial = () => {
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `来扩列喵？`,
+    message: t('social.defaultTip'),
   });
   if (store.webSpeech) {
     stopSpeech();

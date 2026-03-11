@@ -34,7 +34,7 @@ const mountApp = () => {
   app.mount("#app");
   const store = mainStore();
   if (import.meta.env.DEV) {
-    console.log("当前处于开发模式。");
+    console.log(i18n.global.t('main.devMode'));
     /* 自动启用开发者选项 */
     store.setV = true;
     /* 在开发状态下挂载 store 以进行测试 */
@@ -48,7 +48,7 @@ const mountApp = () => {
   if (urlParams.get("set") === "reset") {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: `正在恢复默认配置，请稍后...`,
+      message: i18n.global.t('devSet.restoringDefault'),
     });
     if (store.webSpeech) {
       stopSpeech();
@@ -62,8 +62,9 @@ const mountApp = () => {
   // PWA
   navigator.serviceWorker.addEventListener("controllerchange", async () => {
     // 弹出更新提醒
-    console.log("网站已更新，请刷新网页嗷！");
-    ElMessage("网站已更新，请刷新网页嗷！");
+    const updatedMsg = i18n.global.t('main.updated');
+    console.log(updatedMsg);
+    ElMessage(updatedMsg);
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
@@ -100,10 +101,10 @@ if (!import.meta.env.VITE_CONFIG_TURN || import.meta.env.VITE_CONFIG_TURN != "tr
   if (appEl) {
     appEl.style.display = "none";
   }
-  console.error(`警告：您似乎没有启用配置文件，项目可能出现异常！请配置 .env 文件后再运行项目！`);
-  ElMessageBox.confirm("检测到您似乎没有创建配置文件，项目可能出现异常！", "警告", {
-    confirmButtonText: "继续",
-    cancelButtonText: "取消",
+  console.error(i18n.global.t('main.configMissing'));
+  ElMessageBox.confirm(i18n.global.t('main.configMissing'), i18n.global.t('main.warning'), {
+    confirmButtonText: i18n.global.t('main.continue'),
+    cancelButtonText: i18n.global.t('main.cancel'),
     type: "warning",
   })
     .then(() => {
@@ -112,7 +113,7 @@ if (!import.meta.env.VITE_CONFIG_TURN || import.meta.env.VITE_CONFIG_TURN != "tr
     .catch(() => {
       ElMessage({
         type: "info",
-        message: "已取消",
+        message: i18n.global.t('main.cancelled'),
       });
     });
 } else {

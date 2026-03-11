@@ -124,7 +124,7 @@
             :key="
               store.getPlayerLrc.length > 0
                 ? `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}`
-                : '猫猫正在翻找歌词...'
+                : $t('music.lrcSearching')
             "
           >
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
@@ -169,7 +169,7 @@ import { mainStore } from "@/store";
 import config from "@/../package.json";
 import { ref, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { throttle } from "lodash";
+import { throttle } from "lodash-es";
 
 const store = mainStore();
 const fullYear = new Date().getFullYear();
@@ -178,7 +178,7 @@ const scrollPosition = ref(0);
 const currentLine = ref(0);
 const audio = ref(null);
 const icon = ref(null);
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 // 加载配置数据
 // const siteStartDate = ref(envConfig.VITE_SITE_START);
@@ -218,7 +218,7 @@ const toggleForceIcon = () => {
   store.forceShowBarIcon = !store.forceShowBarIcon;
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `${store.forceShowBarIcon ? "诶？" : "进度 ICON 常驻已禁用"}`,
+    message: `${store.forceShowBarIcon ? t("music.eh") : t("music.progressIconDisabled")}`,
   });
   if (store.forceShowBarIcon) {
     if (store.webSpeech) {

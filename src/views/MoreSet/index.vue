@@ -14,7 +14,7 @@
         <!-- 移动端设置菜单 -->
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">全局设置</span>
+          <span class="name">{{ $t('moreSet.globalSettings') }}</span>
         </div>
         <div class="mobileset-scrollable">
           <Set />
@@ -55,7 +55,7 @@
       <el-col :span="12" class="right">
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">全局设置</span>
+          <span class="name">{{ $t('moreSet.globalSettings') }}</span>
         </div>
         <div class="set-scrollable">
           <Set />
@@ -72,7 +72,10 @@ import { mainStore } from "@/store";
 import Set from "@/components/Set.vue";
 import config from "@/../package.json";
 
+import { useI18n } from "vue-i18n";
+
 const store = mainStore();
+const { t } = useI18n();
 const closeShow = ref(false);
 let chuover = 0;
 
@@ -93,7 +96,7 @@ const toggleVer = () => {
   if (chuover > 4) {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: `怎么还在戳哇喂！有那么神秘喵...？`,
+      message: t('moreSet.pokeMore'),
     });
     if (store.webSpeech) {
       stopSpeech();
@@ -105,7 +108,7 @@ const toggleVer = () => {
   } else {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: `诶？是在找...什喵神秘的东西嘛？`,
+      message: t('moreSet.poke'),
     });
     if (store.webSpeech) {
       stopSpeech();

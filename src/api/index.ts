@@ -1,6 +1,7 @@
 // import axios from "axios";
 import fetchJsonp from "fetch-jsonp";
 import { gwgt } from "@/utils/authServer";
+import i18n from "@/locales";
 
 /**
  * JSONP 请求模块
@@ -17,7 +18,7 @@ const loadJSONP = (url, callbackName) => {
     const script = document.createElement("script");
     script.src = url;
     script.onerror = () => {
-      reject(new Error("JSONP 请求失败"));
+      reject(new Error(i18n.global.t('api.console.jsonpFailed')));
       delete (window as any)[callbackName]; // 出错时也要清理
     };
     document.body.appendChild(script);
@@ -40,7 +41,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       data1 = await res1.json();
     } catch (e) {
       data1 = [];
-      console.error("音乐源 1 请求失败:", e);
+      console.error(i18n.global.t('api.console.musicSource1Failed'), e);
     }
     try {
       const res2 = await fetch(
@@ -49,7 +50,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       data2 = await res2.json();
     } catch (e) {
       data2 = [];
-      console.error("音乐源 2 请求失败:", e);
+      console.error(i18n.global.t('api.console.musicSource2Failed'), e);
     }
     dataf = [...(data2 || []), ...(data1 || [])];
   } else {
@@ -58,7 +59,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       data3 = await res1.json();
     } catch (e) {
       data3 = [];
-      console.error("音乐源 1 请求失败:", e);
+      console.error(i18n.global.t('api.console.musicSource1Failed'), e);
     }
     dataf = [...(data3 || [])];
   }

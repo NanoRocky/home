@@ -8,6 +8,8 @@ import Components from "unplugin-vue-components/vite";
 import viteCompression from "vite-plugin-compression2";
 import UnoCSS from 'unocss/vite';
 import type { UserConfig } from "vite";
+import postcssPresetEnv from 'postcss-preset-env';
+import cssnano from 'cssnano';
 
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: string }): UserConfig => {
@@ -133,14 +135,21 @@ export default ({ mode }: { mode: string }): UserConfig => {
             extensions: [".ts", ".js", ".vue", ".json"],
         },
         css: {
+            postcss: {
+                plugins: [
+                    postcssPresetEnv({
+                        stage: 3,
+                        features: { 'nesting-rules': true }
+                    }),
+                    cssnano()
+                ]
+            },
             preprocessorOptions: {
                 scss: {
                     charset: false,
                     additionalData: `@use "@/style/global.scss" as global;`,
-                    silenceDeprecations: ["legacy-js-api"],
                 },
             },
-            postcss: {},
         },
         build: {
             minify: "terser",
@@ -153,7 +162,19 @@ export default ({ mode }: { mode: string }): UserConfig => {
                 output: {
                     manualChunks(id) {
                         if (id.includes('node_modules')) {
+                            if (id.includes('three')) {
+                                return 'vendor_three';
+                            };
+                            if (id.includes('element-plus')) {
+                                return 'vendor_element-plus';
+                            };
+                            if (id.includes('swiper')) {
+                                return 'vendor_swiper';
+                            };
                             return 'vendor';
+                        };
+                        if (id.includes('en-US.json') || id.includes('zh-CN.json')) {
+                            return 'locale';
                         };
                         if (id.includes('xiaomi_weather_adcode.json') || id.includes('xiaomi_weather_status.json')) {
                             return 'xiaomi_weather_data';

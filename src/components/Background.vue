@@ -8,7 +8,7 @@
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
-        已禁用
+        {{ $t('background.disabled') }}
       </a>
     </Transition>
   </div>
@@ -22,9 +22,11 @@ import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
 import { initLantern, closeLantern } from "@/utils/season/lantern";
 import { ref, h, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
+const { t } = useI18n();
 const currentBgUrl = ref(null);
 const nextBgUrl = ref(null);
 const isTransitioning = ref(false);
@@ -71,7 +73,7 @@ async function loadConfig() {
       return true;
     };
   } catch (error) {
-    console.error('无法加载壁纸配置文件:', error);
+    console.error(t('background.loadConfigFailed'), error);
     bgRandom = Math.floor(Math.random() * bgImageCount + 1);
     bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
     sBGCountN = null;
@@ -171,9 +173,9 @@ const changeBg = async (type) => {
       // 预加载新壁纸
       const result = await preloadImage(newBgUrl);
       if (!result.ok) {
-        console.error("壁纸加载失败");
+        console.error(t('background.loadError'));
         ElMessage({
-          message: "壁纸加载失败惹喵...已临时切换回默认！",
+          message: t('background.loadError'),
           icon: h(Error, {
             theme: "filled",
             fill: "var(--el-message-icon-color)",
@@ -258,16 +260,16 @@ const imgLoadComplete = (event) => {
 
 // 图片动画完成
 const imgAnimationEnd = () => {
-  console.log("壁纸加载且动画完成");
+  console.log(t('background.loadSuccess'));
   // 加载完成事件
   emit("loadComplete");
 };
 
 // 图片显示失败
 const imgLoadError = async () => {
-  console.error("壁纸加载失败：", currentBgUrl.value);
+  console.error(t('background.loadError') + "：", currentBgUrl.value);
   ElMessage({
-    message: "壁纸加载失败惹喵...已临时切换回默认！",
+    message: t('background.loadError'),
     icon: h(Error, {
       theme: "filled",
       fill: "var(--el-message-icon-color)",
@@ -536,3 +538,4 @@ watch(() => store.autoBGSwitchInterval, () => {
   }
 }
 </style>
+

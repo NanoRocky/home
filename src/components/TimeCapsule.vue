@@ -2,25 +2,25 @@
   <div class="time-capsule">
     <div class="title">
       <hourglass-full theme="two-tone" size="24" :fill="['var(--time-icon-one-color)', 'var(--time-icon-two-color)']" />
-      <span>时光胶囊</span>
+      <span>{{ $t('timeCapsule.title') }}</span>
     </div>
     <div v-if="timeData" class="all-capsule">
       <div v-for="(item, tag, index) in timeData" :key="index" class="capsule-item">
         <div class="item-title">
           <span class="percentage">
-            {{ item.name }}已度过
+            {{ $t(`timeCapsule.${tag}`) }}{{ $t('timeCapsule.passed') }}
             <strong>{{ item.passed }}</strong>
-            {{ tag === "day" ? "小时" : "天" }}
+            {{ tag === "day" ? $t('timeCapsule.hours') : $t('timeCapsule.days') }}
           </span>
           <span class="remaining">
-            剩余&nbsp;{{ item.remaining }}&nbsp;{{ tag === "day" ? "小时" : "天" }}
+            {{ $t('timeCapsule.remaining') }}&nbsp;{{ item.remaining }}&nbsp;{{ tag === "day" ? $t('timeCapsule.hours') : $t('timeCapsule.days') }}
           </span>
         </div>
         <el-progress :text-inside="true" :stroke-width="20" :percentage="Number(item.percentage)" />
       </div>
       <!-- 建站日期 -->
-      <div v-if="store.siteStartShow" class="capsule-item start">
-        <div class="item-title">{{ startDateText }}</div>
+      <div v-if="store.siteStartShow && startDateText" class="capsule-item start">
+        <div class="item-title">{{ $t('timeCapsule.sitePassed', { years: startDateText[0], months: startDateText[1], days: startDateText[2] }) }}</div>
       </div>
     </div>
   </div>
@@ -36,7 +36,7 @@ const store = mainStore();
 // 进度条数据
 const timeData = ref(getTimeCapsule());
 const startDate = ref(envConfig.VITE_SITE_START);
-const startDateText = ref<string | null>(null);
+const startDateText = ref<number[] | null>(null);
 const timeInterval = ref<number | null>(null);
 
 onMounted(() => {

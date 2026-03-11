@@ -7,9 +7,11 @@
  */
 
 
-import { md5 as d } from "js-md5";
+import { md5 as md } from '@noble/hashes/legacy.js';
+import { bytesToHex as byt, utf8ToBytes as ut } from '@noble/hashes/utils.js';
 
 let x: number | null = null, y: number | null = null;
+const d = (msg: string) => byt(md(ut(msg)));
 const f = () => Math.floor(Date.now() / 1000), o = (v) => v.toString(16);
 
 async function gst() {

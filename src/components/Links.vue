@@ -5,8 +5,8 @@
         <Link />
       </Icon>
       <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
-        @click="store.setOpenState = !store.setOpenState">网站列表</span>
-      <span class="title" v-else>网站列表</span>
+        @click="store.setOpenState = !store.setOpenState">{{ $t('links.title') }}</span>
+      <span class="title" v-else>{{ $t('links.title') }}</span>
     </div>
     <!-- 网站列表 -->
     <Swiper v-if="siteLinks[0]" :modules="[Pagination, Mousewheel]" :slides-per-view="1" :space-between="40"
@@ -89,7 +89,7 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data: SiteLink) => {
-  if (data.name === "音乐" && store.musicClick && store.musicIsOk) {
+  if ((data.name === "音乐" || data.name === "Music") && store.musicClick && store.musicIsOk) {
     store.musicBoxOpenState = !store.musicBoxOpenState;
     return;
   } else {
