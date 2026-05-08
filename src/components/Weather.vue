@@ -5,12 +5,12 @@
     <span>{{ weatherData.weather.temperature }}℃</span>
     <span class="sm-hidden">
       &nbsp;{{
-        weatherData.weather.winddirection?.endsWith("风")
+        weatherData.weather.winddirection?.endsWith($t("weather.wind"))
           ? weatherData.weather.winddirection
-          : weatherData.weather.winddirection + "风"
+          : weatherData.weather.winddirection + $t("weather.wind")
       }}&nbsp;
     </span>
-    <span class="sm-hidden">{{ weatherData.weather.windpower?.endsWith("级")
+    <span class="sm-hidden">{{ weatherData.weather.windpower?.endsWith($t("weather.windPowerUnit") || "级")
       ? weatherData.weather.windpower
       : weatherData.weather.windpower + $t("weather.windPowerUnit") }}&nbsp;</span>
   </div>
@@ -289,7 +289,7 @@ const getHXHW = async () => {
     weather: result.data.type || result.data.night.type,
     temperature: getTemperature(result.data.low || result.data.night.low, result.data.high || result.data.night.high),
     winddirection: result.data.fengxiang || result.data.night.fengxiang,
-    windpower: (!result.data.fengli || result.data.fengli.trim() === '级') ? result.data.night?.fengli || t("common.unknown") : result.data.fengli,
+    windpower: (!result.data.fengli || (result.data.fengli.trim() === t("weather.windPowerUnit") || result.data.fengli.trim() === "级")) ? result.data.night?.fengli || t("common.unknown") : result.data.fengli,
   };
 };
 

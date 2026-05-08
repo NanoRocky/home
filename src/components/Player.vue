@@ -457,7 +457,6 @@ const fetchDWRC = async (dwrcUrl: string) => {
     store.dwrcEnable = false;
   };
   // 偷东西
-  // 偷东西
   if (store.playerDWRCPilfer && baseUrl && store.dwrcEnable != true) {
     try {
       const currentAudio = player.value!.aplayer.audio[player.value!.aplayer.index];

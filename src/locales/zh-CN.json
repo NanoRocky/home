@@ -199,6 +199,7 @@
     "failedToLoadWeather": "天气加载失败",
     "unknownRegion": "未知地区",
     "windPowerUnit": "级",
+    "wind": "风",
     "console": {
       "weatherTencentLog1": "正在使用腾讯天气接口",
       "weatherTencentLog2": "正在使用腾讯天气接口，鉴权模式已启用",

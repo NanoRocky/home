@@ -21,9 +21,9 @@
     "title": "NanoRocky's Home",
     "rightClickWarning": "For a better experience, right-click has been eaten by the cat!",
     "themeChangeFailed": "Failed to change background theme, fallback to system setting.",
-    "wallpaperPreviewDisabled": "Wallpaper preview is disabled. The default wallpapers are NanoRocky's collection, copyrights belong to the original owners. They are for decoration only, preview and download are not provided~ Gomen nasai!",
+    "wallpaperPreviewDisabled": "Nope nope... Wallpaper preview is disabled. The default wallpapers are NanoRocky's collection, copyrights belong to the original owners. They are for decoration only, preview and download are not provided~ ",
     "wallpaperPreviewEnable": "Enable Wallpaper Preview",
-    "wallpaperPreviewDisable": "Disable Wallpaper Preview"
+    "wallpaperPreviewDisable": "Exited Wallpaper Preview"
   },
   "main": {
     "devMode": "Running in development mode.",
@@ -199,6 +199,7 @@
     "failedToLoadWeather": "Failed to load weather",
     "unknownRegion": "Unknown Region",
     "windPowerUnit": "lvl",
+    "wind": " Wind",
     "console": {
       "weatherTencentLog1": "Using Tencent Weather API",
       "weatherTencentLog2": "Using Tencent Weather API, Auth mode activated",
@@ -222,7 +223,7 @@
     "title": "Site List"
   },
   "message": {
-    "resolutionTooLow": "Current display resolution is too low to open the expansion box qwq [Such a 'small' screen for a party! (kidding)]"
+    "resolutionTooLow": "Current display resolution is too low to open the expansion box !"
   },
   "timeCapsule": {
     "days": "days",
