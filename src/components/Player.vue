@@ -362,10 +362,11 @@ const loadMusicError = () => {
 };
 
 // 音频时间更新事件
-const fetchDWRC = async (dwrcUrl: string) => {
+const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
   // 逐字接入模块
   const dwrcSource = await fetch(dwrcUrl);
   const dwrcText = await dwrcSource.text();
+  if (playIndex.value !== expectedIndex) return;
   store.dwrcIndex = playIndex.value;
   try {
     const decoded = await decodeDWQYRC(dwrcText, store.playerRMMetadata);
@@ -404,13 +405,16 @@ const fetchDWRC = async (dwrcUrl: string) => {
       const amllUrl = songUrlInfUrl[songServer].replace("${songIdlrc}", songId);
       const amllSource = await fetch(amllUrl);
       if (amllSource.status === 404) {
+        if (playIndex.value !== expectedIndex) return;
         store.dwrcTemp = [];
         store.dwrcLoading = false;
         store.dwrcEnable = false;
       } else if (!amllSource.ok) {
+        if (playIndex.value !== expectedIndex) return;
         throw new Error(t('player.console.amllFail'));
       } else {
         const amllText = await amllSource.text();
+        if (playIndex.value !== expectedIndex) return;
         const decoded = await decodeDWQYRC(amllText, store.playerRMMetadata);
         store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
         store.dwrcLoading = false;
@@ -427,6 +431,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
           try {
             const amllUrlse = songUrlInfUrlse[songServer].replace("${songIdlrc}", songId);
             const amllSourcese = await fetch(amllUrlse);
+            if (playIndex.value !== expectedIndex) return;
             if (amllSourcese.status === 404) {
               store.dwrcTemp = [];
               store.dwrcLoading = false;
@@ -466,6 +471,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
       const pilferUrl = `${baseUrl}?server=${currentServer}&type=search&id=0&dwrc=true&keyword=${encodeURIComponent(currentName)}`;
       const resp = await fetch(pilferUrl);
       const data = await resp.json();
+      if (playIndex.value !== expectedIndex) return;
       const list = Array.isArray(data)
         ? data
         : (data && typeof data === "object" ? Object.values(data) : []);
@@ -513,6 +519,7 @@ const fetchDWRC = async (dwrcUrl: string) => {
           const originalLrcUrl = player.value!.aplayer.audio[player.value!.aplayer.index]["lrc"];
           const sourceLrcResp = await fetch(originalLrcUrl);
           const sourceLrcText = await sourceLrcResp.text();
+          if (playIndex.value !== expectedIndex) return;
           const processedText = await alignPilferedLyrics(pilferText, sourceLrcText);
           if (processedText) {
             const decoded = await decodeDWQYRC(processedText, store.playerRMMetadata);
@@ -572,7 +579,7 @@ function onLoadStart() {
     const dwrcUrl = player.value!.aplayer.audio[player.value!.aplayer.index]["lrc"] + "&dwrc=true";
     store.dwrcIndex = playIndex.value;
     store.dwrcLoading = true;
-    fetchDWRC(dwrcUrl);
+    fetchDWRC(dwrcUrl, playIndex.value);
   } catch (error) {
     store.dwrcEnable = false;
     store.dwrcTemp = [];
