@@ -2,16 +2,16 @@
   "name": "home",
   "author": "imsyy",
   "efua": "NanoRocky",
-  "github": "https://github.com/imsyy/home",
-  "efug": "https://github.com/NanoRocky/home",
-  "home": "https://imsyy.top",
-  "efuh": "https://nanorocky.top",
+  "github": "https://github.com/imsyy/home/",
+  "efug": "https://github.com/NanoRocky/home/",
+  "home": "https://imsyy.top/",
+  "efuh": "https://nanorocky.top/",
   "private": true,
   "version": "4.4.0.dev [EFU]",
   "type": "module",
   "engines": {
-    "node": ">=24.14.0",
-    "pnpm": ">=10.30.3"
+    "node": ">=24.18.0",
+    "pnpm": ">=11.18.0"
   },
   "scripts": {
     "dev": "vite --host",
@@ -20,7 +20,7 @@
     "format": "prettier --write src/",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
     "type-check": "vue-tsc --noEmit",
-    "package-update": "npm-check-updates -u && pnpm update --latest --save"
+    "package-update": "npx npm-check-updates -u && pnpm update --latest --save"
   },
   "dependencies": {
     "@applemusic-like-lyrics/lyric": "^1.0.2",
@@ -85,14 +85,6 @@
     "@jridgewell/sourcemap-codec": "^1.5.5",
     "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.5.5",
     "source-map@^0.8.0-beta": "0.7.6"
-  },
-  "pnpm": {
-    "overrides": {
-      "glob": "^13.0.6",
-      "@jridgewell/sourcemap-codec": "^1.5.5",
-      "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.5.5",
-      "source-map@^0.8.0-beta": "0.7.6"
-    }
   },
   "resolutions": {
     "glob": "^13.0.6",
