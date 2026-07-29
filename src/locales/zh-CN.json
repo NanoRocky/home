@@ -189,7 +189,8 @@
     "songErrorLog": "猫猫在播放歌曲: ",
     "songErrorPostfix": " 出现错误...",
     "lrcSearching": "猫猫正在翻找歌词...",
-    "lrcNotFound": "猫猫没有找到这首歌的歌词诶qwq"
+    "lrcNotFound": "猫猫没有找到这首歌的歌词诶qwq",
+    "autoPlayError": "当前浏览器策略疑似不允许自动播放，请手动播放喵！"
   },
   "weather": {
     "moduleName": "天气",
@@ -306,7 +307,8 @@
       "musicLoaded": "音乐加载完成",
       "play": "播放",
       "amllFail": "AMLL TTML Database 调用失败...",
-      "dwrcPilfering": "当前正在播放 {songServer} 来源的《{name}》- '{artist}'，猫猫已成功从 {currentServer} 偷到逐字歌词~"
+      "dwrcPilfering": "当前正在播放 {songServer} 来源的《{name}》- '{artist}'，猫猫已成功从 {currentServer} 偷到逐字歌词~",
+      "autoPlayError": "自动播放失败，可能是由于浏览器策略限制了自动播放功能。请尝试手动点击播放按钮："
     }
   },
   "utils": {

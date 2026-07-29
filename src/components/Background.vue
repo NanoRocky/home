@@ -1,7 +1,7 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
-    <img v-show="store.imgLoadStatus" :src="currentBgUrl" :class="['bg', 'current', { 'blur-out': isTransitioning }]"
+    <img v-show="store.imgLoadStatus" :src="currentBgUrl" :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
       alt="cover" @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
     <!-- 新壁纸层 -->
     <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
@@ -31,6 +31,7 @@ const currentBgUrl = ref(null);
 const nextBgUrl = ref(null);
 const isTransitioning = ref(false);
 const isBlurringIn = ref(false);
+const skipTransition = ref(false);
 const imgTimeout = ref(null);
 const autoBGSwitchTimer = ref(null); // 定时切换定时器
 const emit = defineEmits(["loadComplete", "imageLoaded"]);
@@ -51,12 +52,8 @@ let sBGCountN = null;
 // 加载 config.json
 async function loadConfig() {
   try {
-    if (key) {
-      const confUrl = "https://filep.nanorocky.top/home/images/config.json";
-      confUrlS = await gasC(confUrl, key);
-    } else {
-      confUrlS = "https://filep.nanorocky.top/home/images/config.json";
-    };
+    const confUrl = "https://filep.nanorocky.top/home/images/config.json";
+    key?confUrlS = await gasC(confUrl, key):confUrlS = confUrl;
     const response = await fetch(confUrlS);
     const data = await response.json();
     bgImageCount = Math.max(data.bgImageCount, 1);
@@ -170,6 +167,12 @@ const changeBg = async (type) => {
       } else if (type == 6) {
         newBgUrl = "https://uapis.cn/api/bing.php?rand=true";
       };
+
+      if (type != 0) {
+        // 给外部 API 加上时间戳，防止两次请求 URL 相同导致不刷新
+        newBgUrl += newBgUrl.includes('?') ? `&_t=${Date.now()}` : `?_t=${Date.now()}`;
+      }
+
       // 预加载新壁纸
       const result = await preloadImage(newBgUrl);
       if (!result.ok) {
@@ -237,13 +240,20 @@ const performTransition = async (newUrl) => {
     isBlurringIn.value = true;
   }, 30);
 
-  // 等待过渡完全完成后再切换 (1.6s transform是最长的，再加100ms缓冲)
+  // 等待过渡完全完成后再切换
   setTimeout(() => {
+    skipTransition.value = true;
     currentBgUrl.value = newUrl;
     isTransitioning.value = false;
     isBlurringIn.value = false;
     nextBgUrl.value = null;
-  }, 1700);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        skipTransition.value = false;
+      });
+    });
+  }, 1600);
 };
 
 
@@ -461,30 +471,34 @@ watch(() => store.autoBGSwitchInterval, () => {
     transform: scale(1);
     will-change: filter, opacity, transform;
     transition:
-      filter 1.4s cubic-bezier(0.25, 0.1, 0.25, 1),
-      opacity 1.4s cubic-bezier(0.33, 0, 0.2, 1),
-      transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+      filter 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.no-transition {
+      transition: none !important;
+    }
 
     &.current {
-      animation: fade-blur-in 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation: fade-blur-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       animation-delay: 0.45s;
 
       &.blur-out {
-        filter: blur(50px) brightness(0.25);
-        opacity: 0;
-        transform: scale(1.05);
+        filter: blur(10px) brightness(0.8) !important;
+        opacity: 0 !important;
+        transform: scale(1.05) !important;
       }
     }
 
     &.next {
-      filter: blur(50px) brightness(0.25);
+      filter: blur(10px) brightness(0.8);
       opacity: 0;
-      transform: scale(1.08);
+      transform: scale(1.05);
       animation: none;
       z-index: 2;
 
       &.blur-in {
-        filter: blur(20px) brightness(0.3);
+        filter: blur(0px) brightness(1);
         opacity: 1;
         transform: scale(1);
       }
@@ -500,6 +514,8 @@ watch(() => store.autoBGSwitchInterval, () => {
     height: 100%;
     background-image: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.5) 100%),
       radial-gradient(rgba(0, 0, 0, 0) 33%, rgba(0, 0, 0, 0.3) 166%);
+    z-index: 3;
+    pointer-events: none;
 
     transition: 1.5s;
 

@@ -24,7 +24,8 @@
             "vite/client",
             "@vitejs/plugin-vue",
             "unplugin-vue-components",
-            "element-plus/global"
+            "element-plus/global",
+            "node"
         ],
         "noEmit": true
     },

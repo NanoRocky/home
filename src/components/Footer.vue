@@ -91,6 +91,7 @@
                 <span
                   v-for="(i, index) in store.playerLrc"
                   :key="`lrc-char-${i[2]}-${i[3]}`"
+                  :style="{ '--char-duration': i[5] + 'ms' }"
                   :class="[
                     'dwrc-char',
                     i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
@@ -310,6 +311,8 @@ watch(
 <style lang="scss" scoped>
 // 逐字模块1
 .dwrc-char {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
   opacity: 1;
   -webkit-transform: translateY(1px);
@@ -320,9 +323,9 @@ watch(
   font-weight: 520;
   font-size: 1.05rem;
   transition:
-    // opacity 0.3s linear,
-    color 0.5s linear,
-    transform 0.3s linear;
+    opacity var(--short-time) linear,
+    color var(--anim-time) linear,
+    transform var(--short-time) linear;
 
   &.fade-in-start {
     text-shadow: 0px 0px 2px var(--footer-dwrc-shadow-first-color);
@@ -330,20 +333,20 @@ watch(
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.fade-in {
     opacity: 1;
     -webkit-transform: translateY(-1px);
     transform: translateY(-1px);
-    animation: colorFade 0.7s ease-in-out forwards;
+    animation: colorFade var(--anim-time) ease-in-out forwards;
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.fade-out {
@@ -355,13 +358,13 @@ watch(
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.fade-enter-active {
-    animation: float-up 0.3s linear forwards;
+    animation: float-up var(--short-time) linear forwards;
   }
 
   &.long-tone {
@@ -370,9 +373,9 @@ watch(
     transform: translateY(-1px);
     animation: pulse 1.2s ease-in-out forwards !important;
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.long-tone-out {
@@ -382,18 +385,18 @@ watch(
     animation: pulse-out 0.7s ease-in-out forwards !important;
     animation-iteration-count: 1;
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.dwrc-style-s1 {
     opacity: 0.6;
     color: var(--footer-dwrc-start-color);
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.dwrc-style-s2 {
@@ -405,8 +408,8 @@ watch(
       0px 0px 2px rgba(230, 230, 250, 1);
     transition:
       color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 }
 
@@ -508,6 +511,8 @@ watch(
 
 // 逐字模块2
 #dwrc-2-wrap > span {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
   transform: translateY(1px);
   white-space: nowrap;
@@ -515,13 +520,15 @@ watch(
   width: 0;
   opacity: 0.8;
   transition:
-    opacity 0.3s linear,
+    opacity var(--short-time) linear,
+    transform var(--short-time) linear,
     color 0.5s linear,
-    transform 0.3s linear,
     width 0.3s linear;
 }
 
 #dwrc-2-wrap {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
   position: absolute;
   width: auto;
@@ -537,14 +544,16 @@ watch(
   overflow: hidden;
   white-space: nowrap;
   transition:
-    opacity 0.3s linear,
+    opacity var(--short-time) linear,
+    transform var(--short-time) linear,
     color 0.5s linear,
-    transform 0.3s linear,
     width 0.3s linear;
 }
 
 // 逐行部分
 .lrc-char {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline;
   opacity: 1;
   -webkit-background-clip: text;
@@ -558,7 +567,7 @@ watch(
   font-weight: 520;
   font-size: 1.05rem;
   transition:
-    opacity 0.3s linear,
+    opacity var(--short-time) linear,
     color 0.5s linear;
 }
 

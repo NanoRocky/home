@@ -148,6 +148,32 @@ onMounted(() => {
         store.musicIsOk = true;
         // 生成歌单
         playList.value = res as PlaylistItem[];
+        nextTick(() => {
+          if (player.value && player.value.audioRef) {
+            const originalPlay = player.value.audioRef.play;
+            player.value.audioRef.play = function (...args) {
+              const playPromise = originalPlay.apply(this, args);
+              if (playPromise !== undefined) {
+                playPromise.catch((error) => {
+                  if (error.name === 'NotAllowedError') {
+                    console.warn(t('player.console.autoPlayError'), error);
+                    ElMessage({
+                      message: t('music.autoPlayError'),
+                      grouping: true,
+                      icon: h(PlayWrong, {
+                        theme: "filled",
+                        fill: "var(--music-aplayer-message-icon-color)",
+                      }),
+                    });
+                    store.setPlayerState(true);
+                  }
+                });
+              }
+              return playPromise;
+            };
+          }
+        });
+
         if ("mediaSession" in navigator) {
           navigator.mediaSession.metadata = new MediaMetadata({
             title: "Loading...",

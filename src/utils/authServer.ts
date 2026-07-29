@@ -12,7 +12,7 @@ import { bytesToHex as byt, utf8ToBytes as ut } from '@noble/hashes/utils.js';
 
 let x: number | null = null, y: number | null = null;
 const d = (msg: string) => byt(md(ut(msg)));
-const f = () => Math.floor(Date.now() / 1000), o = (v) => v.toString(16);
+const f = () => Math.floor(Date.now() / 1000), o = (v: number) => v.toString(16);
 
 async function gst() {
     // 为什么这里要整一个模块用于获取网络时间呢...

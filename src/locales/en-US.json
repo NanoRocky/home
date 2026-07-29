@@ -189,7 +189,8 @@
     "songErrorLog": "The cat playing song: ",
     "songErrorPostfix": " encountered an error...",
     "lrcSearching": "The cat is searching for lyrics...",
-    "lrcNotFound": "The cat didn't find the lyrics for this song qwq"
+    "lrcNotFound": "The cat didn't find the lyrics for this song qwq",
+    "autoPlayError": "The current browser policy seems to disallow autoplay, please manually play the music meow!"
   },
   "weather": {
     "moduleName": "Weather",
@@ -306,7 +307,8 @@
       "musicLoaded": "Music loaded",
       "play": "Play",
       "amllFail": "AMLL TTML Database call failed...",
-      "dwrcPilfering": "Currently playing 《{name}》 by '{artist}' from {songServer}. Successfully pilfered word-by-word lyrics from {currentServer}!"
+      "dwrcPilfering": "Currently playing 《{name}》 by '{artist}' from {songServer}. Successfully pilfered word-by-word lyrics from {currentServer}!",
+      "autoPlayError": "Autoplay failed, possibly due to browser policy restrictions on autoplay functionality. Please try manually clicking the play button :"
     }
   },
   "utils": {
