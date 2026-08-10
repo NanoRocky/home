@@ -2,8 +2,14 @@
   <!-- 社交链接 -->
   <div class="social">
     <div class="link">
-      <a v-for="item in socialLinks" :key="item.name" :href="item.url" target="_blank"
-        @mouseenter="socialTip = item.tip" @mouseleave="socialTip = t('components.social.TipI')">
+      <a
+        v-for="item in socialLinks"
+        :key="item.name"
+        :href="item.url"
+        target="_blank"
+        @mouseenter="socialTip = item.tip"
+        @mouseleave="socialTip = t('components.social.TipI')"
+      >
         <img class="icon" :src="item.icon" height="24" />
       </a>
     </div>
@@ -12,27 +18,27 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 import socialLinks from "@/assets/socialLinks.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { mainStore } from "@/store";
 
 const { t } = useI18n();
 // 社交链接提示
-const socialTip = ref(t('components.social.Tip'));
+const socialTip = ref(t("components.social.Tip"));
 const store = mainStore();
 
 const togglesocial = () => {
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: t('components.social.defaultTip'),
+    message: t("components.social.defaultTip"),
   });
   if (store.webSpeech) {
     stopSpeech();
     const voice = envConfig.VITE_TTS_Voice;
     const vstyle = envConfig.VITE_TTS_Style;
     SpeechLocal("戳戳社.mp3");
-  };
+  }
 };
 </script>
 

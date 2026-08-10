@@ -1,11 +1,20 @@
 <template>
-  <div class="hitokoto cards" v-show="!store.musicOpenState" @mouseenter="openMusicShow = true"
-    @mouseleave="openMusicShow = false" @click.stop>
+  <div
+    class="hitokoto cards"
+    v-show="!store.musicOpenState"
+    @mouseenter="openMusicShow = true"
+    @mouseleave="openMusicShow = false"
+    @click.stop
+  >
     <!-- 打开音乐面板 -->
     <Transition name="el-fade-in-linear">
-      <div class="open-music" v-show="openMusicShow && store.musicIsOk" @click="store.musicOpenState = true">
+      <div
+        class="open-music"
+        v-show="openMusicShow && store.musicIsOk"
+        @click="store.musicOpenState = true"
+      >
         <music-menu theme="filled" size="18" fill="var(--player-control-color)" />
-        <span>{{ $t('components.hitokoto.openPlayer') }}</span>
+        <span>{{ $t("components.hitokoto.openPlayer") }}</span>
       </div>
     </Transition>
     <!-- 一言内容 -->
@@ -19,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
+import { useI18n } from "vue-i18n";
 import { MusicMenu, Error } from "@icon-park/vue-next";
 import { getHitokoto } from "@/api";
 import { mainStore } from "@/store";
@@ -34,8 +43,8 @@ const openMusicShow = ref(false);
 
 // 一言数据
 const hitokotoData = reactive({
-  text: t('components.hitokoto.defaultText'),
-  from: t('components.hitokoto.defaultFrom'),
+  text: t("components.hitokoto.defaultText"),
+  from: t("components.hitokoto.defaultFrom"),
 });
 
 // 获取一言数据
@@ -46,20 +55,20 @@ const getHitokotoData = async () => {
     hitokotoData.from = result.from;
   } catch (error) {
     ElMessage({
-      message: t('components.hitokoto.failedToFetch'),
+      message: t("components.hitokoto.failedToFetch"),
       icon: h(Error, {
         theme: "filled",
         fill: "var(--el-message-icon-color)",
       }),
     });
-    hitokotoData.text = t('components.hitokoto.failedToFetch');
-    hitokotoData.from = t('components.hitokoto.defaultFrom');
+    hitokotoData.text = t("components.hitokoto.failedToFetch");
+    hitokotoData.from = t("components.hitokoto.defaultFrom");
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("一言加载失败.mp3");
-    };
+    }
   }
 };
 

@@ -1,9 +1,19 @@
 <template>
-  <div class="mobileset" v-if="store.mobileOpenState" @mouseenter="closeShow = true" @mouseleave="closeShow = false"
-    @click.stop>
+  <div
+    class="mobileset"
+    v-if="store.mobileOpenState"
+    @mouseenter="closeShow = true"
+    @mouseleave="closeShow = false"
+    @click.stop
+  >
     <transition name="el-fade-in-linear">
-      <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
-        @click="store.setOpenState = false" />
+      <close-one
+        class="close"
+        theme="filled"
+        size="28"
+        fill="var(--close-icon-color)"
+        @click="store.setOpenState = false"
+      />
     </transition>
     <el-row>
       <el-col class="left">
@@ -14,7 +24,7 @@
         <!-- 移动端设置菜单 -->
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">{{ $t('components.settings.globalSettings') }}</span>
+          <span class="name">{{ $t("components.settings.globalSettings") }}</span>
         </div>
         <div class="mobileset-scrollable">
           <Set />
@@ -27,10 +37,22 @@
       </el-col>
     </el-row>
   </div>
-  <div class="set" v-else @mouseenter="closeShow = true" @mouseleave="closeShow = false" @click.stop>
+  <div
+    class="set"
+    v-else
+    @mouseenter="closeShow = true"
+    @mouseleave="closeShow = false"
+    @click.stop
+  >
     <transition name="el-fade-in-linear">
-      <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)" v-show="closeShow"
-        @click="store.setOpenState = false" />
+      <close-one
+        class="close"
+        theme="filled"
+        size="28"
+        fill="var(--close-icon-color)"
+        v-show="closeShow"
+        @click="store.setOpenState = false"
+      />
     </transition>
     <el-row :gutter="40">
       <el-col :span="12" class="left">
@@ -45,9 +67,18 @@
           <el-tooltip content="Powered by imsyy" placement="top" effect="color" :show-arrow="false">
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
-          <el-tooltip content="Extension Function Updates by NanoRocky" placement="top" effect="color"
-            :show-arrow="false">
-            <file-editing-one class="github" theme="outline" size="24" @click="jumpTo(config.efug)" />
+          <el-tooltip
+            content="Extension Function Updates by NanoRocky"
+            placement="top"
+            effect="color"
+            :show-arrow="false"
+          >
+            <file-editing-one
+              class="github"
+              theme="outline"
+              size="24"
+              @click="jumpTo(config.efug)"
+            />
           </el-tooltip>
         </div>
       </el-col>
@@ -55,7 +86,7 @@
       <el-col :span="12" class="right">
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">{{ $t('components.settings.globalSettings') }}</span>
+          <span class="name">{{ $t("components.settings.globalSettings") }}</span>
         </div>
         <div class="set-scrollable">
           <Set />
@@ -86,8 +117,8 @@ const siteUrl = computed(() => {
   let urlFormat = url;
   // 判断协议前缀
   urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
-  const domainOnly = urlFormat.split('/')[0];
-  const hostname = domainOnly.split(':')[0];
+  const domainOnly = urlFormat.split("/")[0];
+  const hostname = domainOnly.split(":")[0];
   return hostname.split(".");
 });
 
@@ -96,27 +127,27 @@ const toggleVer = () => {
   if (chuover > 4) {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: t('views.moreSet.pokeMore'),
+      message: t("views.moreSet.pokeMore"),
     });
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("戳戳版本.mp3");
-    };
+    }
     store.setV = true;
   } else {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: t('views.moreSet.poke'),
+      message: t("views.moreSet.poke"),
     });
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("戳版本.mp3");
-    };
-  };
+    }
+  }
 };
 
 // 跳转源代码仓库

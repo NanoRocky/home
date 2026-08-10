@@ -1,8 +1,26 @@
 <template>
-  <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
-    :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
-    :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false" @play="onPlay" @pause="onPause"
-    @Loadstart="onLoadStart" @timeupdate="onTimeUp" @error="loadMusicError" @canplay="onCanplay" @waiting="onWaiting" />
+  <APlayer
+    v-if="playList[0]"
+    ref="player"
+    :audio="playList"
+    :autoplay="store.playerAutoplay"
+    :theme="theme"
+    :autoSwitch="false"
+    :loop="store.playerLoop"
+    :order="store.playerOrder"
+    :volume="volume"
+    :showLrc="true"
+    :listFolded="listFolded"
+    :listMaxHeight="listMaxHeight"
+    :noticeSwitch="false"
+    @play="onPlay"
+    @pause="onPause"
+    @Loadstart="onLoadStart"
+    @timeupdate="onTimeUp"
+    @error="loadMusicError"
+    @canplay="onCanplay"
+    @waiting="onWaiting"
+  />
 </template>
 
 <script setup lang="ts">
@@ -10,7 +28,7 @@ import { Float, MusicOne, PlayWrong } from "@icon-park/vue-next";
 import { getPlayerList, testGitHubConnectivity } from "@/api";
 import { mainStore } from "@/store";
 import APlayer from "@worstone/vue-aplayer";
-import type { APlayer as APlayerType } from '@worstone/vue-aplayer';
+import type { APlayer as APlayerType } from "@worstone/vue-aplayer";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { decodeDWQYRC } from "@/utils/decodeDWQYRC";
 import { alignPilferedLyrics } from "@/utils/checkPilferDWRC";
@@ -39,11 +57,7 @@ type PlayerInstance = {
   pause: () => void;
 };
 
-type DWRCItem = [
-  number,
-  number,
-  Array<[[number, number], string, number, number]>
-];
+type DWRCItem = [number, number, Array<[[number, number], string, number, number]>];
 
 interface PlaylistItem {
   name: string;
@@ -52,7 +66,7 @@ interface PlaylistItem {
   url: string;
   cover: string;
   lrc: string;
-};
+}
 
 // 获取播放器 DOM
 const player = ref<PlayerInstance | null>(null);
@@ -124,7 +138,7 @@ watch(
     if (!player.value) return;
     if (player.value) {
       player.value.aplayer.order = newOrder;
-    };
+    }
   },
 );
 
@@ -135,7 +149,7 @@ watch(
     if (!player.value) return;
     if (player.value) {
       player.value.aplayer.loop = newLoop;
-    };
+    }
   },
 );
 
@@ -143,7 +157,14 @@ watch(
 onMounted(() => {
   nextTick(() => {
     try {
-      getPlayerList(props.songServer, props.songType, props.songId, props.songServerSE, props.songIdSE, store.playerTrLrc).then((res) => {
+      getPlayerList(
+        props.songServer,
+        props.songType,
+        props.songId,
+        props.songServerSE,
+        props.songIdSE,
+        store.playerTrLrc,
+      ).then((res) => {
         // 更改播放器加载状态
         store.musicIsOk = true;
         // 生成歌单
@@ -155,10 +176,10 @@ onMounted(() => {
               const playPromise = originalPlay.apply(this, args);
               if (playPromise !== undefined) {
                 playPromise.catch((error) => {
-                  if (error.name === 'NotAllowedError') {
-                    console.warn(t('console.player.autoPlayError'), error);
+                  if (error.name === "NotAllowedError") {
+                    console.warn(t("console.player.autoPlayError"), error);
                     ElMessage({
-                      message: t('components.music.autoPlayError'),
+                      message: t("components.music.autoPlayError"),
                       grouping: true,
                       icon: h(PlayWrong, {
                         theme: "filled",
@@ -179,14 +200,26 @@ onMounted(() => {
             title: "Loading...",
           });
           // 设置 Media Session 操作
-          navigator.mediaSession.setActionHandler("play", () => { player.value!.play() });
-          navigator.mediaSession.setActionHandler("pause", () => { player.value!.pause() });
-          navigator.mediaSession.setActionHandler("nexttrack", () => { changeSong(1) });
-          navigator.mediaSession.setActionHandler("previoustrack", () => { changeSong(0) });
-          navigator.mediaSession.setActionHandler("seekbackward", () => { seekbackward(5) });
-          navigator.mediaSession.setActionHandler("seekforward", () => { seekforward(5) });
-        };
-        console.log(t('console.player.musicLoaded'));
+          navigator.mediaSession.setActionHandler("play", () => {
+            player.value!.play();
+          });
+          navigator.mediaSession.setActionHandler("pause", () => {
+            player.value!.pause();
+          });
+          navigator.mediaSession.setActionHandler("nexttrack", () => {
+            changeSong(1);
+          });
+          navigator.mediaSession.setActionHandler("previoustrack", () => {
+            changeSong(0);
+          });
+          navigator.mediaSession.setActionHandler("seekbackward", () => {
+            seekbackward(5);
+          });
+          navigator.mediaSession.setActionHandler("seekforward", () => {
+            seekforward(5);
+          });
+        }
+        console.log(t("console.player.musicLoaded"));
       });
     } catch (err) {
       console.error(err);
@@ -204,21 +237,21 @@ onMounted(() => {
         const voice = envConfig.VITE_TTS_Voice;
         const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("播放器加载失败.mp3");
-      };
-    };
+      }
+    }
   });
 });
 
 // 播放
 const onPlay = () => {
   if (!player.value) return;
-  console.log(t('console.player.play'));
+  console.log(t("console.player.play"));
   nowLineIndex.value = -1;
   playIndex.value = player.value.aplayer.index;
   const currentTrack = playList.value[playIndex.value];
   if (!currentTrack) {
     return;
-  };
+  }
   // 播放状态
   store.setPlayerState(player.value.audioRef.paused);
   // 储存播放器信息
@@ -247,7 +280,7 @@ const onPlay = () => {
       ],
     });
     updatePositionState();
-  };
+  }
 
   if (store.webSpeech) {
     if (store.playerSpeechName) {
@@ -256,15 +289,15 @@ const onPlay = () => {
       const vstyle = envConfig.VITE_TTS_Style;
       Speech(
         t("components.music.playing") +
-        store.getPlayerData.artist +
-        t("components.music.ofSong") +
-        store.getPlayerData.name +
-        "》。",
+          store.getPlayerData.artist +
+          t("components.music.ofSong") +
+          store.getPlayerData.name +
+          "》。",
         voice,
         vstyle,
       );
-    };
-  };
+    }
+  }
 };
 
 // 开始播放处理
@@ -321,7 +354,7 @@ const seekbackward = (value) => {
     player.value.aplayer.seek(0);
   } else {
     player.value.aplayer.seek(ti);
-  };
+  }
   updatePositionState();
 };
 
@@ -336,7 +369,7 @@ const seekforward = (value) => {
     player.value!.aplayer.seek(0);
   } else {
     player.value!.aplayer.seek(ti);
-  };
+  }
   updatePositionState();
 };
 
@@ -349,7 +382,7 @@ const seektime = (value) => {
     player.value!.aplayer.seek(0);
   } else {
     player.value!.aplayer.seek(value);
-  };
+  }
   updatePositionState();
 };
 
@@ -363,7 +396,7 @@ const loadMusicError = () => {
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("歌曲加载失败.mp3");
-    };
+    }
   } else {
     notice = t("components.music.studioError");
     if (store.webSpeech) {
@@ -371,8 +404,8 @@ const loadMusicError = () => {
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("播放器未知异常.mp3");
-    };
-  };
+    }
+  }
   ElMessage({
     message: notice,
     grouping: true,
@@ -383,7 +416,9 @@ const loadMusicError = () => {
     }),
   });
   console.error(
-    t("components.music.songErrorLog") + player.value!.aplayer.audio[player.value!.aplayer.index].name + t("components.music.songErrorPostfix"),
+    t("components.music.songErrorLog") +
+      player.value!.aplayer.audio[player.value!.aplayer.index].name +
+      t("components.music.songErrorPostfix"),
   );
 };
 
@@ -396,7 +431,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
   store.dwrcIndex = playIndex.value;
   try {
     const decoded = await decodeDWQYRC(dwrcText, store.playerRMMetadata);
-    store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
+    store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
     store.dwrcLoading = false;
     store.dwrcEnable = true;
     return;
@@ -404,7 +439,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
     store.dwrcTemp = [];
     store.dwrcLoading = false;
     store.dwrcEnable = false;
-  };
+  }
   // 额外处理
   const songUrlInf = new URLSearchParams(new URL(dwrcUrl).search);
   const songId = songUrlInf.get("id");
@@ -412,21 +447,21 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
   const baseUrl = `${new URL(dwrcUrl).origin}${new URL(dwrcUrl).pathname}`;
   if (!songId) {
     return;
-  };
+  }
   // 接入 AMLL TTML Database
   if (store.playerDWRCATDB) {
     const songUrlInfUrl = store.playerDWRCATDBF
       ? {
-        netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-        tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-      }
+          netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+          tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+        }
       : {
-        netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-        tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-      };
+          netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+          tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+        };
     if (!songServer || !["netease", "tencent"].includes(songServer)) {
       return;
-    };
+    }
     try {
       const amllUrl = songUrlInfUrl[songServer].replace("${songIdlrc}", songId);
       const amllSource = await fetch(amllUrl);
@@ -437,16 +472,16 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
         store.dwrcEnable = false;
       } else if (!amllSource.ok) {
         if (playIndex.value !== expectedIndex) return;
-        throw new Error(t('console.player.amllFail'));
+        throw new Error(t("console.player.amllFail"));
       } else {
         const amllText = await amllSource.text();
         if (playIndex.value !== expectedIndex) return;
         const decoded = await decodeDWQYRC(amllText, store.playerRMMetadata);
-        store.dwrcTemp = Array.isArray(decoded) ? decoded as DWRCItem[] : [];
+        store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
         store.dwrcLoading = false;
         store.dwrcEnable = true;
         return;
-      };
+      }
     } catch (e) {
       if (store.playerDWRCATDBF) {
         const songUrlInfUrlse = {
@@ -469,24 +504,24 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
             } else {
               const amllTextse = await amllSourcese.text();
               const decodedse = await decodeDWQYRC(amllTextse, store.playerRMMetadata);
-              store.dwrcTemp = Array.isArray(decodedse) ? decodedse as DWRCItem[] : [];
+              store.dwrcTemp = Array.isArray(decodedse) ? (decodedse as DWRCItem[]) : [];
               store.dwrcLoading = false;
               store.dwrcEnable = true;
               return;
-            };
+            }
           } catch (e) {
             store.dwrcTemp = [];
             store.dwrcLoading = false;
             store.dwrcEnable = false;
-          };
-        };
-      };
-    };
+          }
+        }
+      }
+    }
   } else {
     store.dwrcTemp = [];
     store.dwrcLoading = false;
     store.dwrcEnable = false;
-  };
+  }
   // 偷东西
   if (store.playerDWRCPilfer && baseUrl && store.dwrcEnable != true) {
     try {
@@ -500,27 +535,29 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
       if (playIndex.value !== expectedIndex) return;
       const list = Array.isArray(data)
         ? data
-        : (data && typeof data === "object" ? Object.values(data) : []);
+        : data && typeof data === "object"
+          ? Object.values(data)
+          : [];
       if (list.length > 0) {
         const stripBrackets = (title?: string) => {
-          if (!title) return '';
+          if (!title) return "";
           let result = String(title);
           const pairRegex = /[（(\[{<【《][^（(\[{<【《）)\]}>】》]*[）)\]}>】》]/g;
           let depth = 0;
           const MAX_DEPTH = 10;
           while (depth < MAX_DEPTH) {
             const previousResult = result;
-            result = result.replace(pairRegex, '');
+            result = result.replace(pairRegex, "");
             if (result.length === previousResult.length) {
               break;
-            };
+            }
             depth++;
-          };
-          result = result.replace(/[（(\[{<【《）)\]}>】》]/g, '');
-          return result.replace(/\s+/g, ' ').trim();
+          }
+          result = result.replace(/[（(\[{<【《）)\]}>】》]/g, "");
+          return result.replace(/\s+/g, " ").trim();
         };
         const normalizeArtist = (name?: string) => {
-          if (!name) return '';
+          if (!name) return "";
           return stripBrackets(name);
         };
         const normalizedCurrentName = stripBrackets(currentName);
@@ -528,7 +565,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
         const match = list.find(
           (item) =>
             stripBrackets(item.name) === normalizedCurrentName &&
-            normalizeArtist(item.artist) === normalizedCurrentArtist
+            normalizeArtist(item.artist) === normalizedCurrentArtist,
         );
         if (match && match.lrc) {
           let lrcUrl = match.lrc;
@@ -538,7 +575,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
             urlObj.searchParams.append("dwrc", "true");
           } else if (dwrcParam === "false") {
             urlObj.searchParams.set("dwrc", "true");
-          };
+          }
           lrcUrl = urlObj.toString();
           const pilferSource = await fetch(lrcUrl);
           const pilferText = await pilferSource.text();
@@ -552,23 +589,30 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
             store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
             store.dwrcLoading = false;
             store.dwrcEnable = true;
-            console.log(t('console.player.dwrcPilfering', { songServer, name: store.getPlayerData.name, artist: store.getPlayerData.artist, currentServer }));
+            console.log(
+              t("console.player.dwrcPilfering", {
+                songServer,
+                name: store.getPlayerData.name,
+                artist: store.getPlayerData.artist,
+                currentServer,
+              }),
+            );
             return;
           } else {
             store.dwrcTemp = [];
             store.dwrcLoading = false;
             store.dwrcEnable = false;
-          };
+          }
         } else {
           store.dwrcTemp = [];
           store.dwrcLoading = false;
           store.dwrcEnable = false;
-        };
+        }
       } else {
         store.dwrcTemp = [];
         store.dwrcLoading = false;
         store.dwrcEnable = false;
-      };
+      }
     } catch (e) {
       store.dwrcTemp = [];
       store.dwrcLoading = false;
@@ -578,7 +622,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
     store.dwrcTemp = [];
     store.dwrcLoading = false;
     store.dwrcEnable = false;
-  };
+  }
   store.dwrcTemp = [];
   store.dwrcLoading = false;
   store.dwrcEnable = false;
@@ -591,17 +635,17 @@ function onLoadStart() {
   try {
     if (player.value == null || player.value.aplayer == null) {
       return;
-    };
+    }
     const lyrics = player.value.aplayer.lyrics[playIndex.value];
     if (store.playerDWRCShow != true) {
       store.dwrcEnable = false;
       store.dwrcTemp = [];
       store.dwrcLoading = false;
       return;
-    };
+    }
     if (store.dwrcIndex == playIndex.value) {
       return;
-    };
+    }
     const dwrcUrl = player.value!.aplayer.audio[player.value!.aplayer.index]["lrc"] + "&dwrc=true";
     store.dwrcIndex = playIndex.value;
     store.dwrcLoading = true;
@@ -611,8 +655,8 @@ function onLoadStart() {
     store.dwrcTemp = [];
     store.dwrcLoading = false;
     console.error(error);
-  };
-};
+  }
+}
 
 const onTimeUp = () => {
   if (!player.value) return;
@@ -621,12 +665,12 @@ const onTimeUp = () => {
   if (lastTime && Math.abs(newTime - lastTime) > 1) {
     store.lyricSeekVersion++;
     nowLineIndex.value = -1;
-  };
+  }
   store.playerCurrentTime = newTime;
   store.playerDuration = player.value.audioStatus.duration;
   if (showDWRCRunning == 0 && player.value != null && player.value.aplayer != null) {
     requestAnimationFrame(syncDWRCLrc);
-  };
+  }
 };
 
 function updatePositionState() {
@@ -635,14 +679,14 @@ function updatePositionState() {
     duration: player.value!.audioStatus.duration,
     position: player.value!.audioStatus.playedTime,
   });
-};
+}
 
 function syncDWRCLrc() {
   showDWRCRunning = 1;
   try {
     if (!player.value || !player.value.aplayer) {
       return requestAnimationFrame(syncDWRCLrc);
-    };
+    }
     const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length === 0 || store.dwrcLoading;
     const now = player.value.audioStatus.playedTime * 1000;
     const lineSwitchNow = now + 200; // 提前 100ms 用于行切换
@@ -657,11 +701,16 @@ function syncDWRCLrc() {
       } else {
         let lrc = lyrics[playerLyricIndex][1];
         if (lrc === "Loading") lrc = t("components.music.lrcSearching");
-        else if (lrc === "Not available" || lrc === "Not availible") lrc = t("components.music.lrcNotFound");
-        if (store.playerLrc.length !== 1 || store.playerLrc[0][4] !== lrc || store.playerLrc[0][2] !== playerLyricIndex) {
+        else if (lrc === "Not available" || lrc === "Not availible")
+          lrc = t("components.music.lrcNotFound");
+        if (
+          store.playerLrc.length !== 1 ||
+          store.playerLrc[0][4] !== lrc ||
+          store.playerLrc[0][2] !== playerLyricIndex
+        ) {
           store.setPlayerLrc([[true, 1, playerLyricIndex, 0, lrc]]);
-        };
-      };
+        }
+      }
     } else {
       const dwrc = store.dwrcTemp;
       if (nowLineIndex.value === -1) {
@@ -672,39 +721,50 @@ function syncDWRCLrc() {
             foundIndex = i;
           } else {
             break;
-          };
-        };
+          }
+        }
         nowLineIndex.value = foundIndex;
       } else {
-        if (nowLineIndex.value + 1 < dwrc.length && lineSwitchNow >= dwrc
-        [nowLineIndex.value + 1][0]) {
+        if (
+          nowLineIndex.value + 1 < dwrc.length &&
+          lineSwitchNow >= dwrc[nowLineIndex.value + 1][0]
+        ) {
           // now -> lineSwitchNow
           nowLineIndex.value++;
-        };
-      };
+        }
+      }
       const currentLine = nowLineIndex.value !== -1 ? dwrc[nowLineIndex.value] : null;
       let dwrcLyric: any[];
       if (currentLine) {
         const fadeOutDuration = 300;
         dwrcLyric = currentLine[2].map((it: any) => {
           const [[start, duration], word, line, row] = it;
-          const isDuringFadeOut = now > start + duration && now <= start + duration + fadeOutDuration;
+          const isDuringFadeOut =
+            now > start + duration && now <= start + duration + fadeOutDuration;
           const isCurrent = (now >= start && now <= start + duration) || isDuringFadeOut;
           const isSungLyrics = start + duration < now && !isDuringFadeOut;
           const lessdur = start + duration - now;
           return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto"];
         });
       } else {
-        dwrcLyric = [[true, 1, 0, 0, `${store.getPlayerData.name || 'Loading...'} - ${store.getPlayerData.artist || 'NanoRocky'}`]];
-      };
+        dwrcLyric = [
+          [
+            true,
+            1,
+            0,
+            0,
+            `${store.getPlayerData.name || "Loading..."} - ${store.getPlayerData.artist || "NanoRocky"}`,
+          ],
+        ];
+      }
       store.setPlayerLrc(dwrcLyric);
-    };
+    }
   } catch (error) {
-    console.error(t('console.player.syncDWRCLrcError'), error);
+    console.error(t("console.player.syncDWRCLrcError"), error);
   } finally {
     requestAnimationFrame(syncDWRCLrc);
-  };
-};
+  }
+}
 
 // 暴露子组件方法
 defineExpose({ playToggle, changeVolume, changeSong, toggleList });
@@ -747,14 +807,18 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         text-align: left;
         margin: 7px 0 6px 6px;
         height: 44px;
-        -webkit-mask: linear-gradient(#fff 15%,
-            #fff 85%,
-            hsla(0deg, 0%, 100%, 0.6) 90%,
-            hsla(0deg, 0%, 100%, 0));
-        mask: linear-gradient(#fff 15%,
-            #fff 85%,
-            hsla(0deg, 0%, 100%, 0.6) 90%,
-            hsla(0deg, 0%, 100%, 0));
+        -webkit-mask: linear-gradient(
+          #fff 15%,
+          #fff 85%,
+          hsla(0deg, 0%, 100%, 0.6) 90%,
+          hsla(0deg, 0%, 100%, 0)
+        );
+        mask: linear-gradient(
+          #fff 15%,
+          #fff 85%,
+          hsla(0deg, 0%, 100%, 0.6) 90%,
+          hsla(0deg, 0%, 100%, 0)
+        );
 
         &::before,
         &::after {

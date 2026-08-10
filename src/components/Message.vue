@@ -105,7 +105,7 @@ const changeBox = () => {
     store.boxOpenState = !store.boxOpenState;
   } else {
     ElMessage({
-      message: t('message.resolutionLow'),
+      message: t("message.resolutionLow"),
       grouping: true,
       icon: h(Error, {
         theme: "filled",

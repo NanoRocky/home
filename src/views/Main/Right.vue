@@ -1,7 +1,10 @@
 <template>
   <div :class="store.mobileOpenState ? 'right' : 'right is-hidden'">
     <!-- 移动端 Logo -->
-    <div class="logo text-truncate-ellipsis" @click="store.mobileFuncState = !store.mobileFuncState">
+    <div
+      class="logo text-truncate-ellipsis"
+      @click="store.mobileFuncState = !store.mobileFuncState"
+    >
       <span class="bg">{{ siteUrl[0] }}</span>
       <span class="sm">.{{ siteUrl[1] }}</span>
     </div>
@@ -25,8 +28,8 @@ const siteUrl = computed(() => {
   let urlFormat = url;
   // 判断协议前缀
   urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
-  const domainOnly = urlFormat.split('/')[0];
-  const hostname = domainOnly.split(':')[0];
+  const domainOnly = urlFormat.split("/")[0];
+  const hostname = domainOnly.split(":")[0];
   return hostname.split(".");
 });
 </script>
@@ -58,7 +61,7 @@ const siteUrl = computed(() => {
       top: 43.26px; // 721px * 0.06
     }
     @media (max-width: 390px) {
-        width: 391px;
+      width: 391px;
     }
   }
   @media (max-width: 720px) {

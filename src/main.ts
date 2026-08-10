@@ -34,7 +34,7 @@ const mountApp = () => {
   app.mount("#app");
   const store = mainStore();
   if (import.meta.env.DEV) {
-    console.log(i18n.global.t('views.main.devMode'));
+    console.log(i18n.global.t("views.main.devMode"));
     /* 自动启用开发者选项 */
     store.setV = true;
     /* 在开发状态下挂载 store 以进行测试 */
@@ -48,7 +48,7 @@ const mountApp = () => {
   if (urlParams.get("set") === "reset") {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: i18n.global.t('components.settings.system.restoringDefault'),
+      message: i18n.global.t("components.settings.system.restoringDefault"),
     });
     if (store.webSpeech) {
       stopSpeech();
@@ -62,7 +62,7 @@ const mountApp = () => {
   // PWA
   navigator.serviceWorker.addEventListener("controllerchange", async () => {
     // 弹出更新提醒
-    const updatedMsg = i18n.global.t('main.updated');
+    const updatedMsg = i18n.global.t("main.updated");
     console.log(updatedMsg);
     ElMessage(updatedMsg);
     if (store.webSpeech) {
@@ -101,10 +101,10 @@ if (!import.meta.env.VITE_CONFIG_TURN || import.meta.env.VITE_CONFIG_TURN != "tr
   if (appEl) {
     appEl.style.display = "none";
   }
-  console.error(i18n.global.t('main.configMissing'));
-  ElMessageBox.confirm(i18n.global.t('main.configMissing'), i18n.global.t('main.warning'), {
-    confirmButtonText: i18n.global.t('main.continue'),
-    cancelButtonText: i18n.global.t('main.cancel'),
+  console.error(i18n.global.t("main.configMissing"));
+  ElMessageBox.confirm(i18n.global.t("main.configMissing"), i18n.global.t("main.warning"), {
+    confirmButtonText: i18n.global.t("main.continue"),
+    cancelButtonText: i18n.global.t("main.cancel"),
     type: "warning",
   })
     .then(() => {
@@ -113,16 +113,16 @@ if (!import.meta.env.VITE_CONFIG_TURN || import.meta.env.VITE_CONFIG_TURN != "tr
     .catch(() => {
       ElMessage({
         type: "info",
-        message: i18n.global.t('main.cancelled'),
+        message: i18n.global.t("main.cancelled"),
       });
     });
 } else {
   if (config.author != "imsyy" || config.efua != "NanoRocky") {
-    console.warn(i18n.global.t('console.main.authorWarning'));
-    console.log(i18n.global.t('console.main.repoLink'));
+    console.warn(i18n.global.t("console.main.authorWarning"));
+    console.log(i18n.global.t("console.main.repoLink"));
   } else if (envConfig.VITE_SITE_AUTHOR != "酪灰") {
-    console.error(i18n.global.t('console.main.privateVersionWarning'));
-    console.log(i18n.global.t('console.main.repoLink'));
+    console.error(i18n.global.t("console.main.privateVersionWarning"));
+    console.log(i18n.global.t("console.main.repoLink"));
   } else {
     mountApp();
   }

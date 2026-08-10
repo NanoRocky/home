@@ -4,31 +4,46 @@
       <el-collapse-item :title="$t('components.settings.tabs.personalWallpaper')" name="1">
         <div class="bg-set">
           <el-radio-group v-model="coverType" text-color="#ffffff" @change="radioChange">
-            <el-radio :value="0" size="large" border>{{$t('components.settings.wallpaper.backgrounds.0')}}</el-radio>
-            <el-radio :value="1" size="large" border>{{$t('components.settings.wallpaper.backgrounds.1')}}</el-radio>
-            <el-radio :value="2" size="large" border>{{$t('components.settings.wallpaper.backgrounds.2')}}</el-radio>
-            <el-radio :value="3" size="large" border>{{$t('components.settings.wallpaper.backgrounds.3')}}</el-radio>
-            <el-radio :value="4" size="large" border>{{$t('components.settings.wallpaper.backgrounds.4')}}</el-radio>
-            <el-radio :value="5" size="large" border>{{$t('components.settings.wallpaper.backgrounds.5')}}</el-radio>
-            <el-radio :value="6" size="large" border>{{$t('components.settings.wallpaper.backgrounds.6')}}</el-radio>
+            <el-radio :value="0" size="large" border>{{
+              $t("components.settings.wallpaper.backgrounds.0")
+            }}</el-radio>
+            <el-radio :value="1" size="large" border>{{
+              $t("components.settings.wallpaper.backgrounds.1")
+            }}</el-radio>
+            <el-radio :value="2" size="large" border>{{
+              $t("components.settings.wallpaper.backgrounds.2")
+            }}</el-radio>
+            <el-radio :value="3" size="large" border>{{
+              $t("components.settings.wallpaper.backgrounds.3")
+            }}</el-radio>
+            <el-radio :value="4" size="large" border>{{
+              $t("components.settings.wallpaper.backgrounds.4")
+            }}</el-radio>
+            <el-radio :value="5" size="large" border>{{
+              $t("components.settings.wallpaper.backgrounds.5")
+            }}</el-radio>
+            <el-radio :value="6" size="large" border>{{
+              $t("components.settings.wallpaper.backgrounds.6")
+            }}</el-radio>
           </el-radio-group>
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.themeSettings')" name="2">
         <div class="item">
-          <span class="text">{{ $t('components.settings.theme.text') }}</span><br /><br />
+          <span class="text">{{ $t("components.settings.theme.text") }}</span
+          ><br /><br />
           <el-radio-group v-model="theme" size="small" text-color="#FFFFFF">
-            <el-radio value="system" border>{{ $t('components.settings.theme.system') }}</el-radio>
-            <el-radio value="time" border>{{ $t('components.settings.theme.time') }}</el-radio>
-            <el-radio value="bg" border>{{ $t('components.settings.theme.bg') }}</el-radio>
-            <el-radio value="light" border>{{ $t('components.settings.theme.light') }}</el-radio>
-            <el-radio value="dark" border>{{ $t('components.settings.theme.dark') }}</el-radio>
+            <el-radio value="system" border>{{ $t("components.settings.theme.system") }}</el-radio>
+            <el-radio value="time" border>{{ $t("components.settings.theme.time") }}</el-radio>
+            <el-radio value="bg" border>{{ $t("components.settings.theme.bg") }}</el-radio>
+            <el-radio value="light" border>{{ $t("components.settings.theme.light") }}</el-radio>
+            <el-radio value="dark" border>{{ $t("components.settings.theme.dark") }}</el-radio>
           </el-radio-group>
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.personalization')" name="3">
         <div class="item">
-          <span class="text">{{ $t('components.settings.personalization.siteStartShow') }}</span>
+          <span class="text">{{ $t("components.settings.personalization.siteStartShow") }}</span>
           <el-switch
             v-model="siteStartShow"
             inline-prompt
@@ -37,7 +52,7 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.personalization.musicClick') }}</span>
+          <span class="text">{{ $t("components.settings.personalization.musicClick") }}</span>
           <el-switch
             v-model="musicClick"
             inline-prompt
@@ -46,7 +61,7 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.personalization.seasonalEffects') }}</span>
+          <span class="text">{{ $t("components.settings.personalization.seasonalEffects") }}</span>
           <el-switch
             v-model="seasonalEffects"
             inline-prompt
@@ -55,7 +70,7 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.personalization.footerBlur') }}</span>
+          <span class="text">{{ $t("components.settings.personalization.footerBlur") }}</span>
           <el-switch
             v-model="footerBlur"
             inline-prompt
@@ -64,7 +79,9 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.personalization.footerProgressBar') }}</span>
+          <span class="text">{{
+            $t("components.settings.personalization.footerProgressBar")
+          }}</span>
           <el-switch
             v-model="footerProgressBar"
             inline-prompt
@@ -75,7 +92,7 @@
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.playerConfig')" name="4">
         <div class="item">
-          <span class="text">{{ $t('components.settings.player.autoplay') }}</span>
+          <span class="text">{{ $t("components.settings.player.autoplay") }}</span>
           <el-switch
             v-model="playerAutoplay"
             inline-prompt
@@ -84,7 +101,7 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.player.randomOrder') }}</span>
+          <span class="text">{{ $t("components.settings.player.randomOrder") }}</span>
           <el-switch
             v-model="playerOrder"
             inline-prompt
@@ -95,17 +112,17 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.player.loopMode') }}</span>
+          <span class="text">{{ $t("components.settings.player.loopMode") }}</span>
           <el-radio-group v-model="playerLoop" size="small" text-color="#FFFFFF">
-            <el-radio value="all" border>{{ $t('components.settings.player.loopAll') }}</el-radio>
-            <el-radio value="one" border>{{ $t('components.settings.player.loopOne') }}</el-radio>
-            <el-radio value="none" border>{{ $t('components.settings.player.loopNone') }}</el-radio>
+            <el-radio value="all" border>{{ $t("components.settings.player.loopAll") }}</el-radio>
+            <el-radio value="one" border>{{ $t("components.settings.player.loopOne") }}</el-radio>
+            <el-radio value="none" border>{{ $t("components.settings.player.loopNone") }}</el-radio>
           </el-radio-group>
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.lyricSettings')" name="5">
         <div class="item">
-          <span class="text">{{ $t('components.settings.lyric.showFooterLyric') }}</span>
+          <span class="text">{{ $t("components.settings.lyric.showFooterLyric") }}</span>
           <el-switch
             v-model="playerLrcShow"
             inline-prompt
@@ -115,7 +132,9 @@
         </div>
         <div v-if="playerLrcShow" class="item">
           <span class="text" white-space="pre"
-            >{{ $t('components.settings.lyric.useAMLL') }}<br />&nbsp;&nbsp;&nbsp;{{ $t('components.settings.lyric.amllNetworkWarning') }}</span
+            >{{ $t("components.settings.lyric.useAMLL") }}<br />&nbsp;&nbsp;&nbsp;{{
+              $t("components.settings.lyric.amllNetworkWarning")
+            }}</span
           >
           <el-switch
             v-model="playerDWRCATDB"
@@ -125,7 +144,9 @@
           />
         </div>
         <div v-if="playerLrcShow && playerDWRCATDB" class="item">
-          <span class="text" white-space="pre">{{ $t('components.settings.lyric.useAMLLMirror') }}</span>
+          <span class="text" white-space="pre">{{
+            $t("components.settings.lyric.useAMLLMirror")
+          }}</span>
           <el-switch
             v-model="playerDWRCATDBF"
             inline-prompt
@@ -134,7 +155,7 @@
           />
         </div>
         <div v-if="playerLrcShow" class="item">
-          <span class="text">{{ $t('components.settings.lyric.enableDWRC') }}</span>
+          <span class="text">{{ $t("components.settings.lyric.enableDWRC") }}</span>
           <el-switch
             v-model="playerDWRCShow"
             inline-prompt
@@ -143,7 +164,7 @@
           />
         </div>
         <div v-if="playerLrcShow && playerDWRCShow" class="item">
-          <span class="text">{{ $t('components.settings.lyric.enableDWRCPro') }}</span>
+          <span class="text">{{ $t("components.settings.lyric.enableDWRCPro") }}</span>
           <el-switch
             v-model="playerDWRCShowPro"
             inline-prompt
@@ -152,7 +173,7 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.lyric.removeMetadata') }}</span>
+          <span class="text">{{ $t("components.settings.lyric.removeMetadata") }}</span>
           <el-switch
             v-model="playerRMMetadata"
             inline-prompt
@@ -161,7 +182,7 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.lyric.pilfer') }}</span>
+          <span class="text">{{ $t("components.settings.lyric.pilfer") }}</span>
           <el-switch
             v-model="playerDWRCPilfer"
             inline-prompt
@@ -170,7 +191,7 @@
           />
         </div>
         <div class="item">
-          <span class="text">{{ $t('components.settings.lyric.translate') }}</span>
+          <span class="text">{{ $t("components.settings.lyric.translate") }}</span>
           <el-switch
             v-model="playerTrLrc"
             inline-prompt
@@ -181,7 +202,7 @@
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.voiceSettings')" name="6">
         <div class="item">
-          <span class="text">{{ $t('components.settings.voice.enableSwitch') }}</span>
+          <span class="text">{{ $t("components.settings.voice.enableSwitch") }}</span>
           <el-switch
             v-model="webSpeech"
             inline-prompt
@@ -190,7 +211,7 @@
           />
         </div>
         <div v-if="webSpeech" class="item">
-          <span class="text">{{ $t('components.settings.voice.announceSongName') }}</span>
+          <span class="text">{{ $t("components.settings.voice.announceSongName") }}</span>
           <el-switch
             v-model="playerSpeechName"
             inline-prompt
@@ -200,7 +221,7 @@
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.otherSettings')" name="7">
-        <div class="text">{{ $t('components.settings.noMoreOptions') }}</div>
+        <div class="text">{{ $t("components.settings.noMoreOptions") }}</div>
       </el-collapse-item>
       <el-collapse-item v-if="setV" :title="$t('components.settings.tabs.devSettings')" name="8">
         <DevSet />

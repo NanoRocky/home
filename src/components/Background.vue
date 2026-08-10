@@ -1,14 +1,26 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
-    <img v-show="store.imgLoadStatus" :src="currentBgUrl" :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
-      alt="cover" @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
+    <img
+      v-show="store.imgLoadStatus"
+      :src="currentBgUrl"
+      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
+      alt="cover"
+      @load="imgLoadComplete"
+      @error.once="imgLoadError"
+      @animationend="imgAnimationEnd"
+    />
     <!-- 新壁纸层 -->
-    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
+    <img
+      v-if="isTransitioning"
+      :src="nextBgUrl"
+      :class="['bg', 'next', { 'blur-in': isBlurringIn }]"
+      alt="cover"
+    />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
-        {{ $t('background.disabled') }}
+        {{ $t("background.disabled") }}
       </a>
     </Transition>
   </div>
@@ -21,8 +33,8 @@ import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
 import { initLantern, closeLantern } from "@/utils/season/lantern";
-import { ref, h, nextTick } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, h, nextTick } from "vue";
+import { useI18n } from "vue-i18n";
 import { gasC } from "@/utils/authServer";
 
 const store = mainStore();
@@ -53,7 +65,7 @@ let sBGCountN = null;
 async function loadConfig() {
   try {
     const confUrl = "https://filep.nanorocky.top/home/images/config.json";
-    key?confUrlS = await gasC(confUrl, key):confUrlS = confUrl;
+    key ? (confUrlS = await gasC(confUrl, key)) : (confUrlS = confUrl);
     const response = await fetch(confUrlS);
     const data = await response.json();
     bgImageCount = Math.max(data.bgImageCount, 1);
@@ -68,55 +80,55 @@ async function loadConfig() {
       bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
       sBGCountN = null;
       return true;
-    };
+    }
   } catch (error) {
-    console.error(t('components.background.loadConfigFailed'), error);
+    console.error(t("components.background.loadConfigFailed"), error);
     bgRandom = Math.floor(Math.random() * bgImageCount + 1);
     bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
     sBGCountN = null;
     return true;
-  };
-};
+  }
+}
 
 // 检测设备类型
 const detectDevice = () => {
   const userAgent = navigator.userAgent.toLowerCase();
   if (/mobile|android|iphone|ipad|ipod|windows phone/.test(userAgent)) {
     if (/ipad|tablet|playbook|silk|kindle/.test(userAgent)) {
-      return 'tablet'; // 平板
+      return "tablet"; // 平板
     } else {
-      return 'mobile'; // 手机
-    };
+      return "mobile"; // 手机
+    }
   } else {
-    return 'pc'; // PC
-  };
+    return "pc"; // PC
+  }
 };
 
 const getLocalBgUrl = async (deviceType) => {
   // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png
   // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
-  if (deviceType === 'mobile') {
+  if (deviceType === "mobile") {
     if (key) {
       const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
       return await gasC(bgUrlS, key);
     } else {
       return `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
-    };
-  } else if (deviceType === 'tablet' || deviceType === 'pc') {
+    }
+  } else if (deviceType === "tablet" || deviceType === "pc") {
     if (key) {
       const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
       return await gasC(bgUrlS, key);
     } else {
       return `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-    };
+    }
   } else {
     if (key) {
       const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
       return await gasC(bgUrlS, key);
     } else {
       return `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-    };
-  };
+    }
+  }
 };
 
 // 更换壁纸链接
@@ -132,53 +144,53 @@ const changeBg = async (type) => {
       if (type == 0) {
         newBgUrl = await getLocalBgUrl(deviceType);
       } else if (type == 1) {
-        if (deviceType === 'mobile') {
+        if (deviceType === "mobile") {
           newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=phone&tc=1`;
-        } else if (deviceType === 'tablet' || deviceType === 'pc') {
+        } else if (deviceType === "tablet" || deviceType === "pc") {
           newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=pc&tc=1`;
         } else {
           newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=pc&tc=1`;
-        };
+        }
       } else if (type == 2) {
-        if (deviceType === 'mobile') {
+        if (deviceType === "mobile") {
           const bgfmRandom = Math.floor(Math.random() * 2 + 1);
           if (bgfmRandom == 1) {
             newBgUrl = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
           } else {
             newBgUrl = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
-          };
-        } else if (deviceType === 'tablet' || deviceType === 'pc') {
+          }
+        } else if (deviceType === "tablet" || deviceType === "pc") {
           newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
         } else {
           newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
-        };
+        }
       } else if (type == 3) {
-        if (deviceType === 'mobile') {
+        if (deviceType === "mobile") {
           newBgUrl = `https://img.moehu.org/pics.php?id=sjpic`;
-        } else if (deviceType === 'tablet' || deviceType === 'pc') {
+        } else if (deviceType === "tablet" || deviceType === "pc") {
           newBgUrl = `https://img.moehu.org/pic.php?id=pc`;
         } else {
           newBgUrl = `https://img.moehu.org/pic.php?id=pc`;
-        };
+        }
       } else if (type == 4) {
         newBgUrl = "https://img.moehu.org/pic.php?id=kemonomimi";
       } else if (type == 5) {
         newBgUrl = "https://img.moehu.org/pic.php?id=gqbz";
       } else if (type == 6) {
         newBgUrl = "https://uapis.cn/api/bing.php?rand=true";
-      };
+      }
 
       if (type != 0) {
         // 给外部 API 加上时间戳，防止两次请求 URL 相同导致不刷新
-        newBgUrl += newBgUrl.includes('?') ? `&_t=${Date.now()}` : `?_t=${Date.now()}`;
+        newBgUrl += newBgUrl.includes("?") ? `&_t=${Date.now()}` : `?_t=${Date.now()}`;
       }
 
       // 预加载新壁纸
       const result = await preloadImage(newBgUrl);
       if (!result.ok) {
-        console.error(t('components.background.loadError'));
+        console.error(t("components.background.loadError"));
         ElMessage({
-          message: t('components.background.loadError'),
+          message: t("components.background.loadError"),
           icon: h(Error, {
             theme: "filled",
             fill: "var(--el-message-icon-color)",
@@ -189,17 +201,17 @@ const changeBg = async (type) => {
           currentBgUrl.value = newBgUrl;
         } else {
           performTransition(newBgUrl);
-        };
+        }
         if (store.webSpeech) {
           stopSpeech();
           const voice = envConfig.VITE_TTS_Voice;
           const vstyle = envConfig.VITE_TTS_Style;
           SpeechLocal("壁纸加载失败.mp3");
-        };
-      };
+        }
+      }
     } finally {
       isLoading.value = false;
-    };
+    }
   })();
 };
 
@@ -256,7 +268,6 @@ const performTransition = async (newUrl) => {
   }, 1600);
 };
 
-
 // 图片加载完成
 const imgLoadComplete = (event) => {
   emit("imageLoaded", event.target);
@@ -270,16 +281,16 @@ const imgLoadComplete = (event) => {
 
 // 图片动画完成
 const imgAnimationEnd = () => {
-  console.log(t('components.background.loadSuccess'));
+  console.log(t("components.background.loadSuccess"));
   // 加载完成事件
   emit("loadComplete");
 };
 
 // 图片显示失败
 const imgLoadError = async () => {
-  console.error(t('components.background.loadError') + "：", currentBgUrl.value);
+  console.error(t("components.background.loadError") + "：", currentBgUrl.value);
   ElMessage({
-    message: t('components.background.loadError'),
+    message: t("components.background.loadError"),
     icon: h(Error, {
       theme: "filled",
       fill: "var(--el-message-icon-color)",
@@ -290,13 +301,13 @@ const imgLoadError = async () => {
     currentBgUrl.value = await gasC(bgUrlS, key);
   } else {
     currentBgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
-  };
+  }
   if (store.webSpeech) {
     stopSpeech();
     const voice = envConfig.VITE_TTS_Voice;
     const vstyle = envConfig.VITE_TTS_Style;
     SpeechLocal("壁纸加载失败.mp3");
-  };
+  }
 };
 
 // 监听壁纸切换
@@ -305,13 +316,13 @@ watch(
   async (value) => {
     await changeBg(Number(value));
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const SeasonStyle = async (type, state, where) => {
   const month = new Date().getMonth() + 1; // 当前月份，1-12
   if (type == 0) {
-    if (sest == 1 && state == true && where == 'normal') return;
+    if (sest == 1 && state == true && where == "normal") return;
     if ([12, 1, 2].includes(month)) {
       if (state == true) {
         initSnowfall();
@@ -319,8 +330,8 @@ const SeasonStyle = async (type, state, where) => {
         closeSnowfall();
       } else {
         return;
-      };
-    };
+      }
+    }
     if ([1, 2].includes(month)) {
       if (state == true) {
         initLantern();
@@ -328,8 +339,8 @@ const SeasonStyle = async (type, state, where) => {
         closeLantern();
       } else {
         return;
-      };
-    };
+      }
+    }
     if ([7, 8, 9].includes(month)) {
       if (state == true) {
         initFirefly();
@@ -337,8 +348,8 @@ const SeasonStyle = async (type, state, where) => {
         closeFirefly();
       } else {
         return;
-      };
-    };
+      }
+    }
   } else if (type == 1) {
     if (state == true) {
       initSnowfall();
@@ -346,7 +357,7 @@ const SeasonStyle = async (type, state, where) => {
       closeSnowfall();
     } else {
       return;
-    };
+    }
   } else if (type == 2) {
     if (state == true) {
       initLantern();
@@ -354,7 +365,7 @@ const SeasonStyle = async (type, state, where) => {
       closeLantern();
     } else {
       return;
-    };
+    }
   } else if (type == 3) {
     if (state == true) {
       initFirefly();
@@ -362,10 +373,10 @@ const SeasonStyle = async (type, state, where) => {
       closeFirefly();
     } else {
       return;
-    };
+    }
   } else {
     return;
-  };
+  }
   sest = 1;
 };
 
@@ -374,22 +385,22 @@ const setupAutoSwitch = () => {
   if (autoBGSwitchTimer.value) {
     clearInterval(autoBGSwitchTimer.value);
     autoBGSwitchTimer.value = null;
-  };
+  }
 
   // 获取定时切换设置值
   const switchMode = store.autoBGSwitchInterval || 0;
 
   // 根据模式设置间隔时间（毫秒）
   const intervals = {
-    0: 0,      // 不自动切换
-    1: 15000,   // 15秒
-    2: 30000,  // 30秒
-    3: 45000   // 45秒
+    0: 0, // 不自动切换
+    1: 15000, // 15秒
+    2: 30000, // 30秒
+    3: 45000, // 45秒
   };
   const interval = intervals[switchMode];
   if (interval === 0) {
     return;
-  };
+  }
 
   const switchBackground = async () => {
     if (isLoading.value) return;
@@ -407,7 +418,11 @@ onMounted(async () => {
   // 加载壁纸
   await changeBg(Number(store.coverType));
   // 加载季节特效
-  if (store.seasonalEffects) { await SeasonStyle(0, true, 'normal') } else { sest = 1 };
+  if (store.seasonalEffects) {
+    await SeasonStyle(0, true, "normal");
+  } else {
+    sest = 1;
+  }
   // 启动定时切换
   setupAutoSwitch();
 });
@@ -415,34 +430,43 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   if (imgTimeout.value) {
     clearTimeout(imgTimeout.value);
-  };
+  }
   if (autoBGSwitchTimer.value) {
     clearInterval(autoBGSwitchTimer.value);
-  };
+  }
 });
 
-watch(() => store.seasonalEffects, async (value) => {
-  if (sest == 0) return;
-  if (value) {
-    await SeasonStyle(0, true, 'userChange');
-  } else {
-    await SeasonStyle(0, false, 'userChange');
-    await SeasonStyle(1, false, 'userChange');
-    await SeasonStyle(2, false, 'userChange');
-    await SeasonStyle(3, false, 'userChange');
-  };
-});
+watch(
+  () => store.seasonalEffects,
+  async (value) => {
+    if (sest == 0) return;
+    if (value) {
+      await SeasonStyle(0, true, "userChange");
+    } else {
+      await SeasonStyle(0, false, "userChange");
+      await SeasonStyle(1, false, "userChange");
+      await SeasonStyle(2, false, "userChange");
+      await SeasonStyle(3, false, "userChange");
+    }
+  },
+);
 
-watch(() => store.sBGCount, async (value) => {
-  if (store.coverType != 0 || value == null || value == 0) return;
-  sBGCountN = value;
-  await changeBg(Number(store.coverType));
-  store.setSBGCount(null);
-});
+watch(
+  () => store.sBGCount,
+  async (value) => {
+    if (store.coverType != 0 || value == null || value == 0) return;
+    sBGCountN = value;
+    await changeBg(Number(store.coverType));
+    store.setSBGCount(null);
+  },
+);
 
-watch(() => store.autoBGSwitchInterval, () => {
-  setupAutoSwitch();
-});
+watch(
+  () => store.autoBGSwitchInterval,
+  () => {
+    setupAutoSwitch();
+  },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -512,7 +536,8 @@ watch(() => store.autoBGSwitchInterval, () => {
     top: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.5) 100%),
+    background-image:
+      radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.5) 100%),
       radial-gradient(rgba(0, 0, 0, 0) 33%, rgba(0, 0, 0, 0.3) 166%);
     z-index: 3;
     pointer-events: none;
@@ -554,4 +579,3 @@ watch(() => store.autoBGSwitchInterval, () => {
   }
 }
 </style>
-

@@ -105,7 +105,7 @@ const onImageLoaded = (img: HTMLImageElement) => {
       })
       .catch((err) => {
         console.error(err);
-        ElMessage.error(t('app.event.themeChangeFailed'));
+        ElMessage.error(t("app.event.themeChangeFailed"));
         store.theme = "system";
       });
   }
@@ -155,7 +155,7 @@ onMounted(() => {
   // 屏蔽右键
   document.oncontextmenu = () => {
     ElMessage({
-      message: t('app.event.rightClickWarning'),
+      message: t("app.event.rightClickWarning"),
       grouping: true,
       duration: 2000,
     });
@@ -172,7 +172,7 @@ onMounted(() => {
   window.addEventListener("mousedown", (event) => {
     if (event.button == 1) {
       ElMessage({
-        message: t('app.wallpaper.previewDisabled'),
+        message: t("app.wallpaper.previewDisabled"),
         grouping: true,
       });
       if (store.webSpeech) {
@@ -192,8 +192,8 @@ onMounted(() => {
   const styleTitle1 = "font-size: 20px;font-weight: 600;color: rgb(244,167,89);";
   const styleTitle2 = "font-size:12px;color: rgb(244,167,89);";
   const styleContent = "color: rgb(30,152,255);";
-  const title1 = t('app.info.title');
-  const content = `\n\n${t('app.info.version')}${config.version}\n${t('app.info.home')}${config.home}\n${t('app.info.github')}${config.github}\n${t('app.info.update')}${config.efug}\n${t('app.info.maintainedBy')}`;
+  const title1 = t("app.info.title");
+  const content = `\n\n${t("app.info.version")}${config.version}\n${t("app.info.home")}${config.home}\n${t("app.info.github")}${config.github}\n${t("app.info.update")}${config.efug}\n${t("app.info.maintainedBy")}`;
   console.info(`%c${title1} %c${content}`, styleTitle1, styleContent);
 });
 

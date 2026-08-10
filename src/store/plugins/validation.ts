@@ -46,7 +46,10 @@ export const validationPlugin = ({ store }: PiniaPluginContext) => {
       }
       if (!rule.allowed.includes(coercedValue)) {
         store.$patch({ [key]: oldValue });
-        const errMsg = i18n.global.t('validation.invalidValue', { key: String(key), value: newValue });
+        const errMsg = i18n.global.t("validation.invalidValue", {
+          key: String(key),
+          value: newValue,
+        });
         console.error(errMsg);
         ElMessage({
           dangerouslyUseHTMLString: true,

@@ -1,104 +1,103 @@
 [data-theme="light"] {
-    --background-color: rgba(245, 245, 245, 1);
-    --text-color: rgba(15, 15, 15, 1);
-    --card-background-color: rgba(245, 245, 245, 0.6);
-    --link-card-hover-color: rgba(245, 245, 245, 0.9);
-    --social-background-color: rgba(245, 245, 245, 0.3);
-    --social-font-color: rgba(245, 245, 245, 1);
-    --tooltip-background-color: rgba(245, 245, 245, 0.9);
-    --player-control-color: rgba(15, 15, 15, 1);
-    --player-control-hover-bg-color: rgba(15, 15, 15, 0.2);
-    --player-slider-main-color: rgba(15, 15, 15, 0.7);
-    --player-slider-runway-color: rgba(25, 35, 80, 0.3);
-    --close-icon-color: rgba(15, 15, 15, 0.2);
-    --music-card-background-color: rgba(245, 245, 245, 0.6);
-    --music-smcard-background-color: rgba(255, 240, 245, 0.4);
-    --music-smcard-background-hover-color: rgba(255, 240, 245, 0.7);
-    --music-player-background-color: rgba(15, 15, 15, 0.3);
-    --music-player-list-bgc: rgba(245, 245, 245, 0.4);
-    --music-player-list-hover-bgc: rgba(245, 245, 245, 0.6);
-    --music-aplayer-list-icon-color: #192350e5;
-    --music-aplayer-message-icon-color: #192350e5;
-    --el-message-icon-color: #192350e5;
-    --footer-background-color: rgba(245, 245, 245, 0.6);
-    --footer-text-color: rgba(15, 15, 15, 1);
-    --footer-dwrc-shadow-first-color: rgba(255, 240, 245, 0.9);
-    --footer-dwrc-start-color: rgba(112, 128, 144, 1);
-    --footer-dwrc-end-color: rgba(25, 35, 80, 0.9);
-    --footer-dwrc-two-color: rgba(25, 35, 80, 0.7);
-    --footer-music-icon-color: #192350e5; // #0f0f0fff
-    --footer-music-paw-icon-color: rgba(25, 35, 80, 0.9);
-    --time-icon-one-color: #192350e5;
-    --time-icon-two-color: #00000020;
-    --el-progress-bar-in-color: rgba(15, 15, 15, 0.2);
-    --el-progress-bar-out-color: rgba(15, 15, 15, 0.6);
-    --el-progress-bar-span-color: rgba(245, 245, 245, 0.9);
-    --set-background-color: rgba(245, 245, 245, 0.6);
-    --set-coll-background-color: rgba(245, 245, 245, 0.6);
-    --set-coll-background-ck-color: rgba(245, 245, 245, 0.4);
-    --set-radio-border-color: rgba(25, 35, 80, 0.5);
-    --set-radio-border-ck-color: rgba(25, 35, 80, 0.9);
-    --set-radio-bg-color: rgba(25, 35, 80, 0.1);
-    --set-radio-bg-ck-color: rgba(25, 35, 80, 0.3);
-    --set-tooltip-effect: dark;
+  --background-color: rgba(245, 245, 245, 1);
+  --text-color: rgba(15, 15, 15, 1);
+  --card-background-color: rgba(245, 245, 245, 0.6);
+  --link-card-hover-color: rgba(245, 245, 245, 0.9);
+  --social-background-color: rgba(245, 245, 245, 0.3);
+  --social-font-color: rgba(245, 245, 245, 1);
+  --tooltip-background-color: rgba(245, 245, 245, 0.9);
+  --player-control-color: rgba(15, 15, 15, 1);
+  --player-control-hover-bg-color: rgba(15, 15, 15, 0.2);
+  --player-slider-main-color: rgba(15, 15, 15, 0.7);
+  --player-slider-runway-color: rgba(25, 35, 80, 0.3);
+  --close-icon-color: rgba(15, 15, 15, 0.2);
+  --music-card-background-color: rgba(245, 245, 245, 0.6);
+  --music-smcard-background-color: rgba(255, 240, 245, 0.4);
+  --music-smcard-background-hover-color: rgba(255, 240, 245, 0.7);
+  --music-player-background-color: rgba(15, 15, 15, 0.3);
+  --music-player-list-bgc: rgba(245, 245, 245, 0.4);
+  --music-player-list-hover-bgc: rgba(245, 245, 245, 0.6);
+  --music-aplayer-list-icon-color: #192350e5;
+  --music-aplayer-message-icon-color: #192350e5;
+  --el-message-icon-color: #192350e5;
+  --footer-background-color: rgba(245, 245, 245, 0.6);
+  --footer-text-color: rgba(15, 15, 15, 1);
+  --footer-dwrc-shadow-first-color: rgba(255, 240, 245, 0.9);
+  --footer-dwrc-start-color: rgba(112, 128, 144, 1);
+  --footer-dwrc-end-color: rgba(25, 35, 80, 0.9);
+  --footer-dwrc-two-color: rgba(25, 35, 80, 0.7);
+  --footer-music-icon-color: #192350e5; // #0f0f0fff
+  --footer-music-paw-icon-color: rgba(25, 35, 80, 0.9);
+  --time-icon-one-color: #192350e5;
+  --time-icon-two-color: #00000020;
+  --el-progress-bar-in-color: rgba(15, 15, 15, 0.2);
+  --el-progress-bar-out-color: rgba(15, 15, 15, 0.6);
+  --el-progress-bar-span-color: rgba(245, 245, 245, 0.9);
+  --set-background-color: rgba(245, 245, 245, 0.6);
+  --set-coll-background-color: rgba(245, 245, 245, 0.6);
+  --set-coll-background-ck-color: rgba(245, 245, 245, 0.4);
+  --set-radio-border-color: rgba(25, 35, 80, 0.5);
+  --set-radio-border-ck-color: rgba(25, 35, 80, 0.9);
+  --set-radio-bg-color: rgba(25, 35, 80, 0.1);
+  --set-radio-bg-ck-color: rgba(25, 35, 80, 0.3);
+  --set-tooltip-effect: dark;
 
+  a,
+  p {
+    color: var(--text-color);
+  }
 
+  // 卡片样式
+  .cards {
+    border-radius: 6px;
+    background-color: rgba(245, 245, 245, 0.5);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    transform: scale(1);
+    transition:
+      backdrop-filter 0.3s,
+      transform 0.3s;
 
-    a,
-    p {
-        color: var(--text-color);
+    &:hover {
+      transform: scale(1.01);
     }
 
-    // 卡片样式
-    .cards {
-        border-radius: 6px;
-        background-color: rgba(245, 245, 245, 0.5);
-        -webkit-backdrop-filter: blur(3px);
-        backdrop-filter: blur(3px);
-        transform: scale(1);
-        transition:
-            backdrop-filter 0.3s,
-            transform 0.3s;
-
-        &:hover {
-            transform: scale(1.01);
-        }
-
-        &:active {
-            transform: scale(0.98);
-        }
+    &:active {
+      transform: scale(0.98);
     }
+  }
 }
 
 // Common styles
 
 body {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 }
 
-
 .el-message {
-    --el-message-bg-color: var(--card-background-color) !important;
-    --el-message-text-color: var(--text-color) !important;
+  --el-message-bg-color: var(--card-background-color) !important;
+  --el-message-text-color: var(--text-color) !important;
 }
 
 .el-popper.is-color {
-    background: var(--set-background-color) !important;
-    color: var(--text-color) !important;
+  background: var(--set-background-color) !important;
+  color: var(--text-color) !important;
 }
 
 .el-card {
-    .el-card__header {
-        background-color: rgba(from var(--card-background-color) r g b / 0.2) !important;
-    }
+  .el-card__header {
+    background-color: rgba(from var(--card-background-color) r g b / 0.2) !important;
+  }
 
-    .el-card__body {
-        background-color: rgba(from var(--card-background-color) r g b / 0.1) !important;
-    }
+  .el-card__body {
+    background-color: rgba(from var(--card-background-color) r g b / 0.1) !important;
+  }
 }
 
 a {
-    color: var(--text-color);
+  color: var(--text-color);
 }

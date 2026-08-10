@@ -1,7 +1,7 @@
 <template>
   <div class="more-content">
     <span class="greeting">
-      {{ $t('components.moreContent.hello') }}
+      {{ $t("components.moreContent.hello") }}
     </span>
     <div class="msg-image">
       <img v-if="msgP" :src="msgP" class="msgp" />
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, h } from 'vue';
+import { ref, h } from "vue";
 import { gasC } from "@/utils/authServer";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
@@ -29,10 +29,10 @@ onMounted(async () => {
       msgP.value = await gasC(imgUrl, key);
     } else {
       msgP.value = imgUrl;
-    };
+    }
   } catch (error) {
     msgP.value = null;
-  };
+  }
 });
 </script>
 
@@ -77,6 +77,5 @@ onMounted(async () => {
       object-position: bottom;
     }
   }
-
 }
 </style>

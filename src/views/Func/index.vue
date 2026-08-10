@@ -22,7 +22,12 @@
               <span class="sm-hidden">{{ currentTime.weekday }}</span>
             </div>
             <div class="text">
-              <span v-for="(char, index) in timeText" :key="index" :class="{ 'colon': char === ':', 'num': char !== ':' }">{{ char }}</span>
+              <span
+                v-for="(char, index) in timeText"
+                :key="index"
+                :class="{ colon: char === ':', num: char !== ':' }"
+                >{{ char }}</span
+              >
             </div>
           </div>
           <Weather />
@@ -52,10 +57,10 @@ interface CurrentTime {
   hour: number;
   minute: number;
   second: number;
-};
+}
 
 // 当前时间
-const currentTime = ref < CurrentTime > ({
+const currentTime = ref<CurrentTime>({
   year: 0,
   month: 0,
   day: 0,
@@ -64,7 +69,7 @@ const currentTime = ref < CurrentTime > ({
   minute: 0,
   second: 0,
 });
-const timeInterval = ref < number | null > (null);
+const timeInterval = ref<number | null>(null);
 
 // 播放器 id
 const playerHasId = envConfig.VITE_SONG_ID;
@@ -76,9 +81,22 @@ const timeText = computed(() => {
 
 // 英文日期格式
 const enDateText = computed(() => {
-  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
   const mIndex = Number(currentTime.value.month) - 1;
-  const monthName = months[mIndex] || '';
+  const monthName = months[mIndex] || "";
   return `${monthName} ${currentTime.value.day}, ${currentTime.value.year}`;
 });
 
@@ -95,7 +113,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (timeInterval.value !== null) {
     clearInterval(timeInterval.value);
-  };
+  }
 });
 </script>
 

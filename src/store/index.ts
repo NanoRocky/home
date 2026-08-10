@@ -31,7 +31,7 @@ export const storeState: MainState = {
   playerTitle: null as string | null, // 【缓存】当前播放歌曲名
   playerArtist: null as string | null, // 【缓存】当前播放歌手名
   playerAlbum: null as string | null, // 【缓存】当前播放专辑名
-  playerLrc: [[true, i18n.global.t('components.music.lrcSearching')]], // 【缓存】当前播放歌词
+  playerLrc: [[true, i18n.global.t("components.music.lrcSearching")]], // 【缓存】当前播放歌词
   playerLrcShow: true, // 【开关】是否显示底栏歌词
   footerBlur: true, // 【开关】底栏模糊
   footerProgressBar: true, // 【开关】是否显示底栏进度条
@@ -199,7 +199,7 @@ export const mainStore = defineStore("main", {
         "setV",
         "msgNameShow",
         "language",
-        "weatherProvider"
+        "weatherProvider",
       ],
     },
   ],

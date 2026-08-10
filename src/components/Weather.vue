@@ -10,9 +10,13 @@
           : weatherData.weather.winddirection + $t("components.weather.wind")
       }}&nbsp;
     </span>
-    <span class="sm-hidden">{{ weatherData.weather.windpower?.endsWith($t("components.weather.windPowerUnit") || "级")
-      ? weatherData.weather.windpower
-      : weatherData.weather.windpower + $t("components.weather.windPowerUnit") }}&nbsp;</span>
+    <span class="sm-hidden"
+      >{{
+        weatherData.weather.windpower?.endsWith($t("components.weather.windPowerUnit") || "级")
+          ? weatherData.weather.windpower
+          : weatherData.weather.windpower + $t("components.weather.windPowerUnit")
+      }}&nbsp;</span
+    >
   </div>
   <div class="weather" v-else>
     <span>{{ $t("console.weather.weatherFetchFailed").replace("：", "") }}</span>
@@ -41,7 +45,7 @@ import type {
   GDWeatherResponse,
   XMAdcodeItem,
   XMWeatherStatusItem,
-  XMWeatherStatusData
+  XMWeatherStatusData,
 } from "@/typings/weather";
 
 const store = mainStore();
@@ -110,7 +114,7 @@ const ZHFallback = async () => {
       await getXMW();
     } catch (error) {
       await getOW();
-    };
+    }
   } else if (!txkey) {
     // 调用高德天气 API
     console.log(t("console.weather.useAMap"));
@@ -122,8 +126,8 @@ const ZHFallback = async () => {
         await getXMW();
       } catch (error) {
         await getOW();
-      };
-    };
+      }
+    }
   } else {
     // 调用腾讯天气 API
     try {
@@ -138,15 +142,21 @@ const ZHFallback = async () => {
           await getXMW();
         } catch (error) {
           await getOW();
-        };
-      };
-    };
-  };
+        }
+      }
+    }
+  }
 };
 
 const executeAutoRouting = async () => {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const isDomesticTZ = ["Asia/Shanghai", "Asia/Chongqing", "Asia/Urumqi", "Asia/Hong_Kong", "Asia/Macau"].includes(tz);
+  const isDomesticTZ = [
+    "Asia/Shanghai",
+    "Asia/Chongqing",
+    "Asia/Urumqi",
+    "Asia/Hong_Kong",
+    "Asia/Macau",
+  ].includes(tz);
   const isChineseLang = navigator.language.toLowerCase().includes("zh");
 
   if (isDomesticTZ && isChineseLang) {
@@ -157,11 +167,13 @@ const executeAutoRouting = async () => {
   try {
     const traceController = new AbortController();
     const traceTimeout = setTimeout(() => traceController.abort(), 2000);
-    const traceRes = await fetch("https://1.1.1.1/cdn-cgi/trace", { signal: traceController.signal });
+    const traceRes = await fetch("https://1.1.1.1/cdn-cgi/trace", {
+      signal: traceController.signal,
+    });
     clearTimeout(traceTimeout);
     const traceText = await traceRes.text();
     const locMatch = traceText.match(/loc=([A-Z]+)/);
-    if (locMatch && locMatch[1] === 'CN') {
+    if (locMatch && locMatch[1] === "CN") {
       await ZHFallback();
     } else {
       await getGLW();
@@ -175,15 +187,15 @@ const executeAutoRouting = async () => {
 const getWeatherData = async () => {
   try {
     const provider = store.weatherProvider;
-    if (provider === 'tencent') {
+    if (provider === "tencent") {
       await getTXW();
-    } else if (provider === 'amap') {
+    } else if (provider === "amap") {
       await getGDW();
-    } else if (provider === 'xiaomi') {
+    } else if (provider === "xiaomi") {
       await getXMW();
-    } else if (provider === 'oioweb') {
+    } else if (provider === "oioweb") {
       await getOW();
-    } else if (provider === 'google') {
+    } else if (provider === "google") {
       await getGLW();
     } else {
       await executeAutoRouting();
@@ -196,8 +208,8 @@ const getWeatherData = async () => {
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("天气加载失败.mp3");
-    };
-  };
+    }
+  }
 };
 
 // 报错信息
@@ -226,7 +238,10 @@ onUnmounted(() => {
 });
 
 // 设置界面变更天气供应商，立即刷新天气
-watch(() => store.weatherProvider, () => {
-  getWeatherData();
-});
+watch(
+  () => store.weatherProvider,
+  () => {
+    getWeatherData();
+  },
+);
 </script>
