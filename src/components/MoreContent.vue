@@ -1,7 +1,7 @@
 <template>
   <div class="more-content">
     <span class="greeting">
-      {{ $t('moreContent.hello') }}
+      {{ $t('components.moreContent.hello') }}
     </span>
     <div class="msg-image">
       <img v-if="msgP" :src="msgP" class="msgp" />

@@ -5,7 +5,7 @@
     <Transition name="el-fade-in-linear">
       <div class="open-music" v-show="openMusicShow && store.musicIsOk" @click="store.musicOpenState = true">
         <music-menu theme="filled" size="18" fill="var(--player-control-color)" />
-        <span>{{ $t('hitokoto.openPlayer') }}</span>
+        <span>{{ $t('components.hitokoto.openPlayer') }}</span>
       </div>
     </Transition>
     <!-- 一言内容 -->
@@ -34,8 +34,8 @@ const openMusicShow = ref(false);
 
 // 一言数据
 const hitokotoData = reactive({
-  text: t('hitokoto.defaultText'),
-  from: t('hitokoto.defaultFrom'),
+  text: t('components.hitokoto.defaultText'),
+  from: t('components.hitokoto.defaultFrom'),
 });
 
 // 获取一言数据
@@ -46,14 +46,14 @@ const getHitokotoData = async () => {
     hitokotoData.from = result.from;
   } catch (error) {
     ElMessage({
-      message: t('hitokoto.failedToFetch'),
+      message: t('components.hitokoto.failedToFetch'),
       icon: h(Error, {
         theme: "filled",
         fill: "var(--el-message-icon-color)",
       }),
     });
-    hitokotoData.text = t('hitokoto.failedToFetch');
-    hitokotoData.from = t('hitokoto.defaultFrom');
+    hitokotoData.text = t('components.hitokoto.failedToFetch');
+    hitokotoData.from = t('components.hitokoto.defaultFrom');
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;

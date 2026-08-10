@@ -1,4 +1,4 @@
-import { getTXAdcode, getTXWeather, getTXAdcodeS, getTXWeatherS, getGDAdcode, getGDAdcodeI, getGDWeather, getIPV4Addr, getIPV6Addr, getOtherWeather, getHXHWeather, getXMWeather, getIPV4AddrLocation } from "@/api";
+import { getIPV4Addr, getIPV4AddrLocation } from "@/api";
 import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import xmAdcodeData from '@/assets/data/xiaomi_weather_adcode.json';
@@ -39,8 +39,14 @@ const weatherData = reactive<{
     },
 });
 
+// 获取小米天气 API
+export const getXMWeather = async (city) => {
+    const res = await fetch(`https://api.nanorocky.top/xmw/?city=weathercn%3A${city}`);
+    return await res.json();
+};
+
 export async function getXMWT() {
-    console.log(i18n.global.t('utils.console.xiaomiIntf'));
+    console.log(i18n.global.t('console.weather.xiaomiIntf'));
     const store = mainStore();
     // 获取 IP
     const ipv4addr = await getIPV4Addr();
@@ -51,7 +57,7 @@ export async function getXMWT() {
             const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("位置信息获取失败.mp3");
         };
-        throw "天气信息获取失败";
+        throw i18n.global.t('console.weather.weatherError');
     };
     // 获取位置信息
     const location = await getIPV4AddrLocation(ipv4addr.ip);
@@ -62,11 +68,11 @@ export async function getXMWT() {
             const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("位置信息获取失败.mp3");
         };
-        throw "天气信息获取失败";
+        throw i18n.global.t('console.weather.weatherError');
     };
     // 加载 Adcode
     weatherData.adCode = {
-        city: location.data.county || location.data.city || location.data.region || "未知地区",
+        city: location.data.county || location.data.city || location.data.region || i18n.global.t('console.weather.areaUnknown'),
         adcode: findCityAdcode(location.data.region, location.data.city, location.data.county),
     };
     if (weatherData.adCode.adcode == null) {
@@ -76,7 +82,7 @@ export async function getXMWT() {
             const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("天气加载失败.mp3");
         };
-        throw "天气信息获取失败";
+        throw i18n.global.t('console.weather.weatherError');
     };
     // 获取天气信息
     const xmWeather = await getXMWeather(weatherData.adCode.adcode);
@@ -101,7 +107,7 @@ export async function getXMWT() {
             const vstyle = envConfig.VITE_TTS_Style;
             SpeechLocal("天气加载失败.mp3");
         };
-        throw "天气信息获取失败";
+        throw i18n.global.t('console.weather.weatherError');
     };
 };
 
@@ -130,30 +136,33 @@ const findCityAdcode = (region: string, city: string, county: string): string | 
 
 const getWeatherDescription = (weatherCode: number): string => {
     const weatherInfo = xmStatusDataTyped.weatherinfo.find(item => item.code === weatherCode);
-    return weatherInfo ? weatherInfo.wea : "未知天气";
+    return weatherInfo ? weatherInfo.wea : i18n.global.t('console.weather.weaUnknown');
 };
 
 const windDegreeToDirection = (degree: number): string => {
-    const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
+    const directions: string[] = i18n.global.tm('components.weather.windDirections') as string[];
     const index = Math.round(degree / 45) % 8;
-    return directions[index] + '风';
+    return directions[index] + i18n.global.t('components.weather.wind');
 };
 
-export const BEAUFORT_SCALE: XMBeaufortLevel[] = [
-    { level: 0, minSpeed: 0, maxSpeed: 0.2, description: "无风" },
-    { level: 1, minSpeed: 0.3, maxSpeed: 1.5, description: "软风" },
-    { level: 2, minSpeed: 1.6, maxSpeed: 3.3, description: "轻风" },
-    { level: 3, minSpeed: 3.4, maxSpeed: 5.4, description: "微风" },
-    { level: 4, minSpeed: 5.5, maxSpeed: 7.9, description: "和风" },
-    { level: 5, minSpeed: 8.0, maxSpeed: 10.7, description: "清风" },
-    { level: 6, minSpeed: 10.8, maxSpeed: 13.8, description: "强风" },
-    { level: 7, minSpeed: 13.9, maxSpeed: 17.1, description: "疾风" },
-    { level: 8, minSpeed: 17.2, maxSpeed: 20.7, description: "大风" },
-    { level: 9, minSpeed: 20.8, maxSpeed: 24.4, description: "烈风" },
-    { level: 10, minSpeed: 24.5, maxSpeed: 28.4, description: "狂风" },
-    { level: 11, minSpeed: 28.5, maxSpeed: 32.6, description: "暴风" },
-    { level: 12, minSpeed: 32.7, maxSpeed: Infinity, description: "飓风" }
-];
+export const BEAUFORT_SCALE = (): XMBeaufortLevel[] => {
+    const scaleDesc: string[] = i18n.global.tm('components.weather.beaufortScale') as string[];
+    return [
+        { level: 0, minSpeed: 0, maxSpeed: 0.2, description: scaleDesc[0] },
+        { level: 1, minSpeed: 0.3, maxSpeed: 1.5, description: scaleDesc[1] },
+        { level: 2, minSpeed: 1.6, maxSpeed: 3.3, description: scaleDesc[2] },
+        { level: 3, minSpeed: 3.4, maxSpeed: 5.4, description: scaleDesc[3] },
+        { level: 4, minSpeed: 5.5, maxSpeed: 7.9, description: scaleDesc[4] },
+        { level: 5, minSpeed: 8.0, maxSpeed: 10.7, description: scaleDesc[5] },
+        { level: 6, minSpeed: 10.8, maxSpeed: 13.8, description: scaleDesc[6] },
+        { level: 7, minSpeed: 13.9, maxSpeed: 17.1, description: scaleDesc[7] },
+        { level: 8, minSpeed: 17.2, maxSpeed: 20.7, description: scaleDesc[8] },
+        { level: 9, minSpeed: 20.8, maxSpeed: 24.4, description: scaleDesc[9] },
+        { level: 10, minSpeed: 24.5, maxSpeed: 28.4, description: scaleDesc[10] },
+        { level: 11, minSpeed: 28.5, maxSpeed: 32.6, description: scaleDesc[11] },
+        { level: 12, minSpeed: 32.7, maxSpeed: Infinity, description: scaleDesc[12] }
+    ];
+};
 
 export interface WindConversionOptions {
     returnRange?: boolean;
@@ -165,23 +174,23 @@ export function convertWindSpeed(
     options: WindConversionOptions = {}
 ): string {
     const { returnRange = false, includeDescription = false } = options;
-    const level = BEAUFORT_SCALE.find(
+    const level = BEAUFORT_SCALE().find(
         l => speed >= l.minSpeed && speed <= l.maxSpeed
     );
     if (!level) {
-        return "未知风级";
+        return i18n.global.t('console.weather.windUnknown');
     };
     if (returnRange) {
         if (speed > level.minSpeed + (level.maxSpeed - level.minSpeed) * 0.7) {
-            const nextLevel = BEAUFORT_SCALE.find(l => l.level === level.level + 1);
+            const nextLevel = BEAUFORT_SCALE().find(l => l.level === level.level + 1);
             if (nextLevel) {
-                return includeDescription
-                    ? `${level.level}-${nextLevel.level}级 (${level.description})`
-                    : `${level.level}-${nextLevel.level}级`;
+                return includeDescription && nextLevel
+                ? `${level.level}-${nextLevel.level}${i18n.global.t('components.weather.windPowerUnit')} (${level.description})`
+                : `${level.level}-${nextLevel.level}${i18n.global.t('components.weather.windPowerUnit')}`;
             };
         };
     };
-    return includeDescription
-        ? `${level.level}级 (${level.description})`
-        : `${level.level}级`;
+    return includeDescription 
+        ? `${level.level}${i18n.global.t('components.weather.windPowerUnit')} (${level.description})`
+        : `${level.level}${i18n.global.t('components.weather.windPowerUnit')}`;
 };

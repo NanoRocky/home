@@ -3,7 +3,7 @@
   <div class="social">
     <div class="link">
       <a v-for="item in socialLinks" :key="item.name" :href="item.url" target="_blank"
-        @mouseenter="socialTip = item.tip" @mouseleave="socialTip = 'Find NanoRocky'">
+        @mouseenter="socialTip = item.tip" @mouseleave="socialTip = t('components.social.TipI')">
         <img class="icon" :src="item.icon" height="24" />
       </a>
     </div>
@@ -17,15 +17,15 @@ import socialLinks from "@/assets/socialLinks.json";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { mainStore } from "@/store";
 
-// 社交链接提示
-const socialTip = ref("Find NanoRocky");
-const store = mainStore();
 const { t } = useI18n();
+// 社交链接提示
+const socialTip = ref(t('components.social.Tip'));
+const store = mainStore();
 
 const togglesocial = () => {
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: t('social.defaultTip'),
+    message: t('components.social.defaultTip'),
   });
   if (store.webSpeech) {
     stopSpeech();

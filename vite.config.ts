@@ -129,7 +129,7 @@ export default ({ mode }: { mode: string }): UserConfig => {
             alias: [
                 {
                     find: "@",
-                    replacement: resolve(__dirname, "src")
+                    replacement: resolve(import.meta.dirname, "src")
                 }
             ],
             extensions: [".ts", ".js", ".vue", ".json"],

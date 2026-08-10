@@ -1,4 +1,5 @@
 import { removeLyricMetadata } from '@/utils/removeLyricMetadata';
+import i18n from '@/locales';
 
 /**
  * Decode QRC or YRC to text
@@ -62,11 +63,11 @@ export async function decodeDWQYRC(i: string, rmmd: boolean = false): Promise<Li
             output.push([start, duration, stack]);
         };
         if (!output.some(o => o[2].length > 0)) {
-            throw new Error("歌词文件非逐字歌词");
+            throw new Error(i18n.global.t('utils.decodeDWQYRC.notVerbatimLyric'));
         };
         return output;
     } catch (error) {
-        throw new Error("解析歌词时遇到错误：" + (error instanceof Error ? error.message : String(error)));
+        throw new Error(`${i18n.global.t('utils.decodeDWQYRC.parseError')}${error instanceof Error ? error.message : String(error)}`);
     };
 };
 

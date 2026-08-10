@@ -7,8 +7,8 @@
     v-show="store.musicOpenState"
   >
     <div class="btns">
-      <span @click="store.musicBoxOpenState = true">{{ $t('music.musicList') }}</span>
-      <span @click="store.musicOpenState = false">{{ $t('music.backToHitokoto') }}</span>
+      <span @click="store.musicBoxOpenState = true">{{ $t('components.music.musicList') }}</span>
+      <span @click="store.musicOpenState = false">{{ $t('components.music.backToHitokoto') }}</span>
     </div>
     <div class="control">
       <go-start theme="filled" size="30" fill="var(--player-control-color)" @click="changeMusicIndex(0)" />
@@ -25,7 +25,7 @@
         <span>{{
           store.getPlayerData.name
             ? store.getPlayerData.name + " - " + store.getPlayerData.artist
-            : $t('music.partyNotStarted')
+            : $t('components.music.partyNotStarted')
         }}</span>
       </div>
       <div class="volume" v-show="volumeShow">

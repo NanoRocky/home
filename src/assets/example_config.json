@@ -23,6 +23,7 @@
   "VITE_DESC_TEXT_OTHER_EN": "This is a hidden place meoww ~",
   "VITE_TX_WEATHER_KEY": "",
   "VITE_GD_WEATHER_KEY": "",
+  "VITE_GOOGLE_WEATHER_KEY": "",
   "VITE_SITE_START": "2023-12-25",
   "VITE_SITE_ICP": "浙ICP备2024055100号",
   "VITE_SITE_MPS": "浙公网安备33020602000992号",

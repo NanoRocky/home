@@ -125,7 +125,7 @@
             :key="
               store.getPlayerLrc.length > 0
                 ? `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}`
-                : $t('music.lrcSearching')
+                : $t('components.music.lrcSearching')
             "
           >
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
@@ -219,7 +219,7 @@ const toggleForceIcon = () => {
   store.forceShowBarIcon = !store.forceShowBarIcon;
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `${store.forceShowBarIcon ? t("music.eh") : t("music.progressIconDisabled")}`,
+    message: `${store.forceShowBarIcon ? t("components.music.eh") : t("components.music.progressIconDisabled")}`,
   });
   if (store.forceShowBarIcon) {
     if (store.webSpeech) {
@@ -407,7 +407,7 @@ watch(
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
     transition:
-      color 0.5s linear,
+      color var(--anim-time) linear,
       opacity var(--short-time) linear,
       transform var(--short-time) linear;
   }
@@ -522,8 +522,8 @@ watch(
   transition:
     opacity var(--short-time) linear,
     transform var(--short-time) linear,
-    color 0.5s linear,
-    width 0.3s linear;
+    color var(--anim-time) linear,
+    width var(--short-time) linear;
 }
 
 #dwrc-2-wrap {
@@ -546,8 +546,8 @@ watch(
   transition:
     opacity var(--short-time) linear,
     transform var(--short-time) linear,
-    color 0.5s linear,
-    width 0.3s linear;
+    color var(--anim-time) linear,
+    width var(--short-time) linear;
 }
 
 // 逐行部分
@@ -568,7 +568,7 @@ watch(
   font-size: 1.05rem;
   transition:
     opacity var(--short-time) linear,
-    color 0.5s linear;
+    color var(--anim-time) linear;
 }
 
 // End

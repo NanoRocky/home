@@ -14,13 +14,13 @@ export const getCurrentTime = () => {
   let minute = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
   let second = time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds();
   let weekday = [
-    i18n.global.t('time.weekdays.sun'),
-    i18n.global.t('time.weekdays.mon'),
-    i18n.global.t('time.weekdays.tue'),
-    i18n.global.t('time.weekdays.wed'),
-    i18n.global.t('time.weekdays.thu'),
-    i18n.global.t('time.weekdays.fri'),
-    i18n.global.t('time.weekdays.sat')
+    i18n.global.t('utils.time.weekdays.sun'),
+    i18n.global.t('utils.time.weekdays.mon'),
+    i18n.global.t('utils.time.weekdays.tue'),
+    i18n.global.t('utils.time.weekdays.wed'),
+    i18n.global.t('utils.time.weekdays.thu'),
+    i18n.global.t('utils.time.weekdays.fri'),
+    i18n.global.t('utils.time.weekdays.sat')
   ];
   let currentTime = {
     year,
@@ -38,10 +38,10 @@ export const getCurrentTime = () => {
 export const getTimeCapsule = () => {
   const now = dayjs();
   const dayText = {
-    day: "今日",
-    week: "本周",
-    month: "本月",
-    year: "本年",
+    day: i18n.global.t('utils.time.today'),
+    week: i18n.global.t('utils.time.thisWeek'),
+    month: i18n.global.t('utils.time.thisMonth'),
+    year: i18n.global.t('utils.time.thisYear'),
   };
   /**
    * 计算时间差的函数
@@ -85,39 +85,39 @@ export const helloInit = (store) => {
   let hellosound: string | null = null;
   stopSpeech();
   if (hour < 5) {
-    hello = i18n.global.t('time.greetings.lateNight1');
+    hello = i18n.global.t('utils.time.greetings.lateNight1');
     hellosound = "欢迎1.mp3";
   } else if (hour < 7) {
-    hello = i18n.global.t('time.greetings.morning1');
+    hello = i18n.global.t('utils.time.greetings.morning1');
     hellosound = "欢迎2.mp3";
   } else if (hour < 9) {
-    hello = i18n.global.t('time.greetings.morning2');
+    hello = i18n.global.t('utils.time.greetings.morning2');
     hellosound = "欢迎3.mp3";
   } else if (hour < 11) {
-    hello = i18n.global.t('time.greetings.forenoon');
+    hello = i18n.global.t('utils.time.greetings.forenoon');
     hellosound = "欢迎4.mp3";
   } else if (hour < 14) {
-    hello = i18n.global.t('time.greetings.noon');
+    hello = i18n.global.t('utils.time.greetings.noon');
     hellosound = "欢迎5.mp3";
   } else if (hour < 17) {
-    hello = i18n.global.t('time.greetings.afternoon');
+    hello = i18n.global.t('utils.time.greetings.afternoon');
     hellosound = "欢迎6.mp3";
   } else if (hour < 18) {
-    hello = i18n.global.t('time.greetings.dusk');
+    hello = i18n.global.t('utils.time.greetings.dusk');
     hellosound = "欢迎7.mp3";
   } else if (hour < 22) {
-    hello = i18n.global.t('time.greetings.evening');
+    hello = i18n.global.t('utils.time.greetings.evening');
     hellosound = "欢迎8.mp3";
   } else if (hour < 23) {
-    hello = i18n.global.t('time.greetings.lateNight2');
+    hello = i18n.global.t('utils.time.greetings.lateNight2');
     hellosound = "欢迎9.mp3";
   } else {
-    hello = i18n.global.t('time.greetings.lateNight3');
+    hello = i18n.global.t('utils.time.greetings.lateNight3');
     hellosound = "欢迎10.mp3";
   };
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `<strong>${hello}</strong> ${i18n.global.t('time.welcome')}`,
+    message: `<strong>${hello}</strong> ${i18n.global.t('utils.time.welcome')}`,
   });
   if (store.webSpeech) {
     SpeechLocal(hellosound);

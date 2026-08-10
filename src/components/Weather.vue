@@ -5,23 +5,27 @@
     <span>{{ weatherData.weather.temperature }}℃</span>
     <span class="sm-hidden">
       &nbsp;{{
-        weatherData.weather.winddirection?.endsWith($t("weather.wind"))
+        weatherData.weather.winddirection?.endsWith($t("components.weather.wind"))
           ? weatherData.weather.winddirection
-          : weatherData.weather.winddirection + $t("weather.wind")
+          : weatherData.weather.winddirection + $t("components.weather.wind")
       }}&nbsp;
     </span>
-    <span class="sm-hidden">{{ weatherData.weather.windpower?.endsWith($t("weather.windPowerUnit") || "级")
+    <span class="sm-hidden">{{ weatherData.weather.windpower?.endsWith($t("components.weather.windPowerUnit") || "级")
       ? weatherData.weather.windpower
-      : weatherData.weather.windpower + $t("weather.windPowerUnit") }}&nbsp;</span>
+      : weatherData.weather.windpower + $t("components.weather.windPowerUnit") }}&nbsp;</span>
   </div>
   <div class="weather" v-else>
-    <span>{{ $t("weather.console.weatherFetchFailed").replace("：", "") }}</span>
+    <span>{{ $t("console.weather.weatherFetchFailed").replace("：", "") }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getTXAdcode, getTXWeather, getTXAdcodeS, getTXWeatherS, getGDAdcode, getGDAdcodeI, getGDWeather, getIPV4Addr, getIPV6Addr, getOtherWeather, getHXHWeather, getXMWeather, getIPV4AddrLocation } from "@/api";
-import { getXMWT } from "@/utils/xiaomiWeather";
+import { getIPV4Addr, getIPV6Addr, getIPV4AddrLocation } from "@/api";
+import { getTencentWeather } from "@/api/weather/tencentWeather";
+import { getAmapWeather } from "@/api/weather/amapWeather";
+import { getOiowebWeather } from "@/api/weather/otherWeather";
+import { getXMWT } from "@/api/weather/xiaomiWeather";
+import { getGoogleWeather } from "@/api/weather/googleWeather";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
@@ -65,301 +69,128 @@ const weatherData = reactive<{
   },
 });
 
-// 取出天气平均值
-const getTemperature = (min, max) => {
-  try {
-    const cleanMin = parseFloat(min.toString().replace(/[^\d.-]/g, ""));
-    const cleanMax = parseFloat(max.toString().replace(/[^\d.-]/g, ""));
-    if (isNaN(cleanMin) || isNaN(cleanMax)) {
-      throw new Error(t('weather.failedToParseTemp'));
-    };
-    const average = (cleanMin + cleanMax) / 2;
-    return Math.round(average);
-  } catch (error) {
-    console.error(t('weather.console.calcTempError'), error);
-    if (store.webSpeech) {
-      stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
-      SpeechLocal("天气信息无法计算.mp3");
-    };
-    return "NaN";
-  }
-};
-
-
 const getTXW = async () => {
-  if (!txskey) {
-    console.log(t("weather.console.weatherTencentLog1"));
-    // 获取 Adcode
-    const adCode = (await getTXAdcode(txkey)) as TXAdCodeResponse;
-    if (String(adCode.status) !== "0") {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("位置信息获取失败.mp3");
-      };
-      throw t("weather.failedToFetchLocation");
-    };
-    weatherData.adCode = {
-      city: adCode.result.ad_info.district || adCode.result.ad_info.city || adCode.result.ad_info.province || t("weather.unknownRegion"),
-      adcode: adCode.result.ad_info.adcode,
-    };
-    // 获取天气信息
-    if (weatherData.adCode.adcode == null) {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("天气加载失败.mp3");
-      };
-      throw t("weather.failedToLoadWeather");
-    };
-    const txWeather = (await getTXWeather(txkey, weatherData.adCode.adcode)) as TXWeatherResponse;
-    if (String(txWeather.status) !== "0") {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("天气加载失败.mp3");
-      };
-      throw t("weather.failedToLoadWeather");
-    };
-    const realtimeData = txWeather.result.realtime?.[0];
-    if (!realtimeData?.infos) {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("天气加载失败.mp3");
-      };
-      throw t("weather.failedToLoadWeather");
-    };
-    weatherData.weather = {
-      weather: realtimeData.infos.weather,
-      temperature: realtimeData.infos.temperature,
-      winddirection: realtimeData.infos.wind_direction,
-      windpower: realtimeData.infos.wind_power,
-    };
-  } else {
-    console.log(t("weather.console.weatherTencentLog2"));
-    // 获取 Adcode
-    const adCode = (await getTXAdcodeS(txkey, txskey)) as TXAdCodeResponse;
-    if (String(adCode?.status) !== "0") {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("位置信息获取失败.mp3");
-      };
-      throw t("weather.failedToFetchLocation");
-    };
-    weatherData.adCode = {
-      city: adCode.result.ad_info.district || adCode.result.ad_info.city || adCode.result.ad_info.province || t("weather.unknownRegion"),
-      adcode: adCode.result.ad_info.adcode,
-    };
-    // 获取天气信息
-    if (weatherData.adCode.adcode == null) {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("天气加载失败.mp3");
-      };
-      throw t("weather.failedToLoadWeather");
-    };
-    const txWeather = (await getTXWeatherS(txkey, weatherData.adCode.adcode, txskey)) as TXWeatherResponse;
-    if (String(txWeather.status) !== "0") {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("天气加载失败.mp3");
-      };
-      throw t("weather.failedToLoadWeather");
-    };
-    const realtimeData = txWeather.result.realtime?.[0];
-    if (!realtimeData?.infos) {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("天气加载失败.mp3");
-      };
-      throw t("weather.failedToLoadWeather");
-    };
-    weatherData.weather = {
-      weather: realtimeData.infos.weather,
-      temperature: realtimeData.infos.temperature,
-      winddirection: realtimeData.infos.wind_direction,
-      windpower: realtimeData.infos.wind_power,
-    };
-  };
+  const res = await getTencentWeather();
+  weatherData.adCode = res.adCode;
+  weatherData.weather = res.weather;
 };
 
 const getGDW = async () => {
-  // 获取 Adcode
-  const adCode = (await getGDAdcode(gdkey)) as GDAdCodeResponse;
-  let adCodei: GDAdcodeIResponse | null = null;
-  if (String(adCode?.infocode) !== "10000" || String(adCode?.status) !== "1") {
-    console.log(t('weather.console.weatherAMapLog'));
-    const ipV4addr = await getIPV4Addr();
-    adCodei = (await getGDAdcodeI(ipV4addr.ip, gdkey)) as GDAdcodeIResponse;
-    if (String(adCodei?.infocode) !== "10000" || String(adCodei?.status) !== "1") {
-      if (store.webSpeech) {
-        stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
-        SpeechLocal("位置信息获取失败.mp3");
-      };
-      throw t("weather.failedToFetchLocation");
-    };
-  };
-  if (!adCodei) {
-    weatherData.adCode = {
-      city: adCode.city || adCode.province || t("weather.unknownRegion"),
-      adcode: adCode.adcode || null,
-    };
-  } else {
-    weatherData.adCode = {
-      city: adCodei.city || adCodei.province || t("weather.unknownRegion"),
-      adcode: adCodei.adcode || null,
-    };
-  };
-  // 获取天气信息
-  if (weatherData.adCode.adcode == null) {
-    if (store.webSpeech) {
-      stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
-      SpeechLocal("天气加载失败.mp3");
-    };
-    throw t("weather.failedToLoadWeather");
-  };
-  const result = (await getGDWeather(gdkey, weatherData.adCode.adcode)) as GDWeatherResponse;
-  if (String(result?.status) !== "1" || String(result?.infocode) !== "10000") {
-    if (store.webSpeech) {
-      stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
-      SpeechLocal("天气加载失败.mp3");
-    };
-    throw t("weather.failedToLoadWeather");
-  };
-  weatherData.weather = {
-    weather: result.lives[0].weather,
-    temperature: result.lives[0].temperature,
-    winddirection: result.lives[0].winddirection,
-    windpower: result.lives[0].windpower,
-  };
+  const res = await getAmapWeather();
+  weatherData.adCode = res.adCode;
+  weatherData.weather = res.weather;
 };
 
 const getOW = async () => {
-  const result = await getOtherWeather();
-  const data = result.result;
-  weatherData.adCode = {
-    city: data.city.City || t("weather.unknownRegion"),
-    adcode: null
-  };
-  weatherData.weather = {
-    weather: data.condition.day_weather,
-    temperature: getTemperature(data.condition.min_degree, data.condition.max_degree),
-    winddirection: data.condition.day_wind_direction,
-    windpower: data.condition.day_wind_power,
-  };
+  const res = await getOiowebWeather();
+  weatherData.adCode = res.adCode;
+  weatherData.weather = res.weather;
 };
 
-const getHXHW = async () => {
-  const result = await getHXHWeather();
-  if (String(result?.success) !== "true") {
-    if (store.webSpeech) {
-      stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
-      SpeechLocal("天气加载失败.mp3");
-    };
-    throw t("weather.failedToLoadWeather");
-  };
-  weatherData.adCode = {
-    city: result.city || t("weather.unknownRegion"),
-    adcode: null
-  };
-  weatherData.weather = {
-    weather: result.data.type || result.data.night.type,
-    temperature: getTemperature(result.data.low || result.data.night.low, result.data.high || result.data.night.high),
-    winddirection: result.data.fengxiang || result.data.night.fengxiang,
-    windpower: (!result.data.fengli || (result.data.fengli.trim() === t("weather.windPowerUnit") || result.data.fengli.trim() === "级")) ? result.data.night?.fengli || t("common.unknown") : result.data.fengli,
-  };
+const getGLW = async () => {
+  const res = await getGoogleWeather();
+  weatherData.adCode = res.adCode;
+  weatherData.weather = res.weather;
 };
 
 const getXMW = async () => {
-  const xmw = await getXMWT();
-  if (!xmw) {
-    throw t("weather.failedToLoadWeather");
+  const res = await getXMWT();
+  if (!res) {
+    throw t("components.weather.failedToLoadWeather");
   } else {
-    weatherData.adCode = xmw.adCode;
-    weatherData.weather = xmw.weather;
+    weatherData.adCode = res.adCode;
+    weatherData.weather = res.weather;
+  }
+};
+
+const ZHFallback = async () => {
+  if (!gdkey && !txkey) {
+    console.log(t("console.weather.missingKeyUseBackup"));
+    try {
+      await getXMW();
+    } catch (error) {
+      await getOW();
+    };
+  } else if (!txkey) {
+    // 调用高德天气 API
+    console.log(t("console.weather.useAMap"));
+    try {
+      await getGDW();
+    } catch (error) {
+      console.error(t("console.weather.aMapFailedUseBackup"));
+      try {
+        await getXMW();
+      } catch (error) {
+        await getOW();
+      };
+    };
+  } else {
+    // 调用腾讯天气 API
+    try {
+      await getTXW();
+    } catch (error) {
+      console.error(t("console.weather.tencentFailedUseAMap"));
+      try {
+        await getGDW();
+      } catch (error) {
+        console.error(t("console.weather.aMapFailedUseBackup"));
+        try {
+          await getXMW();
+        } catch (error) {
+          await getOW();
+        };
+      };
+    };
   };
+};
+
+const executeAutoRouting = async () => {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const isDomesticTZ = ["Asia/Shanghai", "Asia/Chongqing", "Asia/Urumqi", "Asia/Hong_Kong", "Asia/Macau"].includes(tz);
+  const isChineseLang = navigator.language.toLowerCase().includes("zh");
+
+  if (isDomesticTZ && isChineseLang) {
+    await ZHFallback();
+    return;
+  }
+
+  try {
+    const traceController = new AbortController();
+    const traceTimeout = setTimeout(() => traceController.abort(), 2000);
+    const traceRes = await fetch("https://1.1.1.1/cdn-cgi/trace", { signal: traceController.signal });
+    clearTimeout(traceTimeout);
+    const traceText = await traceRes.text();
+    const locMatch = traceText.match(/loc=([A-Z]+)/);
+    if (locMatch && locMatch[1] === 'CN') {
+      await ZHFallback();
+    } else {
+      await getGLW();
+    }
+  } catch (e) {
+    await ZHFallback();
+  }
 };
 
 // 获取天气数据
 const getWeatherData = async () => {
   try {
-    // 获取地理位置信息
-    if (!gdkey && !txkey) {
-      console.log(t("weather.console.missingKeyUseBackup"));
-      try {
-        await getXMW();
-      } catch (error) {
-        try {
-          await getHXHW();
-        } catch (error) {
-          await getOW();
-        };
-      };
-    } else if (!txkey) {
-      // 调用高德天气 API
-      console.log(t("weather.console.useAMap"));
-      try {
-        await getGDW();
-      } catch (error) {
-        console.error(t("weather.console.aMapFailedUseBackup"));
-        try {
-          await getXMW();
-        } catch (error) {
-          try {
-            await getHXHW();
-          } catch (error) {
-            await getOW();
-          };
-        };
-      };
+    const provider = store.weatherProvider;
+    if (provider === 'tencent') {
+      await getTXW();
+    } else if (provider === 'amap') {
+      await getGDW();
+    } else if (provider === 'xiaomi') {
+      await getXMW();
+    } else if (provider === 'oioweb') {
+      await getOW();
+    } else if (provider === 'google') {
+      await getGLW();
     } else {
-      // 调用腾讯天气 API
-      try {
-        await getTXW();
-      } catch (error) {
-        console.error(t("weather.console.tencentFailedUseAMap"));
-        try {
-          await getGDW();
-        } catch (error) {
-          console.error(t("weather.console.aMapFailedUseBackup"));
-          try {
-            await getXMW();
-          } catch (error) {
-            try {
-              await getHXHW();
-            } catch (error) {
-              await getOW();
-            };
-          };
-        };
-      };
-    };
+      await executeAutoRouting();
+    }
   } catch (error) {
-    console.error(t("weather.console.weatherFetchFailed") + error);
-    onError(t("weather.console.weatherFetchFailed").replace("：", ""));
+    console.error(t("console.weather.weatherFetchFailed") + error);
+    onError(t("console.weather.weatherFetchFailed").replace("：", ""));
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
@@ -381,8 +212,21 @@ const onError = (message) => {
   console.error(message);
 };
 
+let weatherInterval: number | undefined;
+
 onMounted(() => {
-  // 调用获取天气
+  getWeatherData();
+  weatherInterval = setInterval(() => {
+    getWeatherData();
+  }, 7200000) as unknown as number;
+});
+
+onUnmounted(() => {
+  if (weatherInterval) clearInterval(weatherInterval);
+});
+
+// 设置界面变更天气供应商，立即刷新天气
+watch(() => store.weatherProvider, () => {
   getWeatherData();
 });
 </script>

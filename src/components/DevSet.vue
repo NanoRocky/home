@@ -1,75 +1,88 @@
 <template>
     <div class="devsettings">
         <el-collapse class="collapse" v-model="activeName" accordion>
-            <el-collapse-item :title="$t('devSet.seasonalEffects')" name="1">
+            <el-collapse-item :title="$t('components.settings.seasonalEffects.title')" name="1">
                 <div class="item">
                     <el-button plain class="el-button" :class="{ active: store.showSnowfall }"
-                        @click="toggleEffect('snow')">{{ store.showSnowfall ? $t('common.disable') : $t('common.enable') }}{{ $t('devSet.winterSnow') }}</el-button>
+                        @click="toggleEffect('snow')">{{ store.showSnowfall ? $t('common.status.disable') : $t('common.status.enable') }}{{ $t('components.settings.seasonalEffects.winterSnow') }}</el-button>
                     <el-button plain class="el-button" :class="{ active: store.showFirefly }"
-                        @click="toggleEffect('firefly')">{{ store.showFirefly ? $t('common.disable') : $t('common.enable') }}{{ $t('devSet.autumnFirefly') }}</el-button>
+                        @click="toggleEffect('firefly')">{{ store.showFirefly ? $t('common.status.disable') : $t('common.status.enable') }}{{ $t('components.settings.seasonalEffects.autumnFirefly') }}</el-button>
                     <el-button plain class="el-button" :class="{ active: store.showLantern }"
-                        @click="toggleEffect('lantern')">{{ store.showLantern ? $t('common.disable') : $t('common.enable') }}{{ $t('devSet.springLantern') }}</el-button>
+                        @click="toggleEffect('lantern')">{{ store.showLantern ? $t('common.status.disable') : $t('common.status.enable') }}{{ $t('components.settings.seasonalEffects.springLantern') }}</el-button>
                 </div>
             </el-collapse-item>
-            <el-collapse-item :title="$t('devSet.wallpaperAdjust')" name="2">
+            <el-collapse-item :title="$t('components.settings.wallpaper.adjust')" name="2">
                 <div class="item">
-                    <div class="upver">{{ $t('devSet.specifyWallpaper') }}</div>
+                    <div class="upver">{{ $t('components.settings.wallpaper.specify') }}</div>
                 </div>
                 <div class="item">
                     <el-form :model="form" style="max-width: 120px" label-width="auto"
                         @submit.prevent="handleSetWallpaper">
                         <el-form-item prop="wallpaperId" :rules="[
-                            { required: true, message: $t('devSet.wallpaperIdEmpty'), trigger: 'blur' },
-                            { pattern: /^\d+$/, message: $t('devSet.wallpaperIdNotNumber'), trigger: ['blur', 'change'] },
+                            { required: true, message: $t('components.settings.wallpaper.idEmpty'), trigger: 'blur' },
+                            { pattern: /^\d+$/, message: $t('components.settings.wallpaper.idNotNumber'), trigger: ['blur', 'change'] },
                         ]">
                             <el-input v-model="form.wallpaperId" type="text" autocomplete="off" clearable />
                             <el-button plain class="el-button" native-type="submit"
-                                :disabled="!form.wallpaperId">{{ $t('common.confirm') }}</el-button>
+                                :disabled="!form.wallpaperId">{{ $t('common.action.confirm') }}</el-button>
                         </el-form-item>
                     </el-form>
                 </div>
             </el-collapse-item>
-            <el-collapse-item :title="$t('devSet.personalization')" name="3">
+            <el-collapse-item :title="$t('components.settings.personalization.title')" name="3">
                 <div class="item">
-                    <span class="text">{{ $t('devSet.customName') }}</span>
+                    <span class="text">{{ $t('components.settings.personalization.customName') }}</span>
                     <el-switch v-model="msgNameShow" inline-prompt :active-icon="CheckSmall"
                         :inactive-icon="CloseSmall" />
                 </div>
             </el-collapse-item>
-            <el-collapse-item :title="$t('devSet.advancedWallpaper')" name="4">
+            <el-collapse-item :title="$t('components.settings.wallpaper.advanced')" name="4">
                 <div class="item">
-                    <span class="text">{{ $t('devSet.autoSwitch') }}</span><br /><br />
+                    <span class="text">{{ $t('components.settings.wallpaper.autoSwitch') }}</span><br /><br />
                     <el-radio-group v-model="autoBGSwitchInterval" size="small" text-color="#FFFFFF">
-                        <el-radio :value="0" border>{{ $t('common.disable') }}</el-radio>
-                        <el-radio :value="1" border>15 {{ $t('devSet.sec') }}</el-radio>
-                        <el-radio :value="2" border>30 {{ $t('devSet.sec') }}</el-radio>
-                        <el-radio :value="3" border>45 {{ $t('devSet.sec') }}</el-radio>
+                        <el-radio :value="0" border>{{ $t('common.status.disable') }}</el-radio>
+                        <el-radio :value="1" border>15 {{ $t('common.unit.sec') }}</el-radio>
+                        <el-radio :value="2" border>30 {{ $t('common.unit.sec') }}</el-radio>
+                        <el-radio :value="3" border>45 {{ $t('common.unit.sec') }}</el-radio>
                     </el-radio-group>
                 </div>
             </el-collapse-item>
-            <el-collapse-item :title="$t('devSet.languageSettings')" name="5">
+            <el-collapse-item :title="$t('components.settings.system.languageSettings')" name="5">
                 <div class="item">
                     <el-radio-group v-model="language" size="small" text-color="#FFFFFF" @change="handleLangChange">
-                        <el-radio :value="'auto'" border>{{ $t('devSet.autoLang') }}</el-radio>
+                        <el-radio :value="'auto'" border>{{ $t('components.settings.system.autoLang') }}</el-radio>
                         <el-radio :value="'zh-CN'" border>中文</el-radio>
                         <el-radio :value="'en-US'" border>English</el-radio>
+                        <el-radio :value="'ja-JP'" border>日本語</el-radio>
                     </el-radio-group>
                 </div>
             </el-collapse-item>
-            <el-collapse-item :title="$t('devSet.reset')" name="6">
+            <el-collapse-item :title="$t('components.settings.system.weatherProvider')" name="6">
                 <div class="item">
-                    <el-button plain class="el-button" @click="resetSettings()">{{ $t('devSet.resetAll') }}</el-button>
+                    <el-radio-group v-model="weatherProvider" size="small" text-color="#FFFFFF">
+                        <el-radio :value="'auto'" border>{{ $t('components.settings.system.autoLang') }}</el-radio>
+                        <el-radio :value="'tencent'" border>{{ $t('components.settings.system.providerTencent') }}</el-radio>
+                        <el-radio :value="'amap'" border>{{ $t('components.settings.system.providerAMap') }}</el-radio>
+                        <el-radio :value="'google'" border>{{ $t('components.settings.system.providerGoogle') }}</el-radio>
+                        <el-radio :value="'xiaomi'" border>{{ $t('components.settings.system.providerXiaomi') }}</el-radio>
+                        <el-radio :value="'oioweb'" border>{{ $t('components.settings.system.providerOioweb') }}</el-radio>
+                    </el-radio-group>
                 </div>
             </el-collapse-item>
-            <el-collapse-item :title="$t('devSet.checkUpdate')" name="7">
+            <el-collapse-item :title="$t('common.action.reset')" name="7">
+                <div class="item">
+                    <el-button plain class="el-button" @click="resetSettings()">{{ $t('common.action.resetAll') }}</el-button>
+                </div>
+            </el-collapse-item>
+            <el-collapse-item :title="$t('components.settings.system.checkUpdate')" name="8">
                 <div class="item">
                     <div class="upver">
-                        {{ $t('app.version') }}v{{ versionInfo.version }}，{{ versTypeT }}，{{ versionInfo.channel }} {{ $t('devSet.channel') }}，by
+                        {{ $t('app.info.version') }}v{{ versionInfo.version }}，{{ versTypeT }}，{{ versionInfo.channel }} {{ $t('components.settings.system.channel') }}，by
                         {{ versionInfo.upa }} 。
                     </div>
                 </div>
                 <div class="item">
-                    <el-button plain class="el-button" @click="checkUpdate()">{{ $t('devSet.checkButton') }}</el-button>
+                    <el-button plain class="el-button" @click="checkUpdate()">{{ $t('components.settings.system.checkButton') }}</el-button>
                 </div>
             </el-collapse-item>
         </el-collapse>
@@ -114,6 +127,7 @@ const {
     msgNameShow,
     playerDWRCPilfer,
     autoBGSwitchInterval,
+    weatherProvider,
 } = storeToRefs(store);
 
 const { t, locale } = useI18n();
@@ -122,15 +136,15 @@ let chuores = 0;
 const versTypeT = computed(() => {
     switch (versionInfo.type) {
         case "preview":
-            return t('devSet.preview');
+            return t('common.version.preview');
         case "development":
-            return t('devSet.development');
+            return t('common.version.dev');
         case "beta":
-            return t('devSet.beta');
+            return t('common.version.early');
         case "release":
-            return t('devSet.release');
+            return t('common.version.stable');
         default:
-            return t('devSet.unknownVersion');
+            return t('common.version.unknown');
     }
 });
 
@@ -138,7 +152,7 @@ const checkUpdate = async () => {
     const updinfo = await checkForUpdate(versionInfo);
     if (updinfo.status == "true") {
         ElMessage({
-            message: t('devSet.alreadyLatest', { version: versionInfo.version, type: versionInfo.type }),
+            message: t('components.settings.system.alreadyLatest', { version: versionInfo.version, type: versionInfo.type }),
             grouping: true,
         });
         if (store.webSpeech) {
@@ -149,7 +163,7 @@ const checkUpdate = async () => {
         }
     } else if (updinfo.status == "false") {
         ElMessage({
-            message: t('devSet.newVersion', { version: updinfo.latestVersion, type: updinfo.isPreview == "true" ? t('devSet.preview') : t('devSet.release') }),
+            message: t('components.settings.system.newVersion', { version: updinfo.latestVersion, type: updinfo.isPreview == "true" ? t('common.version.preview') : t('common.version.stable') }),
             grouping: true,
         });
         if (store.webSpeech) {
@@ -160,7 +174,7 @@ const checkUpdate = async () => {
         }
     } else {
         ElMessage({
-            message: t('devSet.checkError'),
+            message: t('components.settings.system.checkError'),
             grouping: true,
         });
         if (store.webSpeech) {
@@ -200,7 +214,7 @@ const resetSettings = () => {
     if (chuores === 3) {
         ElMessage({
             dangerouslyUseHTMLString: true,
-            message: t('devSet.restoringDefault'),
+            message: t('components.settings.system.restoringDefault'),
         });
         if (store.webSpeech) {
             stopSpeech();
@@ -212,7 +226,7 @@ const resetSettings = () => {
     } else if (chuores > 3) {
         ElMessage({
             dangerouslyUseHTMLString: true,
-            message: t('devSet.loadingInitial'),
+            message: t('components.settings.system.loadingInitial'),
         });
         if (store.webSpeech) {
             stopSpeech();
@@ -223,7 +237,7 @@ const resetSettings = () => {
     } else {
         ElMessage({
             dangerouslyUseHTMLString: true,
-            message: t('devSet.confirmReset'),
+            message: t('components.settings.system.confirmReset'),
         });
         if (store.webSpeech) {
             stopSpeech();
@@ -236,7 +250,7 @@ const resetSettings = () => {
 
 const handleSetWallpaper = () => {
     if (store.coverType != 0) {
-        ElMessage.error(t('devSet.notSupportedCustom'));
+        ElMessage.error(t('components.settings.wallpaper.notBuiltin'));
         if (store.webSpeech) {
             stopSpeech();
             const voice = envConfig.VITE_TTS_Voice;
@@ -246,7 +260,7 @@ const handleSetWallpaper = () => {
         return;
     }
     if (!form.wallpaperId.trim()) {
-        ElMessage.error(t('devSet.wallpaperEmpty'));
+        ElMessage.error(t('components.settings.wallpaper.idEmpty'));
         if (store.webSpeech) {
             stopSpeech();
             const voice = envConfig.VITE_TTS_Voice;
@@ -256,7 +270,7 @@ const handleSetWallpaper = () => {
         return;
     }
     if (!/^\d+$/.test(form.wallpaperId)) {
-        ElMessage.error(t('devSet.wallpaperNotNumber'));
+        ElMessage.error(t('components.settings.wallpaper.idNotNumber'));
         if (store.webSpeech) {
             stopSpeech();
             const voice = envConfig.VITE_TTS_Voice;
@@ -267,7 +281,7 @@ const handleSetWallpaper = () => {
     }
     const wallpaperId = parseInt(form.wallpaperId, 10);
     store.setSBGCount(Number(wallpaperId));
-    ElMessage.success(t('devSet.wallpaperSetSuccess', { id: wallpaperId }));
+    ElMessage.success(t('components.settings.wallpaper.setSuccess', { id: wallpaperId }));
     if (store.webSpeech) {
         stopSpeech();
         const voice = envConfig.VITE_TTS_Voice;

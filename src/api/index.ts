@@ -7,7 +7,7 @@ import i18n from "@/locales";
  * JSONP 请求模块
  */
 // JSONP 请求函数，并返回 JSON 【关于为什么要有这个呢...请腾讯自觉扫一下（x）】
-const loadJSONP = (url, callbackName) => {
+export const loadJSONP = (url, callbackName) => {
   return new Promise((resolve, reject) => {
     // 定义 JSONP 回调函数
     (window as any)[callbackName] = (data: any) => {
@@ -18,7 +18,7 @@ const loadJSONP = (url, callbackName) => {
     const script = document.createElement("script");
     script.src = url;
     script.onerror = () => {
-      reject(new Error(i18n.global.t('api.console.jsonpFailed')));
+      reject(new Error(i18n.global.t('console.api.jsonpFailed')));
       delete (window as any)[callbackName]; // 出错时也要清理
     };
     document.body.appendChild(script);
@@ -41,7 +41,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       data1 = await res1.json();
     } catch (e) {
       data1 = [];
-      console.error(i18n.global.t('api.console.musicSource1Failed'), e);
+      console.error(i18n.global.t('console.api.musicSource1Failed'), e);
     }
     try {
       const res2 = await fetch(
@@ -50,7 +50,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       data2 = await res2.json();
     } catch (e) {
       data2 = [];
-      console.error(i18n.global.t('api.console.musicSource2Failed'), e);
+      console.error(i18n.global.t('console.api.musicSource2Failed'), e);
     }
     dataf = [...(data2 || []), ...(data1 || [])];
   } else {
@@ -59,7 +59,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       data3 = await res1.json();
     } catch (e) {
       data3 = [];
-      console.error(i18n.global.t('api.console.musicSource1Failed'), e);
+      console.error(i18n.global.t('console.api.musicSource1Failed'), e);
     }
     dataf = [...(data3 || [])];
   }
@@ -108,59 +108,6 @@ export const getHitokoto = async () => {
   return await res.json();
 };
 
-/**
- * 天气
- */
-// 获取腾讯地理位置信息（JSONP 方式）
-export const getTXAdcode = async (key) => {
-  const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-  const url = `https://apis.map.qq.com/ws/location/v1/ip?key=${key}&output=jsonp&callback=${callback}`;
-  return await loadJSONP(url, callback);
-};
-
-// 获取腾讯地理天气信息（JSONP 方式）
-export const getTXWeather = async (key, adcode) => {
-  const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-  const url = `https://apis.map.qq.com/ws/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=jsonp&callback=${callback}`;
-  return await loadJSONP(url, callback);
-};
-
-// 获取腾讯地理位置信息（鉴权模式 JSONP 方式）
-export const getTXAdcodeS = async (key, skey) => {
-  const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-  const url = `https://apis.map.qq.com/ws/location/v1/ip?key=${key}&output=jsonp&callback=${callback}`;
-  const urls = await gwgt(url, skey);
-  return await loadJSONP(urls, callback);
-};
-
-// 获取腾讯地理天气信息（鉴权模式 JSONP 方式）
-export const getTXWeatherS = async (key, adcode, skey) => {
-  const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-  const url = `https://apis.map.qq.com/ws/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=jsonp&callback=${callback}`;
-  const urls = await gwgt(url, skey);
-  return await loadJSONP(urls, callback);
-};
-
-// 获取高德地理位置信息
-export const getGDAdcode = async (key) => {
-  const res = await fetch(`https://restapi.amap.com/v3/ip?key=${key}`);
-  return await res.json();
-};
-
-// 获取高德地理位置信息（带IP）
-export const getGDAdcodeI = async (ipv4, key) => {
-  const res = await fetch(`https://restapi.amap.com/v3/ip?ip=${ipv4}&key=${key}`);
-  return await res.json();
-};
-
-// 获取高德地理天气信息
-export const getGDWeather = async (key, city) => {
-  const res = await fetch(
-    `https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`,
-  );
-  return await res.json();
-};
-
 // 补充的获取 IPV4 地址的 API
 export const getIPV4Addr = async () => {
   const res = await fetch(`https://v4.yinghualuo.cn/bejson?format=json`);
@@ -173,31 +120,7 @@ export const getIPV6Addr = async () => {
   return await res.json();
 };
 
-// 免 KEY 区域
-// 强烈建议自己注册腾讯或高德的 API
-// 获取韩小韩天气 API
-export const getHXHWeather = async () => {
-  const res = await fetch("https://api.vvhan.com/api/weather");
-  return await res.json();
-};
 
-// 获取教书先生天气 API
-// https://api.oioweb.cn/doc/weather/GetWeather
-export const getOtherWeather = async () => {
-  const res = await fetch("https://api.oioweb.cn/api/weather/GetWeather");
-  return await res.json();
-};
-
-// ------
-// 由于这些非公开接口没有 CORS 不允许跨域，必须使用中转。如果您希望使用这个接口，记得捐赠酪灰，帮助其承担服务器费用！
-// 这些接口有着较为严格的速率限制，所以有时会出现不可用的问题。如果追求稳定性，请务必自行申请腾讯或高德的 KEY 使用他们的专业服务！
-
-// 获取小米天气 API
-export const getXMWeather = async (city) => {
-  // const res = await fetch(`https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?latitude=0&longitude=0&isLocated=true&locationKey=weathercn%3A${city}&days=2&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07&locale=zh_cn&alpha=false&isGlobal=false`);
-  const res = await fetch(`https://api.nanorocky.top/xmw/?city=weathercn%3A${city}`);
-  return await res.json();
-};
 
 // 获取 IPV4 地址的地理位置信息 API
 export const getIPV4AddrLocation = async (ipv4) => {

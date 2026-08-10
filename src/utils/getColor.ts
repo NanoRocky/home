@@ -6,12 +6,14 @@
  * @param {HTMLImageElement} img
  * @returns {Promise<'light' | 'dark'>}
  */
+import i18n from '@/locales';
+
 export const getColor = (img: HTMLImageElement): Promise<'light' | 'dark'> => {
     return new Promise((resolve, reject) => {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
         if (!context) {
-            return reject(new Error('无法获取 canvas 的 2d context'));
+            return reject(new Error(i18n.global.t('utils.system.canvasError')));
         };
         canvas.width = img.width;
         canvas.height = img.height;
@@ -33,7 +35,7 @@ export const getColor = (img: HTMLImageElement): Promise<'light' | 'dark'> => {
             };
             resolve(light > dark ? 'light' : 'dark');
         } catch (e) {
-            reject(new Error('无法处理图片以获取颜色'));
+            reject(new Error(i18n.global.t('utils.system.imageColorError')));
         };
     });
 };

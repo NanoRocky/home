@@ -12,9 +12,9 @@
         <div class="right cards">
           <div class="time">
             <div class="date" v-if="locale === 'zh-CN'">
-              <span>{{ currentTime.year }}&nbsp;{{ $t("func.year") }}&nbsp;</span>
-              <span>{{ currentTime.month }}&nbsp;{{ $t("func.month") }}&nbsp;</span>
-              <span>{{ currentTime.day }}&nbsp;{{ $t("func.day") }}&nbsp;</span>
+              <span>{{ currentTime.year }}&nbsp;{{ $t("common.unit.year") }}&nbsp;</span>
+              <span>{{ currentTime.month }}&nbsp;{{ $t("common.unit.month") }}&nbsp;</span>
+              <span>{{ currentTime.day }}&nbsp;{{ $t("common.unit.day") }}&nbsp;</span>
               <span class="sm-hidden">{{ currentTime.weekday }}</span>
             </div>
             <div class="date" v-else>

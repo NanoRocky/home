@@ -1,0 +1,420 @@
+{
+  "common": {
+    "status": {
+      "enable": "有効",
+      "disable": "無効",
+      "unknown": "不明",
+      "loading": "読み込み中...",
+      "error": "取得失敗",
+      "warning": "警告",
+      "on": "オン",
+      "off": "オフ"
+    },
+    "action": {
+      "confirm": "確認",
+      "continue": "続行",
+      "cancel": "キャンセル",
+      "reset": "リセット",
+      "resetAll": "全てリセット"
+    },
+    "unit": {
+      "sec": "秒",
+      "year": "年",
+      "month": "月",
+      "day": "日"
+    },
+    "version": {
+      "preview": "プレビュー版",
+      "dev": "開発版",
+      "early": "アーリーアクセス版",
+      "stable": "安定版",
+      "unknown": "不明なバージョン"
+    }
+  },
+  "app": {
+    "info": {
+      "version": "バージョン: ",
+      "home": "ホーム: ",
+      "github": "Github: ",
+      "update": "Update: ",
+      "maintainedBy": "現在は NanoRocky がメンテナンスしています。",
+      "title": "NanoRocky のホームページ"
+    },
+    "event": {
+      "rightClickWarning": "より良い体験のために、右クリックは猫に食べられちゃいました！",
+      "themeChangeFailed": "テーマの変更に失敗しました。システム設定に従います"
+    },
+    "wallpaper": {
+      "previewDisabled": "壁紙のプレビューは無効化されています。デフォルトの壁紙は NanoRocky のコレクションであり、著作権は原著作者に帰属します。装飾目的のみで、プレビューやダウンロードはできません。ごめんね！",
+      "previewEnable": "壁紙プレビューを有効化",
+      "previewDisable": "壁紙プレビューを無効化"
+    }
+  },
+  "views": {
+    "main": {
+      "devMode": "現在開発モードです。",
+      "resettingConfig": "デフォルト設定を復元しています。少々お待ちください...",
+      "siteUpdated": "サイトが更新されました。ページをリロードしてくださいニャ！",
+      "noConfigWarningLog": "警告：設定ファイルが有効になっていないようです。プロジェクトに異常が発生する可能性があります！ プロジェクトを実行する前に .env ファイルを設定してください！",
+      "noConfigDetect": "設定ファイルが作成されていないようです。プロジェクトに異常が発生する可能性があります！",
+      "canceled": "キャンセルされました"
+    },
+    "moreSet": {
+      "pokeMore": "なんでまだつつくの！そんなに秘密ニャの...？",
+      "poke": "え？何か...秘密のもの探してるの？"
+    }
+  },
+  "console": {
+    "main": {
+      "authorWarning": "Warning: Somethings error ... , The original author information for this project has been modified. If this was not done by you, please delete the file and download the project code package again. If this was done by you, please do not modify or remove the original author information. Thank you! Of course, you can also choose to ignore this message.",
+      "repoLink": "Original repository link: https://github.com/NanoRocky/home/blob/EFU/",
+      "privateVersionWarning": "Warning: This version is not permitted for public use. Please use the public version."
+    },
+    "voice": {
+      "apiNotConfigured": "音声サービス API が設定されていません。",
+      "requestCanceled": "Request canceled",
+      "error": "Error:"
+    },
+    "update": {
+      "updateCheckFailed": "更新チェック失敗:",
+      "invalidGithubUrl": "無効な GitHub リポジトリ URL",
+      "githubApiError": "GitHub API エラー: "
+    },
+    "weather": {
+      "weatherTencentLog1": "Tencent 天気 API を使用中",
+      "weatherTencentLog2": "Tencent 天気 API を使用中、認証モードが有効",
+      "weatherAMapLog": "AMap API から IP が取得できませんでした。IPv4 アドレスを取得するために別の API を呼び出しています...",
+      "calcTempError": "猫は取得した温度データの計算方法がわからないニャ qwq：",
+      "xiaomiWeatherLog": "Xiaomi 天気 API を使用中",
+      "missingKeyUseBackup": "天気 API キーが設定されていません。予備の天気 API を使用します",
+      "useAMap": "AMap 天気 API を使用中",
+      "aMapFailedUseBackup": "AMap 天気 API の取得に失敗しました。予備 API を呼び出します",
+      "tencentFailedUseAMap": "Tencent 天気 API の取得に失敗しました。AMap 天気 API を試します",
+      "weatherFetchFailed": "猫は今日の天気がわからないニャ qwq：",
+      "weatherError": "天気情報の取得に失敗しました",
+      "weaUnknown": "不明な天気",
+      "windUnknown": "不明な風級",
+      "xiaomiIntf": "Xiaomi 天気 API を使用中",
+      "areaUnknown": "不明な地域",
+      "googleKeyMissing": "Google 天気 API キーが設定されていません。天気を読み込めません",
+      "googleGeolocationStart": "Google Geolocation API を使用して位置情報を取得しています...",
+      "googleWeatherStart": "Google Weather API を使用して天気データを取得しています..."
+    },
+    "store": {
+      "notSupportedChangeContext1": "変数 '",
+      "notSupportedChangeContext2": "' の値を '",
+      "notSupportedChangeContext3": "' に設定することはサポートされていません。変更はブロックされました。",
+      "resetting": "デフォルト設定を復元しています...",
+      "resetComplete": "リセットが完了しました。まもなくページがリロードされます..."
+    },
+    "api": {
+      "jsonpFailed": "JSONP リクエスト失敗",
+      "musicSource1Failed": "音楽ソース 1 リクエスト失敗:",
+      "musicSource2Failed": "音楽ソース 2 リクエスト失敗:"
+    },
+    "player": {
+      "musicLoaded": "音楽の読み込みが完了しました",
+      "play": "再生",
+      "amllFail": "AMLL TTML Database の呼び出しに失敗しました...",
+      "dwrcPilfering": "現在 {songServer} の《{name}》- '{artist}' を再生中です。猫は無事に {currentServer} から一文字ずつの歌詞を盗んできたニャ〜",
+      "syncDWRCLrcError": "Error in syncDWRCLrc:",
+      "autoPlayError": "自動再生に失敗しました。ブラウザのポリシーにより制限されている可能性があります。手動で再生ボタンをクリックしてみてください："
+    }
+  },
+  "components": {
+    "settings": {
+      "globalSettings": "グローバル設定",
+      "menu": {
+        "mobile": "モバイル設定メニュー",
+        "desktop": "デスクトップ設定メニュー"
+      },
+      "wallpaper": {
+        "changeSuccess": "壁紙の変更に成功したニャ！",
+        "backgrounds": {
+          "0": "NanoRocky のコレクション",
+          "1": "ランダム もふもふ",
+          "2": "ランダム Furry",
+          "3": "ランダム アニメ",
+          "4": "ランダム 猫耳",
+          "5": "ランダム 風景",
+          "6": "Bing 毎日ランダム画像"
+        },
+        "adjust": "壁紙調整",
+        "specify": "内蔵壁紙使用時に一時的に壁紙を指定",
+        "idEmpty": "壁紙 ID は空にできません！",
+        "idNotNumber": "壁紙 ID は数字のみです！",
+        "notBuiltin": "現在内蔵壁紙を使用していないため、この機能はサポートされていません！",
+        "advanced": "壁紙の高度な設定",
+        "autoSwitch": "壁紙の自動切り替え",
+        "setSuccess": "壁紙 ID を設定しました: {id}"
+      },
+      "noMoreOptions": "今は他にないニャ qwq",
+      "tabs": {
+        "personalWallpaper": "個別壁紙",
+        "themeSettings": "テーマ設定",
+        "personalization": "パーソナライズ",
+        "playerConfig": "プレイヤー設定",
+        "lyricSettings": "歌詞設定",
+        "voiceSettings": "音声設定",
+        "otherSettings": "その他の設定",
+        "devSettings": "開発設定"
+      },
+      "theme": {
+        "text": "テーマモード",
+        "system": "システムに従う",
+        "time": "時間に従う",
+        "bg": "背景に従う",
+        "light": "ライトモード",
+        "dark": "ダークモード"
+      },
+      "personalization": {
+        "siteStartShow": "サイト開設日を表示",
+        "musicClick": "音楽クリックでパネルを開く",
+        "seasonalEffects": "季節のエフェクトを表示",
+        "footerBlur": "フッターの背景をぼかす",
+        "footerProgressBar": "フッターに音楽プログレスバーを表示",
+        "title": "パーソナライズ設定",
+        "customName": "情報エリアにカスタム名を表示"
+      },
+      "player": {
+        "autoplay": "自動再生",
+        "randomOrder": "ランダム再生",
+        "loopMode": "ループモード",
+        "loopAll": "リスト",
+        "loopOne": "1曲",
+        "loopNone": "ループしない"
+      },
+      "lyric": {
+        "showFooterLyric": "フッターに歌詞を表示",
+        "useAMLL": "NetEase Cloud にない歌詞に AMLL TTML Database を呼び出す",
+        "amllNetworkWarning": "（Github ネットワークが不安定な場合、歌詞の読み込みが遅くなる可能性があります）",
+        "useAMLLMirror": "AMLL TTML Database 呼び出し時にミラーを使用",
+        "enableDWRC": "逐字歌詞（DWRC）マスタースイッチ",
+        "enableDWRCPro": "逐字効果拡張",
+        "removeMetadata": "逐字歌詞のメタデータを削除",
+        "pilfer": "東の壁を壊して西の壁を補う（歌詞の代替取得）",
+        "translate": "行ごとの歌詞翻訳表示"
+      },
+      "voice": {
+        "enableSwitch": "Web 音声対話マスタースイッチ",
+        "announceSongName": "曲名をアナウンス"
+      },
+      "tooltips": {
+        "version": "Version",
+        "poweredBy": "Powered by imsyy",
+        "extensionUpdates": "Extension Function Updates by NanoRocky",
+        "sourceCode": "Github ソースコードリポジトリ",
+        "extensionUpdateRepo": "拡張機能更新リポジトリ"
+      },
+      "updateLog": {
+        "title": "更新履歴"
+      },
+      "seasonalEffects": {
+        "title": "季節のエフェクト",
+        "winterSnow": "冬の雪",
+        "autumnFirefly": "秋のホタル",
+        "springLantern": "春の提灯"
+      },
+      "system": {
+        "weatherProvider": "天気プロバイダー",
+        "providerTencent": "テンセント",
+        "providerAMap": "高徳",
+        "providerGoogle": "Google",
+        "providerXiaomi": "Xiaomi",
+        "providerOioweb": "oioweb",
+        "languageSettings": "言語設定",
+        "autoLang": "自動",
+        "channel": "チャンネル",
+        "checkUpdate": "アップデートを確認",
+        "checkButton": "更新を確認",
+        "updateFound": "新しいバージョンが見つかりました",
+        "alreadyLatest": "すでに最新バージョンです！ v{version} 、 {type} 。",
+        "newVersion": "新しいバージョン v{version}、{type} が見つかりました。ぜひお試しください！",
+        "checkError": "バージョン確認エラーです。後でもう一度お試しくださいニャ〜",
+        "restoringDefault": "デフォルト設定を復元しています。少々お待ちください...",
+        "loadingInitial": "初期設定を読み込んでいます。少々お待ちください...",
+        "confirmReset": "本当に全ての設定をリセットしますか？ 操作は3回クリックした後に実行されます。"
+      }
+    },
+    "music": {
+      "musicList": "音楽リスト",
+      "backToHitokoto": "Hitokoto に戻る",
+      "partyNotStarted": "パーティーはまだ始まってないよ（？）",
+      "playerLoadFailed": "アナウンサーが消えちゃったニャ、音楽の読み込みに失敗しました qwq",
+      "playErrorNext": "曲の再生中にエラーが発生しました。2秒後に次の曲を再生します",
+      "playError": "曲の再生中にエラーが発生しました",
+      "playing": "再生中、「",
+      "ofSong": "」の曲、《",
+      "lyricLoading": "歌詞を読み込み中...",
+      "progressIconDisabled": "プログレス ICON の常駐が無効になりました",
+      "eh": "え？",
+      "songLoadFailedNext": "猫はこの曲を「歌えない」ニャ qwq。2秒後に次の曲を再生します",
+      "studioError": "スタジオで少しトラブルが発生しました。後でもう一度お試しください qwq",
+      "songErrorLog": "猫が曲を再生中にエラーが発生しました: ",
+      "songErrorPostfix": " ...",
+      "lrcSearching": "猫が歌詞を探しているニャ...",
+      "lrcNotFound": "猫はこの曲の歌詞を見つけられなかったニャ qwq",
+      "autoPlayError": "現在のブラウザのポリシーでは自動再生が許可されていないようです。手動で再生してニャ！"
+    },
+    "weather": {
+      "moduleName": "天気",
+      "failedToFetchData": "天気データの取得に失敗しました",
+      "failedToParseTemp": "温度データを解析できませんでした",
+      "failedToFetchLocation": "位置情報の取得に失敗しました",
+      "failedToLoadWeather": "天気の読み込みに失敗しました",
+      "unknownRegion": "未知の地域",
+      "internationalRegion": "海外地域",
+      "googleWindDirections": {
+        "NORTH": "北",
+        "SOUTH": "南",
+        "EAST": "東",
+        "WEST": "西",
+        "NORTHEAST": "北東",
+        "NORTHWEST": "北西",
+        "SOUTHEAST": "南東",
+        "SOUTHWEST": "南西",
+        "NORTH_NORTHEAST": "北北東",
+        "EAST_NORTHEAST": "東北東",
+        "EAST_SOUTHEAST": "東南東",
+        "SOUTH_SOUTHEAST": "南南東",
+        "SOUTH_SOUTHWEST": "南南西",
+        "WEST_SOUTHWEST": "西南西",
+        "WEST_NORTHWEST": "西北西",
+        "NORTH_NORTHWEST": "北北西"
+      },
+      "googleConditions": {
+        "CLEAR": "晴れ",
+        "MOSTLY_CLEAR": "ほぼ晴れ",
+        "PARTLY_CLOUDY": "所により曇り",
+        "MOSTLY_CLOUDY": "ほぼ曇り",
+        "CLOUDY": "曇り",
+        "WINDY": "風が強い",
+        "WIND_AND_RAIN": "風雨",
+        "LIGHT_RAIN_SHOWERS": "小雨",
+        "CHANCE_OF_SHOWERS": "にわか雨の可能性",
+        "SCATTERED_SHOWERS": "所によりにわか雨",
+        "RAIN_SHOWERS": "にわか雨",
+        "HEAVY_RAIN_SHOWERS": "激しいにわか雨",
+        "TYPE_UNSPECIFIED": "不明な天気"
+      },
+      "windPowerUnit": " 級",
+      "wind": "風",
+      "windDirections": [
+        "北",
+        "北東",
+        "東",
+        "東南",
+        "南",
+        "南西",
+        "西",
+        "北西"
+      ],
+      "beaufortScale": [
+        "無風",
+        "至軽風",
+        "軽風",
+        "軟風",
+        "和風",
+        "疾風",
+        "雄風",
+        "強風",
+        "大強風",
+        "烈風",
+        "狂風",
+        "暴風",
+        "台風"
+      ]
+    },
+    "hitokoto": {
+      "openPlayer": "音楽プレイヤーを開く",
+      "failedToFetch": "一言の取得に失敗しました",
+      "defaultText": "猫は考え中...",
+      "defaultFrom": "NanoRocky"
+    },
+    "links": {
+      "title": "サイトリスト"
+    },
+    "message": {
+      "resolutionTooLow": "現在の解像度が低すぎて拡張ボックスを開けないニャ qwq【こんなに「小さい」のにパーティー開きたいの！（違う）】"
+    },
+    "timeCapsule": {
+      "days": "日",
+      "title": "タイムカプセル",
+      "month": "今月",
+      "hours": "時間",
+      "year": "今年",
+      "passed": "経過",
+      "day": "今日",
+      "remaining": "残り",
+      "week": "今週",
+      "sitePassed": "このサイトはすでに {years} 年 {months} ヶ月 {days} 日 生き延びています"
+    },
+    "social": {
+      "defaultTip": "友達になるニャ？",
+      "Tip": "Find NanoRocky",
+      "TipI": "Find NanoRocky"
+    },
+    "background": {
+      "loadConfigFailed": "壁紙設定ファイルの読み込みに失敗しました:",
+      "loadFailedSwitched": "壁紙の読み込みに失敗しました。一時的にデフォルトに戻しました",
+      "loadError": "壁紙の読み込みに失敗しました",
+      "loadSuccess": "壁紙の読み込みとアニメーションが完了しました"
+    },
+    "moreContent": {
+      "hello": "こんにちは〜"
+    }
+  },
+  "utils": {
+    "time": {
+      "today": "今日",
+      "thisWeek": "今週",
+      "thisMonth": "今月",
+      "thisYear": "今年",
+      "weekdays": {
+        "sun": "日曜日",
+        "mon": "月曜日",
+        "tue": "火曜日",
+        "wed": "水曜日",
+        "thu": "木曜日",
+        "fri": "金曜日",
+        "sat": "土曜日"
+      },
+      "greetings": {
+        "lateNight1": "夜中ですよ、もう寝る時間！",
+        "morning1": "おはよう、早起きだね〜",
+        "morning2": "おはよう、また新しい一日だね〜",
+        "forenoon": "おはようございます！",
+        "noon": "こんにちは、午前中お疲れ様。エネルギーを補給しよう〜",
+        "afternoon": "こんにちは！",
+        "dusk": "こんばんは、美味しい夕食を食べてリラックスしよう〜",
+        "evening": "こんばんは、少し楽しんでリラックスしてね〜",
+        "lateNight2": "深夜です！夜も更けました、おやすみなさい w",
+        "lateNight3": "深夜です！もうすぐ夜明けだよ、早く休んでね〜"
+      },
+      "welcome": " ここへようこそ〜",
+      "todayIs": "今日は",
+      "holidays": {
+        "qingming": "清明節",
+        "wenchuan": "汶川大地震記念日",
+        "kangzhan": "中国人民抗日戦争記念日",
+        "jiuyiba": "九・一八事変記念日",
+        "nanjing": "南京大虐殺犠牲者国家追悼の日"
+      }
+    },
+    "system": {
+      "canvasError": "canvas の 2d コンテキストを取得できません",
+      "imageColorError": "色を抽出するために画像を処理できません"
+    },
+    "speech": {
+      "noFileNameProvided": "No file name provided",
+      "failedToGenerateAudioURL": "Failed to generate audio URL"
+    },
+    "decodeDWQYRC": {
+      "notVerbatimLyric": "歌詞ファイルが逐字歌詞ではありません",
+      "parseError": "歌詞の解析中にエラーが発生しました："
+    }
+  },
+  "validation": {
+    "invalidValue": "変数 '{key}' の値を '{value}' に設定することはサポートされていません。変更はブロックされました。"
+  }
+}

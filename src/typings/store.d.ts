@@ -26,10 +26,10 @@ export interface MainState {
   playerArtist: string | null;
   playerAlbum: string | null;
   playerLrc:
-    | [boolean, string, string, string, string, string, string][]
-    | [boolean, string, string, string, string, string][]
-    | [boolean, string, string, string, string][]
-    | [boolean, string][];
+  | [boolean, string, string, string, string, string, string][]
+  | [boolean, string, string, string, string, string][]
+  | [boolean, string, string, string, string][]
+  | [boolean, string][];
   playerLrcShow: boolean;
   footerBlur: boolean;
   footerProgressBar: boolean;
@@ -62,4 +62,5 @@ export interface MainState {
   showProgressIcon: boolean;
   showProgressIconState: number;
   theme: "system" | "time" | "bg" | "light" | "dark";
+  weatherProvider: "auto" | "tencent" | "amap" | "google" | "xiaomi" | "oioweb";
 }

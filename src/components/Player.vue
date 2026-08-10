@@ -156,9 +156,9 @@ onMounted(() => {
               if (playPromise !== undefined) {
                 playPromise.catch((error) => {
                   if (error.name === 'NotAllowedError') {
-                    console.warn(t('player.console.autoPlayError'), error);
+                    console.warn(t('console.player.autoPlayError'), error);
                     ElMessage({
-                      message: t('music.autoPlayError'),
+                      message: t('components.music.autoPlayError'),
                       grouping: true,
                       icon: h(PlayWrong, {
                         theme: "filled",
@@ -186,13 +186,13 @@ onMounted(() => {
           navigator.mediaSession.setActionHandler("seekbackward", () => { seekbackward(5) });
           navigator.mediaSession.setActionHandler("seekforward", () => { seekforward(5) });
         };
-        console.log(t('player.console.musicLoaded'));
+        console.log(t('console.player.musicLoaded'));
       });
     } catch (err) {
       console.error(err);
       store.musicIsOk = false;
       ElMessage({
-        message: t("music.playerLoadFailed"),
+        message: t("components.music.playerLoadFailed"),
         grouping: true,
         icon: h(PlayWrong, {
           theme: "filled",
@@ -212,7 +212,7 @@ onMounted(() => {
 // 播放
 const onPlay = () => {
   if (!player.value) return;
-  console.log(t('player.console.play'));
+  console.log(t('console.player.play'));
   nowLineIndex.value = -1;
   playIndex.value = player.value.aplayer.index;
   const currentTrack = playList.value[playIndex.value];
@@ -255,9 +255,9 @@ const onPlay = () => {
       const voice = envConfig.VITE_TTS_Voice;
       const vstyle = envConfig.VITE_TTS_Style;
       Speech(
-        t("music.playing") +
+        t("components.music.playing") +
         store.getPlayerData.artist +
-        t("music.ofSong") +
+        t("components.music.ofSong") +
         store.getPlayerData.name +
         "》。",
         voice,
@@ -357,7 +357,7 @@ const seektime = (value) => {
 const loadMusicError = () => {
   let notice = "";
   if (playList.value.length > 1) {
-    notice = t("music.songLoadFailedNext");
+    notice = t("components.music.songLoadFailedNext");
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
@@ -365,7 +365,7 @@ const loadMusicError = () => {
       SpeechLocal("歌曲加载失败.mp3");
     };
   } else {
-    notice = t("music.studioError");
+    notice = t("components.music.studioError");
     if (store.webSpeech) {
       stopSpeech();
       const voice = envConfig.VITE_TTS_Voice;
@@ -383,7 +383,7 @@ const loadMusicError = () => {
     }),
   });
   console.error(
-    t("music.songErrorLog") + player.value!.aplayer.audio[player.value!.aplayer.index].name + t("music.songErrorPostfix"),
+    t("components.music.songErrorLog") + player.value!.aplayer.audio[player.value!.aplayer.index].name + t("components.music.songErrorPostfix"),
   );
 };
 
@@ -437,7 +437,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
         store.dwrcEnable = false;
       } else if (!amllSource.ok) {
         if (playIndex.value !== expectedIndex) return;
-        throw new Error(t('player.console.amllFail'));
+        throw new Error(t('console.player.amllFail'));
       } else {
         const amllText = await amllSource.text();
         if (playIndex.value !== expectedIndex) return;
@@ -552,7 +552,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
             store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
             store.dwrcLoading = false;
             store.dwrcEnable = true;
-            console.log(t('player.console.dwrcPilfering', { songServer, name: store.getPlayerData.name, artist: store.getPlayerData.artist, currentServer }));
+            console.log(t('console.player.dwrcPilfering', { songServer, name: store.getPlayerData.name, artist: store.getPlayerData.artist, currentServer }));
             return;
           } else {
             store.dwrcTemp = [];
@@ -650,14 +650,14 @@ function syncDWRCLrc() {
       const lyrics = player.value.aplayer.lyrics[playIndex.value];
       const playerLyricIndex = player.value.aplayer.lyricIndex;
       if (!lyrics || !lyrics[playerLyricIndex]) {
-        const lrc = t("music.lrcSearching");
+        const lrc = t("components.music.lrcSearching");
         if (store.playerLrc.length !== 1 || store.playerLrc[0][4] !== lrc) {
           store.setPlayerLrc([[true, 1, 0, 0, lrc]]);
         }
       } else {
         let lrc = lyrics[playerLyricIndex][1];
-        if (lrc === "Loading") lrc = t("music.lrcSearching");
-        else if (lrc === "Not available" || lrc === "Not availible") lrc = t("music.lrcNotFound");
+        if (lrc === "Loading") lrc = t("components.music.lrcSearching");
+        else if (lrc === "Not available" || lrc === "Not availible") lrc = t("components.music.lrcNotFound");
         if (store.playerLrc.length !== 1 || store.playerLrc[0][4] !== lrc || store.playerLrc[0][2] !== playerLyricIndex) {
           store.setPlayerLrc([[true, 1, playerLyricIndex, 0, lrc]]);
         };
@@ -700,7 +700,7 @@ function syncDWRCLrc() {
       store.setPlayerLrc(dwrcLyric);
     };
   } catch (error) {
-    console.error("Error in syncDWRCLrc:", error);
+    console.error(t('console.player.syncDWRCLrcError'), error);
   } finally {
     requestAnimationFrame(syncDWRCLrc);
   };

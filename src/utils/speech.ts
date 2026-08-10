@@ -1,4 +1,5 @@
 import { gasA, gasC } from "@/utils/authServer";
+import i18n from "@/locales";
 
 
 let currentAudio: HTMLAudioElement | null = null;
@@ -63,7 +64,7 @@ export function Speech(
         const speechapi = envConfig.VITE_TTS_API;
         const key = envConfig.VITE_TTS_SKEY;
         if (!speechapi || speechapi === "" || speechapi === null) {
-          console.error("语音服务API未配置。");
+          console.error(i18n.global.t('console.voice.apiNotConfigured'));
           return;
         };
         if (!key) {
@@ -97,9 +98,9 @@ export function Speech(
       } catch (error) {
         const err = error as Error;
         if (err.name === "AbortError") {
-          console.log("Request canceled");
+          console.log(i18n.global.t('console.voice.requestCanceled'));
         } else {
-          console.error("Error:", err.message);
+          console.error(i18n.global.t('console.voice.error'), err.message);
           reject(err);
         };
       };
@@ -184,7 +185,7 @@ export function SpeechLocal(
 ): Promise<void> {
   return new Promise<void>(async (resolve, reject) => {
     if (!fileName) {
-      reject(new Error("No file name provided"));
+      reject(new Error(i18n.global.t('utils.speech.noFileNameProvided')));
       return;
     };
 
@@ -197,7 +198,7 @@ export function SpeechLocal(
       audioUrlS = audioUrl;
     };
     if (!audioUrlS) {
-      reject(new Error("Failed to generate audio URL"));
+      reject(new Error(i18n.global.t('utils.speech.failedToGenerateAudioURL')));
       return;
     };
     // 如果有现有的等待，取消之前的 timeout

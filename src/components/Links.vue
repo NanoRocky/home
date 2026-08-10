@@ -5,8 +5,8 @@
         <Link />
       </Icon>
       <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
-        @click="store.setOpenState = !store.setOpenState">{{ $t('links.title') }}</span>
-      <span class="title" v-else>{{ $t('links.title') }}</span>
+        @click="store.setOpenState = !store.setOpenState">{{ $t('components.links.title') }}</span>
+      <span class="title" v-else>{{ $t('components.links.title') }}</span>
     </div>
     <!-- 网站列表 -->
     <Swiper v-if="siteLinks[0]" :modules="[Pagination, Mousewheel]" :slides-per-view="1" :space-between="40"

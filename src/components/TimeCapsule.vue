@@ -2,25 +2,25 @@
   <div class="time-capsule">
     <div class="title">
       <hourglass-full theme="two-tone" size="24" :fill="['var(--time-icon-one-color)', 'var(--time-icon-two-color)']" />
-      <span>{{ $t('timeCapsule.title') }}</span>
+      <span>{{ $t('components.timeCapsule.title') }}</span>
     </div>
     <div v-if="timeData" class="all-capsule">
       <div v-for="(item, tag, index) in timeData" :key="index" class="capsule-item">
         <div class="item-title">
           <span class="percentage">
-            {{ $t(`timeCapsule.${tag}`) }}{{ $t('timeCapsule.passed') }}
+            {{ $t(`components.timeCapsule.${tag}`) }}{{ $t('components.timeCapsule.passed') }}
             <strong>{{ item.passed }}</strong>
-            {{ tag === "day" ? $t('timeCapsule.hours') : $t('timeCapsule.days') }}
+            {{ tag === "day" ? $t('components.timeCapsule.hours') : $t('components.timeCapsule.days') }}
           </span>
           <span class="remaining">
-            {{ $t('timeCapsule.remaining') }}&nbsp;{{ item.remaining }}&nbsp;{{ tag === "day" ? $t('timeCapsule.hours') : $t('timeCapsule.days') }}
+            {{ $t('components.timeCapsule.remaining') }}&nbsp;{{ item.remaining }}&nbsp;{{ tag === "day" ? $t('components.timeCapsule.hours') : $t('components.timeCapsule.days') }}
           </span>
         </div>
         <el-progress :text-inside="true" :stroke-width="20" :percentage="Number(item.percentage)" />
       </div>
       <!-- 建站日期 -->
       <div v-if="store.siteStartShow && startDateText" class="capsule-item start">
-        <div class="item-title">{{ $t('timeCapsule.sitePassed', { years: startDateText[0], months: startDateText[1], days: startDateText[2] }) }}</div>
+        <div class="item-title">{{ $t('components.timeCapsule.sitePassed', { years: startDateText[0], months: startDateText[1], days: startDateText[2] }) }}</div>
       </div>
     </div>
   </div>

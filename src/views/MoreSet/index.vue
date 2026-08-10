@@ -14,7 +14,7 @@
         <!-- 移动端设置菜单 -->
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">{{ $t('moreSet.globalSettings') }}</span>
+          <span class="name">{{ $t('components.settings.globalSettings') }}</span>
         </div>
         <div class="mobileset-scrollable">
           <Set />
@@ -55,7 +55,7 @@
       <el-col :span="12" class="right">
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">{{ $t('moreSet.globalSettings') }}</span>
+          <span class="name">{{ $t('components.settings.globalSettings') }}</span>
         </div>
         <div class="set-scrollable">
           <Set />
@@ -96,7 +96,7 @@ const toggleVer = () => {
   if (chuover > 4) {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: t('moreSet.pokeMore'),
+      message: t('views.moreSet.pokeMore'),
     });
     if (store.webSpeech) {
       stopSpeech();
@@ -108,7 +108,7 @@ const toggleVer = () => {
   } else {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: t('moreSet.poke'),
+      message: t('views.moreSet.poke'),
     });
     if (store.webSpeech) {
       stopSpeech();

@@ -62,12 +62,12 @@ export const checkForUpdate = async (
         const repoUrl = versionInfo.upa === 'imsyy' ? config.github : config.efug;
         const repoInfo = extractRepoInfo(repoUrl);
         if (!repoInfo) {
-            throw new Error('无效的 GitHub 仓库 URL');
+            throw new Error(i18n.global.t('console.update.invalidGithubUrl'));
         };
         const apiUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/releases/latest`;
         const response = await fetch(apiUrl);
         if (!response.ok) {
-            throw new Error(`GitHub API 错误: ${response.status}`);
+            throw new Error(`${i18n.global.t('console.update.githubApiError')}${response.status}`);
         };
         const releaseData = await response.json();
         const latestTag = releaseData.tag_name;
@@ -135,7 +135,7 @@ export const checkForUpdate = async (
             versionType: extractedType
         };
     } catch (error) {
-        console.error('更新检查失败:', error);
+        console.error(i18n.global.t('console.update.updateCheckFailed'), error);
         return {
             status: 'error',
             latestVersion: '0.0.0',

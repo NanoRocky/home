@@ -31,7 +31,7 @@ export const storeState: MainState = {
   playerTitle: null as string | null, // 【缓存】当前播放歌曲名
   playerArtist: null as string | null, // 【缓存】当前播放歌手名
   playerAlbum: null as string | null, // 【缓存】当前播放专辑名
-  playerLrc: [[true, i18n.global.t('music.lrcSearching')]], // 【缓存】当前播放歌词
+  playerLrc: [[true, i18n.global.t('components.music.lrcSearching')]], // 【缓存】当前播放歌词
   playerLrcShow: true, // 【开关】是否显示底栏歌词
   footerBlur: true, // 【开关】底栏模糊
   footerProgressBar: true, // 【开关】是否显示底栏进度条
@@ -65,6 +65,7 @@ export const storeState: MainState = {
   showProgressIcon: false, // 【状态】进度条图标显示状态
   showProgressIconState: 0, // 【状态】进度条图标持续显示状态，0: 未悬停不显示，1: 已悬停显示，2: 始终显示
   theme: "system", // 【开关】主题，"system"/"time"/"bg"/"light"/"dark"。
+  weatherProvider: "auto", // 【开关】天气接口提供商，"auto"/"tencent"/"amap"/"google"/"xiaomi"/"oioweb"
 };
 
 export const mainStore = defineStore("main", {
@@ -198,6 +199,7 @@ export const mainStore = defineStore("main", {
         "setV",
         "msgNameShow",
         "language",
+        "weatherProvider"
       ],
     },
   ],

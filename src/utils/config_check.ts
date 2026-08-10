@@ -38,6 +38,8 @@ export const envConfig: Env = {
         ? import.meta.env.VITE_TX_WEATHER_KEY || exampleConfig.VITE_TX_WEATHER_KEY : exampleConfig.VITE_TX_WEATHER_KEY,
     VITE_GD_WEATHER_KEY: import.meta.env.VITE_CONFIG_TURN == 'true'
         ? import.meta.env.VITE_GD_WEATHER_KEY || exampleConfig.VITE_GD_WEATHER_KEY : exampleConfig.VITE_GD_WEATHER_KEY,
+    VITE_GOOGLE_WEATHER_KEY: import.meta.env.VITE_CONFIG_TURN == 'true'
+        ? import.meta.env.VITE_GOOGLE_WEATHER_KEY || exampleConfig.VITE_GOOGLE_WEATHER_KEY : exampleConfig.VITE_GOOGLE_WEATHER_KEY,
     VITE_SITE_START: import.meta.env.VITE_CONFIG_TURN == 'true'
         ? import.meta.env.VITE_SITE_START || exampleConfig.VITE_SITE_START : exampleConfig.VITE_SITE_START,
     VITE_SITE_ICP: import.meta.env.VITE_CONFIG_TURN == 'true'

@@ -34,7 +34,7 @@ const mountApp = () => {
   app.mount("#app");
   const store = mainStore();
   if (import.meta.env.DEV) {
-    console.log(i18n.global.t('main.devMode'));
+    console.log(i18n.global.t('views.main.devMode'));
     /* 自动启用开发者选项 */
     store.setV = true;
     /* 在开发状态下挂载 store 以进行测试 */
@@ -48,7 +48,7 @@ const mountApp = () => {
   if (urlParams.get("set") === "reset") {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: i18n.global.t('devSet.restoringDefault'),
+      message: i18n.global.t('components.settings.system.restoringDefault'),
     });
     if (store.webSpeech) {
       stopSpeech();
@@ -118,15 +118,11 @@ if (!import.meta.env.VITE_CONFIG_TURN || import.meta.env.VITE_CONFIG_TURN != "tr
     });
 } else {
   if (config.author != "imsyy" || config.efua != "NanoRocky") {
-    console.warn(
-      `Warning: Somethings error ... , The original author information for this project has been modified. If this was not done by you, please delete the file and download the project code package again. If this was done by you, please do not modify or remove the original author information. Thank you! Of course, you can also choose to ignore this message.`,
-    );
-    console.log("Original repository link: https://github.com/NanoRocky/home/blob/EFU/");
+    console.warn(i18n.global.t('console.main.authorWarning'));
+    console.log(i18n.global.t('console.main.repoLink'));
   } else if (envConfig.VITE_SITE_AUTHOR != "酪灰") {
-    console.error(
-      `Warning: This version is not permitted for public use. Please use the public version.`,
-    );
-    console.log("Original repository link: https://github.com/NanoRocky/home/blob/EFU/");
+    console.error(i18n.global.t('console.main.privateVersionWarning'));
+    console.log(i18n.global.t('console.main.repoLink'));
   } else {
     mountApp();
   }

@@ -70,7 +70,7 @@ async function loadConfig() {
       return true;
     };
   } catch (error) {
-    console.error(t('background.loadConfigFailed'), error);
+    console.error(t('components.background.loadConfigFailed'), error);
     bgRandom = Math.floor(Math.random() * bgImageCount + 1);
     bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
     sBGCountN = null;
@@ -176,9 +176,9 @@ const changeBg = async (type) => {
       // 预加载新壁纸
       const result = await preloadImage(newBgUrl);
       if (!result.ok) {
-        console.error(t('background.loadError'));
+        console.error(t('components.background.loadError'));
         ElMessage({
-          message: t('background.loadError'),
+          message: t('components.background.loadError'),
           icon: h(Error, {
             theme: "filled",
             fill: "var(--el-message-icon-color)",
@@ -270,16 +270,16 @@ const imgLoadComplete = (event) => {
 
 // 图片动画完成
 const imgAnimationEnd = () => {
-  console.log(t('background.loadSuccess'));
+  console.log(t('components.background.loadSuccess'));
   // 加载完成事件
   emit("loadComplete");
 };
 
 // 图片显示失败
 const imgLoadError = async () => {
-  console.error(t('background.loadError') + "：", currentBgUrl.value);
+  console.error(t('components.background.loadError') + "：", currentBgUrl.value);
   ElMessage({
-    message: t('background.loadError'),
+    message: t('components.background.loadError'),
     icon: h(Error, {
       theme: "filled",
       fill: "var(--el-message-icon-color)",

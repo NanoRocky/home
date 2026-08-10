@@ -1,339 +1,419 @@
 {
   "common": {
-    "enable": "Enable",
-    "disable": "Disable",
-    "unknown": "Unknown",
-    "loading": "Loading...",
-    "error": "Error",
-    "warning": "Warning",
-    "confirm": "Confirm",
-    "continue": "Continue",
-    "cancel": "Cancel",
-    "on": "On",
-    "off": "Off"
-  },
-  "app": {
-    "version": "Version: ",
-    "home": "Home: ",
-    "github": "Github: ",
-    "update": "Update: ",
-    "maintainedBy": "Currently maintained by NanoRocky.",
-    "title": "NanoRocky's Home",
-    "rightClickWarning": "For a better experience, right-click has been eaten by the cat!",
-    "themeChangeFailed": "Failed to change background theme, fallback to system setting.",
-    "wallpaperPreviewDisabled": "Nope nope... Wallpaper preview is disabled. The default wallpapers are NanoRocky's collection, copyrights belong to the original owners. They are for decoration only, preview and download are not provided~ ",
-    "wallpaperPreviewEnable": "Enable Wallpaper Preview",
-    "wallpaperPreviewDisable": "Exited Wallpaper Preview"
-  },
-  "main": {
-    "devMode": "Running in development mode.",
-    "resettingConfig": "Resetting to default configuration, please wait...",
-    "siteUpdated": "The site has been updated, please refresh the page!",
-    "noConfigWarningLog": "Warning: It seems you haven't enabled the config file, the project may behave abnormally! Please configure the .env file before running the project!",
-    "noConfigDetect": "We detected that you haven't created a config file, the project may behave abnormally!",
-    "canceled": "Canceled",
-    "console": {
-      "authorWarning": "Warning: Somethings error ... , The original author information for this project has been modified. If this was not done by you, please delete the file and download the project code package again. If this was done by you, please do not modify or remove the original author information. Thank you! Of course, you can also choose to ignore this message.",
-      "repoLink": "Original repository link: https://github.com/NanoRocky/home/blob/EFU/",
-      "privateVersionWarning": "Warning: This version is not permitted for public use. Please use the public version."
-    }
-  },
-  "setting": {
-    "globalSettings": "Global Settings",
-    "mobileSettingsMenu": "Mobile Settings Menu",
-    "desktopSettingsMenu": "Desktop Settings Menu",
-    "wallpaperChangeSuccess": "Wallpaper changed successfully meow!",
-    "noMoreOptions": "No more options available qwq",
-    "tabs": {
-      "personalWallpaper": "Wallpapers",
-      "themeSettings": "Themes",
-      "personalization": "Personalization",
-      "playerConfig": "Player",
-      "lyricSettings": "Lyrics",
-      "voiceSettings": "Voice",
-      "otherSettings": "Others",
-      "devSettings": "Developer Settings"
+    "status": {
+      "enable": "Enable",
+      "disable": "Disable",
+      "unknown": "Unknown",
+      "loading": "Loading...",
+      "error": "Error",
+      "warning": "Warning",
+      "on": "On",
+      "off": "Off"
     },
-    "backgrounds": {
-      "0": "NanoRocky's Collection",
-      "1": "Random Fursuit Friday",
-      "2": "Random Furry",
-      "3": "Random Anime",
-      "4": "Random Cat Ears",
-      "5": "Random Landscapes",
-      "6": "Bing Daily Random"
+    "action": {
+      "confirm": "Confirm",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "reset": "Reset",
+      "resetAll": "Reset All Settings"
     },
-    "themes": {
-      "text": "Theme Mode",
-      "system": "System",
-      "time": "Time",
-      "bg": "Background",
-      "light": "Light Mode",
-      "dark": "Dark Mode"
+    "unit": {
+      "sec": "Sec",
+      "year": "Year",
+      "month": "Month",
+      "day": "Day"
     },
-    "personalization": {
-      "siteStartShow": "Show Site Start Date",
-      "musicClick": "Open Panel on Music Click",
-      "seasonalEffects": "Show Seasonal Effects",
-      "footerBlur": "Footer Background Blur",
-      "footerProgressBar": "Show Footer Music Progress Bar"
-    },
-    "player": {
-      "autoplay": "Autoplay",
-      "randomOrder": "Random",
-      "loopMode": "Loop Mode",
-      "loopAll": "List",
-      "loopOne": "Single",
-      "loopNone": "None"
-    },
-    "lyric": {
-      "showFooterLyric": "Show Footer Lyric",
-      "useAMLL": "Allow AMLL TTML Database for fetching lyrics not present in NetEase Cloud",
-      "amllNetworkWarning": "(Lyric loading might be slow due to unstable Github network)",
-      "useAMLLMirror": "Use mirror acceleration via AMLL TTML Database",
-      "enableDWRC": "Master Switch for Word-by-Word Lyrics",
-      "enableDWRCPro": "Enhanced Effect for Word-by-Word Lyrics",
-      "removeMetadata": "Remove Metadata from Word-by-Word Lyrics",
-      "pilfer": "Rob Peter to Pay Paul",
-      "translate": "Line-by-Line Lyric Translation"
-    },
-    "voice": {
-      "enableSwitch": "Web Voice Interaction Master Switch",
-      "announceSongName": "Announce Song Name",
-      "console": {
-        "apiNotConfigured": "Voice service API is not configured.",
-        "requestCanceled": "Request canceled",
-        "error": "Error:"
-      }
-    },
-    "tooltips": {
-      "version": "Version",
-      "poweredBy": "Powered by imsyy",
-      "extensionUpdates": "Extension Function Updates by NanoRocky",
-      "sourceCode": "Github Source Code Repository",
-      "extensionUpdateRepo": "Extension Update Repository"
-    },
-    "easterEggs": {
-      "pokeMessage1": "Why are you still poking! Is there really a mystery meow...?",
-      "pokeMessage2": "Eh? Are you looking for... some mysterious things?"
-    },
-    "updateLog": {
-      "title": "Update Log"
-    }
-  },
-  "devSet": {
-    "seasonalEffects": "Seasonal Effects",
-    "winterSnow": "Winter Snow",
-    "autumnFirefly": "Autumn Firefly",
-    "springLantern": "Spring Lantern",
-    "wallpaperAdjust": "Wallpaper Adjustment",
-    "specifyWallpaper": "Temporarily specify a wallpaper when using built-in wallpapers",
-    "wallpaperIdEmpty": "Wallpaper ID cannot be empty!",
-    "wallpaperIdNotNumber": "Wallpaper ID must be numeric only!",
-    "notBuiltinWallpaper": "Currently using a not-builtin wallpaper, this feature is not supported!",
-    "personalization": "Personalization Settings",
-    "customName": "Custom Name Display in Info Panel",
-    "advancedWallpaper": "Advanced Wallpaper Settings",
-    "autoSwitch": "Auto Switch Wallpapers",
-    "sec": "seconds",
-    "reset": "Reset",
-    "resetAll": "Reset All Settings",
-    "languageSettings": "Language Settings",
-    "autoLang": "Auto",
-    "channel": "Channel",
-    "checkUpdate": "Check for Updates",
-    "checkButton": "Check",
-    "versions": {
+    "version": {
       "preview": "Preview",
       "dev": "Dev",
       "early": "Early Access",
       "stable": "Stable",
       "unknown": "Unknown Version"
+    }
+  },
+  "app": {
+    "info": {
+      "version": "Version: ",
+      "home": "Home: ",
+      "github": "Github: ",
+      "update": "Update: ",
+      "maintainedBy": "Currently maintained by NanoRocky.",
+      "title": "NanoRocky's Homepage"
     },
-    "updateFound": "New version found",
-    "console": {
+    "event": {
+      "rightClickWarning": "For a better experience, right-click has been eaten by the cat!",
+      "themeChangeFailed": "Theme switch failed, falling back to follow system."
+    },
+    "wallpaper": {
+      "previewDisabled": "Wallpaper preview is disabled. The default wallpapers are NanoRocky's collection, all rights reserved. They are for decoration only and cannot be previewed or downloaded. Sorry!",
+      "previewEnable": "Enable Wallpaper Preview",
+      "previewDisable": "Disable Wallpaper Preview"
+    }
+  },
+  "views": {
+    "main": {
+      "devMode": "Currently in development mode.",
+      "resettingConfig": "Restoring default configuration, please wait...",
+      "siteUpdated": "Website updated, please refresh the page meow!",
+      "noConfigWarningLog": "Warning: You seem to have no configuration file enabled, the project may encounter exceptions! Please configure the .env file before running the project!",
+      "noConfigDetect": "It seems you haven't created a configuration file, the project may encounter exceptions!",
+      "canceled": "Canceled"
+    },
+    "moreSet": {
+      "pokeMore": "Why are you still poking! Is there something that secret miaow...?",
+      "poke": "Eh? Are you looking for... something secret?"
+    }
+  },
+  "console": {
+    "main": {
+      "authorWarning": "Warning: Somethings error ... , The original author information for this project has been modified. If this was not done by you, please delete the file and download the project code package again. If this was done by you, please do not modify or remove the original author information. Thank you! Of course, you can also choose to ignore this message.",
+      "repoLink": "Original repository link: https://github.com/NanoRocky/home/blob/EFU/",
+      "privateVersionWarning": "Warning: This version is not permitted for public use. Please use the public version."
+    },
+    "voice": {
+      "apiNotConfigured": "Voice service API is not configured.",
+      "requestCanceled": "Request canceled",
+      "error": "Error:"
+    },
+    "update": {
       "updateCheckFailed": "Update check failed:",
       "invalidGithubUrl": "Invalid GitHub repository URL",
       "githubApiError": "GitHub API Error: "
     },
-    "preview": "Preview",
-    "development": "Development",
-    "beta": "Beta",
-    "release": "Release",
-    "unknownVersion": "Unknown Version",
-    "alreadyLatest": "Already on the latest version! v{version}, {type}.",
-    "newVersion": "Found new version v{version}, {type}, go and try it!",
-    "checkError": "Version check error, please try again later~",
-    "restoringDefault": "Restoring default settings, please wait...",
-    "loadingInitial": "Loading initial settings, please wait...",
-    "confirmReset": "Are you sure you want to reset all settings? It will trigger after 3 clicks.",
-    "notSupportedCustom": "Currently not using built-in wallpaper, this feature is not supported!",
-    "wallpaperEmpty": "Wallpaper ID cannot be empty!",
-    "wallpaperNotNumber": "Wallpaper ID must be pure numbers!",
-    "wallpaperSetSuccess": "Successfully set wallpaper ID: {id}"
-  },
-  "music": {
-    "musicList": "Music List",
-    "backToHitokoto": "Back to Hitokoto",
-    "partyNotStarted": "The party hasn't started (?)",
-    "playerLoadFailed": "The announcer disappeared, failed to load music qwq",
-    "playErrorNext": "An error occurred while playing the song, player will skip in 2s",
-    "playError": "An error occurred while playing the song",
-    "playing": "Now Playing \"",
-    "ofSong": "\" by <",
-    "lyricLoading": "Loading lyrics...",
-    "progressIconDisabled": "Progress ICON persistence disabled",
-    "eh": "Eh?",
-    "songLoadFailedNext": "The cat 'can't sing' this song qwq, will play the next song in 2 seconds",
-    "studioError": "A small glitch occurred in the broadcasting studio, please try again later qwq",
-    "songErrorLog": "The cat playing song: ",
-    "songErrorPostfix": " encountered an error...",
-    "lrcSearching": "The cat is searching for lyrics...",
-    "lrcNotFound": "The cat didn't find the lyrics for this song qwq",
-    "autoPlayError": "The current browser policy seems to disallow autoplay, please manually play the music meow!"
-  },
-  "weather": {
-    "moduleName": "Weather",
-    "failedToFetchData": "Failed to fetch weather data",
-    "failedToParseTemp": "Unable to parse temperature data",
-    "failedToFetchLocation": "Failed to fetch location info",
-    "failedToLoadWeather": "Failed to load weather",
-    "unknownRegion": "Unknown Region",
-    "windPowerUnit": "lvl",
-    "wind": " Wind",
-    "console": {
+    "weather": {
       "weatherTencentLog1": "Using Tencent Weather API",
-      "weatherTencentLog2": "Using Tencent Weather API, Auth mode activated",
-      "weatherAMapLog": "AMap API IP fetch failed, calling alternative API for IPV4 address...",
-      "calcTempError": "The cat doesn't know how to calculate the fetched temperature data qwq:",
+      "weatherTencentLog2": "Using Tencent Weather API, authentication enabled",
+      "weatherAMapLog": "AMap API IP fetch failed, calling extra API for IPv4 address...",
+      "calcTempError": "Cat doesn't know how to calculate the temperature data qwq:",
       "xiaomiWeatherLog": "Using Xiaomi Weather API",
-      "missingKeyUseBackup": "Weather API key not configured, using backup weather API",
+      "missingKeyUseBackup": "Weather API key not configured, using backup API",
       "useAMap": "Using AMap Weather API",
-      "aMapFailedUseBackup": "AMap weather API failed, attempting backup API",
-      "tencentFailedUseAMap": "Tencent weather API failed, attempting AMap weather API",
-      "weatherFetchFailed": "The cat doesn't know today's weather either qwq:"
-    }
-  },
-  "hitokoto": {
-    "openPlayer": "Open Music Player",
-    "failedToFetch": "Failed to fetch Hitokoto",
-    "defaultText": "The cat is thinking...",
-    "defaultFrom": "NanoRocky"
-  },
-  "links": {
-    "title": "Site List"
-  },
-  "message": {
-    "resolutionTooLow": "Current display resolution is too low to open the expansion box !"
-  },
-  "timeCapsule": {
-    "days": "days",
-    "title": "Time Capsule",
-    "month": "This Month",
-    "hours": "hrs",
-    "year": "This Year",
-    "passed": "passed",
-    "day": "Today",
-    "remaining": "remaining",
-    "week": "This Week",
-    "sitePassed": "This site has survived for {years} years, {months} months, {days} days"
-  },
-  "social": {
-    "defaultTip": "Wanna be friends meow?"
-  },
-  "background": {
-    "loadConfigFailed": "Failed to load wallpaper configuration:",
-    "loadFailedSwitched": "Wallpaper loading failed, temporarily switched to default",
-    "loadError": "Wallpaper loading failed",
-    "loadSuccess": "Wallpaper loaded and animation complete"
-  },
-  "time": {
-    "year": "Y",
-    "month": "M",
-    "day": "D",
-    "today": "Today",
-    "thisWeek": "This Week",
-    "thisMonth": "This Month",
-    "thisYear": "This Year",
-    "weekdays": {
-      "sun": "Sun",
-      "mon": "Mon",
-      "tue": "Tue",
-      "wed": "Wed",
-      "thu": "Thu",
-      "fri": "Fri",
-      "sat": "Sat"
-    },
-    "greetings": {
-      "lateNight1": "Good late night, it's time to sleep!",
-      "morning1": "Good morning, getting up so early~",
-      "morning2": "Good morning, it's a brand new day~",
-      "forenoon": "Good morning!",
-      "noon": "Good noon, grab some energy after a busy morning~",
-      "afternoon": "Good afternoon!",
-      "dusk": "Good evening, enjoy a delicious dinner and take a rest~",
-      "evening": "Good evening, have some fun and relax~",
-      "lateNight2": "Good late night! It's dark outside, sleep tight w",
-      "lateNight3": "Good late night! It's almost midnight, sweet dreams~"
-    },
-    "welcome": " Welcome to here~",
-    "todayIs": "Today is ",
-    "holidays": {
-      "qingming": "Qingming Festival",
-      "wenchuan": "Wenchuan Earthquake Memorial Day",
-      "kangzhan": "Victory in the Anti-Japanese War",
-      "jiuyiba": "September 18th Incident Memorial Day",
-      "nanjing": "Nanjing Massacre Memorial Day"
-    }
-  },
-  "store": {
-    "console": {
-      "notSupportedChangeContext1": "Changing the value of '",
-      "notSupportedChangeContext2": "' to '",
-      "notSupportedChangeContext3": "' is not supported. Change blocked.",
-      "resetting": "Restoring default config...",
-      "resetComplete": "Reset complete, page is about to refresh..."
-    }
-  },
-  "api": {
-    "console": {
-      "jsonpFailed": "JSONP request failed",
-      "musicSource1Failed": "Music source 1 request failed:",
-      "musicSource2Failed": "Music source 2 request failed:"
-    }
-  },
-  "player": {
-    "console": {
-      "musicLoaded": "Music loaded",
-      "play": "Play",
-      "amllFail": "AMLL TTML Database call failed...",
-      "dwrcPilfering": "Currently playing 《{name}》 by '{artist}' from {songServer}. Successfully pilfered word-by-word lyrics from {currentServer}!",
-      "autoPlayError": "Autoplay failed, possibly due to browser policy restrictions on autoplay functionality. Please try manually clicking the play button :"
-    }
-  },
-  "utils": {
-    "console": {
-      "canvasError": "Unable to get 2d context from canvas",
-      "imageColorError": "Unable to process image to extract color",
+      "aMapFailedUseBackup": "AMap Weather API failed, trying backup API",
+      "tencentFailedUseAMap": "Tencent Weather API failed, trying AMap Weather API",
+      "weatherFetchFailed": "Cat doesn't know today's weather qwq:",
       "weatherError": "Weather info fetch failed",
       "weaUnknown": "Unknown Weather",
       "windUnknown": "Unknown Wind Scale",
       "xiaomiIntf": "Using Xiaomi Weather API",
-      "areaUnknown": "Unknown Area"
+      "areaUnknown": "Unknown Area",
+      "googleKeyMissing": "Google Weather API key not configured, cannot load weather",
+      "googleGeolocationStart": "Getting location using Google Geolocation API...",
+      "googleWeatherStart": "Getting weather data using Google Weather API..."
+    },
+    "store": {
+      "notSupportedChangeContext1": "Unsupported to set variable '",
+      "notSupportedChangeContext2": "' to '",
+      "notSupportedChangeContext3": "'. Changes blocked.",
+      "resetting": "Restoring default configuration...",
+      "resetComplete": "Reset complete, page will refresh shortly..."
+    },
+    "api": {
+      "jsonpFailed": "JSONP request failed",
+      "musicSource1Failed": "Music source 1 request failed:",
+      "musicSource2Failed": "Music source 2 request failed:"
+    },
+    "player": {
+      "musicLoaded": "Music loaded",
+      "play": "Play",
+      "amllFail": "AMLL TTML Database call failed...",
+      "dwrcPilfering": "Currently playing \"{name}\" - '{artist}' from {songServer}. Cat has successfully stolen word-by-word lyrics from {currentServer}~",
+      "syncDWRCLrcError": "Error in syncDWRCLrc:",
+      "autoPlayError": "Autoplay failed, likely restricted by browser policies. Please try clicking the play button manually:"
     }
   },
-  "moreContent": {
-    "hello": "Hello~"
+  "components": {
+    "settings": {
+      "globalSettings": "Global Settings",
+      "menu": {
+        "mobile": "Mobile Settings Menu",
+        "desktop": "Desktop Settings Menu"
+      },
+      "wallpaper": {
+        "changeSuccess": "Wallpaper changed successfully meow!",
+        "backgrounds": {
+          "0": "NanoRocky's Collection",
+          "1": "Random Fluff",
+          "2": "Random Furry",
+          "3": "Random Anime",
+          "4": "Random Cat Ears",
+          "5": "Random Scenery",
+          "6": "Bing Daily Random Image"
+        },
+        "adjust": "Wallpaper Adjustment",
+        "specify": "Specify wallpaper temporarily for built-in wallpapers",
+        "idEmpty": "Wallpaper ID cannot be empty!",
+        "idNotNumber": "Wallpaper ID must be numeric!",
+        "notBuiltin": "Currently not using a built-in wallpaper, this feature is not supported!",
+        "advanced": "Advanced Wallpaper Settings",
+        "autoSwitch": "Auto Wallpaper Switch",
+        "setSuccess": "Wallpaper ID set: {id}"
+      },
+      "noMoreOptions": "No more options for now qwq",
+      "tabs": {
+        "personalWallpaper": "Personal Wallpaper",
+        "themeSettings": "Theme Settings",
+        "personalization": "Personalization",
+        "playerConfig": "Player Config",
+        "lyricSettings": "Lyric Settings",
+        "voiceSettings": "Voice Settings",
+        "otherSettings": "Other Settings",
+        "devSettings": "Dev Settings"
+      },
+      "theme": {
+        "text": "Theme Mode",
+        "system": "Follow System",
+        "time": "Follow Time",
+        "bg": "Follow Background",
+        "light": "Light Mode",
+        "dark": "Dark Mode"
+      },
+      "personalization": {
+        "siteStartShow": "Site Start Date Display",
+        "musicClick": "Click Music to Open Panel",
+        "seasonalEffects": "Show Seasonal Effects",
+        "footerBlur": "Footer Background Blur",
+        "footerProgressBar": "Show Footer Music Progress Bar",
+        "title": "Personalization Settings",
+        "customName": "Show Custom Name in Info Area"
+      },
+      "player": {
+        "autoplay": "Autoplay",
+        "randomOrder": "Random Order",
+        "loopMode": "Loop Mode",
+        "loopAll": "List",
+        "loopOne": "Single",
+        "loopNone": "No Loop"
+      },
+      "lyric": {
+        "showFooterLyric": "Show Footer Lyric",
+        "useAMLL": "Enable AMLL TTML Database for missing lyrics",
+        "amllNetworkWarning": "(May slow down lyric loading in unstable GitHub networks)",
+        "useAMLLMirror": "Use mirror for AMLL TTML Database",
+        "enableDWRC": "DWRC Master Switch",
+        "enableDWRCPro": "DWRC Enhanced Effect",
+        "removeMetadata": "Remove Metadata from DWRC",
+        "pilfer": "Pilfer Lyrics (Use alternate source on fail)",
+        "translate": "Line-by-line Lyric Translation Display"
+      },
+      "voice": {
+        "enableSwitch": "Web Voice Interaction Master Switch",
+        "announceSongName": "Announce Song Name"
+      },
+      "tooltips": {
+        "version": "Version",
+        "poweredBy": "Powered by imsyy",
+        "extensionUpdates": "Extension Function Updates by NanoRocky",
+        "sourceCode": "Github Source Code Repository",
+        "extensionUpdateRepo": "Extension Update Repository"
+      },
+      "updateLog": {
+        "title": "Update Log"
+      },
+      "seasonalEffects": {
+        "title": "Seasonal Effects",
+        "winterSnow": "Winter Snow",
+        "autumnFirefly": "Autumn Fireflies",
+        "springLantern": "Spring Lanterns"
+      },
+      "system": {
+        "weatherProvider": "Weather Provider",
+        "providerTencent": "Tencent",
+        "providerAMap": "AMap",
+        "providerGoogle": "Google",
+        "providerXiaomi": "Xiaomi",
+        "providerOioweb": "oioweb",
+        "languageSettings": "Language Settings",
+        "autoLang": "Auto",
+        "channel": "Channel",
+        "checkUpdate": "Check for Updates",
+        "checkButton": "Check Update",
+        "updateFound": "Update Found",
+        "alreadyLatest": "Already latest version! v{version}, {type}.",
+        "newVersion": "New version v{version}, {type} found, come and experience it!",
+        "checkError": "Update check error, please try again later~",
+        "restoringDefault": "Restoring default configuration, please wait...",
+        "loadingInitial": "Loading initial settings, please wait...",
+        "confirmReset": "Are you sure you want to reset all settings? The operation will be executed after clicking 3 times."
+      }
+    },
+    "music": {
+      "musicList": "Music List",
+      "backToHitokoto": "Back to Hitokoto",
+      "partyNotStarted": "Party hasn't started (?)",
+      "playerLoadFailed": "Announcer disappeared, music failed to load qwq",
+      "playErrorNext": "Error playing song, moving to next in 2s",
+      "playError": "Error playing song",
+      "playing": "Playing \"",
+      "ofSong": "\" by \"",
+      "lyricLoading": "Loading lyrics...",
+      "progressIconDisabled": "Progress ICON persist disabled",
+      "eh": "Eh?",
+      "songLoadFailedNext": "Cat 'can't sing' this song qwq, playing next in 2s",
+      "studioError": "A slight glitch in the studio, please try again later qwq",
+      "songErrorLog": "Cat encountered an error playing: ",
+      "songErrorPostfix": "...",
+      "lrcSearching": "Cat is searching for lyrics...",
+      "lrcNotFound": "Cat didn't find the lyrics for this song qwq",
+      "autoPlayError": "Current browser policy seems to prevent autoplay, please play manually meow!"
+    },
+    "weather": {
+      "loading": "Loading weather data...",
+      "moduleName": "Weather",
+      "failedToFetchData": "Weather data fetch failed",
+      "failedToParseTemp": "Failed to parse temperature data",
+      "failedToFetchLocation": "Location fetch failed",
+      "failedToLoadWeather": "Weather load failed",
+      "unknownRegion": "Unknown Region",
+      "internationalRegion": "Intl Region",
+      "googleWindDirections": {
+        "NORTH": "North",
+        "SOUTH": "South",
+        "EAST": "East",
+        "WEST": "West",
+        "NORTHEAST": "Northeast",
+        "NORTHWEST": "Northwest",
+        "SOUTHEAST": "Southeast",
+        "SOUTHWEST": "Southwest",
+        "NORTH_NORTHEAST": "North-northeast",
+        "EAST_NORTHEAST": "East-northeast",
+        "EAST_SOUTHEAST": "East-southeast",
+        "SOUTH_SOUTHEAST": "South-southeast",
+        "SOUTH_SOUTHWEST": "South-southwest",
+        "WEST_SOUTHWEST": "West-southwest",
+        "WEST_NORTHWEST": "West-northwest",
+        "NORTH_NORTHWEST": "North-northwest"
+      },
+      "googleConditions": {
+        "CLEAR": "Clear",
+        "MOSTLY_CLEAR": "Mostly clear",
+        "PARTLY_CLOUDY": "Partly cloudy",
+        "MOSTLY_CLOUDY": "Mostly cloudy",
+        "CLOUDY": "Cloudy",
+        "WINDY": "Windy",
+        "WIND_AND_RAIN": "Wind and rain",
+        "LIGHT_RAIN_SHOWERS": "Light rain showers",
+        "CHANCE_OF_SHOWERS": "Chance of showers",
+        "SCATTERED_SHOWERS": "Scattered showers",
+        "RAIN_SHOWERS": "Rain showers",
+        "HEAVY_RAIN_SHOWERS": "Heavy rain showers",
+        "TYPE_UNSPECIFIED": "Unknown weather"
+      },
+      "windPowerUnit": " Scale",
+      "wind": "Wind",
+      "windDirections": [
+        "North",
+        "Northeast",
+        "East",
+        "Southeast",
+        "South",
+        "Southwest",
+        "West",
+        "Northwest"
+      ],
+      "beaufortScale": [
+        "Calm",
+        "Light Air",
+        "Light Breeze",
+        "Gentle Breeze",
+        "Moderate Breeze",
+        "Fresh Breeze",
+        "Strong Breeze",
+        "Near Gale",
+        "Gale",
+        "Strong Gale",
+        "Storm",
+        "Violent Storm",
+        "Hurricane"
+      ]
+    },
+    "hitokoto": {
+      "openPlayer": "Open Music Player",
+      "failedToFetch": "Failed to fetch Hitokoto",
+      "defaultText": "Cat is thinking...",
+      "defaultFrom": "NanoRocky"
+    },
+    "links": {
+      "title": "Website List"
+    },
+    "message": {
+      "resolutionTooLow": "Current resolution is too low to open the expansion box qwq [So 'small' yet trying to open it! (bushi)]"
+    },
+    "timeCapsule": {
+      "days": "Days",
+      "title": "Time Capsule",
+      "month": "This Month",
+      "hours": "Hours",
+      "year": "This Year",
+      "passed": "Passed",
+      "day": "Today",
+      "remaining": "Remaining",
+      "week": "This Week",
+      "sitePassed": "This site has survived for {years} years, {months} months, and {days} days"
+    },
+    "social": {
+      "defaultTip": "Want to be friends meow?",
+      "Tip": "Find NanoRocky",
+      "TipI": "Find NanoRocky"
+    },
+    "background": {
+      "loadConfigFailed": "Failed to load wallpaper config:",
+      "loadFailedSwitched": "Wallpaper load failed, temporarily switched to default",
+      "loadError": "Wallpaper load failed",
+      "loadSuccess": "Wallpaper loaded and animation complete"
+    },
+    "moreContent": {
+      "hello": "Hello~"
+    }
   },
-  "func": {
-    "day": "D",
-    "month": "M",
-    "year": "Y"
-  },
-  "moreSet": {
-    "pokeMore": "Why are you still poking! Is there something that secret miaow...?",
-    "globalSettings": "Global Settings",
-    "poke": "Eh? Are you looking for... something secret?"
+  "utils": {
+    "time": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "thisYear": "This Year",
+      "weekdays": {
+        "sun": "Sunday",
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday"
+      },
+      "greetings": {
+        "lateNight1": "Good midnight, time to sleep!",
+        "morning1": "Good morning, you're up early~",
+        "morning2": "Good morning, it's a new day~",
+        "forenoon": "Good forenoon!",
+        "noon": "Good noon, take a break and recharge~",
+        "afternoon": "Good afternoon!",
+        "dusk": "Good dusk, enjoy a delicious dinner and relax~",
+        "evening": "Good evening, have some fun and relax your mind~",
+        "lateNight2": "Good late night! It's getting late, good night w",
+        "lateNight3": "Good late night! It's almost midnight, rest early~"
+      },
+      "welcome": " Welcome here~",
+      "todayIs": "Today is",
+      "holidays": {
+        "qingming": "Qingming Festival",
+        "wenchuan": "Wenchuan Earthquake Memorial Day",
+        "kangzhan": "Chinese People's Anti-Japanese War Memorial Day",
+        "jiuyiba": "September 18th Incident Memorial Day",
+        "nanjing": "Nanjing Massacre Victims National Memorial Day"
+      }
+    },
+    "system": {
+      "canvasError": "Unable to get 2d context from canvas",
+      "imageColorError": "Unable to process image to extract color"
+    },
+    "speech": {
+      "noFileNameProvided": "No file name provided",
+      "failedToGenerateAudioURL": "Failed to generate audio URL"
+    },
+    "decodeDWQYRC": {
+      "notVerbatimLyric": "Lyric file is not word-by-word",
+      "parseError": "Error parsing lyrics: "
+    }
   },
   "validation": {
     "invalidValue": "Unsupported to set variable '{key}' to '{value}'. Changes blocked."
