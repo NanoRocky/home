@@ -1,28 +1,8 @@
-import { getIPV4Addr } from "@/api/index";
+import { getIPV4Addr, getGDAdcode, getGDAdcodeI, getGDWeather } from "@/api/index";
 import { mainStore } from "@/store";
 import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import i18n from "@/locales";
 import type { AdCode, WeatherInfo, GDAdCodeResponse, GDAdcodeIResponse, GDWeatherResponse } from "@/typings/weather";
-
-// 获取高德地理位置信息
-export const getGDAdcode = async (key) => {
-  const res = await fetch(`https://restapi.amap.com/v3/ip?key=${key}`);
-  return await res.json();
-};
-
-// 获取高德地理位置信息（带IP）
-export const getGDAdcodeI = async (ipv4, key) => {
-  const res = await fetch(`https://restapi.amap.com/v3/ip?ip=${ipv4}&key=${key}`);
-  return await res.json();
-};
-
-// 获取高德地理天气信息
-export const getGDWeather = async (key, city) => {
-  const res = await fetch(
-    `https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`,
-  );
-  return await res.json();
-};
 
 export const getAmapWeather = async () => {
     const store = mainStore();

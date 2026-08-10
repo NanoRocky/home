@@ -1,19 +1,15 @@
-import { getIPV4Addr, getIPV4AddrLocation } from "@/api";
+import { getIPV4Addr, getIPV4AddrLocation, getXMWeather } from "@/api/index";
 import { Error } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import xmAdcodeData from '@/assets/data/xiaomi_weather_adcode.json';
 import xmStatusData from '@/assets/data/xiaomi_weather_status.json';
 import { mainStore } from "@/store";
 import i18n from '@/locales';
+import { reactive } from "vue";
 
 import type {
     AdCode,
     WeatherInfo,
-    TXAdCodeResponse,
-    TXWeatherResponse,
-    GDAdCodeResponse,
-    GDAdcodeIResponse,
-    GDWeatherResponse,
     XMAdcodeItem,
     XMWeatherStatusItem,
     XMWeatherStatusData,
@@ -38,12 +34,6 @@ const weatherData = reactive<{
         windpower: null,
     },
 });
-
-// 获取小米天气 API
-export const getXMWeather = async (city) => {
-    const res = await fetch(`https://api.nanorocky.top/xmw/?city=weathercn%3A${city}`);
-    return await res.json();
-};
 
 export async function getXMWT() {
     console.log(i18n.global.t('console.weather.xiaomiIntf'));

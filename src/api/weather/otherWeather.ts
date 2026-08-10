@@ -25,23 +25,13 @@ export const getTemperature = (min, max) => {
     }
 };
 
-// 获取韩小韩天气 API
-export const getHXHWeatherAPI = async () => {
-    const res = await fetch("https://api.vvhan.com/api/weather");
-    return await res.json();
-};
-
-// 获取教书先生天气 API
-export const getOtherWeatherAPI = async () => {
-    const res = await fetch("https://api.oioweb.cn/api/weather/GetWeather");
-    return await res.json();
-};
+import { getHXHWeather, getOtherWeather } from "@/api/index";
 
 export const getHxhWeather = async () => {
     const store = mainStore();
     const t = i18n.global.t;
     
-    const result = await getHXHWeatherAPI();
+    const result = await getHXHWeather();
     if (String(result?.success) !== "true") {
         if (store.webSpeech) {
             stopSpeech();
@@ -68,7 +58,7 @@ export const getHxhWeather = async () => {
 export const getOiowebWeather = async () => {
     const t = i18n.global.t;
     
-    const result = await getOtherWeatherAPI();
+    const result = await getOtherWeather();
     const data = result.result;
     
     const adCodeResult: AdCode = {

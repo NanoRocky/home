@@ -1,17 +1,12 @@
+import { getGoogleGeolocationAPI, getGoogleCityNameAPI, getGoogleWeatherFetchAPI } from "@/api/index";
 import { mainStore } from "@/store";
 import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import i18n from "@/locales";
 import type { AdCode, WeatherInfo } from "@/typings/weather";
 
 // 1. 获取 Google 定位坐标 (根据请求 IP 自动解析)
-export const getGoogleGeolocation = async (key: string) => {
-    const res = await fetch(`https://www.googleapis.com/geolocation/v1/geolocate?key=${key}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({})
-    });
+const getGoogleGeolocation = async (key: string) => {
+    const res = await getGoogleGeolocationAPI(key);
     if (!res.ok) {
         throw new Error(`Google Geolocation API Error: ${res.status}`);
     }
@@ -19,24 +14,8 @@ export const getGoogleGeolocation = async (key: string) => {
 };
 
 // 获取 Google 逆地理编码 (将坐标转换为城市名称)
-export const getGoogleCityName = async (lat: number, lng: number, key: string, languageCode: string) => {
-    const res = await fetch(`https://geocode.googleapis.com/v4/geocode/destinations`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": key,
-            "X-Goog-FieldMask": "*",
-            "Accept-Language": languageCode
-        },
-        body: JSON.stringify({
-            locationQuery: {
-                location: {
-                    latitude: lat,
-                    longitude: lng
-                }
-            }
-        })
-    });
+const getGoogleCityName = async (lat: number, lng: number, key: string, languageCode: string) => {
+    const res = await getGoogleCityNameAPI(lat, lng, key, languageCode);
     const data = await res.json();
 
     if (!res.ok || data.error || (data.status && data.status !== "OK" && data.status !== "ZERO_RESULTS")) {
@@ -68,14 +47,15 @@ export const getGoogleCityName = async (lat: number, lng: number, key: string, l
 };
 
 // 获取 Google 天气数据
-export const getGoogleWeatherAPI = async (lat: number, lng: number, key: string, languageCode: string) => {
-    const res = await fetch(`https://weather.googleapis.com/v1/currentConditions:lookup?location.latitude=${lat}&location.longitude=${lng}&languageCode=${languageCode}&key=${key}`);
+const getGoogleWeatherAPI = async (lat: number, lng: number, key: string, languageCode: string) => {
+    const res = await getGoogleWeatherFetchAPI(lat, lng, key, languageCode);
     const data = await res.json();
     if (!res.ok || data.error) {
         throw new Error(`Google Weather API Error: ${data.error?.message || data.error?.status || res.status}`);
     }
     return data;
 };
+
 
 // Google 气象代码映射到本项目的通用天气描述符
 const mapGoogleWeatherCode = (code: string | number, t: any): string => {
