@@ -173,7 +173,7 @@ export default ({ mode }: { mode: string }): UserConfig => {
                             };
                             return 'vendor';
                         };
-                        if (id.includes('en-US.json') || id.includes('zh-CN.json')) {
+                        if (id.includes('en-US.json') || id.includes('zh-CN.json') || id.includes('ja-JP.json')) {
                             return 'locale';
                         };
                         if (id.includes('xiaomi_weather_adcode.json') || id.includes('xiaomi_weather_status.json')) {
