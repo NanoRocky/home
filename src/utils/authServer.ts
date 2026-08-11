@@ -76,10 +76,15 @@ export async function gwgt(u: string, s: string) {
 export async function gwggd(u: string, s: string) {
   const ul = new URL(u),
     q = new URLSearchParams(ul.search);
-  q.set("sig", d(`${[...q.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}=${value}`)
-    .join("&")}${s}`).toLowerCase());
+  q.set(
+    "sig",
+    d(
+      `${[...q.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&")}${s}`,
+    ).toLowerCase(),
+  );
   return `${ul.origin}${ul.pathname}?${q.toString()}`;
 }
 
@@ -87,10 +92,15 @@ export async function gwggdt(u: string, s: string) {
   const ul = new URL(u),
     q = new URLSearchParams(ul.search);
   q.set("time", (await gst()).toString());
-  q.set("sig", d(`${[...q.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}=${value}`)
-    .join("&")}${s}`).toLowerCase());
+  q.set(
+    "sig",
+    d(
+      `${[...q.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&")}${s}`,
+    ).toLowerCase(),
+  );
   return `${ul.origin}${ul.pathname}?${q.toString()}`;
 }
 
@@ -98,10 +108,15 @@ export async function gwggt(u: string) {
   const ul = new URL(u),
     q = new URLSearchParams(ul.search);
   q.set("time", (await gst()).toString());
-  q.set("sig", d(`${[...q.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}=${value}`)
-    .join("&")}`).toLowerCase());
+  q.set(
+    "sig",
+    d(
+      `${[...q.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&")}`,
+    ).toLowerCase(),
+  );
   return `${ul.origin}${ul.pathname}?${q.toString()}`;
 }
 

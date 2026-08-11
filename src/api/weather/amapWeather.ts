@@ -1,4 +1,12 @@
-import { getIPV4Addr, getGDAdcode, getGDAdcodeI, getGDWeather, getGDAdcodeS, getGDAdcodeIS, getGDWeatherS } from "@/api/index";
+import {
+  getIPV4Addr,
+  getGDAdcode,
+  getGDAdcodeI,
+  getGDWeather,
+  getGDAdcodeS,
+  getGDAdcodeIS,
+  getGDWeatherS,
+} from "@/api/index";
 import { mainStore } from "@/store";
 import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import i18n from "@/locales";
@@ -31,7 +39,7 @@ export const getAmapWeather = async () => {
   };
 
   // 获取 Adcode
-  const adCode = gdskey 
+  const adCode = gdskey
     ? ((await getGDAdcodeS(gdkey, gdskey)) as GDAdCodeResponse)
     : ((await getGDAdcode(gdkey)) as GDAdCodeResponse);
   let adCodei: GDAdcodeIResponse | null = null;
@@ -39,7 +47,7 @@ export const getAmapWeather = async () => {
   if (String(adCode?.infocode) !== "10000" || String(adCode?.status) !== "1") {
     console.log(t("console.weather.weatherAMapLog"));
     const ipV4addr = await getIPV4Addr();
-    adCodei = gdskey 
+    adCodei = gdskey
       ? ((await getGDAdcodeIS(ipV4addr.ip, gdkey, gdskey)) as GDAdcodeIResponse)
       : ((await getGDAdcodeI(ipV4addr.ip, gdkey)) as GDAdcodeIResponse);
     if (String(adCodei?.infocode) !== "10000" || String(adCodei?.status) !== "1") {

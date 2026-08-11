@@ -2,7 +2,7 @@ import {
   getGoogleGeolocationAPI,
   getGoogleCityNameAPI,
   getGoogleWeatherFetchAPI,
-  getGoogleGeolocationAPIS
+  getGoogleGeolocationAPIS,
 } from "@/api/index";
 import { mainStore } from "@/store";
 import { stopSpeech, SpeechLocal } from "@/utils/speech";
