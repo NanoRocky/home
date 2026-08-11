@@ -83,6 +83,8 @@
     "weather": {
       "weatherTencentLog1": "Tencent 天気 API を使用中",
       "weatherTencentLog2": "Tencent 天気 API を使用中、認証モードが有効",
+      "weatherAMapLog1": "AMap 天気 API を使用中",
+      "weatherAMapLog2": "AMap 天気 API を使用中、認証モードが有効",
       "weatherAMapLog": "AMap API から IP が取得できませんでした。IPv4 アドレスを取得するために別の API を呼び出しています...",
       "calcTempError": "猫は取得した温度データの計算方法がわからないニャ qwq：",
       "xiaomiWeatherLog": "Xiaomi 天気 API を使用中",

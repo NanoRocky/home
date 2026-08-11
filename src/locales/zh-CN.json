@@ -83,6 +83,8 @@
     "weather": {
       "weatherTencentLog1": "正在使用腾讯天气接口",
       "weatherTencentLog2": "正在使用腾讯天气接口，鉴权模式已启用",
+      "weatherAMapLog1": "正在使用高德天气接口",
+      "weatherAMapLog2": "正在使用高德天气接口，鉴权模式已启用",
       "weatherAMapLog": "检测到高德接口 IP 获取失败，调用额外接口获取 IPV4 地址...",
       "calcTempError": "猫猫不会计算获得的温度数据qwq：",
       "xiaomiWeatherLog": "正在使用小米天气接口",

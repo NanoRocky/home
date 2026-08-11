@@ -129,6 +129,10 @@ export const envConfig: Env = {
     import.meta.env.VITE_CONFIG_TURN == "true"
       ? import.meta.env.VITE_TX_WEATHER_SKEY || exampleConfig.VITE_TX_WEATHER_SKEY
       : exampleConfig.VITE_TX_WEATHER_SKEY,
+  VITE_GD_WEATHER_SKEY:
+    import.meta.env.VITE_CONFIG_TURN == "true"
+      ? import.meta.env.VITE_GD_WEATHER_SKEY || exampleConfig.VITE_GD_WEATHER_SKEY
+      : exampleConfig.VITE_GD_WEATHER_SKEY,
   VITE_METING_SKEY:
     import.meta.env.VITE_CONFIG_TURN == "true"
       ? import.meta.env.VITE_METING_SKEY || exampleConfig.VITE_METING_SKEY

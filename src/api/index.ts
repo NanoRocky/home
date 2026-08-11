@@ -1,6 +1,6 @@
 // import axios from "axios";
 import fetchJsonp from "fetch-jsonp";
-import { gwgt } from "@/utils/authServer";
+import { gwgt, gwggdt, gwggt } from "@/utils/authServer";
 import i18n from "@/locales";
 
 /**
@@ -161,9 +161,45 @@ export const getGDWeather = async (key, city) => {
   return await res.json();
 };
 
+// 获取高德地理位置信息（鉴权模式）
+export const getGDAdcodeS = async (key, skey) => {
+  const url = `https://restapi.amap.com/v3/ip?key=${key}`;
+  const signedUrl = await gwggdt(url, skey);
+  const res = await fetch(signedUrl);
+  return await res.json();
+};
+
+// 获取高德地理位置信息带IP（鉴权模式）
+export const getGDAdcodeIS = async (ipv4, key, skey) => {
+  const url = `https://restapi.amap.com/v3/ip?ip=${ipv4}&key=${key}`;
+  const signedUrl = await gwggdt(url, skey);
+  const res = await fetch(signedUrl);
+  return await res.json();
+};
+
+// 获取高德地理天气信息（鉴权模式）
+export const getGDWeatherS = async (key, city, skey) => {
+  const url = `https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`;
+  const signedUrl = await gwggdt(url, skey);
+  const res = await fetch(signedUrl);
+  return await res.json();
+};
+
 // 获取 Google 定位坐标 (根据请求 IP 自动解析)
 export const getGoogleGeolocationAPI = async (key: string) => {
   return await fetch(`https://www.googleapis.com/geolocation/v1/geolocate?key=${key}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  });
+};
+
+// 获取 Google 定位坐标
+export const getGoogleGeolocationAPIS = async (key: string) => {
+  const url = await gwggt(`https://www.googleapis.com/geolocation/v1/geolocate?key=${key}`);
+  return await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

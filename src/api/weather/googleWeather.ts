@@ -2,15 +2,16 @@ import {
   getGoogleGeolocationAPI,
   getGoogleCityNameAPI,
   getGoogleWeatherFetchAPI,
+  getGoogleGeolocationAPIS
 } from "@/api/index";
 import { mainStore } from "@/store";
 import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import i18n from "@/locales";
 import type { AdCode, WeatherInfo } from "@/typings/weather";
 
-// 1. 获取 Google 定位坐标 (根据请求 IP 自动解析)
+// 获取 Google 定位坐标 (根据请求 IP 自动解析)
 const getGoogleGeolocation = async (key: string) => {
-  const res = await getGoogleGeolocationAPI(key);
+  const res = await getGoogleGeolocationAPIS(key);
   if (!res.ok) {
     throw new Error(`Google Geolocation API Error: ${res.status}`);
   }

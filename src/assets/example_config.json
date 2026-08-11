@@ -38,6 +38,7 @@
   "VITE_TTS_Voice": "zh-CN-YunxiaNeural",
   "VITE_TTS_Style": "cheerful",
   "VITE_TX_WEATHER_SKEY": "",
+  "VITE_GD_WEATHER_SKEY": "",
   "VITE_TTS_SKEY": "",
   "VITE_METING_SKEY": "",
   "VITE_SFILE_SKEY": ""

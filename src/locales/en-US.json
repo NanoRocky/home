@@ -83,6 +83,8 @@
     "weather": {
       "weatherTencentLog1": "Using Tencent Weather API",
       "weatherTencentLog2": "Using Tencent Weather API, authentication enabled",
+      "weatherAMapLog1": "Using AMap Weather API",
+      "weatherAMapLog2": "Using AMap Weather API, authentication enabled",
       "weatherAMapLog": "AMap API IP fetch failed, calling extra API for IPv4 address...",
       "calcTempError": "Cat doesn't know how to calculate the temperature data qwq:",
       "xiaomiWeatherLog": "Using Xiaomi Weather API",

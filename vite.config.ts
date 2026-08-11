@@ -9,7 +9,16 @@ import viteCompression from "vite-plugin-compression2";
 import UnoCSS from 'unocss/vite';
 import type { UserConfig } from "vite";
 import postcssPresetEnv from 'postcss-preset-env';
+import JavaScriptObfuscator from 'javascript-obfuscator';
 import cssnano from 'cssnano';
+
+const originalLog = console.log;
+console.log = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('[javascript-obfuscator]')) {
+        return;
+    }
+    originalLog(...args);
+};
 
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: string }): UserConfig => {
@@ -120,6 +129,47 @@ export default ({ mode }: { mode: string }): UserConfig => {
                 },
             }),
             viteCompression(),
+            {
+                name: 'custom-obfuscator',
+                apply: 'build',
+                enforce: 'post',
+                renderChunk(code, chunk) {
+                    if (!chunk.fileName.includes('index-')) {
+                        return null;
+                    }
+                    const result = JavaScriptObfuscator.obfuscate(code, {
+                        compact: true,
+                        controlFlowFlattening: true,
+                        controlFlowFlatteningThreshold: 1,
+                        identifierNamesGenerator: 'hexadecimal',
+                        stringArray: true,
+                        stringArrayEncoding: ['base64'],
+                        stringArrayThreshold: 1,
+                        stringArrayCallsTransform: true,
+                        stringArrayCallsTransformThreshold: 1,
+                        stringArrayIndexShift: true,
+                        stringArrayRotate: true,
+                        stringArrayShuffle: true,
+                        stringArrayWrappersCount: 2,
+                        stringArrayWrappersChainedCalls: true,
+                        stringArrayWrappersParametersMaxCount: 4,
+                        stringArrayWrappersType: 'function',
+                        numbersToExpressions: true,
+                        ignoreImports: true,
+                        renameGlobals: false,
+                        renameProperties: false,
+                        simplify: true,
+                        splitStrings: false,
+                        transformObjectKeys: false,
+                        unicodeEscapeSequence: false,
+                        debugProtection: false,
+                    });
+
+                    return {
+                        code: result.getObfuscatedCode()
+                    };
+                }
+            },
         ],
         server: {
             port: 3000,
