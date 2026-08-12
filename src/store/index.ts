@@ -59,6 +59,8 @@ export const storeState: MainState = {
   LrcMetaDataCache: null as string[] | null, // 【缓存】歌词元数据关键词缓存
   lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
   forceShowBarIcon: false, // 【开关】进度图标常驻
+  isDragging: false, // 【状态】是否正在拖拽进度条
+  dragProgressTime: 0, // 【状态】当前拖拽停留的模拟时间 (秒)
   showFirefly: false, // 【状态】萤火虫特效
   showSnowfall: false, // 【状态】雪花特效
   showLantern: false, // 【状态】灯笼特效

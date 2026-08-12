@@ -688,7 +688,9 @@ function syncDWRCLrc() {
       return requestAnimationFrame(syncDWRCLrc);
     }
     const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length === 0 || store.dwrcLoading;
-    const now = player.value.audioStatus.playedTime * 1000;
+    const now = store.isDragging
+      ? store.dragProgressTime * 1000
+      : player.value.audioStatus.playedTime * 1000;
     const lineSwitchNow = now + 200; // 提前 100ms 用于行切换
     if (isLineByLine) {
       const lyrics = player.value.aplayer.lyrics[playIndex.value];
@@ -696,24 +698,36 @@ function syncDWRCLrc() {
       if (!lyrics || !lyrics[playerLyricIndex]) {
         const lrc = t("components.music.lrcSearching");
         if (store.playerLrc.length !== 1 || store.playerLrc[0][4] !== lrc) {
-          store.setPlayerLrc([[true, 1, 0, 0, lrc]]);
+          store.setPlayerLrc([[true, 1, 0, 0, lrc, 0, 0, "auto", 0]]);
         }
       } else {
         let lrc = lyrics[playerLyricIndex][1];
         if (lrc === "Loading") lrc = t("components.music.lrcSearching");
         else if (lrc === "Not available" || lrc === "Not availible")
           lrc = t("components.music.lrcNotFound");
+
+        let startTime = 0;
+        let duration = 0;
+        if (typeof lyrics[playerLyricIndex][0] === "number") {
+          startTime = lyrics[playerLyricIndex][0] * 1000;
+          let nextTime = store.playerDuration ? store.playerDuration * 1000 : startTime + 5000;
+          if (lyrics[playerLyricIndex + 1] && typeof lyrics[playerLyricIndex + 1][0] === "number") {
+            nextTime = lyrics[playerLyricIndex + 1][0] * 1000;
+          }
+          duration = nextTime - startTime;
+        }
+        
         if (
           store.playerLrc.length !== 1 ||
           store.playerLrc[0][4] !== lrc ||
           store.playerLrc[0][2] !== playerLyricIndex
         ) {
-          store.setPlayerLrc([[true, 1, playerLyricIndex, 0, lrc]]);
+          store.setPlayerLrc([[true, 1, playerLyricIndex, 0, lrc, duration, 0, "auto", startTime]]);
         }
       }
     } else {
       const dwrc = store.dwrcTemp;
-      if (nowLineIndex.value === -1) {
+      if (nowLineIndex.value === -1 || store.isDragging) {
         let foundIndex = -1;
         for (let i = 0; i < dwrc.length; i++) {
           if (dwrc[i][0] <= lineSwitchNow) {
@@ -722,6 +736,9 @@ function syncDWRCLrc() {
           } else {
             break;
           }
+        }
+        if (store.isDragging && nowLineIndex.value !== foundIndex && nowLineIndex.value !== -1) {
+          store.lyricSeekVersion++;
         }
         nowLineIndex.value = foundIndex;
       } else {
@@ -744,7 +761,7 @@ function syncDWRCLrc() {
           const isCurrent = (now >= start && now <= start + duration) || isDuringFadeOut;
           const isSungLyrics = start + duration < now && !isDuringFadeOut;
           const lessdur = start + duration - now;
-          return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto"];
+          return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto", start];
         });
       } else {
         dwrcLyric = [
@@ -754,6 +771,10 @@ function syncDWRCLrc() {
             0,
             0,
             `${store.getPlayerData.name || "Loading..."} - ${store.getPlayerData.artist || "NanoRocky"}`,
+            0,
+            0,
+            "auto",
+            0,
           ],
         ];
       }

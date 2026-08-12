@@ -3,7 +3,7 @@
     <div
       class="progress"
       :class="{ dragging: isDragging }"
-      :style="{ width: isDragging ? `${dragProgress}%` : `${progressBarWidth}%` }"
+      :style="{ width: isDragging ? `${dragProgress}%` : `${smoothProgress}%` }"
     >
       <img
         v-if="store.showProgressIcon"
@@ -41,11 +41,20 @@ const isDragging = ref(false);
 const dragProgress = ref(0);
 let dragTimer: ReturnType<typeof setTimeout> | null = null;
 
-// 进度计算
-const progressBarWidth = computed(() => {
-  if (!store.playerState) return 0;
-  return (store.playerCurrentTime! / store.playerDuration!) * 100;
-});
+// 丝滑进度更新 (60fps)
+const smoothProgress = ref(0);
+let animationFrameId: number | null = null;
+
+const updateProgress = () => {
+  if (!isDragging.value && store.playerState) {
+    if (audio.value && store.playerDuration) {
+      smoothProgress.value = (audio.value.currentTime / store.playerDuration) * 100;
+    } else if (store.playerCurrentTime && store.playerDuration) {
+      smoothProgress.value = (store.playerCurrentTime / store.playerDuration) * 100;
+    }
+  }
+  animationFrameId = requestAnimationFrame(updateProgress);
+};
 
 // 鼠标事件处理
 const handleMouseEnter = () => {
@@ -67,25 +76,28 @@ const handleMouseLeave = () => {
 };
 
 const handleMouseDown = (e: MouseEvent) => {
+  if (dragTimer) clearTimeout(dragTimer);
   isDragging.value = true;
   isSeeking.value = true;
   const progressBar = document.querySelector(".progress-bar");
   const rect = progressBar!.getBoundingClientRect();
   const initialX = e.clientX - rect.left;
   dragProgress.value = (initialX / rect.width) * 100;
+  store.isDragging = true;
+  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
 };
 
 const onMouseUp = () => {
   if (!isDragging.value) return;
-  isDragging.value = false;
   isSeeking.value = false;
-  if (dragTimer) clearTimeout(dragTimer);
   if (audio.value && store.playerDuration) {
     audio.value.currentTime = (dragProgress.value / 100) * store.playerDuration;
   }
+  if (dragTimer) clearTimeout(dragTimer);
   dragTimer = setTimeout(() => {
-    if (icon.value) icon.value.style.left = "";
-  }, 1000);
+    isDragging.value = false;
+    store.isDragging = false;
+  }, 350);
 };
 
 const onMouseMove = throttle((e: MouseEvent) => {
@@ -95,15 +107,13 @@ const onMouseMove = throttle((e: MouseEvent) => {
   let offsetX = e.clientX - rect.left;
   offsetX = Math.max(0, Math.min(rect.width, offsetX));
   dragProgress.value = (offsetX / rect.width) * 100;
-  if (icon.value) {
-    const newLeft = offsetX - icon.value.offsetWidth / 2;
-    icon.value.style.left = `${newLeft}px`;
-  }
+  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
 }, 16);
 
 // 触摸事件处理
 const handleTouchStart = (e: TouchEvent) => {
   if (e.touches.length > 1) return;
+  if (dragTimer) clearTimeout(dragTimer);
   isDragging.value = true;
   isSeeking.value = true;
   touchIdentifier.value = e.touches[0].identifier;
@@ -111,6 +121,8 @@ const handleTouchStart = (e: TouchEvent) => {
   const rect = progressBar!.getBoundingClientRect();
   const initialX = e.touches[0].clientX - rect.left;
   dragProgress.value = (initialX / rect.width) * 100;
+  store.isDragging = true;
+  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
 };
 
 const onTouchMove = throttle((e: TouchEvent) => {
@@ -123,15 +135,11 @@ const onTouchMove = throttle((e: TouchEvent) => {
   let offsetX = touch.clientX - rect.left;
   offsetX = Math.max(0, Math.min(rect.width, offsetX));
   dragProgress.value = (offsetX / rect.width) * 100;
-  if (icon.value) {
-    const newLeft = offsetX - icon.value.offsetWidth / 2;
-    icon.value.style.left = `${newLeft}px`;
-  }
+  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
 }, 16);
 
 const onTouchEnd = () => {
   if (!isDragging.value) return;
-  isDragging.value = false;
   isSeeking.value = false;
   touchIdentifier.value = null;
   if (audio.value && store.playerDuration) {
@@ -139,8 +147,9 @@ const onTouchEnd = () => {
   }
   if (dragTimer) clearTimeout(dragTimer);
   dragTimer = setTimeout(() => {
-    if (icon.value) icon.value.style.left = "";
-  }, 1000);
+    isDragging.value = false;
+    store.isDragging = false;
+  }, 350);
 };
 
 // 数据处理
@@ -168,6 +177,7 @@ watch(
 onMounted(() =>
   nextTick(() => {
     audio.value = document.querySelector("audio");
+    animationFrameId = requestAnimationFrame(updateProgress);
     const progressBarShowCheck = document.querySelector("#footer");
     if (progressBarShowCheck) {
       progressBarShowCheck.addEventListener("mouseenter", handleMouseEnter);
@@ -182,6 +192,9 @@ onMounted(() =>
 );
 
 onBeforeUnmount(() => {
+  if (animationFrameId !== null) {
+    cancelAnimationFrame(animationFrameId);
+  }
   document.removeEventListener("mouseup", onMouseUp);
   document.removeEventListener("mousemove", onMouseMove);
   document.removeEventListener("touchmove", onTouchMove);
@@ -205,10 +218,7 @@ onBeforeUnmount(() => {
 
   .progress {
     height: 100%;
-    width: 100%;
-    opacity: 1;
     background-color: rgba(138, 43, 226, 1);
-    transition: width 0.2s linear;
     position: relative;
     user-select: none;
 
@@ -249,12 +259,18 @@ onBeforeUnmount(() => {
       width: 32px;
       height: 32px;
       cursor: grab;
-      transform: translateX(var(--progress-icon-x, 0)) translateZ(0);
+      transform: translateX(var(--progress-icon-x, 0)) translateZ(0) scale(1);
       will-change: transform;
-      transition: width 0.2s linear;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+
+      &:hover {
+        transform: translateX(var(--progress-icon-x, 0)) translateZ(0) scale(1.15);
+        filter: drop-shadow(0 0 6px rgba(138, 43, 226, 0.6));
+      }
 
       &:active {
         cursor: grabbing;
+        transform: translateX(var(--progress-icon-x, 0)) translateZ(0) scale(0.95);
       }
     }
   }

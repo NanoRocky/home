@@ -64,7 +64,7 @@
             class="lrc-all"
             :key="
               store.playerLrc.length != 0
-                ? `lrc-line-${store.playerLrc[0][2]}-${store.lyricSeekVersion}`
+                ? `lrc-line-${store.playerLrc[0][2]}-${store.playerLrc.length}-${store.playerLrc[0][4]}-${store.lyricSeekVersion}`
                 : `lrc-line-null`
             "
           >
@@ -79,10 +79,18 @@
               <paw />
             </Icon>
             <span class="dwrc-box">
-              <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap">
+              <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap" :data-line="store.playerLrc[0]?.[2]">
                 <span
                   v-for="(i, index) in store.playerLrc"
                   :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                  :style="{ '--char-duration': i[5] + 'ms' }"
+                  :class="[
+                    'dwrc-2-char',
+                    i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
+                    i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
+                    i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                    i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
+                  ]"
                   v-html="i[4]"
                 >
                 </span>
@@ -249,12 +257,15 @@ watch(
       return;
     }
     const audio = document.querySelector("audio");
-    if (!audio) {
-      return;
-    }
-    const now = audio.currentTime * 1000;
+    const now = store.isDragging 
+      ? store.dragProgressTime * 1000 
+      : (audio ? audio.currentTime * 1000 : 0);
     const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
     if (!dwrc2 || dwrc2 == undefined) {
+      return;
+    }
+    const wrap2 = dwrc2.querySelector("#dwrc-2-wrap");
+    if (wrap2 && wrap2.getAttribute("data-line") != store.getPlayerLrc[0][2]?.toString()) {
       return;
     }
     const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
@@ -262,47 +273,57 @@ watch(
     if (inputDom.length == 0 || outputDom.length == 0) {
       return;
     }
-    const dwrcFiltered = (store.dwrcTemp as DwrcItem[]).filter(
-      (i) => i[0] < now && now < i[0] + i[1],
-    );
-    if (dwrcFiltered.length == 0) {
-      return;
-    }
-    const nowLine = dwrcFiltered[dwrcFiltered.length - 1][2];
-    for (let i = 0; i < nowLine.length; i++) {
-      const item = nowLine[i] as [[number, number], any, any, any];
-      const [[start, duration], _a, _b, _c] = item;
+    
+    for (let i = 0; i < store.getPlayerLrc.length; i++) {
+      const lrcItem = store.getPlayerLrc[i] as any[];
+      const start = Number(lrcItem[8]);
+      const duration = Number(lrcItem[5]);
+      if (lrcItem[8] === undefined || isNaN(start) || isNaN(duration)) return;
+      
       const inputItem = inputDom[i] as HTMLElement;
-      if (!inputItem || inputItem.hasAttribute("data-start")) {
-        continue;
+      if (!inputItem) continue;
+      
+      if (store.isDragging) {
+        inputItem.removeAttribute("data-start");
+      } else if (!inputItem.hasAttribute("data-start")) {
+        inputItem.setAttribute("data-start", "true");
       }
+      
       const computedStyle = window.getComputedStyle(inputItem);
       const width = parseFloat(computedStyle.width);
-      if (isNaN(width)) {
-        inputItem.removeAttribute("data-start");
-        continue;
-      }
+      if (isNaN(width)) continue;
+      
       const outputItem = outputDom[i] as HTMLElement;
-      const animateOptions: KeyframeAnimationOptions = {
-        delay: Math.max(0, start - now),
-        duration: duration,
-        fill: "forwards" as FillMode,
-        easing: "linear",
-      };
-      outputItem.style.transform = "translateY(-1px)";
-      const outputAnimate = outputItem.animate(
-        [{ width: 0 }, { width: `${width}px` }],
-        animateOptions,
-      );
-      outputAnimate.onfinish = () => {
-        outputItem.style.transform = "translateY(1px)";
-        outputItem.animate([{ transform: "translateY(-1px)" }, { transform: "translateY(1px)" }], {
-          duration: 300,
+      if (!outputItem) continue;
+
+      if (now >= start + duration) {
+        if (store.isDragging) outputItem.getAnimations().forEach((a) => a.cancel());
+        outputItem.animate([{ width: `${width}px` }, { width: `${width}px` }], {
+          duration: 0,
+          fill: "forwards",
+        });
+      } else if (now >= start && now < start + duration) {
+        const currentWidth = ((now - start) / duration) * width;
+        if (store.isDragging) {
+          outputItem.getAnimations().forEach((a) => a.cancel());
+          outputItem.style.width = `${currentWidth}px`;
+        } else {
+          const remainingDuration = start + duration - now;
+          outputItem.animate([{ width: `${currentWidth}px` }, { width: `${width}px` }], {
+            duration: remainingDuration,
+            fill: "forwards",
+            easing: "linear",
+          });
+        }
+      } else {
+        if (store.isDragging) outputItem.getAnimations().forEach((a) => a.cancel());
+        outputItem.animate([{ width: 0 }, { width: `${width}px` }], {
+          delay: Math.max(0, start - now),
+          duration: duration,
           fill: "forwards",
           easing: "linear",
         });
-      };
-      inputItem.setAttribute("data-start", "true");
+      }
     }
   },
 );
@@ -342,7 +363,7 @@ watch(
     opacity: 1;
     -webkit-transform: translateY(-1px);
     transform: translateY(-1px);
-    animation: colorFade var(--anim-time) ease-in-out forwards;
+    animation: colorFade var(--anim-time) linear forwards;
     transition:
       color var(--anim-time) linear,
       opacity var(--short-time) linear,
@@ -422,6 +443,21 @@ watch(
   to {
     -webkit-transform: translateY(-1px);
     transform: translateY(-1px);
+  }
+}
+
+.lrc-all {
+  position: relative;
+  
+  .paws-1, .paws-2, .paws-3, .paws-4 {
+    flex-shrink: 0;
+  }
+  
+  .paws-1 {
+    transform: rotate(-18deg) translateY(-2px) !important;
+  }
+  .paws-2 {
+    transform: rotate(18deg) translateY(-2px) !important;
   }
 }
 
@@ -510,20 +546,49 @@ watch(
 }
 
 // 逐字模块2
-#dwrc-2-wrap > span {
+.dwrc-2-char {
   --anim-time: var(--char-duration, 0.5s);
   --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
+  -webkit-transform: translateY(1px);
   transform: translateY(1px);
   white-space: nowrap;
   overflow: hidden;
   width: 0;
-  opacity: 0.8;
+  will-change: width, color, opacity;
   transition:
     opacity var(--short-time) linear,
     transform var(--short-time) linear,
-    color var(--anim-time) linear,
-    width var(--short-time) linear;
+    color var(--anim-time) linear;
+
+  &.fade-in-start {
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+
+  &.fade-in {
+    opacity: 1;
+    -webkit-transform: translateY(-1px);
+    transform: translateY(-1px);
+  }
+
+  &.fade-out {
+    opacity: 1 !important;
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+
+  &.long-tone {
+    opacity: 1;
+    -webkit-transform: translateY(-1px);
+    transform: translateY(-1px);
+  }
+
+  &.long-tone-out {
+    opacity: 1 !important;
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
 }
 
 #dwrc-2-wrap {
@@ -531,6 +596,8 @@ watch(
   --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
   position: absolute;
+  left: 0;
+  top: 0;
   width: auto;
   opacity: 0.8;
   color: var(--footer-dwrc-two-color);
@@ -546,8 +613,7 @@ watch(
   transition:
     opacity var(--short-time) linear,
     transform var(--short-time) linear,
-    color var(--anim-time) linear,
-    width var(--short-time) linear;
+    color var(--anim-time) linear;
 }
 
 // 逐行部分

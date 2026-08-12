@@ -56,6 +56,8 @@ export interface MainState {
   LrcMetaDataCache: string[] | null;
   lyricSeekVersion: number;
   forceShowBarIcon: boolean;
+  isDragging: boolean;
+  dragProgressTime: number;
   showFirefly: boolean;
   showSnowfall: boolean;
   showLantern: boolean;
