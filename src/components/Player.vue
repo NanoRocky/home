@@ -716,7 +716,7 @@ function syncDWRCLrc() {
           }
           duration = nextTime - startTime;
         }
-        
+
         if (
           store.playerLrc.length !== 1 ||
           store.playerLrc[0][4] !== lrc ||

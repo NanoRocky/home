@@ -79,7 +79,11 @@
               <paw />
             </Icon>
             <span class="dwrc-box">
-              <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap" :data-line="store.playerLrc[0]?.[2]">
+              <span
+                class="dwrc-2 lrc-text text-truncate-ellipsis"
+                id="dwrc-2-wrap"
+                :data-line="store.playerLrc[0]?.[2]"
+              >
                 <span
                   v-for="(i, index) in store.playerLrc"
                   :key="`lrc-over-char-${i[2]}-${i[3]}`"
@@ -257,9 +261,11 @@ watch(
       return;
     }
     const audio = document.querySelector("audio");
-    const now = store.isDragging 
-      ? store.dragProgressTime * 1000 
-      : (audio ? audio.currentTime * 1000 : 0);
+    const now = store.isDragging
+      ? store.dragProgressTime * 1000
+      : audio
+        ? audio.currentTime * 1000
+        : 0;
     const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
     if (!dwrc2 || dwrc2 == undefined) {
       return;
@@ -273,26 +279,26 @@ watch(
     if (inputDom.length == 0 || outputDom.length == 0) {
       return;
     }
-    
+
     for (let i = 0; i < store.getPlayerLrc.length; i++) {
       const lrcItem = store.getPlayerLrc[i] as any[];
       const start = Number(lrcItem[8]);
       const duration = Number(lrcItem[5]);
       if (lrcItem[8] === undefined || isNaN(start) || isNaN(duration)) return;
-      
+
       const inputItem = inputDom[i] as HTMLElement;
       if (!inputItem) continue;
-      
+
       if (store.isDragging) {
         inputItem.removeAttribute("data-start");
       } else if (!inputItem.hasAttribute("data-start")) {
         inputItem.setAttribute("data-start", "true");
       }
-      
+
       const computedStyle = window.getComputedStyle(inputItem);
       const width = parseFloat(computedStyle.width);
       if (isNaN(width)) continue;
-      
+
       const outputItem = outputDom[i] as HTMLElement;
       if (!outputItem) continue;
 
@@ -448,11 +454,14 @@ watch(
 
 .lrc-all {
   position: relative;
-  
-  .paws-1, .paws-2, .paws-3, .paws-4 {
+
+  .paws-1,
+  .paws-2,
+  .paws-3,
+  .paws-4 {
     flex-shrink: 0;
   }
-  
+
   .paws-1 {
     transform: rotate(-18deg) translateY(-2px) !important;
   }

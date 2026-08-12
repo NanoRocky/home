@@ -261,7 +261,9 @@ onBeforeUnmount(() => {
       cursor: grab;
       transform: translateX(var(--progress-icon-x, 0)) translateZ(0) scale(1);
       will-change: transform;
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+      transition:
+        transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.25s ease;
 
       &:hover {
         transform: translateX(var(--progress-icon-x, 0)) translateZ(0) scale(1.15);
