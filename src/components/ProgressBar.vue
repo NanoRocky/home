@@ -3,7 +3,17 @@
     <div
       class="progress"
       :class="{ dragging: isDragging }"
-      :style="{ width: isDragging ? `${dragProgress}%` : `${smoothProgress}%` }"
+      :style="{ transform: `scaleX(${ (isDragging ? dragProgress : smoothProgress) / 100 })` }"
+    >
+      <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
+        <ReloadCircle />
+      </Icon>
+    </div>
+    
+    <div
+      class="progress-icon-wrapper"
+      :class="{ dragging: isDragging }"
+      :style="{ transform: `translate3d(${ isDragging ? dragProgress : smoothProgress }%, 0, 0)` }"
     >
       <img
         v-if="store.showProgressIcon"
@@ -14,11 +24,6 @@
         @touchstart.prevent="handleTouchStart"
         ref="icon"
       />
-      <!-- <img v-if="store.showProgressIcon" src="/images/icon/ProgressBar.ico" class="progress-icon" draggable="false"
-                :onmousedown="handleMouseDown" @touchstart.prevent="handleTouchStart" ref="icon" /> -->
-      <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
-        <ReloadCircle />
-      </Icon>
     </div>
   </div>
 </template>
@@ -218,9 +223,12 @@ onBeforeUnmount(() => {
 
   .progress {
     height: 100%;
+    width: 100%;
     background-color: rgba(138, 43, 226, 1);
     position: relative;
     user-select: none;
+    transform-origin: left center;
+    will-change: transform;
 
     &.dragging {
       transition: none !important;
@@ -247,14 +255,29 @@ onBeforeUnmount(() => {
         }
       }
     }
+  }
+
+  .progress-icon-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    pointer-events: none;
+    will-change: transform;
+
+    &.dragging .progress-icon {
+      transition: none !important;
+    }
 
     .progress-icon {
       // 进度条图标，请勿修改宽高和边距，这些参数是定嘶的！除非你有大改动的能力
       position: absolute;
       user-select: none;
       touch-action: none;
+      pointer-events: auto;
       top: -16px;
-      right: -16px;
+      left: -16px;
       opacity: 1;
       width: 32px;
       height: 32px;

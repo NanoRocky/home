@@ -251,88 +251,72 @@ const toggleForceIcon = () => {
 };
 
 // dwrc part
-watch(
-  () => store.getPlayerLrc,
-  (_new, _old) => {
+let dwrcRAFId: number | null = null;
+
+const startDWRCLoop = () => {
+  if (dwrcRAFId !== null) return;
+  const loop = () => {
     type DwrcItem = [number, number, any[]];
     const isLineByLine =
       !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
-    if (!store.playerDWRCShowPro || isLineByLine) {
-      return;
-    }
-    const audio = document.querySelector("audio");
-    const now = store.isDragging
-      ? store.dragProgressTime * 1000
-      : audio
-        ? audio.currentTime * 1000
-        : 0;
-    const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
-    if (!dwrc2 || dwrc2 == undefined) {
-      return;
-    }
-    const wrap2 = dwrc2.querySelector("#dwrc-2-wrap");
-    if (wrap2 && wrap2.getAttribute("data-line") != store.getPlayerLrc[0][2]?.toString()) {
-      return;
-    }
-    const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
-    const inputDom = dwrc2.querySelectorAll("#dwrc-1-wrap span");
-    if (inputDom.length == 0 || outputDom.length == 0) {
-      return;
-    }
+    if (store.playerDWRCShowPro && !isLineByLine && store.playerLrc && store.playerLrc.length > 0) {
+      const audio = document.querySelector("audio");
+      const now = store.isDragging
+        ? store.dragProgressTime * 1000
+        : audio
+          ? audio.currentTime * 1000
+          : 0;
 
-    for (let i = 0; i < store.getPlayerLrc.length; i++) {
-      const lrcItem = store.getPlayerLrc[i] as any[];
-      const start = Number(lrcItem[8]);
-      const duration = Number(lrcItem[5]);
-      if (lrcItem[8] === undefined || isNaN(start) || isNaN(duration)) return;
+      const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
+      if (dwrc2) {
+        const wrap2 = dwrc2.querySelector("#dwrc-2-wrap");
+        if (wrap2 && wrap2.getAttribute("data-line") === store.playerLrc[0][2]?.toString()) {
+          const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span") as NodeListOf<HTMLElement>;
+          if (outputDom.length === store.playerLrc.length) {
+            for (let i = 0; i < store.playerLrc.length; i++) {
+              const lrcItem = store.playerLrc[i] as any[];
+              const start = Number(lrcItem[8]);
+              const duration = Number(lrcItem[5]);
+              if (lrcItem[8] === undefined || isNaN(start) || isNaN(duration)) continue;
 
-      const inputItem = inputDom[i] as HTMLElement;
-      if (!inputItem) continue;
+              const outputItem = outputDom[i];
+              if (!outputItem) continue;
 
-      if (store.isDragging) {
-        inputItem.removeAttribute("data-start");
-      } else if (!inputItem.hasAttribute("data-start")) {
-        inputItem.setAttribute("data-start", "true");
-      }
-
-      const computedStyle = window.getComputedStyle(inputItem);
-      const width = parseFloat(computedStyle.width);
-      if (isNaN(width)) continue;
-
-      const outputItem = outputDom[i] as HTMLElement;
-      if (!outputItem) continue;
-
-      if (now >= start + duration) {
-        if (store.isDragging) outputItem.getAnimations().forEach((a) => a.cancel());
-        outputItem.animate([{ width: `${width}px` }, { width: `${width}px` }], {
-          duration: 0,
-          fill: "forwards",
-        });
-      } else if (now >= start && now < start + duration) {
-        const currentWidth = ((now - start) / duration) * width;
-        if (store.isDragging) {
-          outputItem.getAnimations().forEach((a) => a.cancel());
-          outputItem.style.width = `${currentWidth}px`;
-        } else {
-          const remainingDuration = start + duration - now;
-          outputItem.animate([{ width: `${currentWidth}px` }, { width: `${width}px` }], {
-            duration: remainingDuration,
-            fill: "forwards",
-            easing: "linear",
-          });
+              if (duration === 0) {
+                outputItem.style.clipPath = `inset(0 100% 0 0)`;
+              } else if (now >= start + duration) {
+                outputItem.style.clipPath = `inset(0 0% 0 0)`;
+              } else if (now >= start && now < start + duration) {
+                const progress = (now - start) / duration;
+                const clipRight = Math.max(0, Math.min(100, (1 - progress) * 100));
+                outputItem.style.clipPath = `inset(0 ${clipRight}% 0 0)`;
+              } else {
+                outputItem.style.clipPath = `inset(0 100% 0 0)`;
+              }
+            }
+          }
         }
-      } else {
-        if (store.isDragging) outputItem.getAnimations().forEach((a) => a.cancel());
-        outputItem.animate([{ width: 0 }, { width: `${width}px` }], {
-          delay: Math.max(0, start - now),
-          duration: duration,
-          fill: "forwards",
-          easing: "linear",
-        });
       }
     }
-  },
-);
+    dwrcRAFId = requestAnimationFrame(loop);
+  };
+  dwrcRAFId = requestAnimationFrame(loop);
+};
+
+const stopDWRCLoop = () => {
+  if (dwrcRAFId !== null) {
+    cancelAnimationFrame(dwrcRAFId);
+    dwrcRAFId = null;
+  }
+};
+
+onMounted(() => {
+  startDWRCLoop();
+});
+
+onBeforeUnmount(() => {
+  stopDWRCLoop();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -564,9 +548,8 @@ watch(
   -webkit-transform: translateY(1px);
   transform: translateY(1px);
   white-space: nowrap;
-  overflow: hidden;
-  width: 0;
-  will-change: width, color, opacity;
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path, color, opacity;
   transition:
     opacity var(--short-time) linear,
     transform var(--short-time) linear,

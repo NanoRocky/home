@@ -1,6 +1,7 @@
 import { mainStore } from "@/store";
 let animationFrameId: number | null = null;
-let intervalId: ReturnType<typeof setInterval> | null = null;
+let lastDrawTime = 0;
+const fpsInterval = 1000 / 60;
 let canvas: HTMLCanvasElement | null = null;
 let snowflakeCount: number = 0;
 
@@ -39,7 +40,7 @@ const createCanvas = () => {
 const initSnowfall = () => {
   const store = mainStore();
   store.showSnowfall = true;
-  if (animationFrameId || intervalId) {
+  if (animationFrameId) {
     closeSnowfall();
   }
   createCanvas();
@@ -89,21 +90,17 @@ const initSnowfall = () => {
       }
     }
   };
-  const updateSnowflakes = () => {
-    drawSnowflakes();
+  const updateSnowflakes = (timestamp: number) => {
     animationFrameId = requestAnimationFrame(updateSnowflakes);
+    if (timestamp - lastDrawTime < fpsInterval) return;
+    lastDrawTime = timestamp;
+    drawSnowflakes();
   };
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
   createSnowflakes();
-  updateSnowflakes();
-  intervalId = setInterval(() => {
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-      updateSnowflakes();
-    }
-  }, 1000 / 30);
+  lastDrawTime = performance.now();
+  updateSnowflakes(lastDrawTime);
 };
 
 const detectDevice = () => {
@@ -123,10 +120,6 @@ const closeSnowfall = () => {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
-  }
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
   }
   if (canvas && canvas.parentNode === document.body) {
     document.body.removeChild(canvas);

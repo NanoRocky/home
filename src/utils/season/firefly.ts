@@ -1,6 +1,7 @@
 import { mainStore } from "@/store";
 let animationFrameId: number | null = null;
-let intervalId: ReturnType<typeof setInterval> | null = null;
+let lastDrawTime = 0;
+const fpsInterval = 1000 / 60;
 let canvas: HTMLCanvasElement | null = null;
 let fireflyCount: number = 0;
 const fireflies: {
@@ -37,7 +38,7 @@ const createCanvas = () => {
 const initFirefly = () => {
   const store = mainStore();
   store.showFirefly = true;
-  if (animationFrameId || intervalId) {
+  if (animationFrameId) {
     closeFirefly();
   }
   createCanvas();
@@ -88,23 +89,18 @@ const initFirefly = () => {
     });
   };
 
-  const updateFireflies = () => {
-    drawFireflies();
+  const updateFireflies = (timestamp: number) => {
     animationFrameId = requestAnimationFrame(updateFireflies);
+    if (timestamp - lastDrawTime < fpsInterval) return;
+    lastDrawTime = timestamp;
+    drawFireflies();
   };
 
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
   createFireflies();
-  updateFireflies();
-
-  intervalId = setInterval(() => {
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-      updateFireflies();
-    }
-  }, 1000 / 30);
+  lastDrawTime = performance.now();
+  updateFireflies(lastDrawTime);
 };
 
 // 检测设备类型
@@ -125,10 +121,6 @@ const closeFirefly = () => {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
-  }
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
   }
   if (canvas && canvas.parentNode === document.body) {
     document.body.removeChild(canvas);

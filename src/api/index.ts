@@ -1,4 +1,3 @@
-// import axios from "axios";
 import fetchJsonp from "fetch-jsonp";
 import { gwgt, gwggdt, gwggt } from "@/utils/authServer";
 import i18n from "@/locales";

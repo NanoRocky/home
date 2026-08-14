@@ -47,8 +47,7 @@ class Cursor {
 
   move(left: number, top: number) {
     if (!this.cursor) return;
-    this.cursor.style["left"] = `${left}px`;
-    this.cursor.style["top"] = `${top}px`;
+    this.cursor.style.translate = `${left}px ${top}px`;
   }
 
   create() {

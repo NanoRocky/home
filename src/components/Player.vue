@@ -681,6 +681,7 @@ function updatePositionState() {
   });
 }
 
+let lastDwrcLyricStr = "";
 function syncDWRCLrc() {
   showDWRCRunning = 1;
   try {
@@ -760,8 +761,8 @@ function syncDWRCLrc() {
             now > start + duration && now <= start + duration + fadeOutDuration;
           const isCurrent = (now >= start && now <= start + duration) || isDuringFadeOut;
           const isSungLyrics = start + duration < now && !isDuringFadeOut;
-          const lessdur = start + duration - now;
-          return [isCurrent, isSungLyrics, line, row, word, duration, lessdur, "auto", start];
+          const fakeLessDur = (isCurrent && !isDuringFadeOut) ? 1 : -1;
+          return [isCurrent, isSungLyrics, line, row, word, duration, fakeLessDur, "auto", start];
         });
       } else {
         dwrcLyric = [
@@ -778,7 +779,11 @@ function syncDWRCLrc() {
           ],
         ];
       }
-      store.setPlayerLrc(dwrcLyric);
+      const currentStr = JSON.stringify(dwrcLyric);
+      if (currentStr !== lastDwrcLyricStr) {
+        store.setPlayerLrc(dwrcLyric);
+        lastDwrcLyricStr = currentStr;
+      }
     }
   } catch (error) {
     console.error(t("console.player.syncDWRCLrcError"), error);

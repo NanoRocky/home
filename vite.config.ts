@@ -214,9 +214,6 @@ export default ({ mode }: { mode: string }): UserConfig => {
                 output: {
                     manualChunks(id) {
                         if (id.includes('node_modules')) {
-                            if (id.includes('three')) {
-                                return 'vendor_three';
-                            };
                             if (id.includes('element-plus')) {
                                 return 'vendor_element-plus';
                             };

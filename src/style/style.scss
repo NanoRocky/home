@@ -36,7 +36,7 @@ p {
   box-sizing: border-box;
 
   &:hover {
-    transition: 0.3s;
+    transition: color 0.3s, background-color 0.3s, border-color 0.3s, opacity 0.3s, transform 0.3s;
   }
 }
 
@@ -206,6 +206,8 @@ a:hover {
 // 自定义鼠标
 #cursor {
   position: fixed;
+  left: 0;
+  top: 0;
   width: 18px;
   height: 18px;
   background: #fff;
@@ -213,8 +215,9 @@ a:hover {
   opacity: 0.25;
   z-index: 10086;
   pointer-events: none;
+  will-change: transform, opacity;
   transition: 0.2s ease-in-out;
-  transition-property: background, opacity, transform;
+  transition-property: background, opacity, scale;
 
   &.hidden {
     opacity: 0;
@@ -222,7 +225,7 @@ a:hover {
 
   &.active {
     opacity: 0.5;
-    transform: scale(0.5);
+    scale: 0.5;
   }
 }
 

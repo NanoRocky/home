@@ -181,15 +181,17 @@ const toggleKeyListener = (add) => {
 const handleFocus = () => toggleKeyListener(true);
 const handleBlur = () => toggleKeyListener(false);
 
+const handleVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    toggleKeyListener(true); // 页面可见时监听
+  } else {
+    toggleKeyListener(false); // 页面不可见时移除监听
+  }
+};
+
 onMounted(() => {
   // 检测页面是否在窗口前端
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      toggleKeyListener(true); // 页面可见时监听
-    } else {
-      toggleKeyListener(false); // 页面不可见时移除监听
-    }
-  });
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 
   // 检测窗口焦点
   window.addEventListener("focus", handleFocus);
@@ -206,7 +208,7 @@ onUnmounted(() => {
   toggleKeyListener(false);
   window.removeEventListener("focus", handleFocus);
   window.removeEventListener("blur", handleBlur);
-  document.removeEventListener("visibilitychange", handleFocus);
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
 });
 
 // 监听音量变化
