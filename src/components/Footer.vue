@@ -378,6 +378,7 @@ watch(
 
   &.fade-out {
     opacity: 1 !important;
+    color: var(--footer-dwrc-end-color) !important;
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
     text-shadow:
@@ -407,6 +408,7 @@ watch(
 
   &.long-tone-out {
     opacity: 1 !important;
+    color: var(--footer-dwrc-end-color) !important;
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
     animation: pulse-out 0.7s ease-in-out forwards !important;
