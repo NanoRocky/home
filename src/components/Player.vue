@@ -761,7 +761,7 @@ function syncDWRCLrc() {
             now > start + duration && now <= start + duration + fadeOutDuration;
           const isCurrent = (now >= start && now <= start + duration) || isDuringFadeOut;
           const isSungLyrics = start + duration < now && !isDuringFadeOut;
-          const fakeLessDur = (isCurrent && !isDuringFadeOut) ? 1 : -1;
+          const fakeLessDur = isCurrent && !isDuringFadeOut ? 1 : -1;
           return [isCurrent, isSungLyrics, line, row, word, duration, fakeLessDur, "auto", start];
         });
       } else {

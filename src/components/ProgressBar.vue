@@ -3,17 +3,17 @@
     <div
       class="progress"
       :class="{ dragging: isDragging }"
-      :style="{ transform: `scaleX(${ (isDragging ? dragProgress : smoothProgress) / 100 })` }"
+      :style="{ transform: `scaleX(${(isDragging ? dragProgress : smoothProgress) / 100})` }"
     >
       <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
         <ReloadCircle />
       </Icon>
     </div>
-    
+
     <div
       class="progress-icon-wrapper"
       :class="{ dragging: isDragging }"
-      :style="{ transform: `translate3d(${ isDragging ? dragProgress : smoothProgress }%, 0, 0)` }"
+      :style="{ transform: `translate3d(${isDragging ? dragProgress : smoothProgress}%, 0, 0)` }"
     >
       <img
         v-if="store.showProgressIcon"
