@@ -103,11 +103,15 @@ export const envConfig: Env = {
     : exampleConfig.VITE_SONG_TYPE) as "playlist" | "song",
   VITE_SONG_ID:
     import.meta.env.VITE_CONFIG_TURN == "true"
-      ? import.meta.env.VITE_SONG_ID || exampleConfig.VITE_SONG_ID
+      ? import.meta.env.VITE_SONG_ID || import.meta.env.VITE_SONG_ID_SECOND
+        ? import.meta.env.VITE_SONG_ID || ""
+        : exampleConfig.VITE_SONG_ID
       : exampleConfig.VITE_SONG_ID,
   VITE_SONG_ID_SECOND:
     import.meta.env.VITE_CONFIG_TURN == "true"
-      ? import.meta.env.VITE_SONG_ID_SECOND || exampleConfig.VITE_SONG_ID_SECOND
+      ? import.meta.env.VITE_SONG_ID || import.meta.env.VITE_SONG_ID_SECOND
+        ? import.meta.env.VITE_SONG_ID_SECOND || ""
+        : exampleConfig.VITE_SONG_ID_SECOND
       : exampleConfig.VITE_SONG_ID_SECOND,
   VITE_TTS_API:
     import.meta.env.VITE_CONFIG_TURN == "true"
