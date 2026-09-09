@@ -15,13 +15,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: 10
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "24.x"
           cache: pnpm
@@ -63,7 +63,7 @@ jobs:
           Write-Host "✓ Build successful: $fileCount files generated in dist/"
       - name: Upload build logs on failure
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: build-logs-${{ github.run_number }}
           path: |
@@ -73,7 +73,7 @@ jobs:
           retention-days: 7
           if-no-files-found: warn
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Home
           path: dist
