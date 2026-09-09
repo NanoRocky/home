@@ -78,10 +78,6 @@ const formatLrcTimestamp = (ms: number): string => {
 const adjustLineWithOffset = (line: string, offset: number): string | null => {
   if (offset === 0) return line;
 
-  const start = parseStartTimeMs(line);
-  if (start !== null && start + offset < 0) {
-    return null;
-  }
   let updated = line;
   updated = updated.replace(
     /\[(\d{1,2}):(\d{1,2})(?:[.:](\d{1,3}))?\]/g,
@@ -90,87 +86,93 @@ const adjustLineWithOffset = (line: string, offset: number): string | null => {
       const seconds = Number(ss);
       const fraction = ff ? Number(ff) : 0;
       const fractionMs = ff && ff.length === 3 ? fraction : fraction * 10;
-      const newMs = minutes * 60_000 + seconds * 1_000 + fractionMs + offset;
-      return newMs < 0 ? "" : formatLrcTimestamp(newMs);
+      const newMs = Math.max(0, minutes * 60_000 + seconds * 1_000 + fractionMs + offset);
+      return formatLrcTimestamp(newMs);
     },
   );
   updated = updated.replace(/\[(\d+),\s*(\d+)\]/g, (_match, startStr, duration) => {
-    const newStart = Number(startStr) + offset;
-    return newStart < 0 ? "" : `[${newStart},${duration}]`;
+    const newStart = Math.max(0, Number(startStr) + offset);
+    return `[${newStart},${duration}]`;
   });
   updated = updated.replace(/\[(\d+)\]/g, (_match, startStr) => {
-    const newStart = Number(startStr) + offset;
-    return newStart < 0 ? "" : `[${newStart}]`;
+    const newStart = Math.max(0, Number(startStr) + offset);
+    return `[${newStart}]`;
   });
   updated = updated.replace(/\((\d+(?:,\d+)*)\)/g, (_match, body) => {
     const parts = body.split(",");
-    const newStart = Number(parts[0]) + offset;
-    if (newStart < 0) return "";
+    const newStart = Math.max(0, Number(parts[0]) + offset);
     parts[0] = String(newStart);
     return `(${parts.join(",")})`;
   });
   return updated;
 };
 
-const strictMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): number => {
-  const requiredMatchCount = Math.min(3, sourceEntries.length);
+interface MatchResult {
+  sourceIdx: number;
+  pilferIdx: number;
+}
 
-  for (let i = 0; i <= pilferEntries.length - requiredMatchCount; i++) {
-    let matched = true;
-    for (let j = 0; j < requiredMatchCount; j++) {
-      if (sourceEntries[j].normalized !== pilferEntries[i + j].normalized) {
-        matched = false;
-        break;
+const strictMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): MatchResult | null => {
+  const minRequired = Math.min(3, sourceEntries.length, pilferEntries.length);
+  if (minRequired === 0) return null;
+
+  for (let requiredMatchCount = minRequired; requiredMatchCount >= Math.min(2, minRequired); requiredMatchCount--) {
+    for (let s = 0; s <= sourceEntries.length - requiredMatchCount; s++) {
+      for (let p = 0; p <= pilferEntries.length - requiredMatchCount; p++) {
+        let matched = true;
+        for (let j = 0; j < requiredMatchCount; j++) {
+          if (sourceEntries[s + j].normalized !== pilferEntries[p + j].normalized) {
+            matched = false;
+            break;
+          }
+        }
+        if (matched) return { sourceIdx: s, pilferIdx: p };
       }
     }
-    if (matched) {
-      return i;
-    }
   }
-  return -1;
+  return null;
 };
 
-const fuzzyMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): number => {
-  const requiredMatchCount = Math.min(3, sourceEntries.length);
+const fuzzyMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): MatchResult | null => {
+  const minRequired = Math.min(3, sourceEntries.length, pilferEntries.length);
+  if (minRequired === 0) return null;
 
-  for (let i = 0; i <= pilferEntries.length - requiredMatchCount; i++) {
-    let matched = true;
-    let latestHintLineNumber = i;
+  for (let requiredMatchCount = minRequired; requiredMatchCount >= Math.min(2, minRequired); requiredMatchCount--) {
+    for (let s = 0; s <= sourceEntries.length - requiredMatchCount; s++) {
+      for (let p = 0; p <= pilferEntries.length - requiredMatchCount; p++) {
+        let matched = true;
+        let latestHintLineNumber = p;
 
-    for (let j = 0; j < requiredMatchCount; j++) {
-      let needHint = sourceEntries[j].normalized
-        .split("")
-        .filter((x) => x !== " ")
-        .join("");
-      for (
-        let currentLnNum = latestHintLineNumber;
-        currentLnNum < pilferEntries.length && currentLnNum < latestHintLineNumber + 10;
-        currentLnNum++
-      ) {
-        const currentLine = pilferEntries[currentLnNum].normalized
-          .split("")
-          .filter((x) => x !== " ")
-          .join("");
-        if (needHint.startsWith(currentLine)) {
-          needHint = needHint.slice(currentLine.length);
-          latestHintLineNumber = currentLnNum + 1;
-        } else {
-          break;
+        for (let j = 0; j < requiredMatchCount; j++) {
+          let needHint = sourceEntries[s + j].normalized;
+          for (
+            let currentLnNum = latestHintLineNumber;
+            currentLnNum < pilferEntries.length && currentLnNum < latestHintLineNumber + 10;
+            currentLnNum++
+          ) {
+            const currentLine = pilferEntries[currentLnNum].normalized;
+            if (needHint.startsWith(currentLine)) {
+              needHint = needHint.slice(currentLine.length);
+              latestHintLineNumber = currentLnNum + 1;
+            } else {
+              break;
+            }
+            if (needHint === "") {
+              break;
+            }
+          }
+          if (needHint !== "") {
+            matched = false;
+            break;
+          }
         }
-        if (needHint === "") {
-          break;
+        if (matched) {
+          return { sourceIdx: s, pilferIdx: p };
         }
       }
-      if (needHint !== "") {
-        matched = false;
-        break;
-      }
-    }
-    if (matched) {
-      return i;
     }
   }
-  return -1;
+  return null;
 };
 
 export async function alignPilferedLyrics(
@@ -193,23 +195,16 @@ export async function alignPilferedLyrics(
   if (!sourceEntries.length || !pilferEntries.length) {
     return pilferLyric;
   }
-  let matchedIndex = strictMatch(sourceEntries, pilferEntries);
-  if (matchedIndex === -1) {
-    matchedIndex = fuzzyMatch(sourceEntries, pilferEntries);
+  let matchResult = strictMatch(sourceEntries, pilferEntries);
+  if (!matchResult) {
+    matchResult = fuzzyMatch(sourceEntries, pilferEntries);
   }
-  if (matchedIndex === -1) {
+  if (!matchResult) {
     return null;
   }
-  const characterMarkers = /^[男女合]$/;
-  let firstValidSourceEntry = sourceEntries[0];
-  for (const entry of sourceEntries) {
-    if (!characterMarkers.test(entry.normalized)) {
-      firstValidSourceEntry = entry;
-      break;
-    }
-  }
-  const sourceStart = firstValidSourceEntry.startMs ?? 0;
-  const pilferStart = pilferEntries[matchedIndex].startMs ?? 0;
+  
+  const sourceStart = sourceEntries[matchResult.sourceIdx].startMs ?? 0;
+  const pilferStart = pilferEntries[matchResult.pilferIdx].startMs ?? 0;
   let offset = sourceStart - pilferStart;
   if (Math.abs(offset) < 1500 && Math.abs(offset) > -1500) {
     offset = 0;
@@ -229,7 +224,6 @@ export async function alignPilferedLyrics(
     }
     metadataPrefixCount++;
   }
-  const linesToRemove = pilferEntries[matchedIndex].index;
   const trimmedLines = originalPilferLines;
   if (offset === 0) {
     return trimmedLines.join("\n");

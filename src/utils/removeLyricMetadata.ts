@@ -56,12 +56,30 @@ export async function removeLyricMetadata(lrcText: string): Promise<string> {
    */
   const isMetadataLine = (line: string): boolean => {
     if (/^\[(?:ti|ar|al|by|offset|ch):/i.test(line.trim())) {
-      return false;
+      return true;
     }
-    const temp = line.replace(/[\[\{]\w+[:\d,]*[\]\}]/g, "").replace(/\(\d+(?:,\d+)*\)/g, "");
+    const temp = line.replace(/\[[^\]]*\]/g, "").replace(/\([^)]*\)/g, "");
     const pureText = temp.trim();
+    if (!pureText) return false;
+
     for (const keyword of keywords) {
-      if (pureText.includes(keyword)) {
+      if (!keyword) continue;
+      const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+      const isPureEnglish = /^[a-zA-Z]+$/.test(keyword);
+      const needsSeparator = /^[a-zA-Z\u4e00-\u9fa5]+$/.test(keyword);
+
+      let suffixPattern = ``;
+      if (needsSeparator) {
+        if (isPureEnglish) {
+          suffixPattern = `(?:[:：\\-\\s\\/]|$)`;
+        } else {
+          suffixPattern = `[^:：\\-\\s]{0,6}(?:[:：\\-\\s\\/]|$)`;
+        }
+      }
+
+      const regex = new RegExp(`^[\\s\\-*•【\\[\\]】《》]*${escapedKeyword}${suffixPattern}`, "i");
+      if (regex.test(pureText)) {
         return true;
       }
     }

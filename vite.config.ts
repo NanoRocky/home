@@ -182,9 +182,13 @@ export default ({ mode }: { mode: string }): UserConfig => {
                 {
                     find: "@",
                     replacement: resolve(import.meta.dirname, "src")
+                },
+                {
+                    find: /^@vicons\/([^/]+)$/,
+                    replacement: "@vicons/$1/lib/index.js"
                 }
             ],
-            extensions: [".ts", ".js", ".vue", ".json"],
+            extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json", ".vue"],
         },
         css: {
             postcss: {

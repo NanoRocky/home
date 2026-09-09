@@ -3,9 +3,9 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - postcss@8.5.25
   - swiper@14.0.7
-  - cssnano-preset-default@8.0.5
+  - cssnano-preset-default@8.0.5 || 9.0.4
   - cssnano-utils@6.0.3
-  - cssnano@8.0.5
+  - cssnano@8.0.5 || 9.0.4
   - postcss-colormin@8.0.3
   - postcss-convert-values@8.0.3
   - postcss-discard-comments@8.0.3
@@ -47,6 +47,39 @@ minimumReleaseAgeExclude:
   - globals@17.11.0
   - pinia@4.0.3
   - terser@5.50.0
+  - '@csstools/postcss-alpha-function@2.0.12'
+  - '@csstools/postcss-color-function-display-p3-linear@2.0.11'
+  - '@csstools/postcss-color-function@5.0.11'
+  - '@csstools/postcss-color-mix-function@4.0.11'
+  - '@csstools/postcss-color-mix-variadic-function-arguments@2.0.11'
+  - '@csstools/postcss-content-alt-text@3.0.4'
+  - '@csstools/postcss-contrast-color-function@3.0.11'
+  - '@csstools/postcss-exponential-functions@3.0.5'
+  - '@csstools/postcss-fit-tolerance-property@1.0.1'
+  - '@csstools/postcss-gamut-mapping@3.0.11'
+  - '@csstools/postcss-gradients-interpolation-method@6.0.11'
+  - '@csstools/postcss-hwb-function@5.0.11'
+  - '@csstools/postcss-ic-unit@5.0.4'
+  - '@csstools/postcss-image-function@1.0.3'
+  - '@csstools/postcss-light-dark-function@3.0.4'
+  - '@csstools/postcss-logical-viewport-units@4.0.1'
+  - '@csstools/postcss-nested-calc@5.0.1'
+  - '@csstools/postcss-oklab-function@5.0.11'
+  - '@csstools/postcss-progressive-custom-properties@5.1.3'
+  - '@csstools/postcss-random-function@4.0.1'
+  - '@csstools/postcss-relative-color-syntax@4.0.11'
+  - '@csstools/postcss-sign-functions@2.0.5'
+  - '@csstools/postcss-stepped-value-functions@5.0.5'
+  - '@csstools/postcss-trigonometric-functions@5.0.5'
+  - eslint-plugin-vue@10.11.0
+  - postcss-color-functional-notation@8.0.11
+  - postcss-color-hex-alpha@11.0.1
+  - postcss-color-rebeccapurple@11.0.1
+  - postcss-double-position-gradients@7.0.4
+  - postcss-image-set-function@8.0.1
+  - postcss-lab-function@8.0.11
+  - postcss-preset-env@11.5.2
+  - javascript-obfuscator@5.7.0
 
 overrides:
   glob: "^13.0.6"

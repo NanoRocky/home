@@ -5,9 +5,6 @@
       :class="{ dragging: isDragging }"
       :style="{ transform: `scaleX(${(isDragging ? dragProgress : smoothProgress) / 100})` }"
     >
-      <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
-        <ReloadCircle />
-      </Icon>
     </div>
 
     <div
@@ -24,6 +21,9 @@
         @touchstart.prevent="handleTouchStart"
         ref="icon"
       />
+      <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
+        <ReloadCircle />
+      </Icon>
     </div>
   </div>
 </template>
@@ -46,7 +46,6 @@ const isDragging = ref(false);
 const dragProgress = ref(0);
 let dragTimer: ReturnType<typeof setTimeout> | null = null;
 
-// 丝滑进度更新 (60fps)
 const smoothProgress = ref(0);
 let animationFrameId: number | null = null;
 
@@ -102,11 +101,11 @@ const onMouseUp = () => {
   dragTimer = setTimeout(() => {
     isDragging.value = false;
     store.isDragging = false;
-  }, 350);
+  }, 500);
 };
 
 const onMouseMove = throttle((e: MouseEvent) => {
-  if (!isDragging.value) return;
+  if (!isSeeking.value) return;
   const progressBar = document.querySelector(".progress-bar");
   const rect = progressBar!.getBoundingClientRect();
   let offsetX = e.clientX - rect.left;
@@ -131,7 +130,7 @@ const handleTouchStart = (e: TouchEvent) => {
 };
 
 const onTouchMove = throttle((e: TouchEvent) => {
-  if (!isDragging.value || touchIdentifier.value === null) return;
+  if (!isSeeking.value || touchIdentifier.value === null) return;
   const touch = Array.from(e.touches).find((t) => t.identifier === touchIdentifier.value);
   if (!touch) return;
   e.preventDefault();
@@ -154,7 +153,7 @@ const onTouchEnd = () => {
   dragTimer = setTimeout(() => {
     isDragging.value = false;
     store.isDragging = false;
-  }, 350);
+  }, 200);
 };
 
 // 数据处理
@@ -233,28 +232,6 @@ onBeforeUnmount(() => {
     &.dragging {
       transition: none !important;
     }
-
-    .ReloadCircle {
-      position: absolute;
-      user-select: none;
-      touch-action: none;
-      top: -16px;
-      right: -16px;
-      width: 32px;
-      height: 32px;
-      color: black;
-      animation: spin 1s linear infinite;
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg) translateZ(0);
-        }
-
-        100% {
-          transform: rotate(360deg) translateZ(0);
-        }
-      }
-    }
   }
 
   .progress-icon-wrapper {
@@ -268,6 +245,30 @@ onBeforeUnmount(() => {
 
     &.dragging .progress-icon {
       transition: none !important;
+    }
+
+    .ReloadCircle {
+      position: absolute;
+      user-select: none;
+      touch-action: none;
+      top: -16px;
+      left: -16px;
+      width: 32px;
+      height: 32px;
+      color: black;
+      animation: spin 1s linear infinite;
+      z-index: 2; /* 确保它在图标上方 */
+      pointer-events: none; /* 让点击事件穿透到下方的猫爪 */
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg) translateZ(0);
+        }
+
+        100% {
+          transform: rotate(360deg) translateZ(0);
+        }
+      }
     }
 
     .progress-icon {

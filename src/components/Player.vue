@@ -302,6 +302,7 @@ const onPlay = () => {
 
 // 开始播放处理
 const onCanplay = () => {
+  lastDwrcLyricStr = "";
   // 播放状态
   store.setPlayerCanplay(true);
   updatePositionState();
@@ -314,6 +315,7 @@ const onWaiting = () => {
 // 暂停
 const onPause = () => {
   store.setPlayerState(player.value!.audioRef.paused);
+  lastDwrcLyricStr = "";
 };
 
 // 切换播放暂停事件
@@ -632,6 +634,7 @@ function onLoadStart() {
   // 逐字获取模块
   if (!player.value) return;
   nowLineIndex.value = -1;
+  lastDwrcLyricStr = "";
   try {
     if (player.value == null || player.value.aplayer == null) {
       return;
@@ -700,6 +703,7 @@ function syncDWRCLrc() {
         const lrc = t("components.music.lrcSearching");
         if (store.playerLrc.length !== 1 || store.playerLrc[0][4] !== lrc) {
           store.setPlayerLrc([[true, 1, 0, 0, lrc, 0, 0, "auto", 0]]);
+          lastDwrcLyricStr = "";
         }
       } else {
         let lrc = lyrics[playerLyricIndex][1];
@@ -724,32 +728,27 @@ function syncDWRCLrc() {
           store.playerLrc[0][2] !== playerLyricIndex
         ) {
           store.setPlayerLrc([[true, 1, playerLyricIndex, 0, lrc, duration, 0, "auto", startTime]]);
+          lastDwrcLyricStr = "";
         }
       }
     } else {
       const dwrc = store.dwrcTemp;
-      if (nowLineIndex.value === -1 || store.isDragging) {
-        let foundIndex = -1;
-        for (let i = 0; i < dwrc.length; i++) {
-          if (dwrc[i][0] <= lineSwitchNow) {
-            // now -> lineSwitchNow
-            foundIndex = i;
-          } else {
-            break;
-          }
+      let foundIndex = -1;
+      for (let i = 0; i < dwrc.length; i++) {
+        if (dwrc[i][0] <= lineSwitchNow) {
+          foundIndex = i;
+        } else {
+          break;
         }
-        if (store.isDragging && nowLineIndex.value !== foundIndex && nowLineIndex.value !== -1) {
+      }
+
+      if (nowLineIndex.value === -1) {
+        nowLineIndex.value = foundIndex;
+      } else if (foundIndex !== nowLineIndex.value) {
+        if (store.isDragging || foundIndex < nowLineIndex.value || foundIndex > nowLineIndex.value + 1) {
           store.lyricSeekVersion++;
         }
         nowLineIndex.value = foundIndex;
-      } else {
-        if (
-          nowLineIndex.value + 1 < dwrc.length &&
-          lineSwitchNow >= dwrc[nowLineIndex.value + 1][0]
-        ) {
-          // now -> lineSwitchNow
-          nowLineIndex.value++;
-        }
       }
       const currentLine = nowLineIndex.value !== -1 ? dwrc[nowLineIndex.value] : null;
       let dwrcLyric: any[];
