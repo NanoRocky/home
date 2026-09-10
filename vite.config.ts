@@ -185,7 +185,7 @@ export default ({ mode }: { mode: string }): UserConfig => {
                 },
                 {
                     find: /^@vicons\/([^/]+)$/,
-                    replacement: "@vicons/$1/lib/index.js"
+                    replacement: "@vicons/$1/es/index.js"
                 }
             ],
             extensions: [".mjs", ".js", ".mts", ".ts", ".jsx", ".tsx", ".json", ".vue"],
