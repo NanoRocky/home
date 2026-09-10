@@ -3,6 +3,7 @@ import { removeLyricMetadata } from "@/utils/removeLyricMetadata";
 type LyricEntry = {
   index: number;
   normalized: string;
+  original: string;
   startMs: number | null;
 };
 
@@ -48,7 +49,7 @@ const buildEntries = (cleanedText: string): LyricEntry[] => {
   lines.forEach((line, index) => {
     const normalized = normalizeLyricLine(line);
     if (!normalized) return;
-    entries.push({ index, normalized, startMs: parseStartTimeMs(line) });
+    entries.push({ index, normalized, original: line, startMs: parseStartTimeMs(line) });
   });
   return entries;
 };
@@ -112,66 +113,80 @@ interface MatchResult {
   pilferIdx: number;
 }
 
-const strictMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): MatchResult | null => {
-  const minRequired = Math.min(3, sourceEntries.length, pilferEntries.length);
-  if (minRequired === 0) return null;
+const anchoredMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): MatchResult | null => {
+  if (!sourceEntries.length || !pilferEntries.length) return null;
 
-  for (let requiredMatchCount = minRequired; requiredMatchCount >= Math.min(2, minRequired); requiredMatchCount--) {
-    for (let s = 0; s <= sourceEntries.length - requiredMatchCount; s++) {
-      for (let p = 0; p <= pilferEntries.length - requiredMatchCount; p++) {
-        let matched = true;
-        for (let j = 0; j < requiredMatchCount; j++) {
-          if (sourceEntries[s + j].normalized !== pilferEntries[p + j].normalized) {
-            matched = false;
+  const targetLinesCount = Math.min(5, sourceEntries.length);
+  const maxPilferStartOffset = Math.min(5, pilferEntries.length);
+
+  for (let p = 0; p < maxPilferStartOffset; p++) {
+    let matched = true;
+    let currentPilferIdx = p;
+    let matches: { sourceIdx: number; pilferIdx: number }[] = [];
+
+    for (let j = 0; j < targetLinesCount; j++) {
+      if (currentPilferIdx >= pilferEntries.length) {
+        matched = false;
+        break;
+      }
+
+      if (sourceEntries[j].normalized === pilferEntries[currentPilferIdx].normalized) {
+        matches.push({ sourceIdx: j, pilferIdx: currentPilferIdx });
+        currentPilferIdx++;
+        continue;
+      }
+
+      let needHint = sourceEntries[j].normalized;
+      let fuzzyMatched = false;
+      let tempPilferIdx = currentPilferIdx;
+      let skippedPilferCount = 0;
+      let startPilferIdx = tempPilferIdx;
+      let hasStartedMatching = false;
+
+      while (tempPilferIdx < pilferEntries.length && tempPilferIdx < currentPilferIdx + 10) {
+        const pilferLine = pilferEntries[tempPilferIdx].normalized;
+        if (needHint.startsWith(pilferLine)) {
+          if (!hasStartedMatching) {
+            hasStartedMatching = true;
+            startPilferIdx = tempPilferIdx;
+          }
+          needHint = needHint.slice(pilferLine.length);
+          tempPilferIdx++;
+          if (needHint === "") {
+            fuzzyMatched = true;
+            currentPilferIdx = tempPilferIdx;
             break;
           }
-        }
-        if (matched) return { sourceIdx: s, pilferIdx: p };
-      }
-    }
-  }
-  return null;
-};
-
-const fuzzyMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): MatchResult | null => {
-  const minRequired = Math.min(3, sourceEntries.length, pilferEntries.length);
-  if (minRequired === 0) return null;
-
-  for (let requiredMatchCount = minRequired; requiredMatchCount >= Math.min(2, minRequired); requiredMatchCount--) {
-    for (let s = 0; s <= sourceEntries.length - requiredMatchCount; s++) {
-      for (let p = 0; p <= pilferEntries.length - requiredMatchCount; p++) {
-        let matched = true;
-        let latestHintLineNumber = p;
-
-        for (let j = 0; j < requiredMatchCount; j++) {
-          let needHint = sourceEntries[s + j].normalized;
-          for (
-            let currentLnNum = latestHintLineNumber;
-            currentLnNum < pilferEntries.length && currentLnNum < latestHintLineNumber + 10;
-            currentLnNum++
-          ) {
-            const currentLine = pilferEntries[currentLnNum].normalized;
-            if (needHint.startsWith(currentLine)) {
-              needHint = needHint.slice(currentLine.length);
-              latestHintLineNumber = currentLnNum + 1;
-            } else {
-              break;
-            }
-            if (needHint === "") {
-              break;
-            }
-          }
-          if (needHint !== "") {
-            matched = false;
-            break;
-          }
-        }
-        if (matched) {
-          return { sourceIdx: s, pilferIdx: p };
+        } else if (j > 0 && needHint === sourceEntries[j].normalized && skippedPilferCount < 3) {
+          tempPilferIdx++;
+          skippedPilferCount++;
+        } else {
+          break;
         }
       }
+
+      if (!fuzzyMatched) {
+        matched = false;
+        break;
+      } else {
+        matches.push({ sourceIdx: j, pilferIdx: startPilferIdx });
+      }
+    }
+
+    if (matched) {
+      for (const m of matches) {
+        const sourceOriginal = sourceEntries[m.sourceIdx].original
+          .replace(/\[[^\]]*\]/g, "")
+          .replace(/\([^)]*\)/g, "")
+          .trim();
+        if (!/[:：【】\[\]]/.test(sourceOriginal)) {
+          return { sourceIdx: m.sourceIdx, pilferIdx: m.pilferIdx };
+        }
+      }
+      return { sourceIdx: matches[0].sourceIdx, pilferIdx: matches[0].pilferIdx };
     }
   }
+
   return null;
 };
 
@@ -195,14 +210,12 @@ export async function alignPilferedLyrics(
   if (!sourceEntries.length || !pilferEntries.length) {
     return pilferLyric;
   }
-  let matchResult = strictMatch(sourceEntries, pilferEntries);
-  if (!matchResult) {
-    matchResult = fuzzyMatch(sourceEntries, pilferEntries);
-  }
+
+  const matchResult = anchoredMatch(sourceEntries, pilferEntries);
   if (!matchResult) {
     return null;
   }
-  
+
   const sourceStart = sourceEntries[matchResult.sourceIdx].startMs ?? 0;
   const pilferStart = pilferEntries[matchResult.pilferIdx].startMs ?? 0;
   let offset = sourceStart - pilferStart;
