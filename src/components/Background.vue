@@ -1,22 +1,11 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
-    <img
-      v-show="store.imgLoadStatus"
-      :src="currentBgUrl"
-      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
-      alt="cover"
-      @load="imgLoadComplete"
-      @error.once="imgLoadError"
-      @animationend="imgAnimationEnd"
-    />
+    <img v-show="store.imgLoadStatus" :src="currentBgUrl"
+      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]" alt="cover"
+      @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
     <!-- 新壁纸层 -->
-    <img
-      v-if="isTransitioning"
-      :src="nextBgUrl"
-      :class="['bg', 'next', { 'blur-in': isBlurringIn }]"
-      alt="cover"
-    />
+    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -61,6 +50,30 @@ let confUrlS = null;
 let sest = 0;
 let sBGCountN = null;
 
+const getNonRepeatingRandom = (maxCount, storageKey) => {
+  if (maxCount <= 1) return 1;
+  const historySize = Math.floor(maxCount / 3);
+  let history = [];
+  try {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) history = JSON.parse(saved);
+  } catch (e) { }
+  let rand = Math.floor(Math.random() * maxCount + 1);
+  let attempts = 0;
+  while (history.includes(rand) && attempts < 50) {
+    rand = Math.floor(Math.random() * maxCount + 1);
+    attempts++;
+  }
+  history.push(rand);
+  if (history.length > historySize) {
+    history = history.slice(history.length - historySize);
+  }
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(history));
+  } catch (e) { }
+  return rand;
+};
+
 // 加载 config.json
 async function loadConfig() {
   try {
@@ -76,15 +89,15 @@ async function loadConfig() {
       sBGCountN = null;
       return true;
     } else {
-      bgRandom = Math.floor(Math.random() * bgImageCount + 1);
-      bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+      bgRandom = getNonRepeatingRandom(bgImageCount, "bgRandomHistory");
+      bgRandomp = getNonRepeatingRandom(bgImageCountP, "bgRandompHistory");
       sBGCountN = null;
       return true;
     }
   } catch (error) {
     console.error(t("components.background.loadConfigFailed"), error);
-    bgRandom = Math.floor(Math.random() * bgImageCount + 1);
-    bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+    bgRandom = getNonRepeatingRandom(bgImageCount, "bgRandomHistory");
+    bgRandomp = getNonRepeatingRandom(bgImageCountP, "bgRandompHistory");
     sBGCountN = null;
     return true;
   }
@@ -105,28 +118,28 @@ const detectDevice = () => {
 };
 
 const getLocalBgUrl = async (deviceType) => {
-  // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png
+  // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png 或 avif
   // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
   if (deviceType === "mobile") {
     if (key) {
-      const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+      const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.avif`;
       return await gasC(bgUrlS, key);
     } else {
-      return `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.webp`;
+      return `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.avif`;
     }
   } else if (deviceType === "tablet" || deviceType === "pc") {
     if (key) {
-      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
       return await gasC(bgUrlS, key);
     } else {
-      return `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+      return `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
     }
   } else {
     if (key) {
-      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
       return await gasC(bgUrlS, key);
     } else {
-      return `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+      return `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
     }
   }
 };
@@ -297,10 +310,10 @@ const imgLoadError = async () => {
     }),
   });
   if (key) {
-    const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+    const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
     currentBgUrl.value = await gasC(bgUrlS, key);
   } else {
-    currentBgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.webp`;
+    currentBgUrl.value = `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
   }
   if (store.webSpeech) {
     stopSpeech();

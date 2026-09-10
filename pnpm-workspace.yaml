@@ -80,6 +80,7 @@ minimumReleaseAgeExclude:
   - postcss-lab-function@8.0.11
   - postcss-preset-env@11.5.2
   - javascript-obfuscator@5.7.0
+  - '@rolldown/binding-openharmony-arm64@1.2.8'
 
 overrides:
   glob: "^13.0.6"
