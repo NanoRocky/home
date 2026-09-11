@@ -33,8 +33,8 @@
 
 <script setup lang="ts">
 import { Icon } from "@vicons/utils";
-import QuoteLeft from "@vicons/fa/lib/QuoteLeft.js";
-import QuoteRight from "@vicons/fa/lib/QuoteRight.js";
+import QuoteLeft from "@vicons/fa/es/QuoteLeft.js";
+import QuoteRight from "@vicons/fa/es/QuoteRight.js";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
