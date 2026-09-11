@@ -81,6 +81,8 @@ minimumReleaseAgeExclude:
   - postcss-preset-env@11.5.2
   - javascript-obfuscator@5.7.0
   - '@rolldown/binding-openharmony-arm64@1.2.8'
+  - autoprefixer@10.5.6
+  - vite@8.3.0
 
 overrides:
   glob: "^13.0.6"

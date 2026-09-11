@@ -4,35 +4,21 @@
       <Icon size="20" class="iconl">
         <Link />
       </Icon>
-      <span
-        class="title text-truncate-ellipsis"
-        v-if="store.mobileOpenState"
-        @click="store.setOpenState = !store.setOpenState"
-        >{{ $t("components.links.title") }}</span
-      >
+      <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
+        @click="store.setOpenState = !store.setOpenState">{{ $t("components.links.title") }}</span>
       <span class="title" v-else>{{ $t("components.links.title") }}</span>
     </div>
     <!-- 网站列表 -->
-    <Swiper
-      v-if="siteLinks[0]"
-      :modules="[Pagination, Mousewheel]"
-      :slides-per-view="1"
-      :space-between="40"
+    <Swiper v-if="siteLinks[0]" :modules="[Pagination, Mousewheel]" :slides-per-view="1" :space-between="40"
       :pagination="{
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'div',
-      }"
-      :mousewheel="true"
-    >
+      }" :mousewheel="true">
       <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">
-            <div
-              class="item cards"
-              :style="index < 3 ? 'margin-bottom: 20px' : null"
-              @click="jumpLink(item)"
-            >
+            <div class="item cards" :style="index < 3 ? 'margin-bottom: 20px' : null" @click="jumpLink(item)">
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>
@@ -49,23 +35,24 @@
 <script setup lang="ts">
 import { Icon } from "@vicons/utils";
 // 可前往 https://www.xicons.org 自行挑选并在此处引入
-import {
-  Link,
-  Blog,
-  CompactDisc,
-  Cloud,
-  Compass,
-  Book,
-  Fire,
-  LaptopCode,
-  Google,
-  WikipediaW,
-  Youtube,
-} from "@vicons/fa";
-import { DeviceTv, Api } from "@vicons/tabler";
-import { LibraryMusicSharp, VideogameAssetFilled, DrawFilled } from "@vicons/material";
-import { IosBasketball } from "@vicons/ionicons4";
-import { GameController } from "@vicons/ionicons5";
+import Link from "@vicons/fa/lib/Link.js";
+import Blog from "@vicons/fa/lib/Blog.js";
+import CompactDisc from "@vicons/fa/lib/CompactDisc.js";
+import Cloud from "@vicons/fa/lib/Cloud.js";
+import Compass from "@vicons/fa/lib/Compass.js";
+import Book from "@vicons/fa/lib/Book.js";
+import Fire from "@vicons/fa/lib/Fire.js";
+import LaptopCode from "@vicons/fa/lib/LaptopCode.js";
+import Google from "@vicons/fa/lib/Google.js";
+import WikipediaW from "@vicons/fa/lib/WikipediaW.js";
+import Youtube from "@vicons/fa/lib/Youtube.js";
+import DeviceTv from "@vicons/tabler/lib/DeviceTv.js";
+import Api from "@vicons/tabler/lib/Api.js";
+import LibraryMusicSharp from "@vicons/material/lib/LibraryMusicSharp.js";
+import VideogameAssetFilled from "@vicons/material/lib/VideogameAssetFilled.js";
+import DrawFilled from "@vicons/material/lib/DrawFilled.js";
+import IosBasketball from "@vicons/ionicons4/lib/IosBasketball.js";
+import GameController from "@vicons/ionicons5/lib/GameController.js";
 import { mainStore } from "@/store";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Mousewheel } from "swiper/modules";

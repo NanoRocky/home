@@ -31,7 +31,8 @@
 <script setup lang="ts">
 import { MusicOne } from "@icon-park/vue-next";
 import { Icon } from "@vicons/utils";
-import { Paw, ReloadCircle } from "@vicons/ionicons5";
+import Paw from "@vicons/ionicons5/lib/Paw.js";
+import ReloadCircle from "@vicons/ionicons5/lib/ReloadCircle.js";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
 import { ref, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";

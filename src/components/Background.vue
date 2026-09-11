@@ -17,7 +17,7 @@
 
 <script setup lang="js">
 import { mainStore } from "@/store";
-import { Error } from "@icon-park/vue-next/es/icons/Error";
+import Error from "@icon-park/vue-next/es/icons/Error";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
