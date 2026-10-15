@@ -53,17 +53,30 @@
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
         <!-- 歌词组件 -->
-        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
-          @before-leave="onBeforeLeave" @before-enter="onBeforeEnter" @after-enter="onAfterEnter">
-          <div class="lrc-all" ref="lrcAllRef"
+        <Transition
+          name="fade"
+          mode="out-in"
+          :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
+          @before-leave="onBeforeLeave"
+          @before-enter="onBeforeEnter"
+          @after-enter="onAfterEnter"
+        >
+          <div
+            class="lrc-all"
+            ref="lrcAllRef"
             :class="{ 'is-overflow': lyricGeo.isOverflow, 'is-centered': !lyricGeo.isOverflow }"
-            :key="lyricTransitionKey">
+            :key="lyricTransitionKey"
+          >
             <!-- 左侧 ICON 组 -->
             <div class="lrc-side-icons left-icons" ref="leftIconsRef">
               <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
               &nbsp;
-              <Icon size="20" style="transform: rotate(-18deg)" class="paws-1"
-                color="var(--footer-music-paw-icon-color)">
+              <Icon
+                size="20"
+                style="transform: rotate(-18deg)"
+                class="paws-1"
+                color="var(--footer-music-paw-icon-color)"
+              >
                 <paw />
               </Icon>
             </div>
@@ -73,39 +86,66 @@
                 <!-- 逐字模块 -->
                 <span v-if="!isLineByLine" class="dwrc-box" ref="dwrcBoxRef">
                   <DwrcDot v-if="store.dwrcDot" ref="dwrcDotRef" />
-                  <span class="dwrc-2 lrc-text" id="dwrc-2-wrap" :data-line="store.playerLrc[0]?.[2]">
-                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
+                  <span
+                    class="dwrc-2 lrc-text"
+                    id="dwrc-2-wrap"
+                    :data-line="store.playerLrc[0]?.[2]"
+                  >
+                    <span
+                      v-for="(i, index) in store.playerLrc"
+                      :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }"
+                      :class="[
                         'dwrc-2-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
-                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
+                          ? 'long-tone'
+                          : 'fade-in-start',
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                      ]" v-html="i[4]">
+                      ]"
+                      v-html="i[4]"
+                    >
                     </span>
                   </span>
                   <span class="dwrc-1 lrc-text" id="dwrc-1-wrap">
-                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
+                    <span
+                      v-for="(i, index) in store.playerLrc"
+                      :key="`lrc-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }"
+                      :class="[
                         'dwrc-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
-                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
+                          ? 'long-tone'
+                          : 'fade-in-start',
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
                         i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
-                      ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                      ]"
+                      :id="`lrc-char-${i[2]}-${i[3]}`"
+                      v-html="i[4]"
+                    >
                     </span>
                   </span>
                 </span>
                 <!-- 逐行模块 -->
-                <span v-else class="lrc-text line-lrc-text lrc-char" ref="lineLrcRef"
-                  v-html="store.getPlayerLrc[0]?.[4]" />
+                <span
+                  v-else
+                  class="lrc-text line-lrc-text lrc-char"
+                  ref="lineLrcRef"
+                  v-html="store.getPlayerLrc[0]?.[4]"
+                />
               </div>
             </div>
             <!-- 右侧 ICON 组 -->
             <div class="lrc-side-icons right-icons" ref="rightIconsRef">
-              <Icon size="20" style="transform: rotate(18deg)" class="paws-2"
-                color="var(--footer-music-paw-icon-color)">
+              <Icon
+                size="20"
+                style="transform: rotate(18deg)"
+                class="paws-2"
+                color="var(--footer-music-paw-icon-color)"
+              >
                 <paw />
               </Icon>
               &nbsp;
@@ -127,7 +167,16 @@ import { Icon } from "@vicons/utils";
 import Paw from "@vicons/ionicons5/es/Paw.js";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
-import { ref, reactive, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
+import {
+  ref,
+  reactive,
+  watch,
+  computed,
+  onMounted,
+  nextTick,
+  onUpdated,
+  onBeforeUnmount,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { throttle } from "lodash-es";
 
@@ -203,8 +252,8 @@ const toggleForceIcon = () => {
   }
 };
 
-const PADDING_LEFT = 8;   // 开始左间距
-const PADDING_RIGHT = 8;  // 结束右间距
+const PADDING_LEFT = 8; // 开始左间距
+const PADDING_RIGHT = 8; // 结束右间距
 const MASK_MAX_WIDTH = 24; // 遮罩渐隐最大宽度
 const SCROLL_LERP = 0.15; // 阻尼平滑系数
 
@@ -294,10 +343,15 @@ const updateLyricGeometry = () => {
 
   const lrcAllRect = lrcAllRef.value.getBoundingClientRect();
   const leftIconsWidth = leftIconsRef.value ? leftIconsRef.value.getBoundingClientRect().width : 50;
-  const rightIconsWidth = rightIconsRef.value ? rightIconsRef.value.getBoundingClientRect().width : 50;
+  const rightIconsWidth = rightIconsRef.value
+    ? rightIconsRef.value.getBoundingClientRect().width
+    : 50;
 
   const sideMargin = 8;
-  const maxAvailableViewportWidth = Math.max(0, lrcAllRect.width - (leftIconsWidth + rightIconsWidth + sideMargin));
+  const maxAvailableViewportWidth = Math.max(
+    0,
+    lrcAllRect.width - (leftIconsWidth + rightIconsWidth + sideMargin),
+  );
 
   const contentEl = dwrcBoxRef.value || lineLrcRef.value;
   const contentWidth = contentEl ? contentEl.getBoundingClientRect().width : 0;
@@ -309,9 +363,13 @@ const updateLyricGeometry = () => {
 
   if (lyricGeo.isOverflow) {
     const vpRect = lrcViewportRef.value?.getBoundingClientRect();
-    lyricGeo.viewportWidth = (vpRect && vpRect.width > contentWidth) ? vpRect.width : maxAvailableViewportWidth;
-    lyricGeo.viewportLeft = vpRect ? vpRect.left : (lrcAllRect.left + leftIconsWidth + 4);
-    lyricGeo.maxScroll = Math.max(0, contentWidth + PADDING_LEFT + PADDING_RIGHT - lyricGeo.viewportWidth);
+    lyricGeo.viewportWidth =
+      vpRect && vpRect.width > contentWidth ? vpRect.width : maxAvailableViewportWidth;
+    lyricGeo.viewportLeft = vpRect ? vpRect.left : lrcAllRect.left + leftIconsWidth + 4;
+    lyricGeo.maxScroll = Math.max(
+      0,
+      contentWidth + PADDING_LEFT + PADDING_RIGHT - lyricGeo.viewportWidth,
+    );
   } else {
     lyricGeo.viewportWidth = contentWidth;
     lyricGeo.viewportLeft = lrcAllRect.left + (lrcAllRect.width - contentWidth) / 2;
@@ -347,7 +405,7 @@ const listenDprChange = () => {
       updateLyricGeometry();
       listenDprChange();
     },
-    { once: true }
+    { once: true },
   );
 };
 
@@ -371,7 +429,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -382,7 +440,7 @@ watch(
     nextTick(() => {
       updateLyricGeometry();
     });
-  }
+  },
 );
 
 watch(
@@ -398,7 +456,7 @@ watch(
     nextTick(() => {
       updateLyricGeometry();
     });
-  }
+  },
 );
 
 let dwrcRAFId: number | null = null;
@@ -463,7 +521,10 @@ const startDWRCLoop = () => {
               if (!outputItem) continue;
 
               timeline.push({ time: start, x: outputItem.offsetLeft });
-              timeline.push({ time: start + duration, x: outputItem.offsetLeft + outputItem.offsetWidth });
+              timeline.push({
+                time: start + duration,
+                x: outputItem.offsetLeft + outputItem.offsetWidth,
+              });
             }
 
             if (timeline.length > 0) {
@@ -507,8 +568,7 @@ const startDWRCLoop = () => {
       }
 
       currentProgressX = dotX;
-    }
-    else if (isLine && store.getPlayerLrc?.length > 0) {
+    } else if (isLine && store.getPlayerLrc?.length > 0) {
       const lrcItem = (store.getPlayerLrc[0] as any[]) || [];
       const duration = Number(lrcItem[5]) || 5000;
       const start = Number(lrcItem[8]) || 0;
@@ -992,16 +1052,20 @@ onBeforeUnmount(() => {
           height: 100%;
           overflow: hidden;
           position: relative;
-          mask-image: linear-gradient(to right,
-              var(--mask-left-color, black) 0,
-              black var(--mask-left, 0px),
-              black calc(100% - var(--mask-right, 24px)),
-              var(--mask-right-color, transparent) 100%);
-          -webkit-mask-image: linear-gradient(to right,
-              var(--mask-left-color, black) 0,
-              black var(--mask-left, 0px),
-              black calc(100% - var(--mask-right, 24px)),
-              var(--mask-right-color, transparent) 100%);
+          mask-image: linear-gradient(
+            to right,
+            var(--mask-left-color, black) 0,
+            black var(--mask-left, 0px),
+            black calc(100% - var(--mask-right, 24px)),
+            var(--mask-right-color, transparent) 100%
+          );
+          -webkit-mask-image: linear-gradient(
+            to right,
+            var(--mask-left-color, black) 0,
+            black var(--mask-left, 0px),
+            black calc(100% - var(--mask-right, 24px)),
+            var(--mask-right-color, transparent) 100%
+          );
         }
 
         .lrc-scroll-track {

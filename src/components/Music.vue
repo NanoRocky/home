@@ -1,19 +1,44 @@
 <template>
   <!-- 音乐控制面板 -->
-  <div class="music" @mouseenter="volumeShow = true" @mouseleave="volumeShow = false" v-show="store.musicOpenState">
+  <div
+    class="music"
+    @mouseenter="volumeShow = true"
+    @mouseleave="volumeShow = false"
+    v-show="store.musicOpenState"
+  >
     <div class="btns">
       <span @click="store.musicBoxOpenState = true">{{ $t("components.music.musicList") }}</span>
       <span @click="store.musicOpenState = false">{{ $t("components.music.backToHitokoto") }}</span>
     </div>
     <div class="control">
-      <go-start theme="filled" size="30" fill="var(--player-control-color)" @click="changeMusicIndex(0)" />
+      <go-start
+        theme="filled"
+        size="30"
+        fill="var(--player-control-color)"
+        @click="changeMusicIndex(0)"
+      />
       <Transition name="fade" mode="out-in">
         <div :key="String(store.playerState)" class="state" @click="changePlayState">
-          <play-one theme="filled" size="50" fill="var(--player-control-color)" v-show="!store.playerState" />
-          <pause theme="filled" size="50" fill="var(--player-control-color)" v-show="store.playerState" />
+          <play-one
+            theme="filled"
+            size="50"
+            fill="var(--player-control-color)"
+            v-show="!store.playerState"
+          />
+          <pause
+            theme="filled"
+            size="50"
+            fill="var(--player-control-color)"
+            v-show="store.playerState"
+          />
         </div>
       </Transition>
-      <go-end theme="filled" size="30" fill="var(--player-control-color)" @click="changeMusicIndex(1)" />
+      <go-end
+        theme="filled"
+        size="30"
+        fill="var(--player-control-color)"
+        @click="changeMusicIndex(1)"
+      />
     </div>
     <div class="menu">
       <div class="name" v-show="!volumeShow">
@@ -25,9 +50,18 @@
       </div>
       <div class="volume" v-show="volumeShow">
         <div class="icon">
-          <volume-mute theme="filled" size="24" fill="var(--player-control-color)" v-if="volumeNum == 0" />
-          <volume-small theme="filled" size="24" fill="var(--player-control-color)"
-            v-else-if="volumeNum > 0 && volumeNum < 0.7" />
+          <volume-mute
+            theme="filled"
+            size="24"
+            fill="var(--player-control-color)"
+            v-if="volumeNum == 0"
+          />
+          <volume-small
+            theme="filled"
+            size="24"
+            fill="var(--player-control-color)"
+            v-else-if="volumeNum > 0 && volumeNum < 0.7"
+          />
           <volume-notice theme="filled" size="24" fill="var(--player-control-color)" v-else />
         </div>
         <el-slider v-model="volumeNum" :show-tooltip="false" :min="0" :max="1" :step="0.01" />
@@ -39,10 +73,22 @@
     <div class="music-list" v-show="musicListShow" @click="store.musicBoxOpenState = false">
       <Transition name="zoom">
         <div class="list" v-show="musicListShow" @click.stop>
-          <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
-            @click="store.musicBoxOpenState = false" />
-          <Player ref="playerRef" :songServer="playerData.server" :songType="playerData.type" :songId="playerData.id"
-            :songServerSE="playerData.serverse" :songIdSE="playerData.idse" :volume="volumeNum" />
+          <close-one
+            class="close"
+            theme="filled"
+            size="28"
+            fill="var(--close-icon-color)"
+            @click="store.musicBoxOpenState = false"
+          />
+          <Player
+            ref="playerRef"
+            :songServer="playerData.server"
+            :songType="playerData.type"
+            :songId="playerData.id"
+            :songServerSE="playerData.serverse"
+            :songIdSE="playerData.idse"
+            :volume="volumeNum"
+          />
         </div>
       </Transition>
     </div>

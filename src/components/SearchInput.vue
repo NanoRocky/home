@@ -1,12 +1,22 @@
 <template>
   <Transition name="search-float">
-    <div v-if="store.searchOpenState" class="search-wrapper" ref="searchWrapperRef" :style="{ top: `${searchTop}px` }"
-      @click.stop>
+    <div
+      v-if="store.searchOpenState"
+      class="search-wrapper"
+      ref="searchWrapperRef"
+      :style="{ top: `${searchTop}px` }"
+      @click.stop
+    >
       <!-- 搜索引擎选择下拉弹窗 -->
       <Transition name="engine-menu">
         <div v-if="showEngineMenu" class="engine-dropdown" ref="engineMenuRef">
-          <div v-for="item in engines" :key="item.key" class="engine-item"
-            :class="{ active: item.key === currentEngine.key }" @click.stop="selectEngine(item)">
+          <div
+            v-for="item in engines"
+            :key="item.key"
+            class="engine-item"
+            :class="{ active: item.key === currentEngine.key }"
+            @click.stop="selectEngine(item)"
+          >
             <span class="engine-icon" v-html="item.icon"></span>
             <span class="engine-name">{{ item.name }}</span>
             <span v-if="item.key === currentEngine.key" class="check-mark">✓</span>
@@ -17,25 +27,44 @@
       <div class="search-box" :class="{ 'is-focused': isFocused }">
         <div class="search-blur-bg"></div>
         <!-- 引擎切换按钮 -->
-        <div class="engine-btn" @click.stop="showEngineMenu = !showEngineMenu"">
-          <span class=" engine-icon" v-html="currentEngine.icon"></span>
-          <svg class="arrow-icon" :class="{ 'is-open': showEngineMenu }" viewBox="0 0 1024 1024" width="10" height="10">
+        <div class="engine-btn" @click.stop="showEngineMenu = !showEngineMenu">
+          <span class="engine-icon" v-html="currentEngine.icon"></span>
+          <svg
+            class="arrow-icon"
+            :class="{ 'is-open': showEngineMenu }"
+            viewBox="0 0 1024 1024"
+            width="10"
+            height="10"
+          >
             <path
               d="M840.4 300H183.6c-19.7 0-30.7 22.8-18.4 37.4l328.4 389.3c9.8 11.6 27 11.6 36.8 0l328.4-389.3c12.3-14.6 1.3-37.4-18.4-37.4z"
-              fill="currentColor" />
+              fill="currentColor"
+            />
           </svg>
         </div>
         <div class="divider"></div>
         <!-- 输入框 -->
-        <input ref="inputRef" v-model="keyword" type="text" class="search-input" :placeholder="placeholderText"
-          autocomplete="off" spellcheck="false" @focus="isFocused = true" @blur="isFocused = false"
-          @keydown.enter="handleSearch" @keydown="handleInputKeyDown" @keydown.space.stop />
+        <input
+          ref="inputRef"
+          v-model="keyword"
+          type="text"
+          class="search-input"
+          :placeholder="placeholderText"
+          autocomplete="off"
+          spellcheck="false"
+          @focus="isFocused = true"
+          @blur="isFocused = false"
+          @keydown.enter="handleSearch"
+          @keydown="handleInputKeyDown"
+          @keydown.space.stop
+        />
         <!-- 清空按钮 -->
         <button v-if="keyword" class="action-btn clear-btn" @click.stop="clearInput" type="button">
           <svg viewBox="0 0 1024 1024" width="14" height="14">
             <path
               d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 613.4l-50.8 50.8L512 562.8l-114.6 115.4-50.8-50.8L461.2 512 346.6 397.4l50.8-50.8L512 461.2l114.6-114.6 50.8 50.8L562.8 512l114.6 115.4z"
-              fill="currentColor" />
+              fill="currentColor"
+            />
           </svg>
         </button>
         <!-- 搜索确认按钮 -->
@@ -43,13 +72,12 @@
           <svg viewBox="0 0 1024 1024" width="16" height="16">
             <path
               d="M909.6 854.5L649.9 594.8C690.2 537.8 714 468.5 714 393 714 205.5 561.5 53 374 53S34 205.5 34 393s152.5 340 340 340c75.5 0 144.8-23.8 201.8-64.1l259.7 259.7c15.1 15.1 39.5 15.1 54.6 0l19.5-19.5c15-15.1 15-39.6 0-54.6zM374 653c-143.6 0-260-116.4-260-260s116.4-260 260-260 260 116.4 260 260-116.4 260-260 260z"
-              fill="currentColor" />
+              fill="currentColor"
+            />
           </svg>
         </button>
         <!-- 快捷键标签 -->
-        <span class="shortcut-tag" @click="closeSearch">
-          Alt Q
-        </span>
+        <span class="shortcut-tag" @click="closeSearch"> Alt Q </span>
       </div>
     </div>
   </Transition>
@@ -132,7 +160,7 @@ const engines: SearchEngine[] = [
     key: "baidu",
     url: "https://www.baidu.com/s?wd={query}",
     icon: `<svg viewBox="0 0 64 64" width="18" height="18" fill="currentColor"><path d="M15.7 33.382c5.533-1.2 4.78-7.803 4.614-9.25-.27-2.23-2.894-6.122-6.452-5.816-4.478.4-5.132 6.87-5.132 6.87-.607 2.992 1.45 9.382 6.97 8.195zm10.272-11.1c3.055 0 5.525-3.518 5.525-7.867s-2.47-7.862-5.525-7.862-5.54 3.504-5.54 7.862 2.487 7.867 5.54 7.867m13.162.52c4.086.53 6.712-3.83 7.234-7.12.534-3.3-2.102-7.12-4.996-7.792s-6.518 3.98-6.847 7.005c-.396 3.7.53 7.396 4.606 7.92zm16.194 5.54c0-1.58-1.3-6.33-6.183-6.33-4.88 0-5.53 4.493-5.53 7.668 0 3.032.254 7.263 6.315 7.128s5.397-6.866 5.397-8.455zM21.586 44.875c-.162.452-.523 1.655-.2 2.7a3.07 3.07 0 0 0 2.636 2.428h2.897V42.9h-3.103a3.4 3.4 0 0 0-2.219 1.967zm27.57-2.652s-6.32-4.9-10-10.175c-5-7.793-12.095-4.634-14.483-.66-2.366 3.963-6.053 6.47-6.58 7.12S10.46 42.996 12.037 50s7.114 6.9 7.114 6.9a31 31 0 0 0 8.818-.659 18.6 18.6 0 0 1 8.817.262c2.875.794 11.064 3.705 14.1-3.43s-1.7-10.833-1.7-10.833zM30.222 52.85h-7.18c-3.106-.618-4.344-2.74-4.5-3.1s-1.032-2.07-.567-4.97c1.343-4.344 5.173-4.657 5.173-4.657h3.83v-4.706l3.26.05zm13.397-.05h-8.28c-3.207-.827-3.357-3.106-3.357-3.106v-9.156l3.357-.054v8.23c.203.877 1.295 1.035 1.295 1.035h3.4v-9.2h3.572z"/></svg>`,
-  }
+  },
 ];
 
 const currentEngine = computed(() => {
@@ -247,10 +275,14 @@ const isPrivateIPv4 = (ip: string): boolean => {
 };
 
 const isPrivateIPv6 = (ip: string): boolean => {
-  const clean = ip.replace(/^\[|\]$/g, "").split("%")[0].toLowerCase();
+  const clean = ip
+    .replace(/^\[|\]$/g, "")
+    .split("%")[0]
+    .toLowerCase();
   if (clean === "::1" || clean === "0:0:0:0:0:0:0:1") return true;
   if (clean === "::" || clean === "0:0:0:0:0:0:0:0") return true;
-  if (/^f[cd][0-9a-f]{2}:/i.test(clean) || clean.startsWith("fc:") || clean.startsWith("fd:")) return true;
+  if (/^f[cd][0-9a-f]{2}:/i.test(clean) || clean.startsWith("fc:") || clean.startsWith("fd:"))
+    return true;
   if (/^fe[89ab][0-9a-f]:/i.test(clean) || clean.startsWith("fe80:")) return true;
   if (clean.startsWith("::ffff:")) {
     const v4 = clean.replace("::ffff:", "");
@@ -261,7 +293,11 @@ const isPrivateIPv6 = (ip: string): boolean => {
 
 const getDirectUrl = (raw: string): string | null => {
   const query = raw.trim();
-  if (!query || query.includes(" ") || /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(query) && !/^https?:\/\//i.test(query)) {
+  if (
+    !query ||
+    query.includes(" ") ||
+    (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(query) && !/^https?:\/\//i.test(query))
+  ) {
     return null;
   }
   try {
@@ -286,7 +322,7 @@ const getDirectUrl = (raw: string): string | null => {
     const isIpv4 = /^(\d{1,3}\.){3}\d{1,3}$/.test(host);
     const isIpv6 = host.startsWith("[") && host.endsWith("]");
     const isIp = isIpv4 || isIpv6;
-    const isPrivate = isIpv4 ? isPrivateIPv4(host) : (isIpv6 ? isPrivateIPv6(host) : false);
+    const isPrivate = isIpv4 ? isPrivateIPv4(host) : isIpv6 ? isPrivateIPv6(host) : false;
     const parts = host.split(".");
     const tld = parts[parts.length - 1];
     const isValidDomain = parts.length >= 2 && /^[a-zA-Z]{2,}$/.test(tld);
@@ -597,7 +633,9 @@ onBeforeUnmount(() => {
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.12);
   cursor: pointer;
-  transition: opacity 0.2s, background-color 0.2s;
+  transition:
+    opacity 0.2s,
+    background-color 0.2s;
 
   &:hover {
     opacity: 0.9;
@@ -693,7 +731,9 @@ onBeforeUnmount(() => {
 
 .engine-menu-enter-active,
 .engine-menu-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .engine-menu-enter-from,

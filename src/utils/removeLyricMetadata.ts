@@ -3,8 +3,6 @@ import { mainStore } from "@/store";
 import { getLrcMetaDataWords } from "@/api";
 import { devLog } from "@/utils/debugLog";
 
-
-
 /**
  * 从 API 加载关键词列表,失败时使用本地备份
  * 每次打开网站只调用一次,后续使用缓存
@@ -62,7 +60,15 @@ export async function removeLyricMetadata(lrcText: string, isPilfering = false):
   }
 
   const lines = lrcText.split("\n");
-  devLog("DWRC-Metadata", "开始处理元数据, exact:", exactKeywords.length, "contains:", containsKeywords.length, "原歌词行数:", lines.length);
+  devLog(
+    "DWRC-Metadata",
+    "开始处理元数据, exact:",
+    exactKeywords.length,
+    "contains:",
+    containsKeywords.length,
+    "原歌词行数:",
+    lines.length,
+  );
 
   const store = mainStore();
   const title = store.playerTitle ? store.playerTitle.replace(/\s+/g, "").toLowerCase() : "";
@@ -163,7 +169,11 @@ export async function removeLyricMetadata(lrcText: string, isPilfering = false):
   for (let i = lines.length - 1; i > endOfTopMetaIndex; i--) {
     const type = i < scanLimit ? lineTypes[i] : getLineType(lines[i]);
     // 底部如果遇到元数据、空行或特定标签，则全部纳入底部元数据块
-    if (type === "STRICT_META" || type === "EMPTY" || /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim())) {
+    if (
+      type === "STRICT_META" ||
+      type === "EMPTY" ||
+      /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim())
+    ) {
       startOfBottomMetaIndex = i;
     } else {
       break;
@@ -173,19 +183,23 @@ export async function removeLyricMetadata(lrcText: string, isPilfering = false):
   const finalLines: string[] = [];
   for (let i = 0; i < lines.length; i++) {
     const type = i < scanLimit ? lineTypes[i] : getLineType(lines[i]);
-    
+
     // 过滤掉顶部的元数据和空行
     if (i <= endOfTopMetaIndex) {
-      if (type === "STRICT_META" || type === "EMPTY" || /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim())) {
+      if (
+        type === "STRICT_META" ||
+        type === "EMPTY" ||
+        /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim())
+      ) {
         continue;
       }
     }
-    
+
     // 过滤掉底部的元数据和空行
     if (i >= startOfBottomMetaIndex) {
       continue;
     }
-    
+
     finalLines.push(lines[i]);
   }
 

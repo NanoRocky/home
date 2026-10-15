@@ -4,8 +4,7 @@
       class="progress"
       :class="{ dragging: isDragging }"
       :style="{ transform: `scaleX(${(isDragging ? dragProgress : smoothProgress) / 100})` }"
-    >
-    </div>
+    ></div>
 
     <div
       class="progress-icon-wrapper"

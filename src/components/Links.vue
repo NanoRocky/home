@@ -4,21 +4,35 @@
       <Icon size="20" class="iconl">
         <Link />
       </Icon>
-      <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
-        @click="store.setOpenState = !store.setOpenState">{{ $t("components.links.title") }}</span>
+      <span
+        class="title text-truncate-ellipsis"
+        v-if="store.mobileOpenState"
+        @click="store.setOpenState = !store.setOpenState"
+        >{{ $t("components.links.title") }}</span
+      >
       <span class="title" v-else>{{ $t("components.links.title") }}</span>
     </div>
     <!-- 网站列表 -->
-    <Swiper v-if="siteLinks[0]" :modules="[Pagination, Mousewheel]" :slides-per-view="1" :space-between="40"
+    <Swiper
+      v-if="siteLinks[0]"
+      :modules="[Pagination, Mousewheel]"
+      :slides-per-view="1"
+      :space-between="40"
       :pagination="{
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'div',
-      }" :mousewheel="true">
+      }"
+      :mousewheel="true"
+    >
       <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">
-            <div class="item cards" :style="index < 3 ? 'margin-bottom: 20px' : null" @click="jumpLink(item)">
+            <div
+              class="item cards"
+              :style="index < 3 ? 'margin-bottom: 20px' : null"
+              @click="jumpLink(item)"
+            >
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>
@@ -101,10 +115,18 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data: SiteLink) => {
-  if ((data.name === "音乐" || data.name === "Music" || data.name === "音楽") && store.musicClick && store.musicIsOk) {
+  if (
+    (data.name === "音乐" || data.name === "Music" || data.name === "音楽") &&
+    store.musicClick &&
+    store.musicIsOk
+  ) {
     store.musicBoxOpenState = !store.musicBoxOpenState;
     return;
-  } else if ((data.name === "搜索" || data.name === "Search" || data.name === "検索") && !store.mobileOpenState && (store.innerWidth == null || store.innerWidth > 720)) {
+  } else if (
+    (data.name === "搜索" || data.name === "Search" || data.name === "検索") &&
+    !store.mobileOpenState &&
+    (store.innerWidth == null || store.innerWidth > 720)
+  ) {
     store.searchOpenState = !store.searchOpenState;
     return;
   } else {

@@ -3,15 +3,30 @@
     <el-collapse class="collapse" v-model="activeName" accordion>
       <el-collapse-item :title="$t('components.settings.seasonalEffects.title')" name="1">
         <div class="item">
-          <el-button plain class="el-button" :class="{ active: store.showSnowfall }" @click="toggleEffect('snow')">{{
-            store.showSnowfall ? $t("common.status.disable") : $t("common.status.enable")
-          }}{{ $t("components.settings.seasonalEffects.winterSnow") }}</el-button>
-          <el-button plain class="el-button" :class="{ active: store.showFirefly }" @click="toggleEffect('firefly')">{{
-            store.showFirefly ? $t("common.status.disable") : $t("common.status.enable")
-          }}{{ $t("components.settings.seasonalEffects.autumnFirefly") }}</el-button>
-          <el-button plain class="el-button" :class="{ active: store.showLantern }" @click="toggleEffect('lantern')">{{
-            store.showLantern ? $t("common.status.disable") : $t("common.status.enable")
-          }}{{ $t("components.settings.seasonalEffects.springLantern") }}</el-button>
+          <el-button
+            plain
+            class="el-button"
+            :class="{ active: store.showSnowfall }"
+            @click="toggleEffect('snow')"
+            >{{ store.showSnowfall ? $t("common.status.disable") : $t("common.status.enable")
+            }}{{ $t("components.settings.seasonalEffects.winterSnow") }}</el-button
+          >
+          <el-button
+            plain
+            class="el-button"
+            :class="{ active: store.showFirefly }"
+            @click="toggleEffect('firefly')"
+            >{{ store.showFirefly ? $t("common.status.disable") : $t("common.status.enable")
+            }}{{ $t("components.settings.seasonalEffects.autumnFirefly") }}</el-button
+          >
+          <el-button
+            plain
+            class="el-button"
+            :class="{ active: store.showLantern }"
+            @click="toggleEffect('lantern')"
+            >{{ store.showLantern ? $t("common.status.disable") : $t("common.status.enable")
+            }}{{ $t("components.settings.seasonalEffects.springLantern") }}</el-button
+          >
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.wallpaper.adjust')" name="2">
@@ -19,22 +34,35 @@
           <div class="upver">{{ $t("components.settings.wallpaper.specify") }}</div>
         </div>
         <div class="item">
-          <el-form :model="form" style="max-width: 120px" label-width="auto" @submit.prevent="handleSetWallpaper">
-            <el-form-item prop="wallpaperId" :rules="[
-              {
-                required: true,
-                message: $t('components.settings.wallpaper.idEmpty'),
-                trigger: 'blur',
-              },
-              {
-                pattern: /^\d+$/,
-                message: $t('components.settings.wallpaper.idNotNumber'),
-                trigger: ['blur', 'change'],
-              },
-            ]">
+          <el-form
+            :model="form"
+            style="max-width: 120px"
+            label-width="auto"
+            @submit.prevent="handleSetWallpaper"
+          >
+            <el-form-item
+              prop="wallpaperId"
+              :rules="[
+                {
+                  required: true,
+                  message: $t('components.settings.wallpaper.idEmpty'),
+                  trigger: 'blur',
+                },
+                {
+                  pattern: /^\d+$/,
+                  message: $t('components.settings.wallpaper.idNotNumber'),
+                  trigger: ['blur', 'change'],
+                },
+              ]"
+            >
               <el-input v-model="form.wallpaperId" type="text" autocomplete="off" clearable />
-              <el-button plain class="el-button" native-type="submit" :disabled="!form.wallpaperId">{{
-                $t("common.action.confirm") }}</el-button>
+              <el-button
+                plain
+                class="el-button"
+                native-type="submit"
+                :disabled="!form.wallpaperId"
+                >{{ $t("common.action.confirm") }}</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
@@ -42,12 +70,18 @@
       <el-collapse-item :title="$t('components.settings.personalization.title')" name="3">
         <div class="item">
           <span class="text">{{ $t("components.settings.personalization.customName") }}</span>
-          <el-switch v-model="msgNameShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="msgNameShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.wallpaper.advanced')" name="4">
         <div class="item">
-          <span class="text">{{ $t("components.settings.wallpaper.autoSwitch") }}</span><br /><br />
+          <span class="text">{{ $t("components.settings.wallpaper.autoSwitch") }}</span
+          ><br /><br />
           <el-radio-group v-model="autoBGSwitchInterval" size="small" text-color="#FFFFFF">
             <el-radio :value="0" border>{{ $t("common.status.disable") }}</el-radio>
             <el-radio :value="1" border>15 {{ $t("common.unit.sec") }}</el-radio>
@@ -58,7 +92,12 @@
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.system.languageSettings')" name="5">
         <div class="item">
-          <el-radio-group v-model="language" size="small" text-color="#FFFFFF" @change="handleLangChange">
+          <el-radio-group
+            v-model="language"
+            size="small"
+            text-color="#FFFFFF"
+            @change="handleLangChange"
+          >
             <el-radio :value="'auto'" border>{{
               $t("components.settings.system.autoLang")
             }}</el-radio>
@@ -92,11 +131,19 @@
           </el-radio-group>
         </div>
       </el-collapse-item>
-      <el-collapse-item :title="$t('components.settings.system.debug')" v-if="isDev && store.setV"
-        name="7">
+      <el-collapse-item
+        :title="$t('components.settings.system.debug')"
+        v-if="isDev && store.setV"
+        name="7"
+      >
         <div v-if="isDev && store.setV" class="item">
-          <span class="text">{{ $t('components.settings.system.detailedLogs') }}</span>
-          <el-switch v-model="store.devDebugLog" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <span class="text">{{ $t("components.settings.system.detailedLogs") }}</span>
+          <el-switch
+            v-model="store.devDebugLog"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('common.action.reset')" name="8">
@@ -456,7 +503,7 @@ const handleSetWallpaper = () => {
                 border-color: var(--set-radio-border-ck-color) !important;
               }
 
-              &+.el-radio__label {
+              & + .el-radio__label {
                 color: var(--text-color) !important;
               }
             }

@@ -197,7 +197,7 @@ export const mainStore = defineStore("main", {
         "seasonalEffects",
         "theme",
         "dwrcDot",
-        "searchEngine"
+        "searchEngine",
       ],
     },
     {

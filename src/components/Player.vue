@@ -745,7 +745,11 @@ function syncDWRCLrc() {
       if (nowLineIndex.value === -1) {
         nowLineIndex.value = foundIndex;
       } else if (foundIndex !== nowLineIndex.value) {
-        if (store.isDragging || foundIndex < nowLineIndex.value || foundIndex > nowLineIndex.value + 1) {
+        if (
+          store.isDragging ||
+          foundIndex < nowLineIndex.value ||
+          foundIndex > nowLineIndex.value + 1
+        ) {
           store.lyricSeekVersion++;
         }
         nowLineIndex.value = foundIndex;

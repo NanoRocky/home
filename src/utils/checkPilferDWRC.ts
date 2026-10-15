@@ -1,8 +1,6 @@
 import { removeLyricMetadata } from "@/utils/removeLyricMetadata";
 import { devLog } from "@/utils/debugLog";
 
-
-
 type LyricEntry = {
   index: number;
   normalized: string;
@@ -116,7 +114,10 @@ interface MatchResult {
   pilferIdx: number;
 }
 
-const anchoredMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): MatchResult | null => {
+const anchoredMatch = (
+  sourceEntries: LyricEntry[],
+  pilferEntries: LyricEntry[],
+): MatchResult | null => {
   if (!sourceEntries.length || !pilferEntries.length) return null;
 
   const maxSourceStartOffset = Math.min(5, sourceEntries.length);
@@ -164,7 +165,11 @@ const anchoredMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[])
               currentPilferIdx = tempPilferIdx;
               break;
             }
-          } else if (j > 0 && needHint === sourceEntries[sourceIdx].normalized && skippedPilferCount < 3) {
+          } else if (
+            j > 0 &&
+            needHint === sourceEntries[sourceIdx].normalized &&
+            skippedPilferCount < 3
+          ) {
             tempPilferIdx++;
             skippedPilferCount++;
           } else {
@@ -181,7 +186,11 @@ const anchoredMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[])
       }
 
       if (matched) {
-        devLog("DWRC-Match", `在 p=${p} s=${s} 成功建立匹配。目标行: `, matches.map(m => sourceEntries[m.sourceIdx].normalized).join(" | "));
+        devLog(
+          "DWRC-Match",
+          `在 p=${p} s=${s} 成功建立匹配。目标行: `,
+          matches.map((m) => sourceEntries[m.sourceIdx].normalized).join(" | "),
+        );
         for (const m of matches) {
           const sourceOriginal = sourceEntries[m.sourceIdx].original
             .replace(/\[[^\]]*\]/g, "")
@@ -196,7 +205,10 @@ const anchoredMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[])
     }
   }
 
-  devLog("DWRC-Match", `未能在允许的最大偏移 ${maxSourceStartOffset}(源)/${maxPilferStartOffset}(偷) 内找到匹配项`);
+  devLog(
+    "DWRC-Match",
+    `未能在允许的最大偏移 ${maxSourceStartOffset}(源)/${maxPilferStartOffset}(偷) 内找到匹配项`,
+  );
   return null;
 };
 
@@ -217,9 +229,17 @@ export async function alignPilferedLyrics(
   const cleanedPilfer = await removeLyricMetadata(pilferLyric, true);
   const sourceEntries = buildEntries(cleanedSource);
   const pilferEntries = buildEntries(cleanedPilfer);
-  devLog("DWRC-Match", "源文件有效词条数:", sourceEntries.length, "替换文件有效词条数:", pilferEntries.length);
-  if (sourceEntries.length > 0) devLog("DWRC-Match", "剔除后的源文本第一句起始歌词:", sourceEntries[0].original);
-  if (pilferEntries.length > 0) devLog("DWRC-Match", "剔除后的偷取文本第一句起始歌词:", pilferEntries[0].original);
+  devLog(
+    "DWRC-Match",
+    "源文件有效词条数:",
+    sourceEntries.length,
+    "替换文件有效词条数:",
+    pilferEntries.length,
+  );
+  if (sourceEntries.length > 0)
+    devLog("DWRC-Match", "剔除后的源文本第一句起始歌词:", sourceEntries[0].original);
+  if (pilferEntries.length > 0)
+    devLog("DWRC-Match", "剔除后的偷取文本第一句起始歌词:", pilferEntries[0].original);
   if (!sourceEntries.length || !pilferEntries.length) {
     devLog("DWRC-Match", "放弃匹配: 有效词条不足");
     return pilferLyric;
@@ -234,7 +254,10 @@ export async function alignPilferedLyrics(
   const sourceStart = sourceEntries[matchResult.sourceIdx].startMs ?? 0;
   const pilferStart = pilferEntries[matchResult.pilferIdx].startMs ?? 0;
   let offset = sourceStart - pilferStart;
-  devLog("DWRC-Match", `对齐时间后的偏移量: 源=${sourceStart} 替换=${pilferStart} 偏移=${offset}ms`);
+  devLog(
+    "DWRC-Match",
+    `对齐时间后的偏移量: 源=${sourceStart} 替换=${pilferStart} 偏移=${offset}ms`,
+  );
   if (Math.abs(offset) < 1500 && Math.abs(offset) > -1500) {
     devLog("DWRC-Match", "偏移量小于 1500ms, 忽略微小偏移");
     offset = 0;
