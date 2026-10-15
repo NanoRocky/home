@@ -27,6 +27,8 @@
         >
           <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
         </Icon>
+        <!-- 搜索框 -->
+        <SearchInput />
         <!-- 页脚 -->
         <Transition name="fade" mode="out-in">
           <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
@@ -47,6 +49,7 @@ import MainLeft from "@/views/Main/Left.vue";
 import MainRight from "@/views/Main/Right.vue";
 import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
+import SearchInput from "@/components/SearchInput.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";

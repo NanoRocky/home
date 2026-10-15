@@ -25,6 +25,8 @@ export const storeState: MainState = {
   mobileOpenState: false, // 【状态】移动端开启状态
   mobileFuncState: false, // 【状态】移动端功能区开启状态
   setOpenState: false, // 【状态】设置页面开启状态
+  searchOpenState: false, // 【状态】搜索框开启状态
+  searchEngine: "bing" as string, // 【开关】默认搜索引擎
   setV: false, // 【状态】开发者模式
   devDebugLog: false, // 【开关】调试日志输出
   playerState: false, // 【状态】当前播放状态
@@ -194,7 +196,8 @@ export const mainStore = defineStore("main", {
         "playerRMMetadata",
         "seasonalEffects",
         "theme",
-        "dwrcDot"
+        "dwrcDot",
+        "searchEngine"
       ],
     },
     {

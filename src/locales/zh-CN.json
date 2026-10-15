@@ -124,6 +124,11 @@
     }
   },
   "components": {
+    "search": {
+      "placeholder": "输入搜索内容或网址...",
+      "noSpace": "当前页面空间不足以显示搜索框喵~",
+      "hint": "按 Enter 搜索，Alt+Q / Esc 关闭"
+    },
     "settings": {
       "globalSettings": "全局设置",
       "menu": {

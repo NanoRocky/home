@@ -101,11 +101,15 @@ const siteIcon = {
 
 // 链接跳转
 const jumpLink = (data: SiteLink) => {
-  if ((data.name === "音乐" || data.name === "Music") && store.musicClick && store.musicIsOk) {
+  if ((data.name === "音乐" || data.name === "Music" || data.name === "音楽") && store.musicClick && store.musicIsOk) {
     store.musicBoxOpenState = !store.musicBoxOpenState;
+    return;
+  } else if ((data.name === "搜索" || data.name === "Search" || data.name === "検索") && !store.mobileOpenState && (store.innerWidth == null || store.innerWidth > 720)) {
+    store.searchOpenState = !store.searchOpenState;
     return;
   } else {
     window.open(data.link, "_blank");
+    return;
   }
 };
 </script>

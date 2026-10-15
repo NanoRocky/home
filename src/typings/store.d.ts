@@ -19,6 +19,8 @@ export interface MainState {
   mobileOpenState: boolean;
   mobileFuncState: boolean;
   setOpenState: boolean;
+  searchOpenState: boolean;
+  searchEngine: string;
   setV: boolean;
   devDebugLog: boolean;
   playerState: boolean;

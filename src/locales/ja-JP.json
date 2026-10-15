@@ -124,6 +124,11 @@
     }
   },
   "components": {
+    "search": {
+      "placeholder": "検索またはURLを入力...",
+      "noSpace": "検索バーを表示する十分なスペースがありませんニャ〜",
+      "hint": "Enterで検索、Alt+Q / Escで閉じる"
+    },
     "settings": {
       "globalSettings": "グローバル設定",
       "menu": {
