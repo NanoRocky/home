@@ -20,16 +20,17 @@ export interface MainState {
   mobileFuncState: boolean;
   setOpenState: boolean;
   setV: boolean;
+  devDebugLog: boolean;
   playerState: boolean;
   playerCanplay: boolean;
   playerTitle: string | null;
   playerArtist: string | null;
   playerAlbum: string | null;
   playerLrc:
-    | [boolean, string, string, string, string, string, string][]
-    | [boolean, string, string, string, string, string][]
-    | [boolean, string, string, string, string][]
-    | [boolean, string][];
+  | [boolean, string, string, string, string, string, string][]
+  | [boolean, string, string, string, string, string][]
+  | [boolean, string, string, string, string][]
+  | [boolean, string][];
   playerLrcShow: boolean;
   footerBlur: boolean;
   footerProgressBar: boolean;
@@ -53,9 +54,10 @@ export interface MainState {
   dwrcEnable: boolean;
   dwrcLoading: boolean;
   LrcMetaDataLoading: boolean;
-  LrcMetaDataCache: string[] | null;
+  LrcMetaDataCache: { exact?: string[]; contains?: string[] } | string[] | null;
   lyricSeekVersion: number;
   forceShowBarIcon: boolean;
+  dwrcDot: boolean;
   isDragging: boolean;
   dragProgressTime: number;
   showFirefly: boolean;

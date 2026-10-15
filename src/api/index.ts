@@ -93,7 +93,7 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
 };
 
 export const getLrcMetaDataWords = async () => {
-  const res = await fetch("https://api.nanorocky.top/lrcmdkw/");
+  const res = await fetch("https://api.nanorocky.top/lrcmdkw/?ver=2");
   return await res.json();
 };
 

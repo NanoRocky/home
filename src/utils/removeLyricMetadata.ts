@@ -1,12 +1,15 @@
 import metadataKeywords from "@/assets/metadata_Keywords.json";
 import { mainStore } from "@/store";
 import { getLrcMetaDataWords } from "@/api";
+import { devLog } from "@/utils/debugLog";
+
+
 
 /**
  * 从 API 加载关键词列表,失败时使用本地备份
  * 每次打开网站只调用一次,后续使用缓存
  */
-async function loadKeywords(): Promise<string[]> {
+async function loadKeywords(): Promise<{ exact?: string[]; contains?: string[] } | string[]> {
   const store = mainStore();
   if (store.LrcMetaDataCache) {
     return store.LrcMetaDataCache;
@@ -43,28 +46,67 @@ async function loadKeywords(): Promise<string[]> {
  * @param lrcText 原始歌词文本
  * @returns 去除头部和尾部元数据后的歌词文本
  */
-export async function removeLyricMetadata(lrcText: string): Promise<string> {
+export async function removeLyricMetadata(lrcText: string, isPilfering = false): Promise<string> {
   if (!lrcText || typeof lrcText !== "string") {
     return "";
   }
-  const keywords = await loadKeywords();
+  const rawKeywords = await loadKeywords();
+  let exactKeywords: string[] = [];
+  let containsKeywords: string[] = [];
+
+  if (Array.isArray(rawKeywords)) {
+    exactKeywords = rawKeywords;
+  } else {
+    exactKeywords = rawKeywords.exact || [];
+    containsKeywords = rawKeywords.contains || [];
+  }
+
   const lines = lrcText.split("\n");
+  devLog("DWRC-Metadata", "开始处理元数据, exact:", exactKeywords.length, "contains:", containsKeywords.length, "原歌词行数:", lines.length);
 
-  /**
-   * 判断一行是否是元数据行
-   * 创建临时变量，移除所有括号内的内容，保留纯字符进行判断
-   */
-  const isMetadataLine = (line: string): boolean => {
-    if (/^\[(?:ti|ar|al|by|offset|ch):/i.test(line.trim())) {
-      return true;
-    }
+  const store = mainStore();
+  const title = store.playerTitle ? store.playerTitle.replace(/\s+/g, "").toLowerCase() : "";
+  const artist = store.playerArtist ? store.playerArtist.replace(/\s+/g, "").toLowerCase() : "";
+
+  const getLineType = (line: string): "STRICT_META" | "EMPTY" | "REAL" => {
     const temp = line.replace(/\[[^\]]*\]/g, "").replace(/\([^)]*\)/g, "");
-    const pureText = temp.trim();
-    if (!pureText) return false;
+    const pureText = temp.trim().normalize("NFKC");
 
-    for (const keyword of keywords) {
+    if (!/[a-zA-Z0-9\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/.test(pureText)) {
+      return "EMPTY";
+    }
+
+    if (/^[《「【〖『].+[》」】〗』]$/.test(pureText)) {
+      devLog("DWRC-Metadata", `匹配到元数据: [全闭合括号包裹] => ${pureText}`);
+      return "STRICT_META";
+    }
+
+    if (title && artist) {
+      const pt = pureText.replace(/\s+/g, "").toLowerCase();
+      if (pt === `${title}-${artist}` || pt === `${artist}-${title}`) {
+        devLog("DWRC-Metadata", `匹配到元数据: [歌名-歌手名] => ${pureText}`);
+        return "STRICT_META";
+      }
+    }
+
+    for (const keyword of containsKeywords) {
       if (!keyword) continue;
-      const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      if (pureText.replace(/\s+/g, "").includes(keyword.replace(/\s+/g, ""))) {
+        devLog("DWRC-Metadata", `匹配到元数据: [包含匹配 ${keyword}] => ${pureText}`);
+        return "STRICT_META";
+      }
+    }
+
+    for (const keyword of exactKeywords) {
+      if (!keyword) continue;
+      const escapedKeyword = Array.from(keyword)
+        .map((c) => {
+          if (c === ":" || c === "：" || c === "-") {
+            return `(?:[a-zA-Z\\s]*)${c}`;
+          }
+          return c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        })
+        .join("\\s*");
 
       const isPureEnglish = /^[a-zA-Z]+$/.test(keyword);
       const needsSeparator = /^[a-zA-Z\u4e00-\u9fa5]+$/.test(keyword);
@@ -72,73 +114,89 @@ export async function removeLyricMetadata(lrcText: string): Promise<string> {
       let suffixPattern = ``;
       if (needsSeparator) {
         if (isPureEnglish) {
-          suffixPattern = `(?:[:：\\-\\s\\/]|$)`;
+          suffixPattern = `(?:[:：\\-\\s\\/【《「〖『\\[，,。.]|$)`;
         } else {
-          suffixPattern = `[^:：\\-\\s]{0,6}(?:[:：\\-\\s\\/]|$)`;
+          suffixPattern = `[a-zA-Z]*[^:：\\-\\s]{0,6}(?:[:：\\-\\s\\/【《「〖『\\[，,。.]|$)`;
         }
       }
 
-      const regex = new RegExp(`^[\\s\\-*•【\\[\\]】《》]*${escapedKeyword}${suffixPattern}`, "i");
+      let prefixPattern = ``;
+      if (isPureEnglish) {
+        prefixPattern = `^[\\s\\-*•【\\[\\]】《》「」〖〗『』]*`;
+      } else {
+        prefixPattern = `^[\\s\\-*•【\\[\\]】《》「」〖〗『』]*(?:[【《「〖『\\[][^】》」〗』\\]]+[】》」〗』\\]]\\s*)*(?:[0-9十百千万亿]+)?`;
+      }
+
+      const regex = new RegExp(prefixPattern + escapedKeyword + suffixPattern, "i");
       if (regex.test(pureText)) {
-        return true;
+        devLog("DWRC-Metadata", `匹配到元数据: [严格匹配 ${keyword}] => ${pureText}`);
+        return "STRICT_META";
       }
     }
-    return false;
-  };
 
-  let startIndex = 0;
-  let firstLyricLineIndex = -1;
-  let isFirstLyricLine = true;
+    return "REAL";
+  };
+  const scanLimit = Math.min(lines.length, 60); // 扫描前 60 行找元数据块
+  let lastStrictMetaIndex = -1;
+  const lineTypes: ("STRICT_META" | "EMPTY" | "REAL")[] = new Array(lines.length).fill("REAL");
+
+  for (let i = 0; i < scanLimit; i++) {
+    const type = getLineType(lines[i]);
+    lineTypes[i] = type;
+    if (type === "STRICT_META") {
+      lastStrictMetaIndex = i;
+    }
+  }
+
+  let endOfTopMetaIndex = lastStrictMetaIndex;
+  // 如果在第一句真正的歌词前全是空行或标签，也将它们划入元数据块进行丢弃
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line || /^\[(?:ti|ar|al|by|offset|ch):/i.test(line) || !/^\[[\d,:.\s]+\]/.test(line)) {
-      continue;
+    const type = i < scanLimit ? lineTypes[i] : getLineType(lines[i]);
+    if (type === "REAL") {
+      endOfTopMetaIndex = Math.max(endOfTopMetaIndex, i - 1);
+      break;
     }
-    const pureContent = line
-      .replace(/\[[^\]]*\]/g, "")
-      .replace(/\([^)]*\)/g, "")
-      .trim();
-    if (!pureContent) {
-      continue;
+  }
+
+  // 寻找底部的元数据块
+  let startOfBottomMetaIndex = lines.length;
+  for (let i = lines.length - 1; i > endOfTopMetaIndex; i--) {
+    const type = i < scanLimit ? lineTypes[i] : getLineType(lines[i]);
+    // 底部如果遇到元数据、空行或特定标签，则全部纳入底部元数据块
+    if (type === "STRICT_META" || type === "EMPTY" || /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim())) {
+      startOfBottomMetaIndex = i;
+    } else {
+      break;
     }
-    if (isFirstLyricLine) {
-      isFirstLyricLine = false;
-      if (!isMetadataLine(line)) {
-        firstLyricLineIndex = i;
+  }
+
+  const finalLines: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const type = i < scanLimit ? lineTypes[i] : getLineType(lines[i]);
+    
+    // 过滤掉顶部的元数据和空行
+    if (i <= endOfTopMetaIndex) {
+      if (type === "STRICT_META" || type === "EMPTY" || /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim())) {
         continue;
       }
     }
-    const isMetadata = isMetadataLine(line);
-    if (isMetadata) {
-      if (firstLyricLineIndex !== -1) {
-        firstLyricLineIndex = -1;
-      }
+    
+    // 过滤掉底部的元数据和空行
+    if (i >= startOfBottomMetaIndex) {
       continue;
     }
-    if (firstLyricLineIndex !== -1) {
-      startIndex = firstLyricLineIndex;
-    } else {
-      startIndex = i;
-    }
-    break;
+    
+    finalLines.push(lines[i]);
   }
-  let endIndex = lines.length - 1;
-  for (let i = lines.length - 1; i >= startIndex; i--) {
-    const line = lines[i].trim();
-    if (!line || /^\[(?:ti|ar|al|by|offset|ch):/i.test(line) || !/^\[[\d,:.\s]+\]/.test(line)) {
-      endIndex = i;
-      continue;
+
+  const strippedCount = lines.length - finalLines.length;
+  if (strippedCount > 0) {
+    devLog("DWRC-Metadata", `共剥离 ${strippedCount} 行元数据。剥离后剩余行数:`, finalLines.length);
+    if (!isPilfering && finalLines.length > 0) {
+      devLog("DWRC-Metadata", `独立剔除后的第一句起始歌词:`, finalLines[0]);
     }
-    const pureContent = line
-      .replace(/\[[^\]]*\]/g, "")
-      .replace(/\([^)]*\)/g, "")
-      .trim();
-    if (!pureContent || isMetadataLine(line)) {
-      endIndex = i;
-      continue;
-    }
-    endIndex = i;
-    break;
+    return finalLines.join("\n");
   }
-  return lines.slice(startIndex, endIndex + 1).join("\n");
+
+  return lrcText;
 }

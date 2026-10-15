@@ -26,6 +26,7 @@ export const storeState: MainState = {
   mobileFuncState: false, // 【状态】移动端功能区开启状态
   setOpenState: false, // 【状态】设置页面开启状态
   setV: false, // 【状态】开发者模式
+  devDebugLog: false, // 【开关】调试日志输出
   playerState: false, // 【状态】当前播放状态
   playerCanplay: false, // 【状态】当前音乐是否完成加载
   playerTitle: null as string | null, // 【缓存】当前播放歌曲名
@@ -56,9 +57,10 @@ export const storeState: MainState = {
   dwrcEnable: true, // 【状态】调用逐字歌词
   dwrcLoading: false, // 【状态】逐字歌词加载
   LrcMetaDataLoading: false, // 【状态】歌词元数据加载
-  LrcMetaDataCache: null as string[] | null, // 【缓存】歌词元数据关键词缓存
+  LrcMetaDataCache: null as { exact?: string[]; contains?: string[] } | string[] | null, // 【缓存】歌词元数据关键词缓存
   lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
   forceShowBarIcon: false, // 【开关】进度图标常驻
+  dwrcDot: true, // 【开关】显示逐字歌词进度小红点
   isDragging: false, // 【状态】是否正在拖拽进度条
   dragProgressTime: 0, // 【状态】当前拖拽停留的模拟时间 (秒)
   showFirefly: false, // 【状态】萤火虫特效
@@ -192,6 +194,7 @@ export const mainStore = defineStore("main", {
         "playerRMMetadata",
         "seasonalEffects",
         "theme",
+        "dwrcDot"
       ],
     },
     {
@@ -199,6 +202,7 @@ export const mainStore = defineStore("main", {
       pick: [
         // 会话性存储，这里的变量在重新打开页面时恢复默认值，多个窗口不互通，用于存储一些特殊的仅本次生效的设置
         "setV",
+        "devDebugLog",
         "msgNameShow",
         "language",
         "weatherProvider",

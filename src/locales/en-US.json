@@ -188,6 +188,7 @@
       },
       "lyric": {
         "showFooterLyric": "Show Footer Lyric",
+        "showDwrcDot": "Show DWRC Progress Dot",
         "useAMLL": "Enable AMLL TTML Database for missing lyrics",
         "amllNetworkWarning": "(May slow down lyric loading in unstable GitHub networks)",
         "useAMLLMirror": "Use mirror for AMLL TTML Database",
@@ -235,7 +236,9 @@
         "checkError": "Update check error, please try again later~",
         "restoringDefault": "Restoring default configuration, please wait...",
         "loadingInitial": "Loading initial settings, please wait...",
-        "confirmReset": "Are you sure you want to reset all settings? The operation will be executed after clicking 3 times."
+        "confirmReset": "Are you sure you want to reset all settings? The operation will be executed after clicking 3 times.",
+        "debug": "Debug",
+        "detailedLogs": "Detailed Logs"
       }
     },
     "music": {

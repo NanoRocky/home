@@ -188,6 +188,7 @@
       },
       "lyric": {
         "showFooterLyric": "显示底栏歌词",
+        "showDwrcDot": "显示逐字歌词进度小红点",
         "useAMLL": "允许调用 AMLL TTML Database 加载网易云没有的歌词",
         "amllNetworkWarning": "（在 Github 不稳定的网络中可能导致歌词载入速度变慢）",
         "useAMLLMirror": "调用 AMLL TTML Database 时使用镜像加速",
@@ -235,7 +236,9 @@
         "checkError": "版本检测异常，稍后再试试叭~",
         "restoringDefault": "正在恢复默认配置，请稍后...",
         "loadingInitial": "正在加载初始设置，请稍后...",
-        "confirmReset": "确定要重置所有设置吗？操作将在点击 3 次后执行。"
+        "confirmReset": "确定要重置所有设置吗？操作将在点击 3 次后执行。",
+        "debug": "调试",
+        "detailedLogs": "详细日志"
       }
     },
     "music": {

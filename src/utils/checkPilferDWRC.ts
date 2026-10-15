@@ -1,4 +1,7 @@
 import { removeLyricMetadata } from "@/utils/removeLyricMetadata";
+import { devLog } from "@/utils/debugLog";
+
+
 
 type LyricEntry = {
   index: number;
@@ -116,77 +119,84 @@ interface MatchResult {
 const anchoredMatch = (sourceEntries: LyricEntry[], pilferEntries: LyricEntry[]): MatchResult | null => {
   if (!sourceEntries.length || !pilferEntries.length) return null;
 
-  const targetLinesCount = Math.min(5, sourceEntries.length);
+  const maxSourceStartOffset = Math.min(5, sourceEntries.length);
   const maxPilferStartOffset = Math.min(5, pilferEntries.length);
 
-  for (let p = 0; p < maxPilferStartOffset; p++) {
-    let matched = true;
-    let currentPilferIdx = p;
-    let matches: { sourceIdx: number; pilferIdx: number }[] = [];
+  for (let s = 0; s < maxSourceStartOffset; s++) {
+    const targetLinesCount = Math.min(5, sourceEntries.length - s);
 
-    for (let j = 0; j < targetLinesCount; j++) {
-      if (currentPilferIdx >= pilferEntries.length) {
-        matched = false;
-        break;
-      }
+    for (let p = 0; p < maxPilferStartOffset; p++) {
+      let matched = true;
+      let currentPilferIdx = p;
+      let matches: { sourceIdx: number; pilferIdx: number }[] = [];
 
-      if (sourceEntries[j].normalized === pilferEntries[currentPilferIdx].normalized) {
-        matches.push({ sourceIdx: j, pilferIdx: currentPilferIdx });
-        currentPilferIdx++;
-        continue;
-      }
-
-      let needHint = sourceEntries[j].normalized;
-      let fuzzyMatched = false;
-      let tempPilferIdx = currentPilferIdx;
-      let skippedPilferCount = 0;
-      let startPilferIdx = tempPilferIdx;
-      let hasStartedMatching = false;
-
-      while (tempPilferIdx < pilferEntries.length && tempPilferIdx < currentPilferIdx + 10) {
-        const pilferLine = pilferEntries[tempPilferIdx].normalized;
-        if (needHint.startsWith(pilferLine)) {
-          if (!hasStartedMatching) {
-            hasStartedMatching = true;
-            startPilferIdx = tempPilferIdx;
-          }
-          needHint = needHint.slice(pilferLine.length);
-          tempPilferIdx++;
-          if (needHint === "") {
-            fuzzyMatched = true;
-            currentPilferIdx = tempPilferIdx;
-            break;
-          }
-        } else if (j > 0 && needHint === sourceEntries[j].normalized && skippedPilferCount < 3) {
-          tempPilferIdx++;
-          skippedPilferCount++;
-        } else {
+      for (let j = 0; j < targetLinesCount; j++) {
+        const sourceIdx = s + j;
+        if (currentPilferIdx >= pilferEntries.length) {
+          matched = false;
           break;
         }
-      }
 
-      if (!fuzzyMatched) {
-        matched = false;
-        break;
-      } else {
-        matches.push({ sourceIdx: j, pilferIdx: startPilferIdx });
-      }
-    }
+        if (sourceEntries[sourceIdx].normalized === pilferEntries[currentPilferIdx].normalized) {
+          matches.push({ sourceIdx: sourceIdx, pilferIdx: currentPilferIdx });
+          currentPilferIdx++;
+          continue;
+        }
 
-    if (matched) {
-      for (const m of matches) {
-        const sourceOriginal = sourceEntries[m.sourceIdx].original
-          .replace(/\[[^\]]*\]/g, "")
-          .replace(/\([^)]*\)/g, "")
-          .trim();
-        if (!/[:：【】\[\]]/.test(sourceOriginal)) {
-          return { sourceIdx: m.sourceIdx, pilferIdx: m.pilferIdx };
+        let needHint = sourceEntries[sourceIdx].normalized;
+        let fuzzyMatched = false;
+        let tempPilferIdx = currentPilferIdx;
+        let skippedPilferCount = 0;
+        let startPilferIdx = tempPilferIdx;
+        let hasStartedMatching = false;
+
+        while (tempPilferIdx < pilferEntries.length && tempPilferIdx < currentPilferIdx + 10) {
+          const pilferLine = pilferEntries[tempPilferIdx].normalized;
+          if (needHint.startsWith(pilferLine)) {
+            if (!hasStartedMatching) {
+              hasStartedMatching = true;
+              startPilferIdx = tempPilferIdx;
+            }
+            needHint = needHint.slice(pilferLine.length);
+            tempPilferIdx++;
+            if (needHint === "") {
+              fuzzyMatched = true;
+              currentPilferIdx = tempPilferIdx;
+              break;
+            }
+          } else if (j > 0 && needHint === sourceEntries[sourceIdx].normalized && skippedPilferCount < 3) {
+            tempPilferIdx++;
+            skippedPilferCount++;
+          } else {
+            break;
+          }
+        }
+
+        if (!fuzzyMatched) {
+          matched = false;
+          break;
+        } else {
+          matches.push({ sourceIdx: sourceIdx, pilferIdx: startPilferIdx });
         }
       }
-      return { sourceIdx: matches[0].sourceIdx, pilferIdx: matches[0].pilferIdx };
+
+      if (matched) {
+        devLog("DWRC-Match", `在 p=${p} s=${s} 成功建立匹配。目标行: `, matches.map(m => sourceEntries[m.sourceIdx].normalized).join(" | "));
+        for (const m of matches) {
+          const sourceOriginal = sourceEntries[m.sourceIdx].original
+            .replace(/\[[^\]]*\]/g, "")
+            .replace(/\([^)]*\)/g, "")
+            .trim();
+          if (!/[:：【】\[\]]/.test(sourceOriginal)) {
+            return { sourceIdx: m.sourceIdx, pilferIdx: m.pilferIdx };
+          }
+        }
+        return { sourceIdx: matches[0].sourceIdx, pilferIdx: matches[0].pilferIdx };
+      }
     }
   }
 
+  devLog("DWRC-Match", `未能在允许的最大偏移 ${maxSourceStartOffset}(源)/${maxPilferStartOffset}(偷) 内找到匹配项`);
   return null;
 };
 
@@ -200,26 +210,33 @@ export async function alignPilferedLyrics(
   if (!originalLineLyric || !originalLineLyric.trim()) {
     return pilferLyric;
   }
-  const cleanedSource = await removeLyricMetadata(originalLineLyric);
+  const cleanedSource = await removeLyricMetadata(originalLineLyric, true);
   if (!cleanedSource.trim()) {
     return pilferLyric;
   }
-  const cleanedPilfer = await removeLyricMetadata(pilferLyric);
+  const cleanedPilfer = await removeLyricMetadata(pilferLyric, true);
   const sourceEntries = buildEntries(cleanedSource);
   const pilferEntries = buildEntries(cleanedPilfer);
+  devLog("DWRC-Match", "源文件有效词条数:", sourceEntries.length, "替换文件有效词条数:", pilferEntries.length);
+  if (sourceEntries.length > 0) devLog("DWRC-Match", "剔除后的源文本第一句起始歌词:", sourceEntries[0].original);
+  if (pilferEntries.length > 0) devLog("DWRC-Match", "剔除后的偷取文本第一句起始歌词:", pilferEntries[0].original);
   if (!sourceEntries.length || !pilferEntries.length) {
+    devLog("DWRC-Match", "放弃匹配: 有效词条不足");
     return pilferLyric;
   }
 
   const matchResult = anchoredMatch(sourceEntries, pilferEntries);
   if (!matchResult) {
+    devLog("DWRC-Match", "匹配失败, 返回 null");
     return null;
   }
 
   const sourceStart = sourceEntries[matchResult.sourceIdx].startMs ?? 0;
   const pilferStart = pilferEntries[matchResult.pilferIdx].startMs ?? 0;
   let offset = sourceStart - pilferStart;
+  devLog("DWRC-Match", `对齐时间后的偏移量: 源=${sourceStart} 替换=${pilferStart} 偏移=${offset}ms`);
   if (Math.abs(offset) < 1500 && Math.abs(offset) > -1500) {
+    devLog("DWRC-Match", "偏移量小于 1500ms, 忽略微小偏移");
     offset = 0;
   }
   const originalPilferLines = pilferLyric.split(/\r?\n/);

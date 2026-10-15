@@ -52,78 +52,47 @@
       <div v-else class="lrc" @dblclick="toggleForceIcon">
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
-        <Transition
-          name="fade"
-          mode="out-in"
-          :id="`lrc-line-${store.playerLrc[0][2]}`"
-          v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)"
-        >
+        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
+          v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)">
           <!-- &amp; -->
           <!-- 逐字模块山 -->
-          <div
-            class="lrc-all"
-            :key="
-              store.playerLrc.length != 0
-                ? `lrc-line-${store.playerLrc[0][2]}-${store.playerLrc.length}-${store.playerLrc[0][4]}-${store.lyricSeekVersion}`
-                : `lrc-line-null`
-            "
-          >
+          <div class="lrc-all" :key="store.playerLrc.length != 0
+            ? `lrc-line-${store.playerLrc[0][2]}-${store.playerLrc.length}-${store.playerLrc[0][4]}-${store.lyricSeekVersion}`
+            : `lrc-line-null`
+            ">
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
             &nbsp;
-            <Icon
-              size="20"
-              style="transform: rotate(-18deg)"
-              class="paws-1"
-              color="var(--footer-music-paw-icon-color)"
-            >
+            <Icon size="20" style="transform: rotate(-18deg)" class="paws-1" color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>
             <span class="dwrc-box">
-              <span
-                class="dwrc-2 lrc-text text-truncate-ellipsis"
-                id="dwrc-2-wrap"
-                :data-line="store.playerLrc[0]?.[2]"
-              >
-                <span
-                  v-for="(i, index) in store.playerLrc"
-                  :key="`lrc-over-char-${i[2]}-${i[3]}`"
-                  :style="{ '--char-duration': i[5] + 'ms' }"
-                  :class="[
+              <DwrcDot v-if="store.dwrcDot" ref="dwrcDotRef" />
+              <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap"
+                :data-line="store.playerLrc[0]?.[2]">
+                <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                  :style="{ '--char-duration': i[5] + 'ms' }" :class="[
                     'dwrc-2-char',
                     i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                     i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
                     i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                     i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                  ]"
-                  v-html="i[4]"
-                >
+                  ]" v-html="i[4]">
                 </span>
               </span>
               <span class="dwrc-1 lrc-text text-truncate-ellipsis" id="dwrc-1-wrap">
-                <span
-                  v-for="(i, index) in store.playerLrc"
-                  :key="`lrc-char-${i[2]}-${i[3]}`"
-                  :style="{ '--char-duration': i[5] + 'ms' }"
-                  :class="[
+                <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
+                  :style="{ '--char-duration': i[5] + 'ms' }" :class="[
                     'dwrc-char',
                     i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                     i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
                     i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                     i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
                     i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
-                  ]"
-                  :id="`lrc-char-${i[2]}-${i[3]}`"
-                  v-html="i[4]"
-                >
+                  ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
                 </span>
               </span>
             </span>
-            <Icon
-              size="20"
-              style="transform: rotate(18deg)"
-              class="paws-2"
-              color="var(--footer-music-paw-icon-color)"
-            >
+            <Icon size="20" style="transform: rotate(18deg)" class="paws-2" color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>
             &nbsp;
@@ -132,35 +101,17 @@
         </Transition>
         <Transition name="fade" mode="out-in" v-else>
           <!-- 逐行模块 -->
-          <div
-            class="lrc-all"
-            :key="
-              store.getPlayerLrc.length > 0
-                ? `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}`
-                : $t('components.music.lrcSearching')
-            "
-          >
+          <div class="lrc-all" :key="store.getPlayerLrc.length > 0
+            ? `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}`
+            : $t('components.music.lrcSearching')
+            ">
             <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
             &nbsp;
-            <Icon
-              size="20"
-              style="transform: rotate(-18deg)"
-              class="paws-3"
-              color="var(--footer-music-paw-icon-color)"
-            >
+            <Icon size="20" style="transform: rotate(-18deg)" class="paws-3" color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>
-            <span
-              class="lrc-text text-truncate-ellipsis"
-              v-html="store.getPlayerLrc[0][4]"
-              :class="`lrc-char`"
-            />
-            <Icon
-              size="20"
-              style="transform: rotate(18deg)"
-              class="paws-4"
-              color="var(--footer-music-paw-icon-color)"
-            >
+            <span class="lrc-text text-truncate-ellipsis" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
+            <Icon size="20" style="transform: rotate(18deg)" class="paws-4" color="var(--footer-music-paw-icon-color)">
               <paw />
             </Icon>
             &nbsp;
@@ -173,6 +124,7 @@
 </template>
 
 <script setup lang="ts">
+import DwrcDot from "@/components/DwrcDot.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { MusicOne } from "@icon-park/vue-next";
@@ -185,6 +137,7 @@ import { useI18n } from "vue-i18n";
 import { throttle } from "lodash-es";
 
 const store = mainStore();
+const dwrcDotRef = ref<InstanceType<typeof DwrcDot> | null>(null);
 const fullYear = new Date().getFullYear();
 const lrcContainer = ref(null);
 const scrollPosition = ref(0);
@@ -268,11 +221,16 @@ const startDWRCLoop = () => {
           : 0;
 
       const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
+      let dotX = 0;
+      let dotVisible = false;
+
       if (dwrc2) {
         const wrap2 = dwrc2.querySelector("#dwrc-2-wrap");
         if (wrap2 && wrap2.getAttribute("data-line") === store.playerLrc[0][2]?.toString()) {
           const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span") as NodeListOf<HTMLElement>;
           if (outputDom.length === store.playerLrc.length) {
+
+            // 1. Clip path loop for lyrics
             for (let i = 0; i < store.playerLrc.length; i++) {
               const lrcItem = store.playerLrc[i] as any[];
               const start = Number(lrcItem[8]);
@@ -294,7 +252,59 @@ const startDWRCLoop = () => {
                 outputItem.style.clipPath = `inset(0 100% 0 0)`;
               }
             }
+
+            const timeline: { time: number; x: number }[] = [];
+            for (let i = 0; i < store.playerLrc.length; i++) {
+              const lrcItem = store.playerLrc[i] as any[];
+              const start = Number(lrcItem[8]);
+              const duration = Number(lrcItem[5]);
+              if (isNaN(start) || isNaN(duration) || duration <= 0) continue;
+
+              const outputItem = outputDom[i];
+              if (!outputItem) continue;
+
+              timeline.push({ time: start, x: outputItem.offsetLeft });
+              timeline.push({ time: start + duration, x: outputItem.offsetLeft + outputItem.offsetWidth });
+            }
+
+            if (timeline.length > 0) {
+              timeline.sort((a, b) => a.time - b.time);
+
+              if (now <= timeline[0].time) {
+                dotX = timeline[0].x;
+              } else if (now >= timeline[timeline.length - 1].time) {
+                dotX = timeline[timeline.length - 1].x;
+              } else {
+                for (let j = 0; j < timeline.length - 1; j++) {
+                  const curr = timeline[j];
+                  const next = timeline[j + 1];
+                  if (now >= curr.time && now < next.time) {
+                    if (next.time === curr.time) {
+                      dotX = curr.x;
+                    } else {
+                      const progress = (now - curr.time) / (next.time - curr.time);
+                      dotX = curr.x + (next.x - curr.x) * progress;
+                    }
+                    break;
+                  }
+                }
+              }
+              dotVisible = true;
+            } else {
+              dotVisible = false;
+            }
           }
+        }
+      }
+
+      // Update dot DOM
+      if (dwrcDotRef.value && dwrcDotRef.value.dotRef) {
+        const dotEl = dwrcDotRef.value.dotRef;
+        if (dotVisible) {
+          dotEl.style.opacity = '1';
+          dotEl.style.transform = `translateX(${dotX}px)`;
+        } else {
+          dotEl.style.opacity = '0';
         }
       }
     }
@@ -451,6 +461,7 @@ onBeforeUnmount(() => {
   .paws-1 {
     transform: rotate(-18deg) translateY(-2px) !important;
   }
+
   .paws-2 {
     transform: rotate(18deg) translateY(-2px) !important;
   }
@@ -583,6 +594,11 @@ onBeforeUnmount(() => {
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
   }
+}
+
+.dwrc-box {
+  position: relative;
+  display: inline-block;
 }
 
 #dwrc-2-wrap {

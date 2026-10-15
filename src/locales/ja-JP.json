@@ -188,6 +188,7 @@
       },
       "lyric": {
         "showFooterLyric": "フッターに歌詞を表示",
+        "showDwrcDot": "逐字歌詞の進行ドットを表示",
         "useAMLL": "NetEase Cloud にない歌詞に AMLL TTML Database を呼び出す",
         "amllNetworkWarning": "（Github ネットワークが不安定な場合、歌詞の読み込みが遅くなる可能性があります）",
         "useAMLLMirror": "AMLL TTML Database 呼び出し時にミラーを使用",
@@ -235,7 +236,9 @@
         "checkError": "バージョン確認エラーです。後でもう一度お試しくださいニャ〜",
         "restoringDefault": "デフォルト設定を復元しています。少々お待ちください...",
         "loadingInitial": "初期設定を読み込んでいます。少々お待ちください...",
-        "confirmReset": "本当に全ての設定をリセットしますか？ 操作は3回クリックした後に実行されます。"
+        "confirmReset": "本当に全ての設定をリセットしますか？ 操作は3回クリックした後に実行されます。",
+        "debug": "デバッグ",
+        "detailedLogs": "詳細ログ"
       }
     },
     "music": {

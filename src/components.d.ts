@@ -14,6 +14,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Background: typeof import('./components/Background.vue')['default']
     DevSet: typeof import('./components/DevSet.vue')['default']
+    DwrcDot: typeof import('./components/DwrcDot.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElCollapse: typeof import('element-plus/es')['ElCollapse']
@@ -48,6 +49,7 @@ declare module 'vue' {
 declare global {
   const Background: typeof import('./components/Background.vue')['default']
   const DevSet: typeof import('./components/DevSet.vue')['default']
+  const DwrcDot: typeof import('./components/DwrcDot.vue')['default']
   const ElButton: typeof import('element-plus/es')['ElButton']
   const ElCol: typeof import('element-plus/es')['ElCol']
   const ElCollapse: typeof import('element-plus/es')['ElCollapse']
