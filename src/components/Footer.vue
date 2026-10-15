@@ -52,70 +52,65 @@
       <div v-else class="lrc" @dblclick="toggleForceIcon">
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
-        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
-          v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)">
-          <!-- &amp; -->
-          <!-- 逐字模块山 -->
-          <div class="lrc-all" :key="store.playerLrc.length != 0
-            ? `lrc-line-${store.playerLrc[0][2]}-${store.playerLrc.length}-${store.playerLrc[0][4]}-${store.lyricSeekVersion}`
-            : `lrc-line-null`
-            ">
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
-            &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg)" class="paws-1" color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            <span class="dwrc-box">
-              <DwrcDot v-if="store.dwrcDot" ref="dwrcDotRef" />
-              <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap"
-                :data-line="store.playerLrc[0]?.[2]">
-                <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`"
-                  :style="{ '--char-duration': i[5] + 'ms' }" :class="[
-                    'dwrc-2-char',
-                    i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
-                    i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
-                    i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
-                    i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                  ]" v-html="i[4]">
+        <!-- 歌词组件 -->
+        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
+          @before-leave="onBeforeLeave" @before-enter="onBeforeEnter" @after-enter="onAfterEnter">
+          <div class="lrc-all" ref="lrcAllRef"
+            :class="{ 'is-overflow': lyricGeo.isOverflow, 'is-centered': !lyricGeo.isOverflow }"
+            :key="lyricTransitionKey">
+            <!-- 左侧 ICON 组 -->
+            <div class="lrc-side-icons left-icons" ref="leftIconsRef">
+              <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
+              &nbsp;
+              <Icon size="20" style="transform: rotate(-18deg)" class="paws-1"
+                color="var(--footer-music-paw-icon-color)">
+                <paw />
+              </Icon>
+            </div>
+            <!-- 中间歌词视口区域 -->
+            <div class="lrc-viewport" ref="lrcViewportRef">
+              <div class="lrc-scroll-track" ref="lrcTrackRef">
+                <!-- 逐字模块 -->
+                <span v-if="!isLineByLine" class="dwrc-box" ref="dwrcBoxRef">
+                  <DwrcDot v-if="store.dwrcDot" ref="dwrcDotRef" />
+                  <span class="dwrc-2 lrc-text" id="dwrc-2-wrap" :data-line="store.playerLrc[0]?.[2]">
+                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
+                        'dwrc-2-char',
+                        i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
+                        i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
+                      ]" v-html="i[4]">
+                    </span>
+                  </span>
+                  <span class="dwrc-1 lrc-text" id="dwrc-1-wrap">
+                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
+                        'dwrc-char',
+                        i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
+                        i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
+                        i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
+                      ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                    </span>
+                  </span>
                 </span>
-              </span>
-              <span class="dwrc-1 lrc-text text-truncate-ellipsis" id="dwrc-1-wrap">
-                <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
-                  :style="{ '--char-duration': i[5] + 'ms' }" :class="[
-                    'dwrc-char',
-                    i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
-                    i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
-                    i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
-                    i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                    i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
-                  ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
-                </span>
-              </span>
-            </span>
-            <Icon size="20" style="transform: rotate(18deg)" class="paws-2" color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            &nbsp;
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
-          </div>
-        </Transition>
-        <Transition name="fade" mode="out-in" v-else>
-          <!-- 逐行模块 -->
-          <div class="lrc-all" :key="store.getPlayerLrc.length > 0
-            ? `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}`
-            : $t('components.music.lrcSearching')
-            ">
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
-            &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg)" class="paws-3" color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            <span class="lrc-text text-truncate-ellipsis" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
-            <Icon size="20" style="transform: rotate(18deg)" class="paws-4" color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            &nbsp;
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
+                <!-- 逐行模块 -->
+                <span v-else class="lrc-text line-lrc-text lrc-char" ref="lineLrcRef"
+                  v-html="store.getPlayerLrc[0]?.[4]" />
+              </div>
+            </div>
+            <!-- 右侧 ICON 组 -->
+            <div class="lrc-side-icons right-icons" ref="rightIconsRef">
+              <Icon size="20" style="transform: rotate(18deg)" class="paws-2"
+                color="var(--footer-music-paw-icon-color)">
+                <paw />
+              </Icon>
+              &nbsp;
+              <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
+            </div>
           </div>
         </Transition>
       </div>
@@ -132,16 +127,21 @@ import { Icon } from "@vicons/utils";
 import Paw from "@vicons/ionicons5/es/Paw.js";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
-import { ref, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
+import { ref, reactive, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { throttle } from "lodash-es";
 
 const store = mainStore();
 const dwrcDotRef = ref<InstanceType<typeof DwrcDot> | null>(null);
+const lrcAllRef = ref<HTMLElement | null>(null);
+const leftIconsRef = ref<HTMLElement | null>(null);
+const rightIconsRef = ref<HTMLElement | null>(null);
+const lrcViewportRef = ref<HTMLElement | null>(null);
+const lrcTrackRef = ref<HTMLElement | null>(null);
+const dwrcBoxRef = ref<HTMLElement | null>(null);
+const lineLrcRef = ref<HTMLElement | null>(null);
+
 const fullYear = new Date().getFullYear();
-const lrcContainer = ref(null);
-const scrollPosition = ref(0);
-const currentLine = ref(0);
 const audio = ref(null);
 const icon = ref(null);
 const { locale, t } = useI18n();
@@ -203,34 +203,233 @@ const toggleForceIcon = () => {
   }
 };
 
-// dwrc part
+const PADDING_LEFT = 8;   // 开始左间距
+const PADDING_RIGHT = 8;  // 结束右间距
+const MASK_MAX_WIDTH = 24; // 遮罩渐隐最大宽度
+const SCROLL_LERP = 0.15; // 阻尼平滑系数
+
+const lyricGeo = reactive({
+  viewportWidth: 0,
+  viewportLeft: 0,
+  contentWidth: 0,
+  maxScroll: 0,
+  isOverflow: false,
+});
+
+let currentScrollX = 0;
+let lastMaskLeft = -1;
+let lastMaskRight = -1;
+let lastMaskLeftColor = "";
+let lastMaskRightColor = "";
+let isTransitioning = false;
+let transitionTimer: any = null;
+
+const resetDynamicMask = (targetVp?: HTMLElement | null) => {
+  lastMaskLeft = -1;
+  lastMaskRight = -1;
+  lastMaskLeftColor = "";
+  lastMaskRightColor = "";
+  const vp = targetVp || lrcViewportRef.value;
+  if (vp) {
+    const vpStyle = vp.style;
+    vpStyle.setProperty("--mask-left", "0px");
+    vpStyle.setProperty("--mask-left-color", "black");
+    vpStyle.setProperty("--mask-right", `${MASK_MAX_WIDTH}px`);
+    vpStyle.setProperty("--mask-right-color", "transparent");
+  }
+};
+
+const onBeforeLeave = () => {
+  isTransitioning = true;
+  clearTimeout(transitionTimer);
+  transitionTimer = setTimeout(() => {
+    isTransitioning = false;
+  }, 400);
+};
+
+const onBeforeEnter = (el: Element) => {
+  isTransitioning = false;
+  clearTimeout(transitionTimer);
+  currentScrollX = 0;
+
+  const track = el.querySelector(".lrc-scroll-track") as HTMLElement;
+  if (track) {
+    track.style.transform = "translate3d(0, 0, 0)";
+  }
+  const vp = el.querySelector(".lrc-viewport") as HTMLElement;
+  if (vp) {
+    resetDynamicMask(vp);
+  }
+
+  nextTick(() => {
+    updateLyricGeometry();
+  });
+};
+
+const onAfterEnter = () => {
+  isTransitioning = false;
+  clearTimeout(transitionTimer);
+  updateLyricGeometry();
+};
+
+type DwrcItem = [number, number, any[]];
+const isLineByLine = computed(() => {
+  return !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
+});
+
+const lyricTransitionKey = computed(() => {
+  if (!isLineByLine.value) {
+    return store.playerLrc?.length > 0
+      ? `lrc-line-${store.playerLrc[0]?.[2]}-${store.playerLrc.length}-${store.playerLrc[0]?.[4]}-${store.lyricSeekVersion}`
+      : `lrc-line-null`;
+  } else {
+    return store.getPlayerLrc?.length > 0
+      ? `lrc-${store.getPlayerLrc[0]?.[2]}-${store.getPlayerLrc.length}`
+      : t("components.music.lrcSearching");
+  }
+});
+
+const updateLyricGeometry = () => {
+  if (!lrcAllRef.value) return;
+
+  const lrcAllRect = lrcAllRef.value.getBoundingClientRect();
+  const leftIconsWidth = leftIconsRef.value ? leftIconsRef.value.getBoundingClientRect().width : 50;
+  const rightIconsWidth = rightIconsRef.value ? rightIconsRef.value.getBoundingClientRect().width : 50;
+
+  const sideMargin = 8;
+  const maxAvailableViewportWidth = Math.max(0, lrcAllRect.width - (leftIconsWidth + rightIconsWidth + sideMargin));
+
+  const contentEl = dwrcBoxRef.value || lineLrcRef.value;
+  const contentWidth = contentEl ? contentEl.getBoundingClientRect().width : 0;
+
+  lyricGeo.contentWidth = contentWidth;
+
+  const availableWidth = maxAvailableViewportWidth - PADDING_LEFT - PADDING_RIGHT;
+  lyricGeo.isOverflow = contentWidth > availableWidth + 1 && availableWidth > 0;
+
+  if (lyricGeo.isOverflow) {
+    const vpRect = lrcViewportRef.value?.getBoundingClientRect();
+    lyricGeo.viewportWidth = (vpRect && vpRect.width > contentWidth) ? vpRect.width : maxAvailableViewportWidth;
+    lyricGeo.viewportLeft = vpRect ? vpRect.left : (lrcAllRect.left + leftIconsWidth + 4);
+    lyricGeo.maxScroll = Math.max(0, contentWidth + PADDING_LEFT + PADDING_RIGHT - lyricGeo.viewportWidth);
+  } else {
+    lyricGeo.viewportWidth = contentWidth;
+    lyricGeo.viewportLeft = lrcAllRect.left + (lrcAllRect.width - contentWidth) / 2;
+    lyricGeo.maxScroll = 0;
+  }
+};
+
+let resizeObserver: ResizeObserver | null = null;
+const setupResizeObserver = () => {
+  if (typeof ResizeObserver === "undefined") return;
+  resizeObserver = new ResizeObserver(() => {
+    updateLyricGeometry();
+  });
+  if (lrcAllRef.value) resizeObserver.observe(lrcAllRef.value);
+  if (lrcViewportRef.value) resizeObserver.observe(lrcViewportRef.value);
+};
+
+watch([lrcAllRef, lrcViewportRef], ([newAll, newViewport], [oldAll, oldViewport]) => {
+  if (oldAll && resizeObserver) resizeObserver.unobserve(oldAll);
+  if (oldViewport && resizeObserver) resizeObserver.unobserve(oldViewport);
+  if (newAll && resizeObserver) resizeObserver.observe(newAll);
+  if (newViewport && resizeObserver) resizeObserver.observe(newViewport);
+  updateLyricGeometry();
+});
+
+let dprMediaQuery: MediaQueryList | null = null;
+const listenDprChange = () => {
+  if (typeof window === "undefined" || !window.matchMedia) return;
+  dprMediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dpr)`);
+  dprMediaQuery.addEventListener(
+    "change",
+    () => {
+      updateLyricGeometry();
+      listenDprChange();
+    },
+    { once: true }
+  );
+};
+
+let lastLineIndex: any = null;
+watch(
+  () => (isLineByLine.value ? store.getPlayerLrc?.[0]?.[2] : store.playerLrc?.[0]?.[2]),
+  (newLine) => {
+    if (newLine !== undefined && newLine !== lastLineIndex) {
+      lastLineIndex = newLine;
+      if (store.isDragging) {
+        isTransitioning = false;
+        clearTimeout(transitionTimer);
+        currentScrollX = 0;
+        resetDynamicMask();
+        if (lrcTrackRef.value) {
+          lrcTrackRef.value.style.transform = "translate3d(0, 0, 0)";
+        }
+        nextTick(() => {
+          updateLyricGeometry();
+        });
+      }
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => store.lyricSeekVersion,
+  () => {
+    isTransitioning = false;
+    clearTimeout(transitionTimer);
+    nextTick(() => {
+      updateLyricGeometry();
+    });
+  }
+);
+
+watch(
+  () => [store.playerLrcShow, isLineByLine.value],
+  () => {
+    isTransitioning = false;
+    clearTimeout(transitionTimer);
+    currentScrollX = 0;
+    resetDynamicMask();
+    if (lrcTrackRef.value) {
+      lrcTrackRef.value.style.transform = "translate3d(0, 0, 0)";
+    }
+    nextTick(() => {
+      updateLyricGeometry();
+    });
+  }
+);
+
 let dwrcRAFId: number | null = null;
 
 const startDWRCLoop = () => {
   if (dwrcRAFId !== null) return;
   const loop = () => {
-    type DwrcItem = [number, number, any[]];
-    const isLineByLine =
-      !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
-    if (store.playerDWRCShowPro && !isLineByLine && store.playerLrc && store.playerLrc.length > 0) {
-      const audio = document.querySelector("audio");
-      const now = store.isDragging
-        ? store.dragProgressTime * 1000
-        : audio
-          ? audio.currentTime * 1000
-          : 0;
+    if (isTransitioning) {
+      dwrcRAFId = requestAnimationFrame(loop);
+      return;
+    }
 
+    const isLine = isLineByLine.value;
+    const audio = document.querySelector("audio");
+    const now = store.isDragging
+      ? store.dragProgressTime * 1000
+      : audio
+        ? audio.currentTime * 1000
+        : 0;
+
+    let currentProgressX = 0;
+    if (store.playerDWRCShowPro && !isLine && store.playerLrc && store.playerLrc.length > 0) {
       const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
       let dotX = 0;
       let dotVisible = false;
 
       if (dwrc2) {
         const wrap2 = dwrc2.querySelector("#dwrc-2-wrap");
-        if (wrap2 && wrap2.getAttribute("data-line") === store.playerLrc[0][2]?.toString()) {
+        if (wrap2 && wrap2.getAttribute("data-line") === store.playerLrc[0]?.[2]?.toString()) {
           const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span") as NodeListOf<HTMLElement>;
           if (outputDom.length === store.playerLrc.length) {
-
-            // 1. Clip path loop for lyrics
             for (let i = 0; i < store.playerLrc.length; i++) {
               const lrcItem = store.playerLrc[i] as any[];
               const start = Number(lrcItem[8]);
@@ -297,17 +496,70 @@ const startDWRCLoop = () => {
         }
       }
 
-      // Update dot DOM
       if (dwrcDotRef.value && dwrcDotRef.value.dotRef) {
         const dotEl = dwrcDotRef.value.dotRef;
         if (dotVisible) {
-          dotEl.style.opacity = '1';
+          dotEl.style.opacity = "1";
           dotEl.style.transform = `translateX(${dotX}px)`;
         } else {
-          dotEl.style.opacity = '0';
+          dotEl.style.opacity = "0";
         }
       }
+
+      currentProgressX = dotX;
     }
+    else if (isLine && store.getPlayerLrc?.length > 0) {
+      const lrcItem = (store.getPlayerLrc[0] as any[]) || [];
+      const duration = Number(lrcItem[5]) || 5000;
+      const start = Number(lrcItem[8]) || 0;
+      const rawText = String(lrcItem[4] || "").replace(/<[^>]+>/g, "");
+      const charCount = rawText.length || 1;
+      const elapsed = Math.max(0, now - start);
+
+      const progress = Math.min(1, Math.max(0, elapsed / duration));
+      currentProgressX = progress * lyricGeo.contentWidth;
+    }
+
+    let targetOffset = 0;
+    if (lyricGeo.isOverflow) {
+      const screen65 = window.innerWidth * 0.65;
+      const headScreenX = lyricGeo.viewportLeft + PADDING_LEFT + currentProgressX;
+      const rawOffset = screen65 - headScreenX;
+      targetOffset = Math.max(-lyricGeo.maxScroll, Math.min(0, rawOffset));
+    }
+    if (Math.abs(targetOffset - currentScrollX) > 0.05) {
+      currentScrollX += (targetOffset - currentScrollX) * SCROLL_LERP;
+    } else {
+      currentScrollX = targetOffset;
+    }
+
+    if (lrcTrackRef.value) {
+      lrcTrackRef.value.style.transform = `translate3d(${currentScrollX}px, 0, 0)`;
+    }
+    if (lyricGeo.isOverflow && lrcViewportRef.value) {
+      const scrollDist = Math.abs(currentScrollX);
+      const leftFade = Math.min(MASK_MAX_WIDTH, Math.max(0, Math.round(scrollDist)));
+      const leftColor = leftFade > 0 ? "transparent" : "black";
+
+      const remainingDist = Math.max(0, lyricGeo.maxScroll - scrollDist);
+      const rightFade = Math.min(MASK_MAX_WIDTH, Math.max(0, Math.round(remainingDist)));
+      const rightColor = rightFade > 0 ? "transparent" : "black";
+
+      const vpStyle = lrcViewportRef.value.style;
+      if (leftFade !== lastMaskLeft || leftColor !== lastMaskLeftColor) {
+        lastMaskLeft = leftFade;
+        lastMaskLeftColor = leftColor;
+        vpStyle.setProperty("--mask-left", `${leftFade}px`);
+        vpStyle.setProperty("--mask-left-color", leftColor);
+      }
+      if (rightFade !== lastMaskRight || rightColor !== lastMaskRightColor) {
+        lastMaskRight = rightFade;
+        lastMaskRightColor = rightColor;
+        vpStyle.setProperty("--mask-right", `${rightFade}px`);
+        vpStyle.setProperty("--mask-right-color", rightColor);
+      }
+    }
+
     dwrcRAFId = requestAnimationFrame(loop);
   };
   dwrcRAFId = requestAnimationFrame(loop);
@@ -321,10 +573,20 @@ const stopDWRCLoop = () => {
 };
 
 onMounted(() => {
+  setupResizeObserver();
+  listenDprChange();
+  nextTick(() => {
+    updateLyricGeometry();
+  });
   startDWRCLoop();
 });
 
 onBeforeUnmount(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+    resizeObserver = null;
+  }
+  clearTimeout(transitionTimer);
   stopDWRCLoop();
 });
 </script>
@@ -618,7 +880,8 @@ onBeforeUnmount(() => {
   font-family: MiSans VF;
   font-weight: 520;
   font-size: 1.05rem;
-  overflow: hidden;
+  overflow: visible;
+  text-overflow: clip;
   white-space: nowrap;
   transition:
     opacity var(--short-time) linear,
@@ -678,15 +941,97 @@ onBeforeUnmount(() => {
     justify-content: flex-start;
 
     .lrc-all {
-      width: 98%;
+      width: 100%;
+      height: 46px;
       display: flex;
       flex-direction: row;
-      justify-content: center;
       align-items: center;
       white-space: nowrap;
+      position: relative;
+
+      .lrc-side-icons {
+        display: inline-flex;
+        align-items: center;
+        flex-shrink: 0;
+        user-select: none;
+      }
+
+      &.is-centered {
+        justify-content: center;
+
+        .lrc-viewport {
+          flex: 0 1 auto;
+          overflow: visible;
+          mask-image: none;
+          -webkit-mask-image: none;
+        }
+
+        .lrc-scroll-track {
+          padding: 0 8px;
+        }
+      }
+
+      &.is-overflow {
+        justify-content: space-between;
+
+        .lrc-side-icons {
+          z-index: 2;
+
+          &.left-icons {
+            margin-left: 4px;
+          }
+
+          &.right-icons {
+            margin-right: 4px;
+          }
+        }
+
+        .lrc-viewport {
+          flex: 1;
+          min-width: 0;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+          mask-image: linear-gradient(to right,
+              var(--mask-left-color, black) 0,
+              black var(--mask-left, 0px),
+              black calc(100% - var(--mask-right, 24px)),
+              var(--mask-right-color, transparent) 100%);
+          -webkit-mask-image: linear-gradient(to right,
+              var(--mask-left-color, black) 0,
+              black var(--mask-left, 0px),
+              black calc(100% - var(--mask-right, 24px)),
+              var(--mask-right-color, transparent) 100%);
+        }
+
+        .lrc-scroll-track {
+          display: inline-flex;
+          align-items: center;
+          white-space: nowrap;
+          will-change: transform;
+          padding-left: 8px;
+          padding-right: 8px;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+      }
+
+      .line-lrc-text {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        text-overflow: clip !important;
+        overflow: visible !important;
+      }
+
+      #dwrc-1-wrap,
+      #dwrc-2-wrap {
+        text-overflow: clip !important;
+        overflow: visible !important;
+        white-space: nowrap !important;
+      }
 
       .lrc-text {
-        margin: 0 8px;
+        margin: 0;
       }
 
       .i-icon {
@@ -703,6 +1048,7 @@ onBeforeUnmount(() => {
         width: auto;
         height: auto;
         z-index: 0;
+        display: inline-block;
 
         .dwrc-1,
         .dwrc-2 {

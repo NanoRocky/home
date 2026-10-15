@@ -27,10 +27,12 @@ export interface MainState {
   playerArtist: string | null;
   playerAlbum: string | null;
   playerLrc:
+  | [boolean, string | number, string | number, string | number, string, string | number, string | number, string, string | number][]
   | [boolean, string, string, string, string, string, string][]
   | [boolean, string, string, string, string, string][]
   | [boolean, string, string, string, string][]
-  | [boolean, string][];
+  | [boolean, string][]
+  | any[];
   playerLrcShow: boolean;
   footerBlur: boolean;
   footerProgressBar: boolean;

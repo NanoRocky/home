@@ -12,7 +12,7 @@ defineExpose({ dotRef });
 .dwrc-dot {
   position: absolute;
   bottom: 3px;
-  left: 6px;
+  left: -1px;
   width: 6px;
   height: 6px;
   border-radius: 50%;
