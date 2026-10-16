@@ -1,78 +1,93 @@
-import { parseVersion } from "@/utils/ver";
 import config from "@/../package.json";
 import i18n from "@/locales";
-
+import type { VersionInfo } from "@/utils/ver";
 // 这是一个“飞屋”模块，用于检测是否存在新版本。由于酪灰懒的一批，这个一点儿都不重要的模块由 AI 全权负责（？），酪灰只是瞅了几眼，就睡着了。所以有 BUG 记得用 issue 轰炸他！
 
+export interface UpdateCheckResult {
+  status: "true" | "false" | "error";
+  latestVersion: string;
+  isPreview: "true" | "false";
+  versionType: string;
+}
+
+/**
+ * 提取 GitHub 仓库所有者与仓库名
+ */
 const extractRepoInfo = (url: string): { owner: string; repo: string } | null => {
   const match = url.match(/github\.com\/([^/]+)\/([^/]+)/i);
-  if (!match || match.length < 3) return null;
+  if (!match) return null;
   return {
     owner: match[1],
-    repo: match[2].replace(/\.git$/, ""),
+    repo: match[2].replace(/\.git$/i, "").replace(/\/$/, ""),
   };
 };
 
-const extractVersionType = (tag: string): string => {
-  const cleanTag = tag.replace(/^v/i, "").replace(/\.[a-z]+$/i, "");
-  const typeMatch = cleanTag.match(/\.([a-z]+)\.?/i);
-  if (typeMatch && typeMatch[1]) {
-    return typeMatch[1].toLowerCase();
-  }
-  if (cleanTag.includes(".pre")) return "pre";
-  if (cleanTag.includes(".beta")) return "beta";
-  if (cleanTag.includes(".dev")) return "dev";
-  if (cleanTag.includes(".alpha")) return "alpha";
-  return "release";
+/**
+ * 从 Release Tag 提取版本类型
+ */
+const extractVersionType = (tag: string, isPrerelease: boolean): string => {
+  const lowerTag = tag.toLowerCase();
+  if (/\bdev\b|\.dev/i.test(lowerTag)) return "dev";
+  if (/\bpre\b|\.pre|preview/i.test(lowerTag)) return "pre";
+  if (/\bbeta\b|\.beta/i.test(lowerTag)) return "beta";
+  if (/\balpha\b|\.alpha/i.test(lowerTag)) return "alpha";
+  return isPrerelease ? "pre" : "release";
 };
 
+/**
+ * 清洗并标准化版本号为 major.minor.patch
+ */
 const cleanVersion = (version: string): string => {
-  const cleaned = version.replace(/^[^\d]+/i, "");
-  const versionParts: string[] = [];
-  const parts = cleaned.split(".");
-  for (const part of parts) {
-    const numMatch = part.match(/\d+/);
-    if (numMatch) {
-      versionParts.push(numMatch[0]);
-
-      if (versionParts.length >= 3) break;
-    }
+  const match = version.match(/(\d+)\.(\d+)(?:\.(\d+))?/);
+  if (match) {
+    const major = match[1];
+    const minor = match[2];
+    const patch = match[3] || "0";
+    return `${major}.${minor}.${patch}`;
   }
-
-  while (versionParts.length < 3) {
-    versionParts.push("0");
-  }
-  return versionParts.slice(0, 3).join(".");
+  return "0.0.0";
 };
 
-export const checkForUpdate = async (versionInfo: {
-  upa: string;
-  channel: string;
-  version: string;
-  type: string;
-}): Promise<{
-  status: string;
-  latestVersion: string;
-  isPreview: string;
-  versionType: string;
-}> => {
+/**
+ * 语义化比对两个三段式版本号
+ * 返回: 1 (v1 > v2), -1 (v1 < v2), 0 (v1 === v2)
+ */
+const compareVersions = (v1: string, v2: string): number => {
+  const p1 = v1.split(".").map((n) => parseInt(n, 10) || 0);
+  const p2 = v2.split(".").map((n) => parseInt(n, 10) || 0);
+  for (let i = 0; i < 3; i++) {
+    const num1 = p1[i] || 0;
+    const num2 = p2[i] || 0;
+    if (num1 > num2) return 1;
+    if (num1 < num2) return -1;
+  }
+  return 0;
+};
+
+/**
+ * 检查是否存在新版本
+ */
+export const checkForUpdate = async (versionInfo: VersionInfo): Promise<UpdateCheckResult> => {
   try {
-    const repoUrl = versionInfo.upa === "imsyy" ? config.github : config.efug;
+    const repoUrl =
+      versionInfo.upa === config.author || versionInfo.channel === "imsyy"
+        ? config.github
+        : config.efug;
     const repoInfo = extractRepoInfo(repoUrl);
     if (!repoInfo) {
       throw new Error(i18n.global.t("console.update.invalidGithubUrl"));
     }
-    const apiUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/releases/latest`;
+
+    // 优先拉取最近的 Releases 列表（包含正式版与预发布版，最多拉取 10 条）
+    const apiUrl = `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/releases?per_page=10`;
     const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error(`${i18n.global.t("console.update.githubApiError")}${response.status}`);
     }
-    const releaseData = await response.json();
-    const latestTag = releaseData.tag_name;
-    const isPrerelease = releaseData.prerelease;
-    const targetCommitish = releaseData.target_commitish?.toLowerCase() || "";
-    const currentChannel = versionInfo.channel.toLowerCase();
-    if (targetCommitish !== "" && targetCommitish !== currentChannel) {
+
+    const releases = await response.json();
+    if (!Array.isArray(releases) || releases.length === 0) {
+      // 仓库暂无 Release，视为当前版本
       return {
         status: "true",
         latestVersion: versionInfo.version,
@@ -80,56 +95,48 @@ export const checkForUpdate = async (versionInfo: {
         versionType: versionInfo.type,
       };
     }
-    const extractedType = extractVersionType(latestTag);
-    const isConsistent =
-      (isPrerelease && ["pre", "beta", "dev", "alpha"].includes(extractedType)) ||
-      (!isPrerelease && extractedType === "release");
-    if (!isConsistent) {
-      return {
-        status: "true",
-        latestVersion: versionInfo.version,
-        isPreview: versionInfo.type === "release" ? "false" : "true",
-        versionType: versionInfo.type,
-      };
-    }
+
+    const isCurrentPreview = versionInfo.type !== "release";
+
+    // 智能筛选匹配的 Release:
+    // 如果当前为正式版用户，优先匹配最新的非草稿、非预发布版；
+    // 如果当前为预览/开发版用户，匹配最新的非草稿版本（支持获取更新的预览版或已发布的正式版）
+    const targetRelease = isCurrentPreview
+      ? releases.find((r: any) => !r.draft) || releases[0]
+      : releases.find((r: any) => !r.draft && !r.prerelease) || releases[0];
+
+    const latestTag = targetRelease.tag_name || "";
+    const isLatestPrerelease = Boolean(targetRelease.prerelease);
+    const extractedType = extractVersionType(latestTag, isLatestPrerelease);
+
     const cleanedLatestVersion = cleanVersion(latestTag);
     const cleanedCurrentVersion = cleanVersion(versionInfo.version);
-    const compareVersions = (v1: string, v2: string): number => {
-      const parts1 = v1.split(".").map(Number);
-      const parts2 = v2.split(".").map(Number);
-      for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-        const num1 = parts1[i] || 0;
-        const num2 = parts2[i] || 0;
 
-        if (num1 < num2) return -1;
-        if (num1 > num2) return 1;
-      }
-      return 0;
-    };
-    const versionComparison = compareVersions(cleanedCurrentVersion, cleanedLatestVersion);
-    const isCurrentPreview = versionInfo.type !== "release";
-    let isLatest = false;
-    if (versionComparison === 0) {
-      if (isCurrentPreview && !isPrerelease) {
-        isLatest = false;
-      } else if (!isCurrentPreview && isPrerelease) {
-        isLatest = true;
+    const cmp = compareVersions(cleanedCurrentVersion, cleanedLatestVersion);
+
+    let hasUpdate = false;
+    if (cmp < 0) {
+      // 远端版本号更高
+      if (isLatestPrerelease && !isCurrentPreview) {
+        // 正式版用户不提示预发布版更新
+        hasUpdate = false;
       } else {
-        isLatest = true;
+        hasUpdate = true;
       }
-    } else if (versionComparison > 0) {
-      isLatest = true;
-    } else {
-      if (isPrerelease && !isCurrentPreview) {
-        isLatest = true;
-      } else {
-        isLatest = false;
+    } else if (cmp === 0) {
+      // 版本号数值相同（例如 4.4.1.dev 与 4.4.1 正式版）
+      if (isCurrentPreview && !isLatestPrerelease) {
+        // 当前是开发/尝鲜版，远端已发布同版本号的正式版，提示更新
+        hasUpdate = true;
       }
     }
+
+    const isLatest = !hasUpdate;
+
     return {
       status: isLatest ? "true" : "false",
       latestVersion: cleanedLatestVersion,
-      isPreview: isPrerelease ? "true" : "false",
+      isPreview: isLatestPrerelease ? "true" : "false",
       versionType: extractedType,
     };
   } catch (error) {
