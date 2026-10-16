@@ -241,7 +241,9 @@
         "enableDWRCPro": "逐字效果增强开关",
         "removeMetadata": "移除逐字歌词中的元数据",
         "pilfer": "拆东墙补西墙",
-        "translate": "翻译歌词显示"
+        "translate": "翻译歌词显示",
+        "notesAvoidFooter": "便签避让底栏歌词",
+        "notesAvoidFooterTip": "便签开启时不遮罩底栏歌词、进度条与翻译歌词，并自动保持安全边距"
       },
       "voice": {
         "enableSwitch": "网页语音交互总开关",

@@ -241,7 +241,9 @@
         "enableDWRCPro": "DWRC Enhanced Effect",
         "removeMetadata": "Remove Metadata from DWRC",
         "pilfer": "Pilfer Lyrics (Use alternate source on fail)",
-        "translate": "Show Translation Lyrics"
+        "translate": "Show Translation Lyrics",
+        "notesAvoidFooter": "Avoid Masking Footer in Notes",
+        "notesAvoidFooterTip": "Keep footer lyrics, progress bar and translation unmasked when Notes is open, maintaining safe margins"
       },
       "voice": {
         "enableSwitch": "Web Voice Interaction Master Switch",

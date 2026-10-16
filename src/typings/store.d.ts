@@ -87,6 +87,7 @@ export interface MainState {
   socialTipPosition: "right" | "down";
   noteOpenState: boolean;
   userNotes: NoteItem[];
+  notesAvoidFooter: boolean;
 }
 
 export interface NoteItem {

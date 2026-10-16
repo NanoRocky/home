@@ -241,7 +241,9 @@
         "enableDWRCPro": "逐字効果拡張",
         "removeMetadata": "逐字歌詞のメタデータを削除",
         "pilfer": "東の壁を壊して西の壁を補う（歌詞の代替取得）",
-        "translate": "翻訳歌詞を表示"
+        "translate": "翻訳歌詞を表示",
+        "notesAvoidFooter": "ノート使用時に底欄歌詞を避ける",
+        "notesAvoidFooterTip": "ノート表示時もフッター歌詞・進捗バー・翻訳歌詞をぼかさず、安全な余白を保持します"
       },
       "voice": {
         "enableSwitch": "Web 音声対話マスタースイッチ",

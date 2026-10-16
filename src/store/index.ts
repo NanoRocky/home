@@ -28,6 +28,7 @@ export const storeState: MainState = {
   searchOpenState: false, // 【状态】搜索框开启状态
   noteOpenState: false, // 【状态】笔记框开启状态
   userNotes: [] as NoteItem[], // 【缓存】用户笔记数据
+  notesAvoidFooter: false as boolean, // 【开关】便签避让底栏歌词
   searchEngine: "bing" as string, // 【开关】默认搜索引擎
   setV: false, // 【状态】开发者模式
   devDebugLog: false, // 【开关】调试日志输出
@@ -211,6 +212,7 @@ export const mainStore = defineStore("main", {
         "dwrcDot",
         "searchEngine",
         "userNotes",
+        "notesAvoidFooter",
       ],
     },
     {

@@ -19,12 +19,8 @@
           </section>
         </div>
         <!-- 移动端菜单按钮 -->
-        <Icon
-          class="menu"
-          size="24"
-          v-show="!store.backgroundShow"
-          @click="store.mobileOpenState = !store.mobileOpenState"
-        >
+        <Icon class="menu" size="24" v-show="!store.backgroundShow"
+          @click="store.mobileOpenState = !store.mobileOpenState">
           <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
         </Icon>
         <!-- 搜索框 -->
@@ -32,9 +28,12 @@
         <!-- 笔记框 -->
         <Notes />
         <!-- 页脚 -->
-        <Transition name="fade" mode="out-in">
-          <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
-        </Transition>
+        <Teleport to="body" :disabled="!shouldElevateFooter">
+          <Transition name="fade" mode="out-in">
+            <Footer class="f-ter" :class="{ 'is-elevated': shouldElevateFooter }"
+              v-show="!store.backgroundShow && !store.setOpenState" />
+          </Transition>
+        </Teleport>
       </main>
     </Transition>
   </el-config-provider>
@@ -68,6 +67,10 @@ const store = mainStore();
 const { locale, t } = useI18n();
 const elLocale = computed(() => (locale.value === "zh-CN" ? ep_zh_CN : ep_en_US));
 const timeThemeInterval = ref<any>(null);
+
+const shouldElevateFooter = computed(() => {
+  return !!(store.noteOpenState && store.notesAvoidFooter && store.playerLrcShow && !store.mobileOpenState && !store.boxOpenState && !store.musicBoxOpenState && !store.setOpenState && !store.mobileFuncState && !store.backgroundShow);
+});
 
 // 页面宽度
 const getWidth = () => {
@@ -365,5 +368,14 @@ onBeforeUnmount(() => {
       }
     }
   }
+}
+
+.f-ter.is-elevated {
+  position: fixed !important;
+  bottom: 0 !important;
+  top: auto !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 101 !important;
 }
 </style>

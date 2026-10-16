@@ -1093,6 +1093,16 @@ onBeforeUnmount(() => {
   white-space: nowrap;
   color: var(--footer-font-color);
 
+  &.is-elevated {
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 101 !important;
+    pointer-events: auto;
+  }
+
   .translation-lrc {
     position: absolute;
     bottom: calc(100% + 10px);
