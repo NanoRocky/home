@@ -78,7 +78,9 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       album: v.album || import.meta.env.VITE_SITE_NAME,
       url: domain + (jsonpData.req_0?.data?.midurlinfo[i]?.purl || ""),
       cover: v.cover || v.pic,
-      lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
+      // 原有的合并翻译歌词获取逻辑已停用，改由独立悬浮组件展示
+      // lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
+      lrc: v.lrc,
     }));
   } else {
     return data.map((v) => ({
@@ -87,7 +89,9 @@ export const getPlayerList = async (server, type, id, serverse, idse, playerTrLr
       album: v.album || import.meta.env.VITE_SITE_NAME, // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
       url: v.url,
       cover: v.cover || v.pic,
-      lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
+      // 原有的合并翻译歌词获取逻辑已停用，改由独立悬浮组件展示
+      // lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
+      lrc: v.lrc,
     }));
   }
 };

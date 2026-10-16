@@ -54,6 +54,7 @@ export interface MainState {
   webSpeech: boolean;
   playerSpeechName: boolean;
   playerTrLrc: boolean;
+  playerTrLrcText: string;
   playerDWRCShow: boolean;
   playerDWRCShowPro: boolean;
   playerDWRCATDB: boolean;
@@ -72,6 +73,8 @@ export interface MainState {
   lyricSeekVersion: number;
   forceShowBarIcon: boolean;
   dwrcDot: boolean;
+  songServer: string | null;
+  lyricSource: string | null;
   isDragging: boolean;
   dragProgressTime: number;
   showFirefly: boolean;
@@ -82,4 +85,14 @@ export interface MainState {
   theme: "system" | "time" | "bg" | "light" | "dark";
   weatherProvider: "auto" | "tencent" | "amap" | "google" | "xiaomi" | "oioweb";
   socialTipPosition: "right" | "down";
+  noteOpenState: boolean;
+  userNotes: NoteItem[];
+}
+
+export interface NoteItem {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: number;
+  updatedAt: number;
 }

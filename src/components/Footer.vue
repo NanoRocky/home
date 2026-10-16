@@ -1,5 +1,13 @@
 <template>
   <footer id="footer" :class="store.footerBlur ? 'blur' : null">
+    <!-- 翻译歌词独立悬浮气泡 -->
+    <Transition name="tr-fade" mode="out-in" @before-enter="onTrBeforeEnter" @after-enter="onTrAfterEnter"
+      @before-leave="onTrBeforeLeave" @after-leave="onTrAfterLeave">
+      <div v-if="store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText"
+        class="translation-lrc" :key="store.playerTrLrcText" @mousedown="handleLrcMiddleClick">
+        <span class="tr-text">{{ store.playerTrLrcText }}</span>
+      </div>
+    </Transition>
     <Transition name="fade" mode="out-in">
       <div v-if="!store.playerState || !store.playerLrcShow" class="power">
         <span>
@@ -49,7 +57,7 @@
           </span>
         </span>
       </div>
-      <div v-else class="lrc" @dblclick="toggleForceIcon">
+      <div v-else class="lrc" @dblclick="toggleForceIcon" @mousedown="handleLrcMiddleClick">
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
         <!-- 歌词组件 -->
@@ -131,6 +139,7 @@ import { Icon } from "@vicons/utils";
 import Paw from "@vicons/ionicons5/es/Paw.js";
 import { mainStore } from "@/store";
 import config from "@/../package.json";
+import { onPilferDiscard } from "@/utils/translationLyric";
 import {
   ref,
   reactive,
@@ -218,6 +227,48 @@ const toggleForceIcon = () => {
   }
 };
 
+let lastMiddleClickTime = 0;
+
+const isExternalLyric = computed(() => {
+  if (!store.lyricSource) return false;
+  if (store.lyricSource === "amll") return true;
+  return Boolean(store.songServer && store.lyricSource !== store.songServer);
+});
+
+const discardExternalLyric = () => {
+  if (!isExternalLyric.value) return;
+  const source = store.lyricSource;
+  store.dwrcTemp = [];
+  store.dwrcEnable = false;
+  store.dwrcLoading = false;
+  store.lyricSeekVersion++;
+
+  if (source !== "amll") {
+    onPilferDiscard(undefined, store);
+  }
+
+  store.lyricSource = store.songServer;
+
+  ElMessage({
+    message: t("components.music.restoredOriginalLyric"),
+    grouping: true,
+  });
+};
+
+const handleLrcMiddleClick = (e: MouseEvent) => {
+  if (!isExternalLyric.value) return;
+  if (e.button !== 1) return;
+  e.stopPropagation();
+  e.preventDefault();
+  const now = Date.now();
+  if (now - lastMiddleClickTime < 350) {
+    lastMiddleClickTime = 0;
+    discardExternalLyric();
+  } else {
+    lastMiddleClickTime = now;
+  }
+};
+
 const PADDING_LEFT = 8; // 开始左间距
 const PADDING_RIGHT = 8; // 结束右间距
 const MASK_MAX_WIDTH = 24; // 遮罩渐隐最大宽度
@@ -286,6 +337,52 @@ const onAfterEnter = () => {
   clearTimeout(transitionTimer);
   updateLyricGeometry();
 };
+
+let isTrLrcMounted = false;
+
+const isTranslationActive = () => {
+  return !!(
+    store.playerState &&
+    store.playerLrcShow &&
+    store.playerTrLrc &&
+    store.playerTrLrcText
+  );
+};
+
+const onTrBeforeEnter = (el: Element) => {
+  if (!isTrLrcMounted) {
+    el.classList.add("is-motion");
+    isTrLrcMounted = true;
+  } else {
+    el.classList.remove("is-motion");
+  }
+};
+
+const onTrBeforeLeave = (el: Element) => {
+  if (!isTranslationActive()) {
+    el.classList.add("is-motion");
+    isTrLrcMounted = false;
+  } else {
+    el.classList.remove("is-motion");
+  }
+};
+
+const onTrAfterEnter = (el: Element) => {
+  el.classList.remove("is-motion");
+};
+
+const onTrAfterLeave = (el: Element) => {
+  el.classList.remove("is-motion");
+};
+
+watch(
+  () => store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText,
+  (val) => {
+    if (!val) {
+      isTrLrcMounted = false;
+    }
+  }
+);
 
 type DwrcItem = [number, number, any[]];
 const isLineByLine = computed(() => {
@@ -952,6 +1049,64 @@ onBeforeUnmount(() => {
   word-break: keep-all;
   white-space: nowrap;
   color: var(--footer-font-color);
+
+  .translation-lrc {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1.4;
+    padding: 4px 14px;
+    border-radius: 6px;
+    background-color: var(--card-background-color);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    font-size: 0.85rem;
+    color: var(--text-color);
+    white-space: nowrap;
+    max-width: 80vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    user-select: none;
+    pointer-events: auto;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    &.tr-fade-enter-active,
+    &.tr-fade-leave-active {
+      transition:
+        opacity 0.2s linear,
+        transform 0.2s linear;
+    }
+
+    &.tr-fade-enter-from,
+    &.tr-fade-leave-to {
+      opacity: 0;
+    }
+
+    &.tr-fade-enter-to,
+    &.tr-fade-leave-from {
+      opacity: 1;
+    }
+
+    &.tr-fade-enter-from.is-motion,
+    &.tr-fade-leave-to.is-motion {
+      transform: translateX(-50%) translateY(4px);
+    }
+
+    &.tr-fade-enter-to.is-motion,
+    &.tr-fade-leave-from.is-motion {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 720px) {
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      max-width: 90vw;
+      bottom: calc(100% + 6px);
+    }
+  }
 
   .power {
     animation: fade 0.3s;

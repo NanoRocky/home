@@ -121,7 +121,19 @@
       "amllFail": "AMLL TTML Database の呼び出しに失敗しました...",
       "dwrcPilfering": "現在 {songServer} の《{name}》- '{artist}' を再生中です。猫は無事に {currentServer} から一文字ずつの歌詞を盗んできたニャ〜",
       "syncDWRCLrcError": "Error in syncDWRCLrc:",
-      "autoPlayError": "自動再生に失敗しました。ブラウザのポリシーにより制限されている可能性があります。手動で再生ボタンをクリックしてみてください："
+      "autoPlayError": "自動再生に失敗しました。ブラウザのポリシーにより制限されている可能性があります。手動で再生ボタンをクリックしてみてください：",
+      "fetchTranslationLrcFailed": "翻訳歌詞の取得に失敗しました:",
+      "pilferTranslationFailedFallback": "盗用元からの翻訳歌詞取得に失敗したため、オリジナル元へフォールバックします:",
+      "fetchOriginalTranslationFailed": "オリジナル元からの翻訳歌詞取得に失敗しました:",
+      "updatePilferTranslationFailed": "盗用した翻訳歌詞の更新に失敗しました:"
+    },
+    "notes": {
+      "parseFailed": "ノートデータの解析に失敗しました。初期ノートにフォールバックします：",
+      "saveFailed": "ノートの保存に失敗しました：",
+      "showSaveFilePickerFallback": "ファイル保存ダイアログの呼び出しに失敗したため、標準ダウンロードにフォールバックします：",
+      "exportFailed": "ノートの出力に失敗しました：",
+      "showOpenFilePickerFallback": "ファイル選択ダイアログの呼び出しに失敗したため、ファイル入力にフォールバックします：",
+      "importFailed": "ノートの取り込みに失敗しました："
     }
   },
   "components": {
@@ -129,6 +141,33 @@
       "placeholder": "検索またはURLを入力...",
       "noSpace": "検索バーを表示する十分なスペースがありませんニャ〜",
       "hint": "Enterで検索、Alt+Q / Escで閉じる"
+    },
+    "notes": {
+      "title": "ノート",
+      "newNote": "新規ノート",
+      "deleteNote": "現在のノートを削除",
+      "deleteConfirm": "このノートを削除しますかニャ？",
+      "titlePlaceholder": "ノートのタイトルを入力...",
+      "contentPlaceholder": "何かメモを書こうニャ...",
+      "pageFlipHint": "PGUP / PGDN でページ送り",
+      "musicPlayingHint": "音楽再生中 (曲送り優先)",
+      "shortcutHint": "Alt + N 閉じる | Esc 終了",
+      "totalNotes": "合計 {count} 件のノート",
+      "untitled": "無題のノート",
+      "welcomeTitle": "ノートへようこそニャ〜",
+      "welcomeContent": "ひらめきや大切な予定をここにメモしよう！\n\n💡 ヒント：\n• Alt + N でいつでもノートを開閉できます\n• 複数ノート対応、上部の + で新規作成\n• 音楽一時停止時は PGUP / PGDN でノート送り\n• 音楽再生時は PGUP / PGDN が曲送りを優先しますニャ〜\n• ノートはブラウザに自動保存されるので安心です！",
+      "created": "新規ノートを作成しましたニャ",
+      "deleted": "ノートを削除しましたニャ",
+      "characters": "文字",
+      "exportNotes": "ノートを出力 (JSON)",
+      "importNotes": "ノートを取り込み (JSON)",
+      "exportSuccess": "ノートを出力しましたニャ〜",
+      "importSuccess": "{count} 件のノートを取り込み、統合しましたニャ！",
+      "importError": "取り込みに失敗しました。ファイル形式が無効ですニャ",
+      "bookmarkList": "ノート一覧",
+      "closeTab": "タブを閉じる",
+      "selectJsonHint": "JSON形式のノートファイルを選択してくださいニャ！",
+      "resize": "ドラッグしてサイズ変更"
     },
     "settings": {
       "globalSettings": "グローバル設定",
@@ -202,7 +241,7 @@
         "enableDWRCPro": "逐字効果拡張",
         "removeMetadata": "逐字歌詞のメタデータを削除",
         "pilfer": "東の壁を壊して西の壁を補う（歌詞の代替取得）",
-        "translate": "行ごとの歌詞翻訳表示"
+        "translate": "翻訳歌詞を表示"
       },
       "voice": {
         "enableSwitch": "Web 音声対話マスタースイッチ",
@@ -265,7 +304,9 @@
       "songErrorPostfix": " ...",
       "lrcSearching": "猫が歌詞を探しているニャ...",
       "lrcNotFound": "猫はこの曲の歌詞を見つけられなかったニャ qwq",
-      "autoPlayError": "現在のブラウザのポリシーでは自動再生が許可されていないようです。手動で再生してニャ！"
+      "autoPlayError": "現在のブラウザのポリシーでは自動再生が許可されていないようです。手動で再生してニャ！",
+      "externalLyricLoaded": "猫は他のソースから歌詞を読み込みました。フッターの歌詞をマウス中ボタンでダブルクリックすると破棄できます。",
+      "restoredOriginalLyric": "元の歌詞に戻しました。"
     },
     "weather": {
       "moduleName": "天気",

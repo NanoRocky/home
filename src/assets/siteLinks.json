@@ -60,6 +60,11 @@
     "link": "https://main.nanorocky.top/starbattle/"
   },
   {
+    "icon": "Book",
+    "name": "笔记",
+    "link": ""
+  },
+  {
     "icon": "LaptopCode",
     "name": "渣渣服务器",
     "link": ""

@@ -1,10 +1,7 @@
 <template>
   <div :class="store.mobileOpenState ? 'right' : 'right is-hidden'">
     <!-- 移动端 Logo -->
-    <div
-      class="logo text-truncate-ellipsis"
-      @click="store.mobileFuncState = !store.mobileFuncState"
-    >
+    <div class="logo text-truncate-ellipsis" @click="store.mobileFuncState = !store.mobileFuncState">
       <span class="bg">{{ siteUrl[0] }}</span>
       <span class="sm">.{{ siteUrl[1] }}</span>
     </div>
@@ -39,10 +36,11 @@ const siteUrl = computed(() => {
   // flex: 1 0 0%;
   width: 50%;
   margin-left: 0.75rem;
+
   .logo {
     width: 100%;
     font-family: "字魂元气酪酪体";
-    color: var(--background-color);
+    color: var(--font-color);
     font-size: 2.25rem;
     position: fixed;
     top: 6%;
@@ -50,23 +48,29 @@ const siteUrl = computed(() => {
     text-align: center;
     transition: transform 0.3s;
     animation: fade 0.5s;
+
     &:active {
       transform: scale(0.95);
     }
+
     @media (min-width: 721px) {
       display: none;
     }
+
     @media (max-height: 720px) {
       width: calc(100% + 6px);
       top: 43.26px; // 721px * 0.06
     }
+
     @media (max-width: 390px) {
       width: 391px;
     }
   }
+
   @media (max-width: 720px) {
     margin-left: 0;
     width: 100%;
+
     &.is-hidden {
       display: none;
     }

@@ -121,7 +121,19 @@
       "amllFail": "AMLL TTML Database call failed...",
       "dwrcPilfering": "Currently playing \"{name}\" - '{artist}' from {songServer}. Cat has successfully stolen word-by-word lyrics from {currentServer}~",
       "syncDWRCLrcError": "Error in syncDWRCLrc:",
-      "autoPlayError": "Autoplay failed, likely restricted by browser policies. Please try clicking the play button manually:"
+      "autoPlayError": "Autoplay failed, likely restricted by browser policies. Please try clicking the play button manually:",
+      "fetchTranslationLrcFailed": "Failed to fetch translation lyrics:",
+      "pilferTranslationFailedFallback": "Failed to fetch translation lyrics from stolen source, falling back to original:",
+      "fetchOriginalTranslationFailed": "Failed to fetch translation lyrics from original source:",
+      "updatePilferTranslationFailed": "Failed to update stolen translation lyrics:"
+    },
+    "notes": {
+      "parseFailed": "Failed to parse notes data, falling back to initial note:",
+      "saveFailed": "Failed to save notes:",
+      "showSaveFilePickerFallback": "Failed to invoke save file picker, falling back to standard download:",
+      "exportFailed": "Failed to export notes:",
+      "showOpenFilePickerFallback": "Failed to invoke open file picker, falling back to file input:",
+      "importFailed": "Failed to import notes:"
     }
   },
   "components": {
@@ -129,6 +141,33 @@
       "placeholder": "Search or type a URL...",
       "noSpace": "Not enough space to show the search bar meow~",
       "hint": "Press Enter to search, Alt+Q / Esc to close"
+    },
+    "notes": {
+      "title": "Notes",
+      "newNote": "New Note",
+      "deleteNote": "Delete Current Note",
+      "deleteConfirm": "Delete this note meow?",
+      "titlePlaceholder": "Note title...",
+      "contentPlaceholder": "Write something meow...",
+      "pageFlipHint": "PGUP / PGDN flip page",
+      "musicPlayingHint": "Music playing (track switch first)",
+      "shortcutHint": "Alt + N Close | Esc Exit",
+      "totalNotes": "{count} notes in total",
+      "untitled": "Untitled Note",
+      "welcomeTitle": "Welcome to Notes meow~",
+      "welcomeContent": "Jot down your sparks and important thoughts here!\n\n💡 Quick Tips:\n• Press Alt + N anytime to toggle the notes card\n• Supports multiple notes, click + on top to add\n• When music is paused, press PGUP / PGDN to flip notes\n• When music is playing, PGUP / PGDN switches music tracks first\n• All notes are auto-saved in your browser localStorage!",
+      "created": "New note created meow",
+      "deleted": "Note deleted meow",
+      "characters": "chars",
+      "exportNotes": "Export Notes (JSON)",
+      "importNotes": "Import Notes (JSON)",
+      "exportSuccess": "Notes exported successfully meow~",
+      "importSuccess": "Successfully imported and merged {count} notes meow!",
+      "importError": "Import failed, invalid file format meow",
+      "bookmarkList": "Notes List",
+      "closeTab": "Close Tab",
+      "selectJsonHint": "Please select a JSON note file meow!",
+      "resize": "Drag to resize"
     },
     "settings": {
       "globalSettings": "Global Settings",
@@ -202,7 +241,7 @@
         "enableDWRCPro": "DWRC Enhanced Effect",
         "removeMetadata": "Remove Metadata from DWRC",
         "pilfer": "Pilfer Lyrics (Use alternate source on fail)",
-        "translate": "Line-by-line Lyric Translation Display"
+        "translate": "Show Translation Lyrics"
       },
       "voice": {
         "enableSwitch": "Web Voice Interaction Master Switch",
@@ -265,7 +304,9 @@
       "songErrorPostfix": "...",
       "lrcSearching": "Cat is searching for lyrics...",
       "lrcNotFound": "Cat didn't find the lyrics for this song qwq",
-      "autoPlayError": "Current browser policy seems to prevent autoplay, please play manually meow!"
+      "autoPlayError": "Current browser policy seems to prevent autoplay, please play manually meow!",
+      "externalLyricLoaded": "Cat has loaded lyrics from an alternate source. Double-click with middle mouse button on footer lyrics to discard.",
+      "restoredOriginalLyric": "Original lyrics restored."
     },
     "weather": {
       "loading": "Loading weather data...",

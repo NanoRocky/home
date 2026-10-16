@@ -121,7 +121,19 @@
       "amllFail": "AMLL TTML Database 调用失败...",
       "dwrcPilfering": "当前正在播放 {songServer} 来源的《{name}》- '{artist}'，猫猫已成功从 {currentServer} 偷到逐字歌词~",
       "syncDWRCLrcError": "Error in syncDWRCLrc:",
-      "autoPlayError": "自动播放失败，可能是由于浏览器策略限制了自动播放功能。请尝试手动点击播放按钮："
+      "autoPlayError": "自动播放失败，可能是由于浏览器策略限制了自动播放功能。请尝试手动点击播放按钮：",
+      "fetchTranslationLrcFailed": "获取翻译歌词失败:",
+      "pilferTranslationFailedFallback": "从偷取源获取翻译歌词失败，回退到本源:",
+      "fetchOriginalTranslationFailed": "从本源获取翻译歌词失败:",
+      "updatePilferTranslationFailed": "更新偷取翻译歌词失败:"
+    },
+    "notes": {
+      "parseFailed": "解析便签数据失败，已回退至初始便签：",
+      "saveFailed": "保存便签失败：",
+      "showSaveFilePickerFallback": "调用保存文件选择器失败，已回退至标准下载：",
+      "exportFailed": "导出便签失败：",
+      "showOpenFilePickerFallback": "调用打开文件选择器失败，已回退至文件选择输入框：",
+      "importFailed": "导入便签失败："
     }
   },
   "components": {
@@ -129,6 +141,33 @@
       "placeholder": "输入搜索内容或网址...",
       "noSpace": "当前页面空间不足以显示搜索框喵~",
       "hint": "按 Enter 搜索，Alt+Q / Esc 关闭"
+    },
+    "notes": {
+      "title": "便签",
+      "newNote": "新建便签",
+      "deleteNote": "删除当前便签",
+      "deleteConfirm": "确认删除这篇便签喵？",
+      "titlePlaceholder": "输入便签标题喵...",
+      "contentPlaceholder": "写点什么好喵...",
+      "pageFlipHint": "PGUP / PGDN 翻页",
+      "musicPlayingHint": "音乐播放中 (切曲优先)",
+      "shortcutHint": "Alt + N 关闭 | Esc 退出",
+      "totalNotes": "共 {count} 篇便签",
+      "untitled": "未命名便签",
+      "welcomeTitle": "欢迎使用便签喵~",
+      "welcomeContent": "这里可以记录你的日常灵感与重要事项喵！\n\n💡 小贴士：\n• 按 Alt + N 可随时呼出/收起便签面板\n• 支持创建多篇便签，点击顶部 + 号即可新建\n• 音乐暂停时，可按 PGUP / PGDN 快速翻页\n• 音乐播放时，PGUP / PGDN 将优先切歌喵~\n• 所有便签会自动保存在浏览器本地！",
+      "created": "已新建便签喵",
+      "deleted": "便签已删除喵",
+      "characters": "字",
+      "exportNotes": "导出便签 (JSON)",
+      "importNotes": "导入便签 (JSON)",
+      "exportSuccess": "便签已成功导出喵~",
+      "importSuccess": "已成功导入并合并 {count} 篇便签喵！",
+      "importError": "导入失败，文件内容有误喵",
+      "bookmarkList": "便签列表",
+      "closeTab": "关闭标签页",
+      "selectJsonHint": "请选择 JSON 格式的便签文件喵！",
+      "resize": "拖拽调整大小"
     },
     "settings": {
       "globalSettings": "全局设置",
@@ -202,7 +241,7 @@
         "enableDWRCPro": "逐字效果增强开关",
         "removeMetadata": "移除逐字歌词中的元数据",
         "pilfer": "拆东墙补西墙",
-        "translate": "逐行歌词翻译显示开关"
+        "translate": "翻译歌词显示"
       },
       "voice": {
         "enableSwitch": "网页语音交互总开关",
@@ -265,7 +304,9 @@
       "songErrorPostfix": " 出现错误...",
       "lrcSearching": "猫猫正在翻找歌词...",
       "lrcNotFound": "猫猫没有找到这首歌的歌词诶qwq",
-      "autoPlayError": "当前浏览器策略疑似不允许自动播放，请手动播放喵！"
+      "autoPlayError": "当前浏览器策略疑似不允许自动播放，请手动播放喵！",
+      "externalLyricLoaded": "猫猫已从其它源加载歌词，可使用鼠标中键双击底部歌词丢弃",
+      "restoredOriginalLyric": "已恢复原歌词"
     },
     "weather": {
       "moduleName": "天气",
@@ -310,7 +351,16 @@
       },
       "windPowerUnit": "级",
       "wind": "风",
-      "windDirections": ["北", "东北", "东", "东南", "南", "西南", "西", "西北"],
+      "windDirections": [
+        "北",
+        "东北",
+        "东",
+        "东南",
+        "南",
+        "西南",
+        "西",
+        "西北"
+      ],
       "beaufortScale": [
         "无风",
         "软风",

@@ -19,16 +19,14 @@
           </section>
         </div>
         <!-- 移动端菜单按钮 -->
-        <Icon
-          class="menu"
-          size="24"
-          v-show="!store.backgroundShow"
-          @click="store.mobileOpenState = !store.mobileOpenState"
-        >
+        <Icon class="menu" size="24" v-show="!store.backgroundShow"
+          @click="store.mobileOpenState = !store.mobileOpenState">
           <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
         </Icon>
         <!-- 搜索框 -->
         <SearchInput />
+        <!-- 笔记框 -->
+        <Notes />
         <!-- 页脚 -->
         <Transition name="fade" mode="out-in">
           <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
@@ -50,6 +48,7 @@ import MainRight from "@/views/Main/Right.vue";
 import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
 import SearchInput from "@/components/SearchInput.vue";
+import Notes from "@/components/Notes.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
@@ -173,6 +172,7 @@ onMounted(() => {
 
   // 鼠标中键事件
   window.addEventListener("mousedown", (event) => {
+    if (store.noteOpenState || store.setOpenState || store.musicBoxOpenState || store.boxOpenState) return;
     if (event.button == 1) {
       ElMessage({
         message: t("app.wallpaper.previewDisabled"),
@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 84%;
+    top: 80.5%;
     left: calc(50% - 28px);
     width: 56px;
     height: 34px;
@@ -285,7 +285,8 @@ onBeforeUnmount(() => {
     }
   }
 
-  @media (max-height: 650px) {
+  // PC 端：高度不足 650px 启动纵向滚动条
+  @media (min-width: 721px) and (max-height: 650px) {
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -298,42 +299,65 @@ onBeforeUnmount(() => {
       }
     }
 
-    .menu {
-      top: calc(650px * 0.84);
-      left: calc(360px * 0.5 - 25px);
-
-      @media (min-width: 360px) {
-        left: calc(50% - 25px);
-      }
-    }
-
     .f-ter {
       top: calc(650px - 46px);
-
-      @media (min-width: 360px) {
-        padding-left: 6px;
-      }
+      bottom: auto;
+      padding-left: 6px;
     }
   }
 
-  @media (max-width: 360px) {
-    overflow-x: auto;
-    overflow: hidden;
+  // 移动端响应式与最小分辨率 (355px × 745px)
+  @media (max-width: 720px) {
+    -webkit-overflow-scrolling: touch;
 
-    .page-container {
-      width: 360px;
+    @media (max-width: 355px) {
+      overflow-x: auto;
+
+      .page-container {
+        width: 355px;
+      }
+
+      .menu {
+        left: calc(355px * 0.5 - 28px);
+      }
+
+      .f-ter {
+        width: 355px;
+      }
+
+      @media (min-height: 746px) {
+        overflow-y: hidden;
+      }
     }
 
-    .menu {
-      left: calc(360px * 0.5 - 28px);
-    }
+    @media (max-height: 745px) {
+      overflow-y: auto;
 
-    .f-ter {
-      width: 360px;
-    }
+      .page-container {
+        height: 745px;
 
-    @media (min-height: 721px) {
-      overflow-y: hidden;
+        .more {
+          height: 745px;
+          width: calc(100% + 6px);
+        }
+      }
+
+      .menu {
+        top: calc(745px * 0.805);
+      }
+
+      .f-ter {
+        top: calc(745px - 46px);
+        bottom: auto;
+      }
+
+      @media (min-width: 356px) {
+        overflow-x: hidden;
+
+        .f-ter {
+          padding-left: 6px;
+        }
+      }
     }
   }
 }

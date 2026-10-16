@@ -237,7 +237,10 @@ export default ({ mode }: { mode: string }): UserConfig => {
                         if (/src[/\\]assets/.test(id)) {
                             return 'assets';
                         };
-                        if (/src[/\\]components[/\\](DwrcDot|Music|Player|ProgressBar)\.vue/.test(id)) {
+                        if (
+                            /src[/\\]components[/\\](DwrcDot|Music|Player|ProgressBar)\.vue/.test(id) ||
+                            /src[/\\]utils[/\\](checkPilferDWRC|decodeDWQYRC|removeLyricMetadata|translationLyric)\.ts/.test(id)
+                        ) {
                             return 'player';
                         };
                         if (

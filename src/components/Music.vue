@@ -1,44 +1,19 @@
 <template>
   <!-- 音乐控制面板 -->
-  <div
-    class="music"
-    @mouseenter="volumeShow = true"
-    @mouseleave="volumeShow = false"
-    v-show="store.musicOpenState"
-  >
+  <div class="music" @mouseenter="volumeShow = true" @mouseleave="volumeShow = false" v-show="store.musicOpenState">
     <div class="btns">
       <span @click="store.musicBoxOpenState = true">{{ $t("components.music.musicList") }}</span>
       <span @click="store.musicOpenState = false">{{ $t("components.music.backToHitokoto") }}</span>
     </div>
     <div class="control">
-      <go-start
-        theme="filled"
-        size="30"
-        fill="var(--player-control-color)"
-        @click="changeMusicIndex(0)"
-      />
+      <go-start theme="filled" size="30" fill="var(--player-control-color)" @click="changeMusicIndex(0)" />
       <Transition name="fade" mode="out-in">
         <div :key="String(store.playerState)" class="state" @click="changePlayState">
-          <play-one
-            theme="filled"
-            size="50"
-            fill="var(--player-control-color)"
-            v-show="!store.playerState"
-          />
-          <pause
-            theme="filled"
-            size="50"
-            fill="var(--player-control-color)"
-            v-show="store.playerState"
-          />
+          <play-one theme="filled" size="50" fill="var(--player-control-color)" v-show="!store.playerState" />
+          <pause theme="filled" size="50" fill="var(--player-control-color)" v-show="store.playerState" />
         </div>
       </Transition>
-      <go-end
-        theme="filled"
-        size="30"
-        fill="var(--player-control-color)"
-        @click="changeMusicIndex(1)"
-      />
+      <go-end theme="filled" size="30" fill="var(--player-control-color)" @click="changeMusicIndex(1)" />
     </div>
     <div class="menu">
       <div class="name" v-show="!volumeShow">
@@ -50,18 +25,9 @@
       </div>
       <div class="volume" v-show="volumeShow">
         <div class="icon">
-          <volume-mute
-            theme="filled"
-            size="24"
-            fill="var(--player-control-color)"
-            v-if="volumeNum == 0"
-          />
-          <volume-small
-            theme="filled"
-            size="24"
-            fill="var(--player-control-color)"
-            v-else-if="volumeNum > 0 && volumeNum < 0.7"
-          />
+          <volume-mute theme="filled" size="24" fill="var(--player-control-color)" v-if="volumeNum == 0" />
+          <volume-small theme="filled" size="24" fill="var(--player-control-color)"
+            v-else-if="volumeNum > 0 && volumeNum < 0.7" />
           <volume-notice theme="filled" size="24" fill="var(--player-control-color)" v-else />
         </div>
         <el-slider v-model="volumeNum" :show-tooltip="false" :min="0" :max="1" :step="0.01" />
@@ -73,22 +39,10 @@
     <div class="music-list" v-show="musicListShow" @click="store.musicBoxOpenState = false">
       <Transition name="zoom">
         <div class="list" v-show="musicListShow" @click.stop>
-          <close-one
-            class="close"
-            theme="filled"
-            size="28"
-            fill="var(--close-icon-color)"
-            @click="store.musicBoxOpenState = false"
-          />
-          <Player
-            ref="playerRef"
-            :songServer="playerData.server"
-            :songType="playerData.type"
-            :songId="playerData.id"
-            :songServerSE="playerData.serverse"
-            :songIdSE="playerData.idse"
-            :volume="volumeNum"
-          />
+          <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
+            @click="store.musicBoxOpenState = false" />
+          <Player ref="playerRef" :songServer="playerData.server" :songType="playerData.type" :songId="playerData.id"
+            :songServerSE="playerData.serverse" :songIdSE="playerData.idse" :volume="volumeNum" />
         </div>
       </Transition>
     </div>
@@ -149,19 +103,35 @@ const changeMusicIndex = (type) => {
 
 // 键盘事件处理逻辑
 const handleKeydown = (e: KeyboardEvent) => {
-  if (!store.musicIsOk) {
+  if (!store.musicIsOk || store.searchOpenState) {
     return;
   }
   const target = e.target as HTMLElement | null;
   const tagName = target?.tagName?.toLowerCase();
+
+  // PGUP / PGDN 切曲逻辑：若音乐正在播放，优先响应切曲
+  if (e.code === "PageUp" || e.code === "PageDown") {
+    if (store.playerState) {
+      e.preventDefault();
+      if (e.code === "PageUp") {
+        changeMusicIndex(0);
+      } else {
+        changeMusicIndex(1);
+      }
+      return;
+    } else if (store.noteOpenState) {
+      return;
+    }
+  }
+
   if (
-    store.searchOpenState ||
     tagName === "input" ||
     tagName === "textarea" ||
-    target?.isContentEditable
+    target?.isContentEditable || (store.noteOpenState && e.code === "Space")
   ) {
     return;
   }
+
   switch (e.code) {
     case "Space": // 播放/暂停
       e.preventDefault(); // 阻止页面默认滚动

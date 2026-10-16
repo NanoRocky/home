@@ -117,16 +117,25 @@ const jumpLink = (data: SiteLink, isMiddleClick = false) => {
   } else if (
     (data.name === "音乐" || data.name === "Music" || data.name === "音楽") &&
     store.musicClick &&
-    store.musicIsOk
+    store.musicIsOk && !store.boxOpenState && !store.setOpenState && !store.backgroundShow && !store.noteOpenState
   ) {
     store.musicBoxOpenState = !store.musicBoxOpenState;
     return;
   } else if (
     (data.name === "搜索" || data.name === "Search" || data.name === "検索") &&
-    !store.mobileOpenState &&
+    !store.mobileOpenState && !store.boxOpenState && !store.musicBoxOpenState && !store.setOpenState && !store.mobileFuncState && !store.backgroundShow &&
+    !store.noteOpenState &&
     (store.innerWidth == null || store.innerWidth > 720)
   ) {
     store.searchOpenState = !store.searchOpenState;
+    return;
+  } else if (
+    (data.name === "笔记" || data.name === "Note" || data.name === "Notes" || data.name === "便签" || data.name === "ノート") &&
+    !store.mobileOpenState && !store.boxOpenState && !store.musicBoxOpenState && !store.setOpenState && !store.mobileFuncState && !store.backgroundShow &&
+    (store.innerWidth == null || store.innerWidth > 720)
+  ) {
+    if (store.searchOpenState) store.searchOpenState = false;
+    store.noteOpenState = !store.noteOpenState;
     return;
   } else {
     window.open(data.link, "_blank");

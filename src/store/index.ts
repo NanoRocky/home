@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { MainState } from "@/typings/store";
+import type { MainState, NoteItem } from "@/typings/store";
 import i18n, { type LocaleKey, supportedLocales, getBrowserLanguage } from "@/locales";
 import { validationPlugin, validationRules } from "@/store/plugins/validation";
 
@@ -26,6 +26,8 @@ export const storeState: MainState = {
   mobileFuncState: false, // 【状态】移动端功能区开启状态
   setOpenState: false, // 【状态】设置页面开启状态
   searchOpenState: false, // 【状态】搜索框开启状态
+  noteOpenState: false, // 【状态】笔记框开启状态
+  userNotes: [] as NoteItem[], // 【缓存】用户笔记数据
   searchEngine: "bing" as string, // 【开关】默认搜索引擎
   setV: false, // 【状态】开发者模式
   devDebugLog: false, // 【开关】调试日志输出
@@ -43,7 +45,8 @@ export const storeState: MainState = {
   playerOrder: "random", // 【开关】循环顺序 "list", "random"
   webSpeech: true, // 【开关】网页语音交互总开关（包含播报歌名功能）
   playerSpeechName: true, // 【开关】播报歌名
-  playerTrLrc: false, // 【开关】逐行歌词调用翻译歌词开关
+  playerTrLrc: true, // 【开关】翻译歌词显示开关
+  playerTrLrcText: "", // 【缓存】当前翻译歌词
   playerDWRCShow: true, // 【开关】逐字歌词解析总开关
   playerDWRCShowPro: true, // 【开关】逐字效果增强开关
   playerDWRCATDB: true, // 【开关】允许接入 AMLL TTML Database
@@ -63,6 +66,8 @@ export const storeState: MainState = {
   lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
   forceShowBarIcon: false, // 【开关】进度图标常驻
   dwrcDot: true, // 【开关】显示逐字歌词进度小红点
+  songServer: null as string | null, // 【缓存】当前歌曲本源服务器
+  lyricSource: null as string | null, // 【状态】当前歌词源类型
   isDragging: false, // 【状态】是否正在拖拽进度条
   dragProgressTime: 0, // 【状态】当前拖拽停留的模拟时间 (秒)
   showFirefly: false, // 【状态】萤火虫特效
@@ -95,6 +100,12 @@ export const mainStore = defineStore("main", {
     // 获取页面宽度
     getInnerWidth(state) {
       return state.innerWidth;
+    },
+    // 是否为从其它外部源加载的歌词
+    isExternalLyric(state): boolean {
+      if (!state.lyricSource) return false;
+      if (state.lyricSource === "amll") return true;
+      return Boolean(state.songServer && state.lyricSource !== state.songServer);
     },
   },
   actions: {
@@ -199,6 +210,7 @@ export const mainStore = defineStore("main", {
         "theme",
         "dwrcDot",
         "searchEngine",
+        "userNotes",
       ],
     },
     {

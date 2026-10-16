@@ -1,26 +1,8 @@
 <template>
-  <APlayer
-    v-if="playList[0]"
-    ref="player"
-    :audio="playList"
-    :autoplay="store.playerAutoplay"
-    :theme="theme"
-    :autoSwitch="false"
-    :loop="store.playerLoop"
-    :order="store.playerOrder"
-    :volume="volume"
-    :showLrc="true"
-    :listFolded="listFolded"
-    :listMaxHeight="listMaxHeight"
-    :noticeSwitch="false"
-    @play="onPlay"
-    @pause="onPause"
-    @Loadstart="onLoadStart"
-    @timeupdate="onTimeUp"
-    @error="loadMusicError"
-    @canplay="onCanplay"
-    @waiting="onWaiting"
-  />
+  <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
+    :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
+    :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false" @play="onPlay" @pause="onPause"
+    @Loadstart="onLoadStart" @timeupdate="onTimeUp" @error="loadMusicError" @canplay="onCanplay" @waiting="onWaiting" />
 </template>
 
 <script setup lang="ts">
@@ -32,6 +14,12 @@ import type { APlayer as APlayerType } from "@worstone/vue-aplayer";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { decodeDWQYRC } from "@/utils/decodeDWQYRC";
 import { alignPilferedLyrics } from "@/utils/checkPilferDWRC";
+import {
+  initTranslationLrc,
+  onPilferSuccess,
+  syncTranslationLrc,
+  clearTranslationLrc,
+} from "@/utils/translationLyric";
 import { useI18n } from "vue-i18n";
 
 const store = mainStore();
@@ -149,6 +137,23 @@ watch(
     if (!player.value) return;
     if (player.value) {
       player.value.aplayer.loop = newLoop;
+    }
+  },
+);
+
+// 监听翻译歌词开关
+watch(
+  () => store.playerTrLrc,
+  (val) => {
+    if (val) {
+      if (player.value && player.value.aplayer) {
+        const currentAudio = player.value.aplayer.audio[player.value.aplayer.index];
+        if (currentAudio && currentAudio.lrc) {
+          initTranslationLrc(currentAudio.lrc, player.value.aplayer.index, store);
+        }
+      }
+    } else {
+      clearTranslationLrc(store);
     }
   },
 );
@@ -289,10 +294,10 @@ const onPlay = () => {
       const vstyle = import.meta.env.VITE_TTS_Style;
       Speech(
         t("components.music.playing") +
-          store.getPlayerData.artist +
-          t("components.music.ofSong") +
-          store.getPlayerData.name +
-          "》。",
+        store.getPlayerData.artist +
+        t("components.music.ofSong") +
+        store.getPlayerData.name +
+        "》。",
         voice,
         vstyle,
       );
@@ -390,6 +395,7 @@ const seektime = (value) => {
 
 // 加载音频错误
 const loadMusicError = () => {
+  store.lyricSource = null;
   let notice = "";
   if (playList.value.length > 1) {
     notice = t("components.music.songLoadFailedNext");
@@ -419,48 +425,65 @@ const loadMusicError = () => {
   });
   console.error(
     t("components.music.songErrorLog") +
-      player.value!.aplayer.audio[player.value!.aplayer.index].name +
-      t("components.music.songErrorPostfix"),
+    player.value!.aplayer.audio[player.value!.aplayer.index].name +
+    t("components.music.songErrorPostfix"),
   );
+};
+
+const checkFallbackLyricSource = (expectedIndex: number, sServer: string | null) => {
+  if (playIndex.value !== expectedIndex) return;
+  const lyrics = player.value?.aplayer?.lyrics?.[expectedIndex];
+  if (lyrics && lyrics.length > 0) {
+    const firstLineText = lyrics[0]?.[1];
+    if (firstLineText === "Not available" || firstLineText === "Not availible") {
+      store.lyricSource = null;
+    } else if (firstLineText !== "Loading") {
+      store.lyricSource = sServer;
+    }
+  } else {
+    store.lyricSource = null;
+  }
 };
 
 // 音频时间更新事件
 const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
   // 逐字接入模块
-  const dwrcSource = await fetch(dwrcUrl);
-  const dwrcText = await dwrcSource.text();
-  if (playIndex.value !== expectedIndex) return;
-  store.dwrcIndex = playIndex.value;
+  const songUrlInf = new URLSearchParams(new URL(dwrcUrl).search);
+  const songId = songUrlInf.get("id");
+  const songServer = songUrlInf.get("server") || store.songServer;
+  const baseUrl = `${new URL(dwrcUrl).origin}${new URL(dwrcUrl).pathname}`;
+
   try {
+    const dwrcSource = await fetch(dwrcUrl);
+    const dwrcText = await dwrcSource.text();
+    if (playIndex.value !== expectedIndex) return;
+    store.dwrcIndex = playIndex.value;
     const decoded = await decodeDWQYRC(dwrcText, store.playerRMMetadata);
     store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
     store.dwrcLoading = false;
     store.dwrcEnable = true;
+    store.lyricSource = songServer;
     return;
   } catch (e) {
     store.dwrcTemp = [];
     store.dwrcLoading = false;
     store.dwrcEnable = false;
   }
-  // 额外处理
-  const songUrlInf = new URLSearchParams(new URL(dwrcUrl).search);
-  const songId = songUrlInf.get("id");
-  const songServer = songUrlInf.get("server");
-  const baseUrl = `${new URL(dwrcUrl).origin}${new URL(dwrcUrl).pathname}`;
   if (!songId) {
+    checkFallbackLyricSource(expectedIndex, songServer);
     return;
   }
   // 接入 AMLL TTML Database
   if (store.playerDWRCATDB) {
     const songUrlInfUrl = store.playerDWRCATDBF
       ? {
-          netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-          tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-        }
+        netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      }
       : {
-          netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-          tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-        };
+        netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      };
     if (!songServer || !["netease", "tencent"].includes(songServer)) {
       return;
     }
@@ -482,6 +505,11 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
         store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
         store.dwrcLoading = false;
         store.dwrcEnable = true;
+        store.lyricSource = "amll";
+        ElMessage({
+          message: t("components.music.externalLyricLoaded"),
+          grouping: true,
+        });
         return;
       }
     } catch (e) {
@@ -509,6 +537,11 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
               store.dwrcTemp = Array.isArray(decodedse) ? (decodedse as DWRCItem[]) : [];
               store.dwrcLoading = false;
               store.dwrcEnable = true;
+              store.lyricSource = "amll";
+              ElMessage({
+                message: t("components.music.externalLyricLoaded"),
+                grouping: true,
+              });
               return;
             }
           } catch (e) {
@@ -591,6 +624,12 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
             store.dwrcTemp = Array.isArray(decoded) ? (decoded as DWRCItem[]) : [];
             store.dwrcLoading = false;
             store.dwrcEnable = true;
+            store.lyricSource = currentServer;
+            onPilferSuccess(match.lrc, expectedIndex, store);
+            ElMessage({
+              message: t("components.music.externalLyricLoaded"),
+              grouping: true,
+            });
             console.log(
               t("console.player.dwrcPilfering", {
                 songServer,
@@ -625,25 +664,42 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
     store.dwrcLoading = false;
     store.dwrcEnable = false;
   }
+  if (playIndex.value !== expectedIndex) return;
   store.dwrcTemp = [];
   store.dwrcLoading = false;
   store.dwrcEnable = false;
+  checkFallbackLyricSource(expectedIndex, songServer);
 };
 
 function onLoadStart() {
-  // 逐字获取模块
+  // 逐字获取与翻译歌词模块
   if (!player.value) return;
   nowLineIndex.value = -1;
   lastDwrcLyricStr = "";
+  store.lyricSource = null;
+  store.songServer = null;
   try {
     if (player.value == null || player.value.aplayer == null) {
       return;
     }
-    const lyrics = player.value.aplayer.lyrics[playIndex.value];
+    const currentAudio = player.value.aplayer.audio[player.value.aplayer.index];
+    let songServer: string | null = null;
+    if (currentAudio && currentAudio.lrc) {
+      try {
+        const urlObj = new URL(currentAudio.lrc);
+        songServer = urlObj.searchParams.get("server");
+      } catch (e) {
+        const match = currentAudio.lrc.match(/[?&]server=([^&]+)/);
+        if (match) songServer = match[1];
+      }
+      initTranslationLrc(currentAudio.lrc, player.value.aplayer.index, store);
+    }
+    store.songServer = songServer;
     if (store.playerDWRCShow != true) {
       store.dwrcEnable = false;
       store.dwrcTemp = [];
       store.dwrcLoading = false;
+      checkFallbackLyricSource(playIndex.value, songServer);
       return;
     }
     if (store.dwrcIndex == playIndex.value) {
@@ -657,6 +713,7 @@ function onLoadStart() {
     store.dwrcEnable = false;
     store.dwrcTemp = [];
     store.dwrcLoading = false;
+    store.lyricSource = null;
     console.error(error);
   }
 }
@@ -694,8 +751,11 @@ function syncDWRCLrc() {
     const isLineByLine = !store.dwrcEnable || store.dwrcTemp.length === 0 || store.dwrcLoading;
     const now = store.isDragging
       ? store.dragProgressTime * 1000
-      : player.value.audioStatus.playedTime * 1000;
+      : player.value.audioRef && !isNaN(player.value.audioRef.currentTime)
+        ? player.value.audioRef.currentTime * 1000
+        : player.value.audioStatus.playedTime * 1000;
     const lineSwitchNow = now + 200; // 提前 100ms 用于行切换
+    syncTranslationLrc(lineSwitchNow / 1000, store);
     if (isLineByLine) {
       const lyrics = player.value.aplayer.lyrics[playIndex.value];
       const playerLyricIndex = player.value.aplayer.lyricIndex;
@@ -707,9 +767,18 @@ function syncDWRCLrc() {
         }
       } else {
         let lrc = lyrics[playerLyricIndex][1];
-        if (lrc === "Loading") lrc = t("components.music.lrcSearching");
-        else if (lrc === "Not available" || lrc === "Not availible")
+        if (lrc === "Loading") {
+          lrc = t("components.music.lrcSearching");
+        } else if (lrc === "Not available" || lrc === "Not availible") {
           lrc = t("components.music.lrcNotFound");
+          if (store.lyricSource !== null) {
+            store.lyricSource = null;
+          }
+        } else {
+          if (!store.dwrcEnable && store.songServer && store.lyricSource !== store.songServer) {
+            store.lyricSource = store.songServer;
+          }
+        }
 
         let startTime = 0;
         let duration = 0;
@@ -836,18 +905,14 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         text-align: left;
         margin: 7px 0 6px 6px;
         height: 44px;
-        -webkit-mask: linear-gradient(
-          #fff 15%,
-          #fff 85%,
-          hsla(0deg, 0%, 100%, 0.6) 90%,
-          hsla(0deg, 0%, 100%, 0)
-        );
-        mask: linear-gradient(
-          #fff 15%,
-          #fff 85%,
-          hsla(0deg, 0%, 100%, 0.6) 90%,
-          hsla(0deg, 0%, 100%, 0)
-        );
+        -webkit-mask: linear-gradient(#fff 15%,
+            #fff 85%,
+            hsla(0deg, 0%, 100%, 0.6) 90%,
+            hsla(0deg, 0%, 100%, 0));
+        mask: linear-gradient(#fff 15%,
+            #fff 85%,
+            hsla(0deg, 0%, 100%, 0.6) 90%,
+            hsla(0deg, 0%, 100%, 0));
 
         &::before,
         &::after {

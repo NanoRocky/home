@@ -1,25 +1,9 @@
 <template>
-  <div class="box cards" @mouseenter="closeShow = true" @mouseleave="closeShow = false">
-    <transition name="el-fade-in-linear">
-      <close-one
-        class="close"
-        theme="filled"
-        size="28"
-        fill="var(--close-icon-color)"
-        v-show="closeShow"
-        @click="store.boxOpenState = false"
-      />
-    </transition>
-    <transition name="el-fade-in-linear">
-      <setting-two
-        class="setting"
-        theme="filled"
-        size="28"
-        fill="var(--close-icon-color)"
-        v-show="closeShow"
-        @click="store.setOpenState = true"
-      />
-    </transition>
+  <div class="box cards">
+    <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
+      @click="store.boxOpenState = false" />
+    <setting-two class="setting" theme="filled" size="28" fill="var(--close-icon-color)"
+      @click="store.setOpenState = true" />
     <div class="content">
       <!-- 可在此处自定义任意内容 -->
       <TimeCapsule />
@@ -35,7 +19,6 @@ import TimeCapsule from "@/components/TimeCapsule.vue";
 import MoreContent from "@/components/MoreContent.vue";
 
 const store = mainStore();
-const closeShow = ref(false);
 </script>
 
 <style lang="scss" scoped>

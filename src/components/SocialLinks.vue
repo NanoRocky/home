@@ -120,7 +120,7 @@ const togglesocial = () => {
 
   @media (min-width: 768px) {
     &:hover {
-      background-color: var(--social-background-color);
+      background-color: var(--card-background-color);
       -webkit-backdrop-filter: blur(5px);
       backdrop-filter: blur(5px);
 

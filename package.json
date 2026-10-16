@@ -65,7 +65,7 @@
     "prettier": "^3.9.10",
     "rollup-plugin-obfuscator": "^1.1.0",
     "rollup-plugin-visualizer": "^7.1.1",
-    "sass-embedded": "^1.105.1",
+    "sass-embedded": "^1.105.2",
     "terser": "^5.51.2",
     "typescript": "^7.0.2",
     "typescript-eslint": "^8.71.2",

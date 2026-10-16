@@ -2,19 +2,15 @@
   <div
     class="mobileset"
     v-if="store.mobileOpenState"
-    @mouseenter="closeShow = true"
-    @mouseleave="closeShow = false"
     @click.stop
   >
-    <transition name="el-fade-in-linear">
-      <close-one
-        class="close"
-        theme="filled"
-        size="28"
-        fill="var(--close-icon-color)"
-        @click="store.setOpenState = false"
-      />
-    </transition>
+    <close-one
+      class="close"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.setOpenState = false"
+    />
     <el-row>
       <el-col class="left">
         <div class="logo text-truncate-ellipsis">
@@ -40,20 +36,15 @@
   <div
     class="set"
     v-else
-    @mouseenter="closeShow = true"
-    @mouseleave="closeShow = false"
     @click.stop
   >
-    <transition name="el-fade-in-linear">
-      <close-one
-        class="close"
-        theme="filled"
-        size="28"
-        fill="var(--close-icon-color)"
-        v-show="closeShow"
-        @click="store.setOpenState = false"
-      />
-    </transition>
+    <close-one
+      class="close"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.setOpenState = false"
+    />
     <el-row :gutter="40">
       <el-col :span="12" class="left">
         <div class="logo text-truncate-ellipsis">
@@ -61,14 +52,14 @@
           <span class="sm">.{{ siteUrl[1] }}</span>
         </div>
         <div class="version">
-          <el-tooltip content="Version" placement="top" effect="color" :show-arrow="false">
+          <el-tooltip :content="$t('components.settings.tooltips.version')" placement="top" effect="color" :show-arrow="false">
             <div class="num" @dblclick="toggleVer">v&nbsp;{{ config.version }}</div>
           </el-tooltip>
-          <el-tooltip content="Powered by imsyy" placement="top" effect="color" :show-arrow="false">
+          <el-tooltip :content="$t('components.settings.tooltips.poweredBy')" placement="top" effect="color" :show-arrow="false">
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
           <el-tooltip
-            content="Extension Function Updates by NanoRocky"
+            :content="$t('components.settings.tooltips.extensionUpdates')"
             placement="top"
             effect="color"
             :show-arrow="false"
@@ -107,7 +98,6 @@ import { useI18n } from "vue-i18n";
 
 const store = mainStore();
 const { t } = useI18n();
-const closeShow = ref(false);
 let chuover = 0;
 
 // 站点链接
@@ -175,13 +165,20 @@ const jumpTo = (url) => {
     right: 14px;
     width: 28px;
     height: 28px;
+    cursor: pointer;
+    opacity: 0.85;
+    z-index: 10;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
 
     &:hover {
-      transform: scale(1.2);
+      transform: scale(1.15);
+      opacity: 1;
     }
 
     &:active {
-      transform: scale(1);
+      transform: scale(0.95);
     }
   }
 
@@ -341,13 +338,20 @@ const jumpTo = (url) => {
     right: 14px;
     width: 28px;
     height: 28px;
+    cursor: pointer;
+    opacity: 0.85;
+    z-index: 10;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
 
     &:hover {
-      transform: scale(1.2);
+      transform: scale(1.15);
+      opacity: 1;
     }
 
     &:active {
-      transform: scale(1);
+      transform: scale(0.95);
     }
   }
 
