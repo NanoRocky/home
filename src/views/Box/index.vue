@@ -1,9 +1,19 @@
 <template>
   <div class="box cards">
-    <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
-      @click="store.boxOpenState = false" />
-    <setting-two class="setting" theme="filled" size="28" fill="var(--close-icon-color)"
-      @click="store.setOpenState = true" />
+    <close-one
+      class="close"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.boxOpenState = false"
+    />
+    <setting-two
+      class="setting"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.setOpenState = true"
+    />
     <div class="content">
       <!-- 可在此处自定义任意内容 -->
       <TimeCapsule />

@@ -1,17 +1,37 @@
 <template>
   <Teleport to="body">
     <Transition name="notes-mask-fade">
-      <div v-if="store.noteOpenState" class="notes-overlay" @click="closeNotes" @mousedown="handleMouseDown">
+      <div
+        v-if="store.noteOpenState"
+        class="notes-overlay"
+        @click="closeNotes"
+        @mousedown="handleMouseDown"
+      >
         <Transition name="notes-sink" appear>
-          <div v-if="store.noteOpenState" class="notes-container" ref="notesContainerRef" :style="containerStyle"
-            @click.stop @mousedown="handleMouseDown">
+          <div
+            v-if="store.noteOpenState"
+            class="notes-container"
+            ref="notesContainerRef"
+            :style="containerStyle"
+            @click.stop
+            @mousedown="handleMouseDown"
+          >
             <!-- 头部：书签按钮、标题、已打开标签栏、操作按钮 -->
             <div class="notes-header">
               <div class="header-left">
                 <!-- 书签侧栏展开/收起按钮 -->
-                <el-tooltip :content="$t('components.notes.bookmarkList')" placement="top" effect="color" :show-arrow="false">
-                  <button class="action-btn bookmark-btn" :class="{ active: showSidebar }"
-                    @click="showSidebar = !showSidebar" type="button">
+                <el-tooltip
+                  :content="$t('components.notes.bookmarkList')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
+                  <button
+                    class="action-btn bookmark-btn"
+                    :class="{ active: showSidebar }"
+                    @click="showSidebar = !showSidebar"
+                    type="button"
+                  >
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                       <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" />
                     </svg>
@@ -25,19 +45,34 @@
               <!-- 顶部标签栏（仅显示已打开的便签标签） -->
               <div class="header-tabs">
                 <div class="tabs-scroll" ref="tabsScrollRef" @wheel="onTabsWheel">
-                  <button v-for="item in openedNotes" :key="item.id" class="tab-item"
-                    :class="{ active: item.id === currentNote?.id }" @click="switchNoteById(item.id)" type="button">
+                  <button
+                    v-for="item in openedNotes"
+                    :key="item.id"
+                    class="tab-item"
+                    :class="{ active: item.id === currentNote?.id }"
+                    @click="switchNoteById(item.id)"
+                    type="button"
+                  >
                     <span class="tab-index">{{ getNoteNumber(item.id) }}</span>
-                    <el-tooltip :content="item.title.trim() || $t('components.notes.untitled')" placement="top" effect="color" :show-arrow="false">
+                    <el-tooltip
+                      :content="item.title.trim() || $t('components.notes.untitled')"
+                      placement="top"
+                      effect="color"
+                      :show-arrow="false"
+                    >
                       <span class="tab-name text-truncate-ellipsis">
                         {{ item.title.trim() || $t("components.notes.untitled") }}
                       </span>
                     </el-tooltip>
                     <!-- 关闭标签页按钮（多于 1 个打开标签时可关闭标签，不删除原便签） -->
-                    <el-tooltip v-if="openedNotes.length > 1" :content="$t('components.notes.closeTab')" placement="top" effect="color" :show-arrow="false">
-                      <span class="tab-close-icon" @click.stop="closeTab(item.id)">
-                        &times;
-                      </span>
+                    <el-tooltip
+                      v-if="openedNotes.length > 1"
+                      :content="$t('components.notes.closeTab')"
+                      placement="top"
+                      effect="color"
+                      :show-arrow="false"
+                    >
+                      <span class="tab-close-icon" @click.stop="closeTab(item.id)"> &times; </span>
                     </el-tooltip>
                   </button>
                 </div>
@@ -46,7 +81,12 @@
               <!-- 右侧快捷操作：新建、导入、导出、删除、关闭 -->
               <div class="header-actions">
                 <!-- 新建便签 -->
-                <el-tooltip :content="$t('components.notes.newNote')" placement="top" effect="color" :show-arrow="false">
+                <el-tooltip
+                  :content="$t('components.notes.newNote')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
                   <button class="action-btn new-btn" @click="addNewNote" type="button">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                       <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -55,17 +95,33 @@
                 </el-tooltip>
 
                 <!-- 导入 JSON -->
-                <el-tooltip :content="$t('components.notes.importNotes')" placement="top" effect="color" :show-arrow="false">
+                <el-tooltip
+                  :content="$t('components.notes.importNotes')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
                   <button class="action-btn import-btn" @click="triggerImport" type="button">
                     <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor">
                       <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                     </svg>
                   </button>
                 </el-tooltip>
-                <input ref="fileInputRef" type="file" accept=".json" style="display: none" @change="onFileSelected" />
+                <input
+                  ref="fileInputRef"
+                  type="file"
+                  accept=".json"
+                  style="display: none"
+                  @change="onFileSelected"
+                />
 
                 <!-- 导出 JSON -->
-                <el-tooltip :content="$t('components.notes.exportNotes')" placement="top" effect="color" :show-arrow="false">
+                <el-tooltip
+                  :content="$t('components.notes.exportNotes')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
                   <button class="action-btn export-btn" @click="exportNotes" type="button">
                     <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor">
                       <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
@@ -74,23 +130,40 @@
                 </el-tooltip>
 
                 <!-- 删除便签 -->
-                <el-tooltip :content="$t('components.notes.deleteNote')" placement="top" effect="color" :show-arrow="false">
+                <el-tooltip
+                  :content="$t('components.notes.deleteNote')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
                   <span class="btn-tooltip-wrap">
-                    <button class="action-btn delete-btn" :disabled="notes.length <= 1 && isCurrentNoteEmpty"
-                      @click="deleteCurrentNote" type="button">
+                    <button
+                      class="action-btn delete-btn"
+                      :disabled="notes.length <= 1 && isCurrentNoteEmpty"
+                      @click="deleteCurrentNote"
+                      type="button"
+                    >
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                        <path
+                          d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                        />
                       </svg>
                     </button>
                   </span>
                 </el-tooltip>
 
                 <!-- 关闭便签 -->
-                <el-tooltip :content="$t('components.notes.shortcutHint')" placement="top" effect="color" :show-arrow="false">
+                <el-tooltip
+                  :content="$t('components.notes.shortcutHint')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
                   <button class="action-btn close-btn" @click="closeNotes" type="button">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                       <path
-                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                      />
                     </svg>
                   </button>
                 </el-tooltip>
@@ -107,7 +180,12 @@
                       {{ $t("components.notes.bookmarkList") }}
                       <span class="count-pill">{{ notes.length }}</span>
                     </span>
-                    <el-tooltip :content="$t('components.notes.newNote')" placement="top" effect="color" :show-arrow="false">
+                    <el-tooltip
+                      :content="$t('components.notes.newNote')"
+                      placement="top"
+                      effect="color"
+                      :show-arrow="false"
+                    >
                       <button class="sidebar-action-btn" @click="addNewNote" type="button">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                           <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -116,21 +194,42 @@
                     </el-tooltip>
                   </div>
                   <div class="sidebar-list">
-                    <div v-for="(item, index) in notes" :key="item.id" class="sidebar-item"
-                      :class="{ active: item.id === currentNote?.id }" @click="openNoteFromSidebar(item.id)">
+                    <div
+                      v-for="(item, index) in notes"
+                      :key="item.id"
+                      class="sidebar-item"
+                      :class="{ active: item.id === currentNote?.id }"
+                      @click="openNoteFromSidebar(item.id)"
+                    >
                       <span class="sidebar-item-index">{{ index + 1 }}</span>
                       <div class="sidebar-item-info">
-                        <el-tooltip :content="item.title.trim() || $t('components.notes.untitled')" placement="top" effect="color" :show-arrow="false">
+                        <el-tooltip
+                          :content="item.title.trim() || $t('components.notes.untitled')"
+                          placement="top"
+                          effect="color"
+                          :show-arrow="false"
+                        >
                           <span class="sidebar-item-title text-truncate-ellipsis">
                             {{ item.title.trim() || $t("components.notes.untitled") }}
                           </span>
                         </el-tooltip>
                         <span class="sidebar-item-date">{{ formatDate(item.updatedAt) }}</span>
                       </div>
-                      <el-tooltip :content="$t('components.notes.deleteNote')" placement="top" effect="color" :show-arrow="false">
-                        <button class="sidebar-item-del" @click.stop="deleteNoteById(item.id)" type="button">
+                      <el-tooltip
+                        :content="$t('components.notes.deleteNote')"
+                        placement="top"
+                        effect="color"
+                        :show-arrow="false"
+                      >
+                        <button
+                          class="sidebar-item-del"
+                          @click.stop="deleteNoteById(item.id)"
+                          type="button"
+                        >
                           <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            <path
+                              d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                            />
                           </svg>
                         </button>
                       </el-tooltip>
@@ -141,13 +240,27 @@
 
               <!-- 便签编辑区 -->
               <div class="notes-body" v-if="currentNote">
-                <input ref="titleInputRef" v-model="currentNote.title" class="note-title-input" type="text"
-                  :placeholder="$t('components.notes.titlePlaceholder')" autocomplete="off" spellcheck="false"
-                  @input="onNoteInput" @keydown.space.stop />
+                <input
+                  ref="titleInputRef"
+                  v-model="currentNote.title"
+                  class="note-title-input"
+                  type="text"
+                  :placeholder="$t('components.notes.titlePlaceholder')"
+                  autocomplete="off"
+                  spellcheck="false"
+                  @input="onNoteInput"
+                  @keydown.space.stop
+                />
                 <div class="note-divider"></div>
-                <textarea ref="contentAreaRef" v-model="currentNote.content" class="note-content-area"
-                  :placeholder="$t('components.notes.contentPlaceholder')" spellcheck="false" @input="onNoteInput"
-                  @keydown.space.stop></textarea>
+                <textarea
+                  ref="contentAreaRef"
+                  v-model="currentNote.content"
+                  class="note-content-area"
+                  :placeholder="$t('components.notes.contentPlaceholder')"
+                  spellcheck="false"
+                  @input="onNoteInput"
+                  @keydown.space.stop
+                ></textarea>
               </div>
             </div>
 
@@ -156,22 +269,39 @@
               <div class="footer-left">
                 <!-- 翻页控制 -->
                 <div class="pager-controls">
-                  <el-tooltip :content="$t('components.notes.pageUp')" placement="top" effect="color" :show-arrow="false">
+                  <el-tooltip
+                    :content="$t('components.notes.pageUp')"
+                    placement="top"
+                    effect="color"
+                    :show-arrow="false"
+                  >
                     <span class="btn-tooltip-wrap">
-                      <button class="pager-btn" :disabled="currentIndex <= 0" @click="prevNote" type="button">
+                      <button
+                        class="pager-btn"
+                        :disabled="currentIndex <= 0"
+                        @click="prevNote"
+                        type="button"
+                      >
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                           <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
                         </svg>
                       </button>
                     </span>
                   </el-tooltip>
-                  <span class="pager-text">
-                    {{ currentIndex + 1 }} / {{ notes.length }}
-                  </span>
-                  <el-tooltip :content="$t('components.notes.pageDown')" placement="top" effect="color" :show-arrow="false">
+                  <span class="pager-text"> {{ currentIndex + 1 }} / {{ notes.length }} </span>
+                  <el-tooltip
+                    :content="$t('components.notes.pageDown')"
+                    placement="top"
+                    effect="color"
+                    :show-arrow="false"
+                  >
                     <span class="btn-tooltip-wrap">
-                      <button class="pager-btn" :disabled="currentIndex >= notes.length - 1" @click="nextNote"
-                        type="button">
+                      <button
+                        class="pager-btn"
+                        :disabled="currentIndex >= notes.length - 1"
+                        @click="nextNote"
+                        type="button"
+                      >
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                           <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                         </svg>
@@ -197,16 +327,30 @@
                 <span class="word-count">
                   {{ currentNote?.content?.length || 0 }} {{ $t("components.notes.characters") }}
                 </span>
-                <el-tooltip :content="$t('components.notes.shortcutHint')" placement="top" effect="color" :show-arrow="false">
+                <el-tooltip
+                  :content="$t('components.notes.shortcutHint')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
                   <span class="shortcut-tag" @click="closeNotes">Alt N</span>
                 </el-tooltip>
 
                 <!-- 右下角鼠标拖拽调大/调小手柄 -->
-                <el-tooltip :content="$t('components.notes.resize')" placement="top" effect="color" :show-arrow="false">
+                <el-tooltip
+                  :content="$t('components.notes.resize')"
+                  placement="top"
+                  effect="color"
+                  :show-arrow="false"
+                >
                   <div class="resize-grip" @mousedown.prevent.stop="startResize">
                     <svg viewBox="0 0 12 12" width="10" height="10" fill="none">
-                      <path d="M10 2L2 10M10 6L6 10M10 10L10 10" stroke="currentColor" stroke-width="1.6"
-                        stroke-linecap="round" />
+                      <path
+                        d="M10 2L2 10M10 6L6 10M10 10L10 10"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                      />
                     </svg>
                   </div>
                 </el-tooltip>
@@ -263,7 +407,11 @@ const generateHash = (len = 8) => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID().replace(/-/g, "").slice(0, len);
   }
-  return Math.random().toString(36).slice(2, 2 + len) + Date.now().toString(36);
+  return (
+    Math.random()
+      .toString(36)
+      .slice(2, 2 + len) + Date.now().toString(36)
+  );
 };
 
 const currentNote = computed<NoteItem | undefined>(() => {

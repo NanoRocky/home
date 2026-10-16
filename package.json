@@ -7,7 +7,7 @@
   "home": "https://imsyy.top/",
   "efuh": "https://nanorocky.top/",
   "private": true,
-  "version": "4.4.0.dev [EFU]",
+  "version": "4.4.1.dev [EFU]",
   "type": "module",
   "engines": {
     "node": ">=24.20.0",

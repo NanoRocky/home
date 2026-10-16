@@ -19,8 +19,12 @@
           </section>
         </div>
         <!-- 移动端菜单按钮 -->
-        <Icon class="menu" size="24" v-show="!store.backgroundShow"
-          @click="store.mobileOpenState = !store.mobileOpenState">
+        <Icon
+          class="menu"
+          size="24"
+          v-show="!store.backgroundShow"
+          @click="store.mobileOpenState = !store.mobileOpenState"
+        >
           <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
         </Icon>
         <!-- 搜索框 -->
@@ -172,7 +176,8 @@ onMounted(() => {
 
   // 鼠标中键事件
   window.addEventListener("mousedown", (event) => {
-    if (store.noteOpenState || store.setOpenState || store.musicBoxOpenState || store.boxOpenState) return;
+    if (store.noteOpenState || store.setOpenState || store.musicBoxOpenState || store.boxOpenState)
+      return;
     if (event.button == 1) {
       ElMessage({
         message: t("app.wallpaper.previewDisabled"),

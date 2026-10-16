@@ -46,9 +46,7 @@ export function getTranslationLrcUrl(rawLrcUrl: string): string {
  */
 export async function fetchTranslationLrc(rawLrcUrl: string): Promise<string> {
   if (!rawLrcUrl) return "";
-  const targetUrl = rawLrcUrl.includes("trlrc=only")
-    ? rawLrcUrl
-    : getTranslationLrcUrl(rawLrcUrl);
+  const targetUrl = rawLrcUrl.includes("trlrc=only") ? rawLrcUrl : getTranslationLrcUrl(rawLrcUrl);
 
   try {
     const res = await fetch(targetUrl);
@@ -123,7 +121,7 @@ export function parseTranslationLrc(lrcText: string): TranslationLrcLine[] {
  */
 export async function loadTranslationLyrics(
   originalLrcUrl?: string | null,
-  pilferLrcUrl?: string | null
+  pilferLrcUrl?: string | null,
 ): Promise<TranslationLrcLine[]> {
   if (pilferLrcUrl) {
     try {
@@ -157,7 +155,7 @@ export async function loadTranslationLyrics(
  */
 export function getTranslationLrcAtTime(
   lines: TranslationLrcLine[],
-  currentTimeSec: number
+  currentTimeSec: number,
 ): string {
   if (!lines || lines.length === 0) return "";
   const currentMs = currentTimeSec * 1000;
@@ -187,7 +185,7 @@ let currentPilferUrl: string | null = null;
 export async function initTranslationLrc(
   originalUrl: string,
   expectedIndex: number,
-  store = mainStore()
+  store = mainStore(),
 ) {
   currentExpectedIndex = expectedIndex;
   currentOriginalUrl = originalUrl;
@@ -227,7 +225,7 @@ export async function initTranslationLrc(
 export async function onPilferSuccess(
   pilferUrl: string,
   expectedIndex: number,
-  store = mainStore()
+  store = mainStore(),
 ) {
   if (currentExpectedIndex !== expectedIndex) return;
   currentPilferUrl = pilferUrl;
@@ -251,10 +249,7 @@ export async function onPilferSuccess(
  * @param expectedIndex 歌曲索引（防切歌竞态，可选，默认当前索引）
  * @param store mainStore 实例（可选，默认自动获取）
  */
-export async function onPilferDiscard(
-  expectedIndex = currentExpectedIndex,
-  store = mainStore()
-) {
+export async function onPilferDiscard(expectedIndex = currentExpectedIndex, store = mainStore()) {
   if (expectedIndex !== -1 && currentExpectedIndex !== expectedIndex) return;
   currentPilferUrl = null;
 
@@ -285,10 +280,7 @@ export async function onPilferDiscard(
  * @param currentTimeSec 当前播放秒数
  * @param store mainStore 实例（可选，默认自动获取）
  */
-export function syncTranslationLrc(
-  currentTimeSec: number,
-  store = mainStore()
-) {
+export function syncTranslationLrc(currentTimeSec: number, store = mainStore()) {
   if (!store.playerTrLrc) {
     if (store.playerTrLrcText) store.playerTrLrcText = "";
     return;

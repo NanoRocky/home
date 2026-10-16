@@ -1,12 +1,22 @@
 <template>
   <Transition name="search-float">
-    <div v-if="store.searchOpenState" class="search-wrapper" ref="searchWrapperRef" :style="{ top: `${searchTop}px` }"
-      @click.stop>
+    <div
+      v-if="store.searchOpenState"
+      class="search-wrapper"
+      ref="searchWrapperRef"
+      :style="{ top: `${searchTop}px` }"
+      @click.stop
+    >
       <!-- 搜索引擎选择下拉弹窗 -->
       <Transition name="engine-menu">
         <div v-if="showEngineMenu" class="engine-dropdown" ref="engineMenuRef">
-          <div v-for="item in engines" :key="item.key" class="engine-item"
-            :class="{ active: item.key === currentEngine.key }" @click.stop="selectEngine(item)">
+          <div
+            v-for="item in engines"
+            :key="item.key"
+            class="engine-item"
+            :class="{ active: item.key === currentEngine.key }"
+            @click.stop="selectEngine(item)"
+          >
             <span class="engine-icon" v-html="item.icon"></span>
             <span class="engine-name">{{ item.name }}</span>
             <span v-if="item.key === currentEngine.key" class="check-mark">✓</span>
@@ -19,23 +29,42 @@
         <!-- 引擎切换按钮 -->
         <div class="engine-btn" @click.stop="showEngineMenu = !showEngineMenu">
           <span class="engine-icon" v-html="currentEngine.icon"></span>
-          <svg class="arrow-icon" :class="{ 'is-open': showEngineMenu }" viewBox="0 0 1024 1024" width="10" height="10">
+          <svg
+            class="arrow-icon"
+            :class="{ 'is-open': showEngineMenu }"
+            viewBox="0 0 1024 1024"
+            width="10"
+            height="10"
+          >
             <path
               d="M840.4 300H183.6c-19.7 0-30.7 22.8-18.4 37.4l328.4 389.3c9.8 11.6 27 11.6 36.8 0l328.4-389.3c12.3-14.6 1.3-37.4-18.4-37.4z"
-              fill="currentColor" />
+              fill="currentColor"
+            />
           </svg>
         </div>
         <div class="divider"></div>
         <!-- 输入框 -->
-        <input ref="inputRef" v-model="keyword" type="text" class="search-input" :placeholder="placeholderText"
-          autocomplete="off" spellcheck="false" @focus="isFocused = true" @blur="isFocused = false"
-          @keydown.enter="handleSearch" @keydown="handleInputKeyDown" @keydown.space.stop />
+        <input
+          ref="inputRef"
+          v-model="keyword"
+          type="text"
+          class="search-input"
+          :placeholder="placeholderText"
+          autocomplete="off"
+          spellcheck="false"
+          @focus="isFocused = true"
+          @blur="isFocused = false"
+          @keydown.enter="handleSearch"
+          @keydown="handleInputKeyDown"
+          @keydown.space.stop
+        />
         <!-- 清空按钮 -->
         <button v-if="keyword" class="action-btn clear-btn" @click.stop="clearInput" type="button">
           <svg viewBox="0 0 1024 1024" width="14" height="14">
             <path
               d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 613.4l-50.8 50.8L512 562.8l-114.6 115.4-50.8-50.8L461.2 512 346.6 397.4l50.8-50.8L512 461.2l114.6-114.6 50.8 50.8L562.8 512l114.6 115.4z"
-              fill="currentColor" />
+              fill="currentColor"
+            />
           </svg>
         </button>
         <!-- 搜索确认按钮 -->
@@ -43,7 +72,8 @@
           <svg viewBox="0 0 1024 1024" width="16" height="16">
             <path
               d="M909.6 854.5L649.9 594.8C690.2 537.8 714 468.5 714 393 714 205.5 561.5 53 374 53S34 205.5 34 393s152.5 340 340 340c75.5 0 144.8-23.8 201.8-64.1l259.7 259.7c15.1 15.1 39.5 15.1 54.6 0l19.5-19.5c15-15.1 15-39.6 0-54.6zM374 653c-143.6 0-260-116.4-260-260s116.4-260 260-260 260 116.4 260 260-116.4 260-260 260z"
-              fill="currentColor" />
+              fill="currentColor"
+            />
           </svg>
         </button>
         <!-- 快捷键标签 -->

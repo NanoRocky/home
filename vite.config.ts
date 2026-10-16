@@ -249,6 +249,15 @@ export default ({ mode }: { mode: string }): UserConfig => {
                         ) {
                             return 'style';
                         };
+                        if (/src[/\\]components[/\\](SearchInput|Notes)\.vue/.test(id)) {
+                            return 'appx';
+                        };
+                        if (
+                            /src[/\\]components[/\\]Weather\.vue/.test(id) ||
+                            /src[/\\]api[/\\]weather/.test(id)
+                        ) {
+                            return 'weather';
+                        };
                     }
                 }
             },
