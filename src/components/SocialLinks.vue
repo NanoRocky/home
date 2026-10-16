@@ -2,17 +2,9 @@
   <!-- 社交链接 -->
   <div :class="['social', store.socialTipPosition || 'right']" @dblclick="togglesocial">
     <div class="link">
-      <span
-        v-for="item in socialLinks"
-        :key="item.name"
-        class="icon-item"
-        @click="openLink(item.url)"
-        @auxclick.stop="openLink(item.url)"
-        @mousedown="handleMouseDown"
-        @mouseenter="socialTip = item.tip"
-        @mouseleave="socialTip = t('components.social.TipI')"
-        @dblclick.stop
-      >
+      <span v-for="item in socialLinks" :key="item.name" class="icon-item" @click="openLink(item.url)"
+        @auxclick.stop="openLink(item.url)" @mousedown="handleMouseDown" @mouseenter="socialTip = item.tip"
+        @mouseleave="socialTip = t('components.social.TipI')" @dblclick.stop>
         <img class="icon" :src="item.icon" height="24" />
       </span>
     </div>
@@ -90,7 +82,7 @@ const togglesocial = () => {
 
     .tip {
       display: none !important;
-      color: var(--social-font-color);
+      color: var(--text-color);
     }
   }
 
@@ -120,7 +112,7 @@ const togglesocial = () => {
   }
 
   .tip {
-    color: var(--social-font-color);
+    color: var(--text-color);
     display: none;
     margin-right: 12px;
     animation: fade 0.5s;
@@ -134,7 +126,7 @@ const togglesocial = () => {
 
       .tip {
         display: block;
-        color: var(--social-font-color);
+        color: var(--text-color);
       }
     }
   }
@@ -152,7 +144,7 @@ const togglesocial = () => {
       text-align: center;
       padding: 4px 12px;
       border-radius: 6px;
-      background-color: var(--social-background-color);
+      background-color: var(--card-background-color);
       -webkit-backdrop-filter: blur(5px);
       backdrop-filter: blur(5px);
       font-size: 0.9rem;
