@@ -164,8 +164,8 @@ onMounted(() => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("鼠标右键.mp3");
     }
     return false;
@@ -180,8 +180,8 @@ onMounted(() => {
       });
       if (store.webSpeech) {
         stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
         SpeechLocal("壁纸预览.mp3");
       }
     }

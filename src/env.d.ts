@@ -27,6 +27,7 @@ interface ImportMetaEnv {
   // 天气 Key
   readonly VITE_TX_WEATHER_KEY: string;
   readonly VITE_GD_WEATHER_KEY: string;
+  readonly VITE_GOOGLE_WEATHER_KEY: string;
 
   // 建站日期
   readonly VITE_SITE_START: string;
@@ -52,8 +53,14 @@ interface ImportMetaEnv {
   // 鉴权参数
   readonly VITE_TTS_SKEY: string;
   readonly VITE_TX_WEATHER_SKEY: string;
+  readonly VITE_GD_WEATHER_SKEY: string;
   readonly VITE_METING_SKEY: string;
   readonly VITE_SFILE_SKEY: string;
+
+  readonly VITE_OSITE_URL?: string;
+  readonly VITE_SITE_NAME_EN?: string;
+  readonly VITE_HAS_ENV_FILE?: boolean;
+  readonly VITE_HAS_ENV_LOCAL?: boolean;
 }
 
 interface ImportMeta {

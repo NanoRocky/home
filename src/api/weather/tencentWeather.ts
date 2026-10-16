@@ -8,8 +8,8 @@ import type { AdCode, WeatherInfo, TXAdCodeResponse, TXWeatherResponse } from "@
 export const getTencentWeather = async () => {
   const store = mainStore();
   const t = i18n.global.t;
-  const txkey = envConfig.VITE_TX_WEATHER_KEY;
-  const txskey = envConfig.VITE_TX_WEATHER_SKEY;
+  const txkey = import.meta.env.VITE_TX_WEATHER_KEY;
+  const txskey = import.meta.env.VITE_TX_WEATHER_SKEY;
 
   let adCodeResult: AdCode = { city: null, adcode: null };
   let weatherResult: WeatherInfo = {

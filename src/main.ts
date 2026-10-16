@@ -52,8 +52,8 @@ const mountApp = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("重置2.mp3");
     }
     store.resetStore();
@@ -67,8 +67,8 @@ const mountApp = () => {
     ElMessage(updatedMsg);
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("网站更新.mp3");
     }
   });
@@ -96,34 +96,59 @@ const mountApp = () => {
   setupset();
 };
 
-if (!import.meta.env.VITE_CONFIG_TURN || import.meta.env.VITE_CONFIG_TURN != "true") {
-  const appEl = document.getElementById("app");
-  if (appEl) {
-    appEl.style.display = "none";
-  }
-  console.error(i18n.global.t("main.configMissing"));
-  ElMessageBox.confirm(i18n.global.t("main.configMissing"), i18n.global.t("main.warning"), {
-    confirmButtonText: i18n.global.t("main.continue"),
-    cancelButtonText: i18n.global.t("main.cancel"),
-    type: "warning",
-  })
-    .then(() => {
-      mountApp();
-    })
-    .catch(() => {
-      ElMessage({
-        type: "info",
-        message: i18n.global.t("main.cancelled"),
-      });
-    });
-} else {
+const checkAuthorAndMount = () => {
   if (config.author != "imsyy" || config.efua != "NanoRocky") {
     console.warn(i18n.global.t("console.main.authorWarning"));
     console.log(i18n.global.t("console.main.repoLink"));
-  } else if (envConfig.VITE_SITE_AUTHOR != "酪灰") {
+  } else if (import.meta.env.VITE_SITE_AUTHOR != "酪灰") {
     console.error(i18n.global.t("console.main.privateVersionWarning"));
     console.log(i18n.global.t("console.main.repoLink"));
   } else {
     mountApp();
   }
+};
+
+if (!import.meta.env.VITE_HAS_ENV_FILE) {
+  const appEl = document.getElementById("app");
+  if (appEl) {
+    appEl.style.display = "none";
+  }
+  console.error(i18n.global.t("views.main.corruptedDetect"));
+  ElMessageBox.alert(
+    i18n.global.t("views.main.corruptedDetect"),
+    i18n.global.t("common.status.warning"),
+    {
+      confirmButtonText: i18n.global.t("common.action.confirm"),
+      showClose: false,
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      type: "error",
+    },
+  );
+} else if (!import.meta.env.VITE_HAS_ENV_LOCAL) {
+  const appEl = document.getElementById("app");
+  if (appEl) {
+    appEl.style.display = "none";
+  }
+  console.error(i18n.global.t("views.main.noConfigWarningLog"));
+  ElMessageBox.confirm(
+    i18n.global.t("views.main.noConfigDetect"),
+    i18n.global.t("common.status.warning"),
+    {
+      confirmButtonText: i18n.global.t("common.action.continue"),
+      cancelButtonText: i18n.global.t("common.action.cancel"),
+      type: "warning",
+    },
+  )
+    .then(() => {
+      checkAuthorAndMount();
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: i18n.global.t("views.main.canceled"),
+      });
+    });
+} else {
+  checkAuthorAndMount();
 }

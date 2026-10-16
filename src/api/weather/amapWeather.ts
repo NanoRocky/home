@@ -21,8 +21,8 @@ import type {
 export const getAmapWeather = async () => {
   const store = mainStore();
   const t = i18n.global.t;
-  const gdkey = envConfig.VITE_GD_WEATHER_KEY;
-  const gdskey = envConfig.VITE_GD_WEATHER_SKEY;
+  const gdkey = import.meta.env.VITE_GD_WEATHER_KEY;
+  const gdskey = import.meta.env.VITE_GD_WEATHER_SKEY;
 
   if (!gdskey) {
     console.log(t("console.weather.weatherAMapLog1"));

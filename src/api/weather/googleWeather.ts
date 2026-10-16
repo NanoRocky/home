@@ -111,7 +111,7 @@ const kmhToBeaufort = (kmh: number): number => {
 export const getGoogleWeather = async () => {
   const store = mainStore();
   const t = i18n.global.t;
-  const googleKey = envConfig.VITE_GOOGLE_WEATHER_KEY;
+  const googleKey = import.meta.env.VITE_GOOGLE_WEATHER_KEY;
 
   if (!googleKey) {
     console.error(t("console.weather.googleKeyMissing"));

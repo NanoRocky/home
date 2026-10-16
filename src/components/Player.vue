@@ -234,8 +234,8 @@ onMounted(() => {
       });
       if (store.webSpeech) {
         stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
         SpeechLocal("播放器加载失败.mp3");
       }
     }
@@ -285,8 +285,8 @@ const onPlay = () => {
   if (store.webSpeech) {
     if (store.playerSpeechName) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       Speech(
         t("components.music.playing") +
           store.getPlayerData.artist +
@@ -395,16 +395,16 @@ const loadMusicError = () => {
     notice = t("components.music.songLoadFailedNext");
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("歌曲加载失败.mp3");
     }
   } else {
     notice = t("components.music.studioError");
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("播放器未知异常.mp3");
     }
   }

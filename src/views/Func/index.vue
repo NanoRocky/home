@@ -72,7 +72,7 @@ const currentTime = ref<CurrentTime>({
 const timeInterval = ref<number | null>(null);
 
 // 播放器 id
-const playerHasId = envConfig.VITE_SONG_ID;
+const playerHasId = import.meta.env.VITE_SONG_ID;
 
 // 处理时间格式为字符串数组
 const timeText = computed(() => {

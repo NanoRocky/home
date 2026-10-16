@@ -112,7 +112,7 @@ let chuover = 0;
 
 // 站点链接
 const siteUrl = computed(() => {
-  const url = envConfig.VITE_SITE_URL;
+  const url = import.meta.env.VITE_SITE_URL;
   if (!url) return "nanorocky.top".split(".");
   let urlFormat = url;
   // 判断协议前缀
@@ -131,8 +131,8 @@ const toggleVer = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("戳戳版本.mp3");
     }
     store.setV = true;
@@ -143,8 +143,8 @@ const toggleVer = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("戳版本.mp3");
     }
   }

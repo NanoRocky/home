@@ -244,8 +244,8 @@ const checkUpdate = async () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("检查更新-已是最新版本.mp3");
     }
   } else if (updinfo.status == "false") {
@@ -259,8 +259,8 @@ const checkUpdate = async () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("检查更新-发现新版本.mp3");
     }
   } else {
@@ -270,8 +270,8 @@ const checkUpdate = async () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("检查更新-检测异常.mp3");
     }
   }
@@ -309,8 +309,8 @@ const resetSettings = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("重置2.mp3");
     }
     store.resetStore();
@@ -321,8 +321,8 @@ const resetSettings = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("重置3.mp3");
     }
   } else {
@@ -332,8 +332,8 @@ const resetSettings = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("重置1.mp3");
     }
   }
@@ -344,8 +344,8 @@ const handleSetWallpaper = () => {
     ElMessage.error(t("components.settings.wallpaper.notBuiltin"));
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("壁纸ID设置失败.mp3");
     }
     return;
@@ -354,8 +354,8 @@ const handleSetWallpaper = () => {
     ElMessage.error(t("components.settings.wallpaper.idEmpty"));
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("壁纸ID设置失败.mp3");
     }
     return;
@@ -364,8 +364,8 @@ const handleSetWallpaper = () => {
     ElMessage.error(t("components.settings.wallpaper.idNotNumber"));
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("壁纸ID设置失败.mp3");
     }
     return;
@@ -375,8 +375,8 @@ const handleSetWallpaper = () => {
   ElMessage.success(t("components.settings.wallpaper.setSuccess", { id: wallpaperId }));
   if (store.webSpeech) {
     stopSpeech();
-    const voice = envConfig.VITE_TTS_Voice;
-    const vstyle = envConfig.VITE_TTS_Style;
+    const voice = import.meta.env.VITE_TTS_Voice;
+    const vstyle = import.meta.env.VITE_TTS_Style;
     SpeechLocal("壁纸ID设置成功.mp3");
   }
   form.wallpaperId = "";

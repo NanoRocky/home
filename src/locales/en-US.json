@@ -57,6 +57,7 @@
       "siteUpdated": "Website updated, please refresh the page meow!",
       "noConfigWarningLog": "Warning: You seem to have no configuration file enabled, the project may encounter exceptions! Please configure the .env file before running the project!",
       "noConfigDetect": "It seems you haven't created a configuration file, the project may encounter exceptions!",
+      "corruptedDetect": "Error: Project files corrupted, please re-acquire..",
       "canceled": "Canceled"
     },
     "moreSet": {

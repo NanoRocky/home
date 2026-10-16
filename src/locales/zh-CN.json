@@ -57,6 +57,7 @@
       "siteUpdated": "网站已更新，请刷新网页嗷！",
       "noConfigWarningLog": "警告：您似乎没有启用配置文件，项目可能出现异常！请配置 .env 文件后再运行项目！",
       "noConfigDetect": "检测到您似乎没有创建配置文件，项目可能出现异常！",
+      "corruptedDetect": "错误：项目文件损坏，请重新获取..",
       "canceled": "已取消"
     },
     "moreSet": {

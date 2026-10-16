@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { resolve } from "path";
+import { existsSync } from "fs";
 import { VitePWA } from "vite-plugin-pwa";
 import vue from "@vitejs/plugin-vue";
 import AutoImport from "unplugin-auto-import/vite";
@@ -23,12 +24,18 @@ console.log = (...args) => {
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: string }): UserConfig => {
     const env = loadEnv(mode, process.cwd());
+    const hasEnvFile = existsSync(resolve(import.meta.dirname, ".env"));
+    const hasEnvLocal = existsSync(resolve(import.meta.dirname, ".env.local"));
     return defineConfig({
+        define: {
+            "import.meta.env.VITE_HAS_ENV_FILE": hasEnvFile,
+            "import.meta.env.VITE_HAS_ENV_LOCAL": hasEnvLocal,
+        },
         plugins: [
             vue(),
             UnoCSS(),
             AutoImport({
-                imports: ["vue", { "@/utils/config_check.ts": ["envConfig"] }],
+                imports: ["vue"],
                 resolvers: [ElementPlusResolver()],
                 dts: "src/auto-imports.d.ts",
             }),
@@ -134,7 +141,9 @@ export default ({ mode }: { mode: string }): UserConfig => {
                 apply: 'build',
                 enforce: 'post',
                 renderChunk(code, chunk) {
-                    if (!chunk.fileName.includes('index-')) {
+                    const targetChunks = ['index'];
+                    const isTarget = targetChunks.some((name) => chunk.name === name || chunk.fileName.includes(`${name}-`));
+                    if (!isTarget) {
                         return null;
                     }
                     const result = JavaScriptObfuscator.obfuscate(code, {
@@ -222,14 +231,20 @@ export default ({ mode }: { mode: string }): UserConfig => {
                             };
                             return 'vendor';
                         };
-                        if (id.includes('en-US.json') || id.includes('zh-CN.json') || id.includes('ja-JP.json')) {
+                        if (/src[/\\]locales/.test(id)) {
                             return 'locale';
                         };
-                        if (id.includes('xiaomi_weather_adcode.json') || id.includes('xiaomi_weather_status.json')) {
-                            return 'xiaomi_weather_data';
+                        if (/src[/\\]assets/.test(id)) {
+                            return 'assets';
                         };
-                        if (id.includes('siteLinks.json') || id.includes('socialLinks.json')) {
-                            return 'custom_data';
+                        if (/src[/\\]components[/\\](DwrcDot|Music|Player|ProgressBar)\.vue/.test(id)) {
+                            return 'player';
+                        };
+                        if (
+                            /src[/\\]components[/\\]Background\.vue/.test(id) ||
+                            /src[/\\]utils[/\\](season|cursor|debounce|getColor)/.test(id)
+                        ) {
+                            return 'style';
                         };
                     }
                 }

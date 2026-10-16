@@ -60,8 +60,8 @@ export function Speech(
     // 在指定的 delay 后开始请求
     timeoutId = setTimeout(async () => {
       try {
-        const speechapi = envConfig.VITE_TTS_API;
-        const key = envConfig.VITE_TTS_SKEY;
+        const speechapi = import.meta.env.VITE_TTS_API;
+        const key = import.meta.env.VITE_TTS_SKEY;
         if (!speechapi || speechapi === "" || speechapi === null) {
           console.error(i18n.global.t("console.voice.apiNotConfigured"));
           return;
@@ -182,7 +182,7 @@ export function SpeechLocal(fileName: string, delay = 0): Promise<void> {
     }
 
     const audioUrl = `https://filep.nanorocky.top/home/speechlocal/${fileName}`;
-    const key = envConfig.VITE_SFILE_SKEY;
+    const key = import.meta.env.VITE_SFILE_SKEY;
     if (key) {
       const fileUrl = audioUrl;
       audioUrlS = await gasC(fileUrl, key);

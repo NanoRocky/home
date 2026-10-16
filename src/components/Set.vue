@@ -290,8 +290,8 @@ const radioChange = () => {
   });
   if (store.webSpeech) {
     stopSpeech();
-    const voice = envConfig.VITE_TTS_Voice;
-    const vstyle = envConfig.VITE_TTS_Style;
+    const voice = import.meta.env.VITE_TTS_Voice;
+    const vstyle = import.meta.env.VITE_TTS_Style;
     SpeechLocal("更换壁纸成功.mp3");
   }
 };

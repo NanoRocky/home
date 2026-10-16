@@ -43,24 +43,24 @@ const store = mainStore();
 const { locale, t } = useI18n();
 
 // 主页站点logo
-const siteLogo = envConfig.VITE_SITE_MAIN_LOGO;
+const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
 // 站点链接
 const siteUrl = computed(() => {
   let mns: string | null = null;
   if (store.msgNameShow) {
-    if (locale.value != "zh-CN" && envConfig.VITE_SITE_MAIN_NAME_EN) {
+    if (locale.value != "zh-CN" && import.meta.env.VITE_SITE_MAIN_NAME_EN) {
       mns =
-        envConfig.VITE_SITE_MAIN_NAME_EN ||
-        envConfig.VITE_SITE_MAIN_NAME ||
-        envConfig.VITE_SITE_URL ||
+        import.meta.env.VITE_SITE_MAIN_NAME_EN ||
+        import.meta.env.VITE_SITE_MAIN_NAME ||
+        import.meta.env.VITE_SITE_URL ||
         "nanorocky.top";
     } else {
-      mns = envConfig.VITE_SITE_MAIN_NAME || envConfig.VITE_SITE_URL || "nanorocky.top";
+      mns = import.meta.env.VITE_SITE_MAIN_NAME || import.meta.env.VITE_SITE_URL || "nanorocky.top";
     }
     // 这里并没有处理显示自定义内容后的分段点，因为这个点看着也不错，有种写字时封笔的感觉，就不处理啦~
     // 才不是懒的！（x）
   } else {
-    mns = envConfig.VITE_SITE_URL || "nanorocky.top";
+    mns = import.meta.env.VITE_SITE_URL || "nanorocky.top";
   }
   const url = mns;
   if (!url) return "nanorocky.top".split(".");
@@ -72,31 +72,31 @@ const siteUrl = computed(() => {
   return hostname.split(".");
 });
 
-const ositeUrl = envConfig.VITE_OSITE_URL;
+const ositeUrl = import.meta.env.VITE_OSITE_URL;
 
 // 简介区域文字
 const descriptionText = computed(() => {
   if (store.boxOpenState) {
     return {
       hello:
-        locale.value != "zh-CN" && envConfig.VITE_DESC_HELLO_OTHER_EN
-          ? envConfig.VITE_DESC_HELLO_OTHER_EN || envConfig.VITE_DESC_HELLO_OTHER
-          : envConfig.VITE_DESC_HELLO_OTHER,
+        locale.value != "zh-CN" && import.meta.env.VITE_DESC_HELLO_OTHER_EN
+          ? import.meta.env.VITE_DESC_HELLO_OTHER_EN || import.meta.env.VITE_DESC_HELLO_OTHER
+          : import.meta.env.VITE_DESC_HELLO_OTHER,
       text:
-        locale.value != "zh-CN" && envConfig.VITE_DESC_TEXT_OTHER_EN
-          ? envConfig.VITE_DESC_TEXT_OTHER_EN || envConfig.VITE_DESC_TEXT_OTHER
-          : envConfig.VITE_DESC_TEXT_OTHER,
+        locale.value != "zh-CN" && import.meta.env.VITE_DESC_TEXT_OTHER_EN
+          ? import.meta.env.VITE_DESC_TEXT_OTHER_EN || import.meta.env.VITE_DESC_TEXT_OTHER
+          : import.meta.env.VITE_DESC_TEXT_OTHER,
     };
   }
   return {
     hello:
-      locale.value != "zh-CN" && envConfig.VITE_DESC_HELLO_EN
-        ? envConfig.VITE_DESC_HELLO_EN || envConfig.VITE_DESC_HELLO
-        : envConfig.VITE_DESC_HELLO,
+      locale.value != "zh-CN" && import.meta.env.VITE_DESC_HELLO_EN
+        ? import.meta.env.VITE_DESC_HELLO_EN || import.meta.env.VITE_DESC_HELLO
+        : import.meta.env.VITE_DESC_HELLO,
     text:
-      locale.value != "zh-CN" && envConfig.VITE_DESC_TEXT_EN
-        ? envConfig.VITE_DESC_TEXT_EN || envConfig.VITE_DESC_TEXT
-        : envConfig.VITE_DESC_TEXT,
+      locale.value != "zh-CN" && import.meta.env.VITE_DESC_TEXT_EN
+        ? import.meta.env.VITE_DESC_TEXT_EN || import.meta.env.VITE_DESC_TEXT
+        : import.meta.env.VITE_DESC_TEXT,
   };
 });
 
@@ -115,8 +115,8 @@ const changeBox = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("分辨率不足.mp3");
     }
   }
@@ -129,8 +129,8 @@ watch(
     if (value) {
       if (store.webSpeech) {
         stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
+        const voice = import.meta.env.VITE_TTS_Voice;
+        const vstyle = import.meta.env.VITE_TTS_Style;
         SpeechLocal("惊讶.mp3");
       }
     }

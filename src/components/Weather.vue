@@ -52,9 +52,9 @@ const store = mainStore();
 const { t } = useI18n();
 
 // 加载密钥
-const txkey = envConfig.VITE_TX_WEATHER_KEY; // 腾讯天气密钥
-const txskey = envConfig.VITE_TX_WEATHER_SKEY; // 选择性对腾讯天气接口加密
-const gdkey = envConfig.VITE_GD_WEATHER_KEY; // 高德天气密钥
+const txkey = import.meta.env.VITE_TX_WEATHER_KEY; // 腾讯天气密钥
+const txskey = import.meta.env.VITE_TX_WEATHER_SKEY; // 选择性对腾讯天气接口加密
+const gdkey = import.meta.env.VITE_GD_WEATHER_KEY; // 高德天气密钥
 
 // 天气数据
 const weatherData = reactive<{
@@ -205,8 +205,8 @@ const getWeatherData = async () => {
     onError(t("console.weather.weatherFetchFailed").replace("：", ""));
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
+      const voice = import.meta.env.VITE_TTS_Voice;
+      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("天气加载失败.mp3");
     }
   }
