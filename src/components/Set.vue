@@ -6,31 +6,32 @@
           <el-radio-group v-model="coverType" text-color="#ffffff" @change="radioChange">
             <el-radio :value="0" size="large" border>{{
               $t("components.settings.wallpaper.backgrounds.0")
-              }}</el-radio>
+            }}</el-radio>
             <el-radio :value="1" size="large" border>{{
               $t("components.settings.wallpaper.backgrounds.1")
-              }}</el-radio>
+            }}</el-radio>
             <el-radio :value="2" size="large" border>{{
               $t("components.settings.wallpaper.backgrounds.2")
-              }}</el-radio>
+            }}</el-radio>
             <el-radio :value="3" size="large" border>{{
               $t("components.settings.wallpaper.backgrounds.3")
-              }}</el-radio>
+            }}</el-radio>
             <el-radio :value="4" size="large" border>{{
               $t("components.settings.wallpaper.backgrounds.4")
-              }}</el-radio>
+            }}</el-radio>
             <el-radio :value="5" size="large" border>{{
               $t("components.settings.wallpaper.backgrounds.5")
-              }}</el-radio>
+            }}</el-radio>
             <el-radio :value="6" size="large" border>{{
               $t("components.settings.wallpaper.backgrounds.6")
-              }}</el-radio>
+            }}</el-radio>
           </el-radio-group>
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.themeSettings')" name="2">
         <div class="item">
-          <span class="text">{{ $t("components.settings.theme.text") }}</span><br /><br />
+          <span class="text">{{ $t("components.settings.theme.text") }}</span
+          ><br /><br />
           <el-radio-group v-model="theme" size="small" text-color="#FFFFFF">
             <el-radio value="system" border>{{ $t("components.settings.theme.system") }}</el-radio>
             <el-radio value="time" border>{{ $t("components.settings.theme.time") }}</el-radio>
@@ -43,36 +44,72 @@
       <el-collapse-item :title="$t('components.settings.tabs.personalization')" name="3">
         <div class="item">
           <span class="text">{{ $t("components.settings.personalization.siteStartShow") }}</span>
-          <el-switch v-model="siteStartShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="siteStartShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">{{ $t("components.settings.personalization.musicClick") }}</span>
-          <el-switch v-model="musicClick" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="musicClick"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">{{ $t("components.settings.personalization.seasonalEffects") }}</span>
-          <el-switch v-model="seasonalEffects" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="seasonalEffects"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">{{ $t("components.settings.personalization.footerBlur") }}</span>
-          <el-switch v-model="footerBlur" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="footerBlur"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">{{
             $t("components.settings.personalization.footerProgressBar")
-            }}</span>
-          <el-switch v-model="footerProgressBar" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          }}</span>
+          <el-switch
+            v-model="footerProgressBar"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.playerConfig')" name="4">
         <div class="item">
           <span class="text">{{ $t("components.settings.player.autoplay") }}</span>
-          <el-switch v-model="playerAutoplay" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerAutoplay"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div class="item">
           <span class="text">{{ $t("components.settings.player.randomOrder") }}</span>
-          <el-switch v-model="playerOrder" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall"
-            active-value="random" inactive-value="list" />
+          <el-switch
+            v-model="playerOrder"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+            active-value="random"
+            inactive-value="list"
+          />
         </div>
         <div class="item">
           <span class="text">{{ $t("components.settings.player.loopMode") }}</span>
@@ -86,57 +123,119 @@
       <el-collapse-item :title="$t('components.settings.tabs.lyricSettings')" name="5">
         <div class="item">
           <span class="text">{{ $t("components.settings.lyric.showFooterLyric") }}</span>
-          <el-switch v-model="playerLrcShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerLrcShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow" class="item">
-          <span class="text" white-space="pre">{{ $t("components.settings.lyric.useAMLL") }}<br />&nbsp;&nbsp;&nbsp;{{
-            $t("components.settings.lyric.amllNetworkWarning")
-          }}</span>
-          <el-switch v-model="playerDWRCATDB" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <span class="text" white-space="pre"
+            >{{ $t("components.settings.lyric.useAMLL") }}<br />&nbsp;&nbsp;&nbsp;{{
+              $t("components.settings.lyric.amllNetworkWarning")
+            }}</span
+          >
+          <el-switch
+            v-model="playerDWRCATDB"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow && playerDWRCATDB" class="item">
           <span class="text" white-space="pre">{{
             $t("components.settings.lyric.useAMLLMirror")
-            }}</span>
-          <el-switch v-model="playerDWRCATDBF" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          }}</span>
+          <el-switch
+            v-model="playerDWRCATDBF"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow" class="item">
           <span class="text">{{ $t("components.settings.lyric.enableDWRC") }}</span>
-          <el-switch v-model="playerDWRCShow" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerDWRCShow"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow && playerDWRCShow" class="item">
           <span class="text">{{ $t("components.settings.lyric.enableDWRCPro") }}</span>
-          <el-switch v-model="playerDWRCShowPro" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerDWRCShowPro"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow && playerDWRCShow" class="item">
           <span class="text">{{ $t("components.settings.lyric.showDwrcDot") }}</span>
-          <el-switch v-model="dwrcDot" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="dwrcDot"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow && playerDWRCShow" class="item">
           <span class="text">{{ $t("components.settings.lyric.removeMetadata") }}</span>
-          <el-switch v-model="playerRMMetadata" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerRMMetadata"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow && playerDWRCShow" class="item">
           <span class="text">{{ $t("components.settings.lyric.pilfer") }}</span>
-          <el-switch v-model="playerDWRCPilfer" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerDWRCPilfer"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow" class="item">
           <span class="text">{{ $t("components.settings.lyric.translate") }}</span>
-          <el-switch v-model="playerTrLrc" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerTrLrc"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="playerLrcShow" class="item">
           <span class="text">{{ $t("components.settings.lyric.notesAvoidFooter") }}</span>
-          <el-switch v-model="notesAvoidFooter" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="notesAvoidFooter"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.voiceSettings')" name="6">
         <div class="item">
           <span class="text">{{ $t("components.settings.voice.enableSwitch") }}</span>
-          <el-switch v-model="webSpeech" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="webSpeech"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
         <div v-if="webSpeech" class="item">
           <span class="text">{{ $t("components.settings.voice.announceSongName") }}</span>
-          <el-switch v-model="playerSpeechName" inline-prompt :active-icon="CheckSmall" :inactive-icon="CloseSmall" />
+          <el-switch
+            v-model="playerSpeechName"
+            inline-prompt
+            :active-icon="CheckSmall"
+            :inactive-icon="CloseSmall"
+          />
         </div>
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.otherSettings')" name="7">
@@ -287,7 +386,7 @@ const radioChange = () => {
                 border-color: var(--set-radio-border-ck-color) !important;
               }
 
-              &+.el-radio__label {
+              & + .el-radio__label {
                 color: var(--text-color) !important;
               }
             }
