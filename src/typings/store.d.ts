@@ -81,4 +81,5 @@ export interface MainState {
   showProgressIconState: number;
   theme: "system" | "time" | "bg" | "light" | "dark";
   weatherProvider: "auto" | "tencent" | "amap" | "google" | "xiaomi" | "oioweb";
+  socialTipPosition: "right" | "down";
 }

@@ -24,7 +24,7 @@ onMounted(async () => {
   try {
     const msgpRandomp = getRandomMsg();
     const baseUrl = "https://filep.nanorocky.top/home/images/msg/";
-    const imgUrl = `${baseUrl}MSG${msgpRandomp}.avif`;
+    const imgUrl = `${baseUrl}MSG${msgpRandomp}.png`;
     if (key) {
       msgP.value = await gasC(imgUrl, key);
     } else {

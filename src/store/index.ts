@@ -72,6 +72,7 @@ export const storeState: MainState = {
   showProgressIconState: 0, // 【状态】进度条图标持续显示状态，0: 未悬停不显示，1: 已悬停显示，2: 始终显示
   theme: "system", // 【开关】主题，"system"/"time"/"bg"/"light"/"dark"。
   weatherProvider: "auto", // 【开关】天气接口提供商，"auto"/"tencent"/"amap"/"google"/"xiaomi"/"oioweb"
+  socialTipPosition: "down", // 【开关】社交链接提示位置，"right"/"down"
 };
 
 export const mainStore = defineStore("main", {

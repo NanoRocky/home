@@ -24,6 +24,10 @@ export const validationRules = {
     allowed: [0, 1, 2, 3],
     defaultValue: 0,
   },
+  socialTipPosition: {
+    allowed: ["right", "down"],
+    defaultValue: "right",
+  },
 };
 
 /**
