@@ -20,7 +20,27 @@ const getStyle = (el: HTMLElement, attr: string) => {
   return false;
 };
 
+/** 检测是否为移动端环境 */
+export const isMobileDevice = (): boolean => {
+  if (typeof window === "undefined") return false;
+  return (
+    window.innerWidth <= 720 ||
+    Boolean(window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches) ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  );
+};
+
 const cursorInit = () => {
+  if (isMobileDevice()) {
+    const handleResize = () => {
+      if (!mainCursor && !isMobileDevice()) {
+        mainCursor = new Cursor();
+        window.removeEventListener("resize", handleResize);
+      }
+    };
+    window.addEventListener("resize", handleResize, { passive: true });
+    return null;
+  }
   mainCursor = new Cursor();
   return mainCursor;
 };
@@ -54,7 +74,6 @@ class Cursor {
     if (!this.cursor) {
       this.cursor = document.createElement("div");
       this.cursor.id = "cursor";
-      this.cursor.classList.add("is-xs-hidden");
       this.cursor.classList.add("hidden");
       document.body.append(this.cursor);
     }
@@ -67,7 +86,7 @@ class Cursor {
     }
     this.scr = document.createElement("style");
     document.body.appendChild(this.scr);
-    this.scr.innerHTML = `* {cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' width='10px' height='10px'><circle cx='4' cy='4' r='4' fill='white' /></svg>") 4 4, auto !important}`;
+    this.scr.innerHTML = `@media (min-width: 721px) and (pointer: fine) { * {cursor: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' width='10px' height='10px'><circle cx='4' cy='4' r='4' fill='white' /></svg>") 4 4, auto !important} }`;
   }
   refresh() {
     if (this.scr) {
@@ -89,23 +108,36 @@ class Cursor {
 
   init() {
     document.onmousemove = (e) => {
+      if (
+        window.innerWidth <= 720 ||
+        (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+      ) {
+        if (this.cursor && !this.cursor.classList.contains("hidden")) {
+          this.cursor.classList.add("hidden");
+        }
+        return;
+      }
+
       this.pos.curr == null && this.move(e.clientX - 8, e.clientY - 8);
       this.pos.curr = {
         x: e.clientX - 8,
         y: e.clientY - 8,
       };
       if (this.cursor) {
-        this.cursor.classList.remove("is-xs-hidden");
         this.cursor.classList.remove("hidden");
       }
       this.render();
     };
     document.onmouseenter = () => {
-      if (this.cursor) this.cursor.classList.remove("is-xs-hidden");
+      if (
+        window.innerWidth <= 720 ||
+        (window.matchMedia && window.matchMedia("(pointer: coarse)").matches)
+      ) {
+        return;
+      }
       if (this.cursor) this.cursor.classList.remove("hidden");
     };
     document.onmouseleave = () => {
-      if (this.cursor) this.cursor.classList.add("is-xs-hidden");
       if (this.cursor) this.cursor.classList.add("hidden");
     };
     document.onmousedown = () => {
@@ -114,6 +146,13 @@ class Cursor {
     document.onmouseup = () => {
       if (this.cursor) this.cursor.classList.remove("active");
     };
+    window.addEventListener(
+      "touchstart",
+      () => {
+        if (this.cursor) this.cursor.classList.add("hidden");
+      },
+      { passive: true }
+    );
   }
 
   render() {

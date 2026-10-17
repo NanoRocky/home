@@ -73,15 +73,13 @@ a:hover {
 @font-face {
   font-family: "字魂元气酪酪体";
   font-display: swap;
-  src: url("https://file.nanorocky.top/home/font/zihunn162hao-yuanqilaolaoti.ttf")
-    format("truetype");
+  src: url("https://file.nanorocky.top/home/font/zihunn162hao-yuanqilaolaoti.ttf") format("truetype");
 }
 
 @font-face {
   font-family: "字魂萌趣软糖体";
   font-display: swap;
-  src: url("https://file.nanorocky.top/home/font/zihun64hao-mengquruantangti.ttf")
-    format("truetype");
+  src: url("https://file.nanorocky.top/home/font/zihun64hao-mengquruantangti.ttf") format("truetype");
 }
 
 @font-face {
@@ -117,6 +115,7 @@ a:hover {
   .el-message__badge {
     display: none;
   }
+
   .el-message__content {
     white-space: nowrap;
   }
@@ -127,11 +126,13 @@ a:hover {
   .el-progress-bar__outer {
     border-radius: 6px;
     background-color: var(--el-progress-bar-in-color);
+
     .el-progress-bar__inner {
       background-color: var(--el-progress-bar-out-color);
       border-radius: 6px;
       text-align: center;
       font-family: "UnidreamLED";
+
       span {
         color: var(--el-progress-bar-span-color);
         font-size: 0.9rem;
@@ -150,11 +151,13 @@ a:hover {
   border-radius: 8px !important;
   border: 1px solid transparent !important;
   background-color: transparent !important;
+
   .el-card__header {
     font-weight: bold;
     padding: 16px 20px !important;
     border-bottom: 1px solid transparent !important;
   }
+
   .el-card__body {
     padding: 0 !important;
   }
@@ -176,6 +179,7 @@ a:hover {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -186,6 +190,7 @@ a:hover {
     filter: blur(20px) brightness(0.3);
     transform: scale(1.6);
   }
+
   to {
     filter: blur(0) brightness(1);
     transform: scale(1);
@@ -196,6 +201,7 @@ a:hover {
   from {
     transform: scale(1.2);
   }
+
   to {
     transform: scale(1);
   }
@@ -231,6 +237,12 @@ a:hover {
   &.active {
     opacity: 0.5;
     scale: 0.5;
+  }
+
+  @media (max-width: 720px),
+  (pointer: coarse),
+  (hover: none) {
+    display: none !important;
   }
 }
 
