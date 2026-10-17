@@ -1,22 +1,11 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
-    <img
-      v-show="store.imgLoadStatus"
-      :src="currentBgUrl"
-      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
-      alt="cover"
-      @load="imgLoadComplete"
-      @error.once="imgLoadError"
-      @animationend="imgAnimationEnd"
-    />
+    <img v-show="store.imgLoadStatus" :src="currentBgUrl"
+      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]" alt="cover"
+      @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
     <!-- 新壁纸层 -->
-    <img
-      v-if="isTransitioning"
-      :src="nextBgUrl"
-      :class="['bg', 'next', { 'blur-in': isBlurringIn }]"
-      alt="cover"
-    />
+    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -35,7 +24,7 @@ import { initFirefly, closeFirefly } from "@/utils/season/firefly";
 import { initLantern, closeLantern } from "@/utils/season/lantern";
 import { ref, h, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
-import { gasC } from "@/utils/authServer";
+import { gasA, gasC } from "@/utils/authServer";
 
 const store = mainStore();
 const { t } = useI18n();
@@ -68,7 +57,7 @@ const getNonRepeatingRandom = (maxCount, storageKey) => {
   try {
     const saved = localStorage.getItem(storageKey);
     if (saved) history = JSON.parse(saved);
-  } catch (e) {}
+  } catch (e) { }
   let rand = Math.floor(Math.random() * maxCount + 1);
   let attempts = 0;
   while (history.includes(rand) && attempts < 50) {
@@ -81,7 +70,7 @@ const getNonRepeatingRandom = (maxCount, storageKey) => {
   }
   try {
     localStorage.setItem(storageKey, JSON.stringify(history));
-  } catch (e) {}
+  } catch (e) { }
   return rand;
 };
 
@@ -114,45 +103,19 @@ async function loadConfig() {
   }
 }
 
-// 检测设备类型
+// 检测屏幕方向与比例
 const detectDevice = () => {
-  const userAgent = navigator.userAgent.toLowerCase();
-  if (/mobile|android|iphone|ipad|ipod|windows phone/.test(userAgent)) {
-    if (/ipad|tablet|playbook|silk|kindle/.test(userAgent)) {
-      return "tablet"; // 平板
-    } else {
-      return "mobile"; // 手机
-    }
-  } else {
-    return "pc"; // PC
-  }
+  if (typeof window === "undefined") return "pc";
+  return window.innerHeight > window.innerWidth ? "mobile" : "pc";
 };
 
 const getLocalBgUrl = async (deviceType) => {
   // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png 或 avif
   // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
-  if (deviceType === "mobile") {
-    if (key) {
-      const bgUrlS = `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.avif`;
-      return await gasC(bgUrlS, key);
-    } else {
-      return `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.avif`;
-    }
-  } else if (deviceType === "tablet" || deviceType === "pc") {
-    if (key) {
-      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
-      return await gasC(bgUrlS, key);
-    } else {
-      return `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
-    }
-  } else {
-    if (key) {
-      const bgUrlS = `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
-      return await gasC(bgUrlS, key);
-    } else {
-      return `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
-    }
-  }
+  const url = deviceType === "mobile" ?
+    `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.avif`
+    : `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
+  return key ? await gasC(url, key) : url;
 };
 
 // 更换壁纸链接
@@ -168,40 +131,18 @@ const changeBg = async (type) => {
       if (type == 0) {
         newBgUrl = await getLocalBgUrl(deviceType);
       } else if (type == 1) {
-        if (deviceType === "mobile") {
-          newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=phone&tc=1`;
-        } else if (deviceType === "tablet" || deviceType === "pc") {
-          newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=pc&tc=1`;
-        } else {
-          newBgUrl = `https://api.nanorocky.top/randfurfriday/?type=pc&tc=1`;
-        }
+        const rawUrl = `https://api.nanorocky.top/randfurfriday/?type=${deviceType === "mobile" ? "phone" : "pc"}&tc=1`;
+        newBgUrl = key ? await gasA(rawUrl, key) : rawUrl;
       } else if (type == 2) {
-        if (deviceType === "mobile") {
-          const bgfmRandom = Math.floor(Math.random() * 2 + 1);
-          if (bgfmRandom == 1) {
-            newBgUrl = `https://uapis.cn/api/imgapi/furry/imgs4k.php`;
-          } else {
-            newBgUrl = `https://uapis.cn/api/imgapi/furry/szs8k.php`;
-          }
-        } else if (deviceType === "tablet" || deviceType === "pc") {
-          newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
-        } else {
-          newBgUrl = "https://uapis.cn/api/imgapi/furry/img4k.php";
-        }
+        newBgUrl = deviceType === "mobile" ? `https://furry.axzt.top/?format=file&redirect=0&mod=box` : `https://furry.axzt.top/?format=file&redirect=0&mod=large`;
       } else if (type == 3) {
-        if (deviceType === "mobile") {
-          newBgUrl = `https://img.moehu.org/pics.php?id=sjpic`;
-        } else if (deviceType === "tablet" || deviceType === "pc") {
-          newBgUrl = `https://img.moehu.org/pic.php?id=pc`;
-        } else {
-          newBgUrl = `https://img.moehu.org/pic.php?id=pc`;
-        }
+        newBgUrl = deviceType === "mobile" ? `https://img.moehu.org/pics.php?id=sjpic` : `https://img.moehu.org/pic.php?id=pc`;
       } else if (type == 4) {
         newBgUrl = "https://img.moehu.org/pic.php?id=kemonomimi";
       } else if (type == 5) {
         newBgUrl = "https://img.moehu.org/pic.php?id=gqbz";
       } else if (type == 6) {
-        newBgUrl = "https://uapis.cn/api/bing.php?rand=true";
+        newBgUrl = "https://uapis.cn/api/v1/image/bing-daily?random=true&format=image";
       }
 
       if (type != 0) {
