@@ -73,13 +73,15 @@ a:hover {
 @font-face {
   font-family: "字魂元气酪酪体";
   font-display: swap;
-  src: url("https://file.nanorocky.top/home/font/zihunn162hao-yuanqilaolaoti.ttf") format("truetype");
+  src: url("https://file.nanorocky.top/home/font/zihunn162hao-yuanqilaolaoti.ttf")
+    format("truetype");
 }
 
 @font-face {
   font-family: "字魂萌趣软糖体";
   font-display: swap;
-  src: url("https://file.nanorocky.top/home/font/zihun64hao-mengquruantangti.ttf") format("truetype");
+  src: url("https://file.nanorocky.top/home/font/zihun64hao-mengquruantangti.ttf")
+    format("truetype");
 }
 
 @font-face {
@@ -239,9 +241,7 @@ a:hover {
     scale: 0.5;
   }
 
-  @media (max-width: 720px),
-  (pointer: coarse),
-  (hover: none) {
+  @media (max-width: 720px), (pointer: coarse), (hover: none) {
     display: none !important;
   }
 }

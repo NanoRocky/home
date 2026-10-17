@@ -25,7 +25,9 @@ export const isMobileDevice = (): boolean => {
   if (typeof window === "undefined") return false;
   return (
     window.innerWidth <= 720 ||
-    Boolean(window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches) ||
+    Boolean(
+      window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches,
+    ) ||
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
   );
 };
@@ -151,7 +153,7 @@ class Cursor {
       () => {
         if (this.cursor) this.cursor.classList.add("hidden");
       },
-      { passive: true }
+      { passive: true },
     );
   }
 
