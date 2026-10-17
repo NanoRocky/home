@@ -10,7 +10,6 @@ export const MAGIC_PREFIX = "6e72";
 /** 第二段暗号 */
 export const MAGIC_MID = "686f";
 
-
 const calcChecksum = (payload: string): string => {
   let hash = 0x811c9dc5;
   for (let i = 0; i < payload.length; i++) {
@@ -20,7 +19,6 @@ const calcChecksum = (payload: string): string => {
   const folded = ((hash >>> 16) ^ (hash & 0xffff)) >>> 0;
   return folded.toString(16).padStart(4, "0");
 };
-
 
 const getRandomHex = (len: number): string => {
   if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
@@ -36,7 +34,6 @@ const getRandomHex = (len: number): string => {
   }
   return s;
 };
-
 
 const getRandomVariantChar = (): string => {
   const chars = ["8", "9", "a", "b"];
@@ -61,9 +58,8 @@ export const generateClientUUID = (): string => {
 
 const VALID_UUID_REGEX = new RegExp(
   `^${MAGIC_PREFIX}[0-9a-f]{4}-${MAGIC_MID}-${PUBLIC_UUID_VERSION}${CLIENT_UUID_SERIAL_VERSION}[0-9a-f]{2}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`,
-  "i"
+  "i",
 );
-
 
 export const isValidClientUUID = (uuid: unknown): boolean => {
   if (typeof uuid !== "string" || uuid.length !== 36) {

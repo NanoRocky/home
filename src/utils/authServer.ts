@@ -20,7 +20,7 @@ const f = () => Math.floor(Date.now() / 1000),
 function gud(): string {
   if (ud) {
     return ud;
-  };
+  }
   try {
     const sre = ms();
     if (sre.clientUUID) {

@@ -1,13 +1,27 @@
 <template>
   <footer id="footer" :class="store.footerBlur ? 'blur' : null">
     <!-- 翻译歌词独立悬浮气泡 -->
-    <Transition name="tr-fade" mode="out-in" @before-enter="onTrBeforeEnter" @after-enter="onTrAfterEnter"
-      @before-leave="onTrBeforeLeave" @after-leave="onTrAfterLeave">
-      <div v-if="
-        store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText
-      " class="translation-lrc" :key="store.playerTrLrcText" @mousedown="handleLrcMouseDown"
-        @touchstart.passive="handleLrcTouchStart" @touchmove.passive="handleLrcTouchMove" @touchend="handleLrcTouchEnd"
-        @touchcancel="handleLrcTouchCancel" @contextmenu="handleContextMenu">
+    <Transition
+      name="tr-fade"
+      mode="out-in"
+      @before-enter="onTrBeforeEnter"
+      @after-enter="onTrAfterEnter"
+      @before-leave="onTrBeforeLeave"
+      @after-leave="onTrAfterLeave"
+    >
+      <div
+        v-if="
+          store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText
+        "
+        class="translation-lrc"
+        :key="store.playerTrLrcText"
+        @mousedown="handleLrcMouseDown"
+        @touchstart.passive="handleLrcTouchStart"
+        @touchmove.passive="handleLrcTouchMove"
+        @touchend="handleLrcTouchEnd"
+        @touchcancel="handleLrcTouchCancel"
+        @contextmenu="handleContextMenu"
+      >
         <span class="tr-text">{{ store.playerTrLrcText }}</span>
       </div>
     </Transition>
@@ -60,23 +74,44 @@
           </span>
         </span>
       </div>
-      <div v-else class="lrc" @dblclick="toggleForceIcon" @mousedown="handleLrcMouseDown"
-        @touchstart.passive="handleLrcTouchStart" @touchmove.passive="handleLrcTouchMove" @touchend="handleLrcTouchEnd"
-        @touchcancel="handleLrcTouchCancel" @contextmenu="handleContextMenu">
+      <div
+        v-else
+        class="lrc"
+        @dblclick="toggleForceIcon"
+        @mousedown="handleLrcMouseDown"
+        @touchstart.passive="handleLrcTouchStart"
+        @touchmove.passive="handleLrcTouchMove"
+        @touchend="handleLrcTouchEnd"
+        @touchcancel="handleLrcTouchCancel"
+        @contextmenu="handleContextMenu"
+      >
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
         <!-- 歌词组件 -->
-        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
-          @before-leave="onBeforeLeave" @before-enter="onBeforeEnter" @after-enter="onAfterEnter">
-          <div class="lrc-all" ref="lrcAllRef"
+        <Transition
+          name="fade"
+          mode="out-in"
+          :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
+          @before-leave="onBeforeLeave"
+          @before-enter="onBeforeEnter"
+          @after-enter="onAfterEnter"
+        >
+          <div
+            class="lrc-all"
+            ref="lrcAllRef"
             :class="{ 'is-overflow': lyricGeo.isOverflow, 'is-centered': !lyricGeo.isOverflow }"
-            :key="lyricTransitionKey">
+            :key="lyricTransitionKey"
+          >
             <!-- 左侧 ICON 组 -->
             <div class="lrc-side-icons left-icons" ref="leftIconsRef">
               <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
               &nbsp;
-              <Icon size="20" style="transform: rotate(-18deg)" class="paws-1"
-                color="var(--footer-music-paw-icon-color)">
+              <Icon
+                size="20"
+                style="transform: rotate(-18deg)"
+                class="paws-1"
+                color="var(--footer-music-paw-icon-color)"
+              >
                 <paw />
               </Icon>
             </div>
@@ -86,9 +121,16 @@
                 <!-- 逐字模块 -->
                 <span v-if="!isLineByLine" class="dwrc-box" ref="dwrcBoxRef">
                   <DwrcDot v-if="store.dwrcDot" ref="dwrcDotRef" />
-                  <span class="dwrc-2 lrc-text" id="dwrc-2-wrap" :data-line="store.playerLrc[0]?.[2]">
-                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
+                  <span
+                    class="dwrc-2 lrc-text"
+                    id="dwrc-2-wrap"
+                    :data-line="store.playerLrc[0]?.[2]"
+                  >
+                    <span
+                      v-for="(i, index) in store.playerLrc"
+                      :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }"
+                      :class="[
                         'dwrc-2-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
@@ -96,12 +138,17 @@
                           : 'fade-in-start',
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                      ]" v-html="i[4]">
+                      ]"
+                      v-html="i[4]"
+                    >
                     </span>
                   </span>
                   <span class="dwrc-1 lrc-text" id="dwrc-1-wrap">
-                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
+                    <span
+                      v-for="(i, index) in store.playerLrc"
+                      :key="`lrc-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }"
+                      :class="[
                         'dwrc-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
@@ -110,19 +157,30 @@
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
                         i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
-                      ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
+                      ]"
+                      :id="`lrc-char-${i[2]}-${i[3]}`"
+                      v-html="i[4]"
+                    >
                     </span>
                   </span>
                 </span>
                 <!-- 逐行模块 -->
-                <span v-else class="lrc-text line-lrc-text lrc-char" ref="lineLrcRef"
-                  v-html="store.getPlayerLrc[0]?.[4]" />
+                <span
+                  v-else
+                  class="lrc-text line-lrc-text lrc-char"
+                  ref="lineLrcRef"
+                  v-html="store.getPlayerLrc[0]?.[4]"
+                />
               </div>
             </div>
             <!-- 右侧 ICON 组 -->
             <div class="lrc-side-icons right-icons" ref="rightIconsRef">
-              <Icon size="20" style="transform: rotate(18deg)" class="paws-2"
-                color="var(--footer-music-paw-icon-color)">
+              <Icon
+                size="20"
+                style="transform: rotate(18deg)"
+                class="paws-2"
+                color="var(--footer-music-paw-icon-color)"
+              >
                 <paw />
               </Icon>
               &nbsp;
@@ -1281,16 +1339,20 @@ onBeforeUnmount(() => {
           height: 100%;
           overflow: hidden;
           position: relative;
-          mask-image: linear-gradient(to right,
-              var(--mask-left-color, black) 0,
-              black var(--mask-left, 0px),
-              black calc(100% - var(--mask-right, 24px)),
-              var(--mask-right-color, transparent) 100%);
-          -webkit-mask-image: linear-gradient(to right,
-              var(--mask-left-color, black) 0,
-              black var(--mask-left, 0px),
-              black calc(100% - var(--mask-right, 24px)),
-              var(--mask-right-color, transparent) 100%);
+          mask-image: linear-gradient(
+            to right,
+            var(--mask-left-color, black) 0,
+            black var(--mask-left, 0px),
+            black calc(100% - var(--mask-right, 24px)),
+            var(--mask-right-color, transparent) 100%
+          );
+          -webkit-mask-image: linear-gradient(
+            to right,
+            var(--mask-left-color, black) 0,
+            black var(--mask-left, 0px),
+            black calc(100% - var(--mask-right, 24px)),
+            var(--mask-right-color, transparent) 100%
+          );
         }
 
         .lrc-scroll-track {
