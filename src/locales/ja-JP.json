@@ -308,6 +308,7 @@
       "lrcNotFound": "猫はこの曲の歌詞を見つけられなかったニャ qwq",
       "autoPlayError": "現在のブラウザのポリシーでは自動再生が許可されていないようです。手動で再生してニャ！",
       "externalLyricLoaded": "猫は他のソースから歌詞を読み込みました。フッターの歌詞をマウス中ボタンでダブルクリックすると破棄できます。",
+      "externalLyricLoadedMobile": "猫は他のソースから歌詞を読み込みました。フッターの歌詞を長押しすると破棄できます。",
       "restoredOriginalLyric": "元の歌詞に戻しました。"
     },
     "weather": {

@@ -69,10 +69,7 @@ export function Speech(
         if (!key) {
           speechapiUrlS = speechapi;
         } else {
-          const speechapiurl = new URL(speechapi);
-          const path = speechapiurl.pathname;
-          const sign = await gasA(path, key);
-          speechapiUrlS = `${speechapi}?sign=${sign}`;
+          speechapiUrlS = await gasA(speechapi, key);
         }
         const response = await fetch(speechapiUrlS, {
           method: "POST",

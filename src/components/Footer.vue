@@ -1,22 +1,13 @@
 <template>
   <footer id="footer" :class="store.footerBlur ? 'blur' : null">
     <!-- 翻译歌词独立悬浮气泡 -->
-    <Transition
-      name="tr-fade"
-      mode="out-in"
-      @before-enter="onTrBeforeEnter"
-      @after-enter="onTrAfterEnter"
-      @before-leave="onTrBeforeLeave"
-      @after-leave="onTrAfterLeave"
-    >
-      <div
-        v-if="
-          store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText
-        "
-        class="translation-lrc"
-        :key="store.playerTrLrcText"
-        @mousedown="handleLrcMiddleClick"
-      >
+    <Transition name="tr-fade" mode="out-in" @before-enter="onTrBeforeEnter" @after-enter="onTrAfterEnter"
+      @before-leave="onTrBeforeLeave" @after-leave="onTrAfterLeave">
+      <div v-if="
+        store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText
+      " class="translation-lrc" :key="store.playerTrLrcText" @mousedown="handleLrcMouseDown"
+        @touchstart.passive="handleLrcTouchStart" @touchmove.passive="handleLrcTouchMove" @touchend="handleLrcTouchEnd"
+        @touchcancel="handleLrcTouchCancel" @contextmenu="handleContextMenu">
         <span class="tr-text">{{ store.playerTrLrcText }}</span>
       </div>
     </Transition>
@@ -69,34 +60,23 @@
           </span>
         </span>
       </div>
-      <div v-else class="lrc" @dblclick="toggleForceIcon" @mousedown="handleLrcMiddleClick">
+      <div v-else class="lrc" @dblclick="toggleForceIcon" @mousedown="handleLrcMouseDown"
+        @touchstart.passive="handleLrcTouchStart" @touchmove.passive="handleLrcTouchMove" @touchend="handleLrcTouchEnd"
+        @touchcancel="handleLrcTouchCancel" @contextmenu="handleContextMenu">
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
         <!-- 歌词组件 -->
-        <Transition
-          name="fade"
-          mode="out-in"
-          :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
-          @before-leave="onBeforeLeave"
-          @before-enter="onBeforeEnter"
-          @after-enter="onAfterEnter"
-        >
-          <div
-            class="lrc-all"
-            ref="lrcAllRef"
+        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
+          @before-leave="onBeforeLeave" @before-enter="onBeforeEnter" @after-enter="onAfterEnter">
+          <div class="lrc-all" ref="lrcAllRef"
             :class="{ 'is-overflow': lyricGeo.isOverflow, 'is-centered': !lyricGeo.isOverflow }"
-            :key="lyricTransitionKey"
-          >
+            :key="lyricTransitionKey">
             <!-- 左侧 ICON 组 -->
             <div class="lrc-side-icons left-icons" ref="leftIconsRef">
               <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
               &nbsp;
-              <Icon
-                size="20"
-                style="transform: rotate(-18deg)"
-                class="paws-1"
-                color="var(--footer-music-paw-icon-color)"
-              >
+              <Icon size="20" style="transform: rotate(-18deg)" class="paws-1"
+                color="var(--footer-music-paw-icon-color)">
                 <paw />
               </Icon>
             </div>
@@ -106,16 +86,9 @@
                 <!-- 逐字模块 -->
                 <span v-if="!isLineByLine" class="dwrc-box" ref="dwrcBoxRef">
                   <DwrcDot v-if="store.dwrcDot" ref="dwrcDotRef" />
-                  <span
-                    class="dwrc-2 lrc-text"
-                    id="dwrc-2-wrap"
-                    :data-line="store.playerLrc[0]?.[2]"
-                  >
-                    <span
-                      v-for="(i, index) in store.playerLrc"
-                      :key="`lrc-over-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }"
-                      :class="[
+                  <span class="dwrc-2 lrc-text" id="dwrc-2-wrap" :data-line="store.playerLrc[0]?.[2]">
+                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
                         'dwrc-2-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
@@ -123,17 +96,12 @@
                           : 'fade-in-start',
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                      ]"
-                      v-html="i[4]"
-                    >
+                      ]" v-html="i[4]">
                     </span>
                   </span>
                   <span class="dwrc-1 lrc-text" id="dwrc-1-wrap">
-                    <span
-                      v-for="(i, index) in store.playerLrc"
-                      :key="`lrc-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }"
-                      :class="[
+                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
                         'dwrc-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
@@ -142,30 +110,19 @@
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
                         i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
-                      ]"
-                      :id="`lrc-char-${i[2]}-${i[3]}`"
-                      v-html="i[4]"
-                    >
+                      ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
                     </span>
                   </span>
                 </span>
                 <!-- 逐行模块 -->
-                <span
-                  v-else
-                  class="lrc-text line-lrc-text lrc-char"
-                  ref="lineLrcRef"
-                  v-html="store.getPlayerLrc[0]?.[4]"
-                />
+                <span v-else class="lrc-text line-lrc-text lrc-char" ref="lineLrcRef"
+                  v-html="store.getPlayerLrc[0]?.[4]" />
               </div>
             </div>
             <!-- 右侧 ICON 组 -->
             <div class="lrc-side-icons right-icons" ref="rightIconsRef">
-              <Icon
-                size="20"
-                style="transform: rotate(18deg)"
-                class="paws-2"
-                color="var(--footer-music-paw-icon-color)"
-              >
+              <Icon size="20" style="transform: rotate(18deg)" class="paws-2"
+                color="var(--footer-music-paw-icon-color)">
                 <paw />
               </Icon>
               &nbsp;
@@ -276,6 +233,17 @@ const toggleForceIcon = () => {
 };
 
 let lastMiddleClickTime = 0;
+let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+let startX = 0;
+let startY = 0;
+let hasTriggeredLongPress = false;
+
+const clearLongPressTimer = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+};
 
 const isExternalLyric = computed(() => {
   if (!store.lyricSource) return false;
@@ -303,17 +271,98 @@ const discardExternalLyric = () => {
   });
 };
 
-const handleLrcMiddleClick = (e: MouseEvent) => {
+const triggerLongPressDiscard = () => {
+  hasTriggeredLongPress = true;
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    try {
+      navigator.vibrate(50);
+    } catch {
+      // 忽略不支持震动
+    }
+  }
+  discardExternalLyric();
+};
+
+const handleLrcMouseDown = (e: MouseEvent) => {
   if (!isExternalLyric.value) return;
-  if (e.button !== 1) return;
-  e.stopPropagation();
-  e.preventDefault();
-  const now = Date.now();
-  if (now - lastMiddleClickTime < 350) {
-    lastMiddleClickTime = 0;
-    discardExternalLyric();
-  } else {
-    lastMiddleClickTime = now;
+  // 鼠标中键双击丢弃
+  if (e.button === 1) {
+    e.stopPropagation();
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastMiddleClickTime < 350) {
+      lastMiddleClickTime = 0;
+      discardExternalLyric();
+    } else {
+      lastMiddleClickTime = now;
+    }
+    return;
+  }
+  // 鼠标左键长按丢弃
+  if (e.button === 0) {
+    hasTriggeredLongPress = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    clearLongPressTimer();
+    longPressTimer = setTimeout(triggerLongPressDiscard, 600);
+    const onMouseMove = (moveEvt: MouseEvent) => {
+      if (Math.abs(moveEvt.clientX - startX) > 10 || Math.abs(moveEvt.clientY - startY) > 10) {
+        clearLongPressTimer();
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+      }
+    };
+    const onMouseUp = () => {
+      clearLongPressTimer();
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  }
+};
+
+const handleLrcTouchStart = (e: TouchEvent) => {
+  if (!isExternalLyric.value) return;
+  if (e.touches.length !== 1) return;
+  hasTriggeredLongPress = false;
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+
+  clearLongPressTimer();
+  longPressTimer = setTimeout(triggerLongPressDiscard, 600);
+};
+
+const handleLrcTouchMove = (e: TouchEvent) => {
+  if (!longPressTimer) return;
+  if (e.touches.length !== 1) {
+    clearLongPressTimer();
+    return;
+  }
+  const moveX = Math.abs(e.touches[0].clientX - startX);
+  const moveY = Math.abs(e.touches[0].clientY - startY);
+  if (moveX > 10 || moveY > 10) {
+    clearLongPressTimer();
+  }
+};
+
+const handleLrcTouchEnd = (e: TouchEvent) => {
+  clearLongPressTimer();
+  if (hasTriggeredLongPress) {
+    if (e.cancelable) e.preventDefault();
+    e.stopPropagation();
+    hasTriggeredLongPress = false;
+  }
+};
+
+const handleLrcTouchCancel = () => {
+  clearLongPressTimer();
+  hasTriggeredLongPress = false;
+};
+
+const handleContextMenu = (e: MouseEvent) => {
+  if (isExternalLyric.value && hasTriggeredLongPress) {
+    e.preventDefault();
   }
 };
 
@@ -748,6 +797,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  clearLongPressTimer();
   if (resizeObserver) {
     resizeObserver.disconnect();
     resizeObserver = null;
@@ -1122,6 +1172,8 @@ onBeforeUnmount(() => {
     text-overflow: ellipsis;
     text-align: center;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
     pointer-events: auto;
     z-index: 10;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -1173,6 +1225,9 @@ onBeforeUnmount(() => {
     justify-content: center;
     z-index: 1;
     justify-content: flex-start;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 
     .lrc-all {
       width: 100%;
@@ -1226,20 +1281,16 @@ onBeforeUnmount(() => {
           height: 100%;
           overflow: hidden;
           position: relative;
-          mask-image: linear-gradient(
-            to right,
-            var(--mask-left-color, black) 0,
-            black var(--mask-left, 0px),
-            black calc(100% - var(--mask-right, 24px)),
-            var(--mask-right-color, transparent) 100%
-          );
-          -webkit-mask-image: linear-gradient(
-            to right,
-            var(--mask-left-color, black) 0,
-            black var(--mask-left, 0px),
-            black calc(100% - var(--mask-right, 24px)),
-            var(--mask-right-color, transparent) 100%
-          );
+          mask-image: linear-gradient(to right,
+              var(--mask-left-color, black) 0,
+              black var(--mask-left, 0px),
+              black calc(100% - var(--mask-right, 24px)),
+              var(--mask-right-color, transparent) 100%);
+          -webkit-mask-image: linear-gradient(to right,
+              var(--mask-left-color, black) 0,
+              black var(--mask-left, 0px),
+              black calc(100% - var(--mask-right, 24px)),
+              var(--mask-right-color, transparent) 100%);
         }
 
         .lrc-scroll-track {

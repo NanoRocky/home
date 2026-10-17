@@ -5,6 +5,7 @@ import App from "@/App.vue";
 import { mainStore } from "@/store";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import { validationPlugin } from "@/store/plugins/validation";
+import { ensureClientUUID } from "@/utils/uuid";
 // 引入 pinia
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
@@ -33,6 +34,7 @@ const mountApp = () => {
   }
   app.mount("#app");
   const store = mainStore();
+  store.clientUUID = ensureClientUUID(store.clientUUID);
   if (import.meta.env.DEV) {
     console.log(i18n.global.t("views.main.devMode"));
     /* 自动启用开发者选项 */

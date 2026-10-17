@@ -308,6 +308,7 @@
       "lrcNotFound": "Cat didn't find the lyrics for this song qwq",
       "autoPlayError": "Current browser policy seems to prevent autoplay, please play manually meow!",
       "externalLyricLoaded": "Cat has loaded lyrics from an alternate source. Double-click with middle mouse button on footer lyrics to discard.",
+      "externalLyricLoadedMobile": "Cat has loaded lyrics from an alternate source. Long-press footer lyrics to discard.",
       "restoredOriginalLyric": "Original lyrics restored."
     },
     "weather": {

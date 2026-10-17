@@ -5,6 +5,7 @@ import { validationPlugin, validationRules } from "@/store/plugins/validation";
 
 export const storeState: MainState = {
   // 这些变量，非有能力的开发者请只操作【开关】项来实现个性化的默认设置，其余变量勿动！
+  clientUUID: "" as string, // 【状态】客户端唯一 UUID
   imgLoadStatus: false, // 【状态】壁纸加载状态
   language: "auto", // 【开关】默认语言设置
   langStatus: null as string | null, // 【状态】当前语言状态
@@ -135,9 +136,10 @@ export const mainStore = defineStore("main", {
       this.playerLrc = value;
     },
     // 更改歌曲数据
-    setPlayerData(title, artist) {
+    setPlayerData(title: string | null, artist: string | null, album: string | null = null) {
       this.playerTitle = title;
       this.playerArtist = artist;
+      this.playerAlbum = album;
     },
     // 更改壁纸加载状态
     setImgLoadStatus(value) {
@@ -188,6 +190,7 @@ export const mainStore = defineStore("main", {
       storage: localStorage,
       pick: [
         // 持久性存储，这里的变量永久存储于浏览器，用于存储用户的自定义设置
+        "clientUUID",
         "coverType",
         "musicVolume",
         "siteStartShow",

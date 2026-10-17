@@ -56,6 +56,7 @@ interface ImportMetaEnv {
   readonly VITE_GD_WEATHER_SKEY: string;
   readonly VITE_METING_SKEY: string;
   readonly VITE_SFILE_SKEY: string;
+  readonly VITE_METING_SKEY_TTL?: string;
 
   readonly VITE_OSITE_URL?: string;
   readonly VITE_SITE_NAME_EN?: string;

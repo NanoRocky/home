@@ -308,6 +308,7 @@
       "lrcNotFound": "猫猫没有找到这首歌的歌词诶qwq",
       "autoPlayError": "当前浏览器策略疑似不允许自动播放，请手动播放喵！",
       "externalLyricLoaded": "猫猫已从其它源加载歌词，可使用鼠标中键双击底部歌词丢弃",
+      "externalLyricLoadedMobile": "猫猫已从其它源加载歌词，可长按底部歌词丢弃",
       "restoredOriginalLyric": "已恢复原歌词"
     },
     "weather": {

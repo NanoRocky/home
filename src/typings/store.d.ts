@@ -88,6 +88,7 @@ export interface MainState {
   noteOpenState: boolean;
   userNotes: NoteItem[];
   notesAvoidFooter: boolean;
+  clientUUID: string;
 }
 
 export interface NoteItem {
