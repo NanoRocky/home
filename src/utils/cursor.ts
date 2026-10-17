@@ -28,7 +28,9 @@ export const isMobileDevice = (): boolean => {
     Boolean(
       window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches,
     ) ||
-    /Android|Phone|Mobile|Windows Phone|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet|Playbook|Silk|Kindle/i.test(navigator.userAgent)
+    /Android|Phone|Mobile|Windows Phone|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet|Playbook|Silk|Kindle/i.test(
+      navigator.userAgent,
+    )
   );
 };
 

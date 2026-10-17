@@ -1,11 +1,22 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
-    <img v-show="store.imgLoadStatus" :src="currentBgUrl"
-      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]" alt="cover"
-      @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
+    <img
+      v-show="store.imgLoadStatus"
+      :src="currentBgUrl"
+      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
+      alt="cover"
+      @load="imgLoadComplete"
+      @error.once="imgLoadError"
+      @animationend="imgAnimationEnd"
+    />
     <!-- 新壁纸层 -->
-    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
+    <img
+      v-if="isTransitioning"
+      :src="nextBgUrl"
+      :class="['bg', 'next', { 'blur-in': isBlurringIn }]"
+      alt="cover"
+    />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -57,7 +68,7 @@ const getNonRepeatingRandom = (maxCount, storageKey) => {
   try {
     const saved = localStorage.getItem(storageKey);
     if (saved) history = JSON.parse(saved);
-  } catch (e) { }
+  } catch (e) {}
   let rand = Math.floor(Math.random() * maxCount + 1);
   let attempts = 0;
   while (history.includes(rand) && attempts < 50) {
@@ -70,7 +81,7 @@ const getNonRepeatingRandom = (maxCount, storageKey) => {
   }
   try {
     localStorage.setItem(storageKey, JSON.stringify(history));
-  } catch (e) { }
+  } catch (e) {}
   return rand;
 };
 
@@ -112,9 +123,10 @@ const detectDevice = () => {
 const getLocalBgUrl = async (deviceType) => {
   // 这里指定了所有自定义背景的文件格式,必须统一。可以自定义修改,比如 webp 或 png 或 avif
   // 酪灰的小批注:这里添加了设备类型识别以加载不同分辨率的壁纸
-  const url = deviceType === "mobile" ?
-    `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.avif`
-    : `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
+  const url =
+    deviceType === "mobile"
+      ? `https://filep.nanorocky.top/home/images/phone/backgroundphone${bgRandomp}.avif`
+      : `https://filep.nanorocky.top/home/images/background${bgRandom}.avif`;
   return key ? await gasC(url, key) : url;
 };
 
@@ -134,9 +146,15 @@ const changeBg = async (type) => {
         const rawUrl = `https://api.nanorocky.top/randfurfriday/?type=${deviceType === "mobile" ? "phone" : "pc"}&tc=1`;
         newBgUrl = key ? await gasA(rawUrl, key) : rawUrl;
       } else if (type == 2) {
-        newBgUrl = deviceType === "mobile" ? `https://furry.axzt.top/?format=file&redirect=0&mod=box` : `https://furry.axzt.top/?format=file&redirect=0&mod=large`;
+        newBgUrl =
+          deviceType === "mobile"
+            ? `https://furry.axzt.top/?format=file&redirect=0&mod=box`
+            : `https://furry.axzt.top/?format=file&redirect=0&mod=large`;
       } else if (type == 3) {
-        newBgUrl = deviceType === "mobile" ? `https://img.moehu.org/pics.php?id=sjpic` : `https://img.moehu.org/pic.php?id=pc`;
+        newBgUrl =
+          deviceType === "mobile"
+            ? `https://img.moehu.org/pics.php?id=sjpic`
+            : `https://img.moehu.org/pic.php?id=pc`;
       } else if (type == 4) {
         newBgUrl = "https://img.moehu.org/pic.php?id=kemonomimi";
       } else if (type == 5) {
