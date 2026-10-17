@@ -5,7 +5,7 @@ minimumReleaseAgeExclude:
   - swiper@14.0.7
   - cssnano-preset-default@8.0.5 || 9.0.4
   - cssnano-utils@6.0.3
-  - cssnano@8.0.5 || 9.0.4
+  - cssnano@8.0.5 || 9.0.4 || 9.9.0
   - postcss-colormin@8.0.3
   - postcss-convert-values@8.0.3
   - postcss-discard-comments@8.0.3
@@ -130,9 +130,10 @@ minimumReleaseAgeExclude:
   - sass-embedded-win32-x64@1.105.2
   - sass-embedded@1.105.2
   - sass@1.105.2
+  - eslint@10.13.0
 
 overrides:
   glob: "^13.0.6"
-  "@jridgewell/sourcemap-codec": "^1.5.5"
-  sourcemap-codec: "npm:@jridgewell/sourcemap-codec@^1.5.5"
-  "source-map@^0.8.0-beta": "0.7.6"
+  "@jridgewell/sourcemap-codec": "^1.6.0"
+  sourcemap-codec: "npm:@jridgewell/sourcemap-codec@^1.6.0"
+  "source-map": "^0.8.0"

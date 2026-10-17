@@ -10,8 +10,8 @@
   "version": "4.4.1.dev [EFU]",
   "type": "module",
   "engines": {
-    "node": ">=24.20.0",
-    "pnpm": ">=12.4.1"
+    "node": ">=24.22.0",
+    "pnpm": ">=12.14.0"
   },
   "scripts": {
     "dev": "vite --host",
@@ -52,8 +52,8 @@
     "@vitejs/plugin-vue": "^6.0.10",
     "@vitejs/plugin-vue-jsx": "^5.1.6",
     "autoprefixer": "^10.6.1",
-    "cssnano": "^9.8.0",
-    "eslint": "^10.12.0",
+    "cssnano": "^9.9.0",
+    "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
     "eslint-plugin-vue": "^10.11.1",
@@ -82,14 +82,14 @@
   },
   "overrides": {
     "glob": "^13.0.6",
-    "@jridgewell/sourcemap-codec": "^1.5.5",
-    "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.5.5",
-    "source-map@^0.8.0-beta": "0.7.6"
+    "@jridgewell/sourcemap-codec": "^^1.6.0",
+    "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^^1.6.0",
+    "source-map": "^0.8.0"
   },
   "resolutions": {
     "glob": "^13.0.6",
-    "@jridgewell/sourcemap-codec": "^1.5.5",
-    "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.5.5",
-    "source-map@^0.8.0-beta": "0.7.6"
+    "@jridgewell/sourcemap-codec": "^1.6.0",
+    "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^^1.6.0",
+    "source-map": "^0.8.0"
   }
 }
