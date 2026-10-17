@@ -1,24 +1,23 @@
 import fetchJsonp from "fetch-jsonp";
-import { gwgt, gwggdt, gwggt } from "@/utils/authServer";
+import { gwgt, gwggdt, gwggt, gasA } from "@/utils/authServer";
 import i18n from "@/locales";
 
 /**
  * JSONP 请求模块
+ * 
+ * 请求 JSONP，并返回 JSON 【关于为什么要有这个呢...请腾讯自觉扫一下（x）】
  */
-// JSONP 请求函数，并返回 JSON 【关于为什么要有这个呢...请腾讯自觉扫一下（x）】
 export const loadJSONP = (url, callbackName) => {
   return new Promise((resolve, reject) => {
-    // 定义 JSONP 回调函数
     (window as any)[callbackName] = (data: any) => {
-      resolve(data); // 解析 JSON 数据
-      delete (window as any)[callbackName]; // 清理全局变量，防止污染
+      resolve(data);
+      delete (window as any)[callbackName];
     };
-    // 创建 script 标签
     const script = document.createElement("script");
     script.src = url;
     script.onerror = () => {
       reject(new Error(i18n.global.t("console.api.jsonpFailed")));
-      delete (window as any)[callbackName]; // 出错时也要清理
+      delete (window as any)[callbackName];
     };
     document.body.appendChild(script);
   });
@@ -29,44 +28,28 @@ export const loadJSONP = (url, callbackName) => {
  */
 
 // 获取音乐播放列表
-export const getPlayerList = async (server, type, id, serverse, idse, playerTrLrc) => {
-  let dataf: any[] = [],
-    data3: any[] = [],
-    data1: any[] = [],
-    data2: any[] = [];
-  if (serverse != null && idse != null) {
+export const getPlayerList = async (server, type, id, serverse, idse, uuid) => {
+  const key = import.meta.env.VITE_METING_SKEY;
+  const fetchSource = async (s: string, i: string, sourceNum: number) => {
     try {
-      const res1 = await fetch(
-        `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
-      );
-      data1 = await res1.json();
+      const baseUrl = `${import.meta.env.VITE_SONG_API}?server=${s}&type=${type}&id=${i}`;
+      const url = key
+        ? await gasA(baseUrl, key)
+        : `${baseUrl}${uuid ? `&uuid=${uuid}` : ""}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      return Array.isArray(json) ? json : [];
     } catch (e) {
-      data1 = [];
-      console.error(i18n.global.t("console.api.musicSource1Failed"), e);
-    }
-    try {
-      const res2 = await fetch(
-        `${import.meta.env.VITE_SONG_API}?server=${serverse}&type=${type}&id=${idse}`,
-      );
-      data2 = await res2.json();
-    } catch (e) {
-      data2 = [];
-      console.error(i18n.global.t("console.api.musicSource2Failed"), e);
-    }
-    dataf = [...(data2 || []), ...(data1 || [])];
-  } else {
-    try {
-      const res1 = await fetch(
-        `${import.meta.env.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
-      );
-      data3 = await res1.json();
-    } catch (e) {
-      data3 = [];
-      console.error(i18n.global.t("console.api.musicSource1Failed"), e);
-    }
-    dataf = [...(data3 || [])];
-  }
-  const data = dataf;
+      console.error(i18n.global.t(`console.api.musicSource${sourceNum}Failed`), e);
+      return [];
+    };
+  };
+  const hasSecondary = serverse != null && idse != null;
+  const [data1, data2] = await Promise.all([
+    fetchSource(server, id, 1),
+    hasSecondary ? fetchSource(serverse, idse, 2) : Promise.resolve([]),
+  ]);
+  const data = hasSecondary ? [...data2, ...data1] : data1;
   if (data.length > 0 && data[0]?.url?.startsWith("@")) {
     const [handle, jsonpCallback, jsonpCallbackFunction, url] = data[0].url.split("@").slice(1);
     const jsonpData = await fetchJsonp(url).then((res) => res.json());

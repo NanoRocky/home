@@ -15,7 +15,8 @@ let x: number | null = null,
   ud: string | null = null;
 const d = (msg: string) => byt(md(ut(msg)));
 const f = () => Math.floor(Date.now() / 1000),
-  o = (v: number) => v.toString(16);
+  o = (v: number) => v.toString(16),
+  c = (q: URLSearchParams) => (q.delete("sig"), q.delete("sign"));
 
 function gud(): string {
   if (ud) {
@@ -51,157 +52,183 @@ async function gst() {
 
 export async function gwp(u: string, s: string, b: Record<string, any>) {
   // 备注：POST 方法需要传入 body ！
-  const { origin: ul, pathname: p } = new URL(u),
+  const ul = new URL(u),
+    p = ul.pathname,
+    q = ul.searchParams,
     ui = gud();
-  if (ui && !b.uuid) {
-    b.uuid = ui;
-  }
-  return `${ul}${p}?sig=${d(
-    `${p}?${Object.keys(b)
-      .sort()
-      .map((key) => `${key}=${JSON.stringify(b[key])}`)
-      .join("&")}${s}`,
-  ).toLowerCase()}`;
+  if (ui) b.uuid = ui;
+  delete b.sig;
+  delete b.sign;
+  c(q);
+  q.set(
+    "sig",
+    d(
+      `${p}?${Object.keys(b)
+        .sort()
+        .map((k) => `${k}=${JSON.stringify(b[k])}`)
+        .join("&")}${s}`,
+    ).toLowerCase(),
+  );
+  return ul.toString();
 }
 
 export async function gwg(u: string, s: string) {
-  const { origin: ul, pathname: p } = new URL(u),
-    q = new URLSearchParams(new URL(u).search),
+  const ul = new URL(u),
+    p = ul.pathname,
+    q = ul.searchParams,
     ui = gud();
   if (ui) q.set("uuid", ui);
+  c(q);
   q.set(
     "sig",
     d(
       `${p}?${[...q.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([key, value]) => `${key}=${value}`)
+        .map(([k, v]) => `${k}=${v}`)
         .join("&")}${s}`,
     ).toLowerCase(),
   );
-  return `${ul}${p}?${q.toString()}`;
+  return ul.toString();
 }
 
 export async function gwgt(u: string, s: string) {
-  const { origin: ul, pathname: p } = new URL(u),
-    q = new URLSearchParams(new URL(u).search),
+  const ul = new URL(u),
+    p = ul.pathname,
+    q = ul.searchParams,
     ui = gud();
   q.set("time", (await gst()).toString());
   if (ui) q.set("uuid", ui);
+  c(q);
   q.set(
     "sig",
     d(
       `${p}?${[...q.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([key, value]) => `${key}=${value}`)
+        .map(([k, v]) => `${k}=${v}`)
         .join("&")}${s}`,
     ).toLowerCase(),
   );
-  return `${ul}${p}?${q.toString()}`;
+  return ul.toString();
 }
 
 export async function gwggd(u: string, s: string) {
   const ul = new URL(u),
-    q = new URLSearchParams(ul.search),
+    q = ul.searchParams,
     ui = gud();
   if (ui) q.set("uuid", ui);
+  c(q);
   q.set(
     "sig",
     d(
       `${[...q.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([key, value]) => `${key}=${value}`)
+        .map(([k, v]) => `${k}=${v}`)
         .join("&")}${s}`,
     ).toLowerCase(),
   );
-  return `${ul.origin}${ul.pathname}?${q.toString()}`;
+  return ul.toString();
 }
 
 export async function gwggdt(u: string, s: string) {
   const ul = new URL(u),
-    q = new URLSearchParams(ul.search),
+    q = ul.searchParams,
     ui = gud();
   q.set("time", (await gst()).toString());
   if (ui) q.set("uuid", ui);
+  c(q);
   q.set(
     "sig",
     d(
       `${[...q.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([key, value]) => `${key}=${value}`)
+        .map(([k, v]) => `${k}=${v}`)
         .join("&")}${s}`,
     ).toLowerCase(),
   );
-  return `${ul.origin}${ul.pathname}?${q.toString()}`;
+  return ul.toString();
 }
 
 export async function gwggt(u: string) {
   const ul = new URL(u),
-    q = new URLSearchParams(ul.search),
+    q = ul.searchParams,
     ui = gud();
   q.set("time", (await gst()).toString());
   if (ui) q.set("uuid", ui);
+  c(q);
   q.set(
     "sig",
     d(
       `${[...q.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
-        .map(([key, value]) => `${key}=${value}`)
+        .map(([k, v]) => `${k}=${v}`)
         .join("&")}`,
     ).toLowerCase(),
   );
-  return `${ul.origin}${ul.pathname}?${q.toString()}`;
+  return ul.toString();
 }
 
 export async function gasA(u: string, s: string) {
   const ul = new URL(u),
     p = ul.pathname,
+    q = ul.searchParams,
     t = await gst(),
     r = Math.random().toString(36).substring(2, 12),
     ui = gud();
-  if (ui) ul.searchParams.set("uuid", ui);
-  ul.searchParams.set("sign", [t, r, "0", d(`${p}-${t}-${r}-0-${s}`)].join("-"));
+  if (ui) q.set("uuid", ui);
+  c(q);
+  q.set("sign", [t, r, "0", d(`${p}-${t}-${r}-0-${s}`)].join("-"));
   return ul.toString();
 }
 
 export async function gasB(u: string, s: string) {
-  const { origin: ul, pathname: p } = new URL(u),
-    q = new URLSearchParams(new URL(u).search),
+  const ul = new URL(u),
+    p = ul.pathname.replace(/^\/?\d{12}\/[0-9a-f]{32}\//i, "").replace(/^\//, ""),
+    q = ul.searchParams,
     ui = gud(),
     t = new Date((await gst()) * 1000 + 8 * 3600 * 1000)
       .toISOString()
       .replace(/[-T:]|(\..*)/g, "")
       .substring(0, 12);
   if (ui) q.set("uuid", ui);
-  return `${ul}/${t}/${d(`${s}${t}/${p.startsWith("/") ? p.slice(1) : p}`)}/${p.startsWith("/") ? p.slice(1) : p}${q.toString() ? `?${q.toString()}` : ""}`;
+  c(q);
+  return `${ul.origin}/${t}/${d(`${s}${t}/${p}`)}/${p}${q.toString() ? `?${q.toString()}` : ""}`;
 }
 
 export async function gasC(u: string, s: string) {
-  const { origin: ul, pathname: p } = new URL(u),
-    q = new URLSearchParams(new URL(u).search),
+  const ul = new URL(u),
+    p = ul.pathname.replace(/^\/?[0-9a-f]{32}\/[0-9a-f]+\//i, "").replace(/^\//, ""),
+    q = ul.searchParams,
     ui = gud(),
     t = o(await gst());
   if (ui) q.set("uuid", ui);
-  return `${ul}/${d(`${s}/${p.startsWith("/") ? p.slice(1) : p}${t}`)}/${t}/${p.startsWith("/") ? p.slice(1) : p}${q.toString() ? `?${q.toString()}` : ""}`;
+  c(q);
+  return `${ul.origin}/${d(`${s}/${p}${t}`)}/${t}/${p}${q.toString() ? `?${q.toString()}` : ""}`;
 }
 
 export async function gasDH(u: string, s: string) {
   const ul = new URL(u),
     p = ul.pathname,
+    q = ul.searchParams,
     t = await gst(),
     ui = gud();
-  if (ui) ul.searchParams.set("uuid", ui);
-  ul.searchParams.set("sign", d(`${s}/${p.startsWith("/") ? p.slice(1) : p}${t}`));
-  ul.searchParams.set("t", t.toString());
+  if (ui) q.set("uuid", ui);
+  c(q);
+  q.set("sign", d(`${s}/${p.startsWith("/") ? p.slice(1) : p}${t}`));
+  q.set("t", t.toString());
   return ul.toString();
 }
 
 export async function gasDI(u: string, s: string) {
   const ul = new URL(u),
     p = ul.pathname,
+    q = ul.searchParams,
     t = o(await gst()),
     ui = gud();
-  if (ui) ul.searchParams.set("uuid", ui);
-  ul.searchParams.set("sign", d(`${s}/${p.startsWith("/") ? p.slice(1) : p}${t}`));
-  ul.searchParams.set("t", t.toString());
+  if (ui) q.set("uuid", ui);
+  c(q);
+  q.set("sign", d(`${s}/${p.startsWith("/") ? p.slice(1) : p}${t}`));
+  q.set("t", t.toString());
   return ul.toString();
 }
+
+

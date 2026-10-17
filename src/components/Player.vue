@@ -1,28 +1,9 @@
 <template>
-  <APlayer
-    v-if="playList[0]"
-    ref="player"
-    :audio="playList"
-    :autoplay="store.playerAutoplay"
-    :theme="theme"
-    :autoSwitch="false"
-    :loop="store.playerLoop"
-    :order="store.playerOrder"
-    :volume="volume"
-    :showLrc="true"
-    :preload="playerPreload"
-    :listFolded="listFolded"
-    :listMaxHeight="listMaxHeight"
-    :noticeSwitch="false"
-    @play="onPlay"
-    @pause="onPause"
-    @Loadstart="onLoadStart"
-    @timeupdate="onTimeUp"
-    @error="loadMusicError"
-    @canplay="onCanplay"
-    @waiting="onWaiting"
-    @seeked="updatePositionState"
-  />
+  <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
+    :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
+    :preload="playerPreload" :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false"
+    @play="onPlay" @pause="onPause" @Loadstart="onLoadStart" @timeupdate="onTimeUp" @error="loadMusicError"
+    @canplay="onCanplay" @waiting="onWaiting" @seeked="updatePositionState" />
 </template>
 
 <script setup lang="ts">
@@ -106,7 +87,7 @@ const signAudioUrl = async (rawUrl?: string): Promise<string | null> => {
         if (urlObj.origin !== songApiOrigin) {
           return null;
         }
-      } catch {}
+      } catch { }
     }
     return await gasA(rawUrl, skey);
   } catch (error) {
@@ -260,7 +241,7 @@ onMounted(() => {
         props.songId,
         props.songServerSE,
         props.songIdSE,
-        store.playerTrLrc,
+        store.clientUUID
       ).then(async (res) => {
         // 更改播放器加载状态
         store.musicIsOk = true;
@@ -289,7 +270,7 @@ onMounted(() => {
                   }
                   originalSetAudio.call(this, audioItem);
                   if (this.audioStatus?.playStatus) {
-                    this.audioRef?.play()?.catch(() => {});
+                    this.audioRef?.play()?.catch(() => { });
                   }
                 };
               }
@@ -375,7 +356,7 @@ onMounted(() => {
                 seektime(details.seekTime);
               }
             });
-          } catch {}
+          } catch { }
         }
         console.log(t("console.player.musicLoaded"));
       });
@@ -437,11 +418,11 @@ const onPlay = () => {
         album: currentTrack.album || store.getPlayerData.album || "",
         artwork: currentTrack.cover
           ? [
-              {
-                src: currentTrack.cover,
-                sizes: "512x512",
-              },
-            ]
+            {
+              src: currentTrack.cover,
+              sizes: "512x512",
+            },
+          ]
           : [],
       });
       navigator.mediaSession.playbackState = "playing";
@@ -455,10 +436,10 @@ const onPlay = () => {
         const vstyle = import.meta.env.VITE_TTS_Style;
         Speech(
           t("components.music.playing") +
-            store.getPlayerData.artist +
-            t("components.music.ofSong") +
-            store.getPlayerData.name +
-            "》。",
+          store.getPlayerData.artist +
+          t("components.music.ofSong") +
+          store.getPlayerData.name +
+          "》。",
           voice,
           vstyle,
         );
@@ -580,8 +561,8 @@ const loadMusicError = () => {
   });
   console.error(
     t("components.music.songErrorLog") +
-      player.value!.aplayer.audio[player.value!.aplayer.index].name +
-      t("components.music.songErrorPostfix"),
+    player.value!.aplayer.audio[player.value!.aplayer.index].name +
+    t("components.music.songErrorPostfix"),
   );
 };
 
@@ -651,13 +632,13 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
   if (store.playerDWRCATDB) {
     const songUrlInfUrl = store.playerDWRCATDBF
       ? {
-          netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-          tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-        }
+        netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      }
       : {
-          netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-          tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-        };
+        netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      };
     if (!songServer || !["netease", "tencent"].includes(songServer)) {
       return;
     }
@@ -1085,18 +1066,14 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         text-align: left;
         margin: 7px 0 6px 6px;
         height: 44px;
-        -webkit-mask: linear-gradient(
-          #fff 15%,
-          #fff 85%,
-          hsla(0deg, 0%, 100%, 0.6) 90%,
-          hsla(0deg, 0%, 100%, 0)
-        );
-        mask: linear-gradient(
-          #fff 15%,
-          #fff 85%,
-          hsla(0deg, 0%, 100%, 0.6) 90%,
-          hsla(0deg, 0%, 100%, 0)
-        );
+        -webkit-mask: linear-gradient(#fff 15%,
+            #fff 85%,
+            hsla(0deg, 0%, 100%, 0.6) 90%,
+            hsla(0deg, 0%, 100%, 0));
+        mask: linear-gradient(#fff 15%,
+            #fff 85%,
+            hsla(0deg, 0%, 100%, 0.6) 90%,
+            hsla(0deg, 0%, 100%, 0));
 
         &::before,
         &::after {
