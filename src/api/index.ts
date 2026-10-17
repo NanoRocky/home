@@ -4,7 +4,7 @@ import i18n from "@/locales";
 
 /**
  * JSONP 请求模块
- * 
+ *
  * 请求 JSONP，并返回 JSON 【关于为什么要有这个呢...请腾讯自觉扫一下（x）】
  */
 export const loadJSONP = (url, callbackName) => {
@@ -33,16 +33,14 @@ export const getPlayerList = async (server, type, id, serverse, idse, uuid) => {
   const fetchSource = async (s: string, i: string, sourceNum: number) => {
     try {
       const baseUrl = `${import.meta.env.VITE_SONG_API}?server=${s}&type=${type}&id=${i}`;
-      const url = key
-        ? await gasA(baseUrl, key)
-        : `${baseUrl}${uuid ? `&uuid=${uuid}` : ""}`;
+      const url = key ? await gasA(baseUrl, key) : `${baseUrl}${uuid ? `&uuid=${uuid}` : ""}`;
       const res = await fetch(url);
       const json = await res.json();
       return Array.isArray(json) ? json : [];
     } catch (e) {
       console.error(i18n.global.t(`console.api.musicSource${sourceNum}Failed`), e);
       return [];
-    };
+    }
   };
   const hasSecondary = serverse != null && idse != null;
   const [data1, data2] = await Promise.all([

@@ -230,5 +230,3 @@ export async function gasDI(u: string, s: string) {
   q.set("t", t.toString());
   return ul.toString();
 }
-
-
