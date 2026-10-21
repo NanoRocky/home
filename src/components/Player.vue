@@ -1,28 +1,10 @@
 <template>
-  <APlayer
-    v-if="playList[0]"
-    ref="player"
-    :audio="playList"
-    :autoplay="store.playerAutoplay"
-    :theme="theme"
-    :autoSwitch="false"
-    :loop="store.playerLoop"
-    :order="store.playerOrder"
-    :volume="volume"
-    :showLrc="true"
-    :preload="playerPreload"
-    :listFolded="listFolded"
-    :listMaxHeight="listMaxHeight"
-    :noticeSwitch="false"
-    @play="onPlay"
-    @pause="onPause"
-    @Loadstart="onLoadStart"
-    @timeupdate="onTimeUp"
-    @error="loadMusicError"
-    @canplay="onCanplay"
-    @waiting="onWaiting"
-    @seeked="updatePositionState"
-  />
+  <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
+    :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :showLrc="true"
+    :preload="playerPreload" :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false"
+    @play="onPlay" @pause="onPause" @Loadstart="onLoadStart" @timeupdate="onTimeUp" @error="loadMusicError"
+    @canplay="onCanplay" @waiting="onWaiting" @seeked="() => updatePositionState()"
+    @durationchange="() => updatePositionState()" @loadedmetadata="() => updatePositionState()" />
 </template>
 
 <script setup lang="ts">
@@ -50,6 +32,7 @@ let lastTimestamp = Date.now();
 let nowLineStart: number = -1;
 let nowLineIndex = ref(-1);
 let lastMediaSessionSongKey = "";
+let lastReportedDuration = 0;
 
 const playerPreload = computed(() => (import.meta.env.VITE_METING_SKEY ? "none" : "metadata"));
 type DWRCItem = [number, number, Array<[[number, number], string, number, number]>];
@@ -106,7 +89,7 @@ const signAudioUrl = async (rawUrl?: string): Promise<string | null> => {
         if (urlObj.origin !== songApiOrigin) {
           return null;
         }
-      } catch {}
+      } catch { }
     }
     return await gasA(rawUrl, skey);
   } catch (error) {
@@ -289,7 +272,7 @@ onMounted(() => {
                   }
                   originalSetAudio.call(this, audioItem);
                   if (this.audioStatus?.playStatus) {
-                    this.audioRef?.play()?.catch(() => {});
+                    this.audioRef?.play()?.catch(() => { });
                   }
                 };
               }
@@ -363,11 +346,11 @@ onMounted(() => {
           navigator.mediaSession.setActionHandler("previoustrack", () => {
             changeSong(0);
           });
-          navigator.mediaSession.setActionHandler("seekbackward", () => {
-            seekbackward(5);
+          navigator.mediaSession.setActionHandler("seekbackward", (details) => {
+            seekbackward(details?.seekOffset || 5);
           });
-          navigator.mediaSession.setActionHandler("seekforward", () => {
-            seekforward(5);
+          navigator.mediaSession.setActionHandler("seekforward", (details) => {
+            seekforward(details?.seekOffset || 5);
           });
           try {
             navigator.mediaSession.setActionHandler("seekto", (details) => {
@@ -375,7 +358,7 @@ onMounted(() => {
                 seektime(details.seekTime);
               }
             });
-          } catch {}
+          } catch { }
         }
         console.log(t("console.player.musicLoaded"));
       });
@@ -437,11 +420,11 @@ const onPlay = () => {
         album: currentTrack.album || store.getPlayerData.album || "",
         artwork: currentTrack.cover
           ? [
-              {
-                src: currentTrack.cover,
-                sizes: "512x512",
-              },
-            ]
+            {
+              src: currentTrack.cover,
+              sizes: "512x512",
+            },
+          ]
           : [],
       });
       navigator.mediaSession.playbackState = "playing";
@@ -455,10 +438,10 @@ const onPlay = () => {
         const vstyle = import.meta.env.VITE_TTS_Style;
         Speech(
           t("components.music.playing") +
-            store.getPlayerData.artist +
-            t("components.music.ofSong") +
-            store.getPlayerData.name +
-            "》。",
+          store.getPlayerData.artist +
+          t("components.music.ofSong") +
+          store.getPlayerData.name +
+          "》。",
           voice,
           vstyle,
         );
@@ -523,28 +506,41 @@ const toggleList = () => {
 // 跳转
 const seektime = (value: number) => {
   if (!player.value) return;
-  const dur = player.value.audioStatus?.duration || 0;
-  if (dur > 0 && value > dur) {
+  const dur =
+    player.value.audioRef && !isNaN(player.value.audioRef.duration) && isFinite(player.value.audioRef.duration) && player.value.audioRef.duration > 0
+      ? player.value.audioRef.duration
+      : (player.value.audioStatus?.duration || store.playerDuration || 0);
+
+  if (dur > 0 && value >= dur) {
     changeSong(1);
-  } else if (value < 0) {
-    player.value.aplayer.seek(0);
-  } else {
-    player.value.aplayer.seek(value);
+    return;
   }
-  updatePositionState();
+  const targetTime = Math.max(0, dur > 0 ? Math.min(value, dur) : Math.max(0, value));
+
+  if (typeof (player.value as any).seek === "function") {
+    (player.value as any).seek(targetTime);
+  }
+  if (player.value.audioRef) {
+    player.value.audioRef.currentTime = targetTime;
+  }
+  if (player.value.audioStatus) {
+    player.value.audioStatus.playedTime = targetTime;
+  }
+  store.playerCurrentTime = targetTime;
+  updatePositionState(targetTime);
 };
 
 // 快退
 const seekbackward = (value: number = 5) => {
   if (!player.value) return;
-  const currentTime = player.value.audioStatus?.playedTime || 0;
+  const currentTime = player.value.audioRef?.currentTime || player.value.audioStatus?.playedTime || 0;
   seektime(currentTime - value);
 };
 
 // 快进
 const seekforward = (value: number = 5) => {
   if (!player.value) return;
-  const currentTime = player.value.audioStatus?.playedTime || 0;
+  const currentTime = player.value.audioRef?.currentTime || player.value.audioStatus?.playedTime || 0;
   seektime(currentTime + value);
 };
 
@@ -580,8 +576,8 @@ const loadMusicError = () => {
   });
   console.error(
     t("components.music.songErrorLog") +
-      player.value!.aplayer.audio[player.value!.aplayer.index].name +
-      t("components.music.songErrorPostfix"),
+    player.value!.aplayer.audio[player.value!.aplayer.index].name +
+    t("components.music.songErrorPostfix"),
   );
 };
 
@@ -651,13 +647,13 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number) => {
   if (store.playerDWRCATDB) {
     const songUrlInfUrl = store.playerDWRCATDBF
       ? {
-          netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-          tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-        }
+        netease: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://ghfast.top/https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      }
       : {
-          netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
-          tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
-        };
+        netease: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/ncm-lyrics/${songId}.yrc`,
+        tencent: `https://raw.githubusercontent.com/amll-dev/amll-ttml-db/main/qq-lyrics/${songId}.qrc`,
+      };
     if (!songServer || !["netease", "tencent"].includes(songServer)) {
       return;
     }
@@ -892,13 +888,21 @@ const onTimeUp = () => {
     nowLineIndex.value = -1;
   }
   store.playerCurrentTime = newTime;
-  store.playerDuration = player.value.audioStatus.duration;
+  const dur =
+    player.value.audioRef && !isNaN(player.value.audioRef.duration) && isFinite(player.value.audioRef.duration) && player.value.audioRef.duration > 0
+      ? player.value.audioRef.duration
+      : player.value.audioStatus.duration;
+  store.playerDuration = dur;
   if (showDWRCRunning == 0 && player.value != null && player.value.aplayer != null) {
     requestAnimationFrame(syncDWRCLrc);
   }
+  if (dur && dur > 0 && Math.abs(dur - lastReportedDuration) > 0.5) {
+    lastReportedDuration = dur;
+    updatePositionState();
+  }
 };
 
-function updatePositionState() {
+function updatePositionState(overridePos?: number) {
   if (
     !("mediaSession" in navigator) ||
     !("setPositionState" in navigator.mediaSession) ||
@@ -906,14 +910,24 @@ function updatePositionState() {
   ) {
     return;
   }
-  const dur = player.value.audioStatus?.duration;
-  const pos = player.value.audioStatus?.playedTime;
+  const dur =
+    player.value.audioRef && !isNaN(player.value.audioRef.duration) && isFinite(player.value.audioRef.duration) && player.value.audioRef.duration > 0
+      ? player.value.audioRef.duration
+      : (player.value.audioStatus?.duration || store.playerDuration || 0);
+
+  const pos =
+    overridePos !== undefined
+      ? overridePos
+      : player.value.audioRef && !isNaN(player.value.audioRef.currentTime) && isFinite(player.value.audioRef.currentTime)
+        ? player.value.audioRef.currentTime
+        : (player.value.audioStatus?.playedTime || 0);
+
   if (typeof dur === "number" && !isNaN(dur) && isFinite(dur) && dur > 0) {
     try {
       navigator.mediaSession.setPositionState({
         duration: dur,
         playbackRate: player.value.audioRef?.playbackRate || 1,
-        position: Math.min(Math.max(pos || 0, 0), dur),
+        position: Math.min(Math.max(pos, 0), dur),
       });
     } catch {
       // 忽略边缘情况下浏览器的校验报错
@@ -1085,18 +1099,14 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         text-align: left;
         margin: 7px 0 6px 6px;
         height: 44px;
-        -webkit-mask: linear-gradient(
-          #fff 15%,
-          #fff 85%,
-          hsla(0deg, 0%, 100%, 0.6) 90%,
-          hsla(0deg, 0%, 100%, 0)
-        );
-        mask: linear-gradient(
-          #fff 15%,
-          #fff 85%,
-          hsla(0deg, 0%, 100%, 0.6) 90%,
-          hsla(0deg, 0%, 100%, 0)
-        );
+        -webkit-mask: linear-gradient(#fff 15%,
+            #fff 85%,
+            hsla(0deg, 0%, 100%, 0.6) 90%,
+            hsla(0deg, 0%, 100%, 0));
+        mask: linear-gradient(#fff 15%,
+            #fff 85%,
+            hsla(0deg, 0%, 100%, 0.6) 90%,
+            hsla(0deg, 0%, 100%, 0));
 
         &::before,
         &::after {
