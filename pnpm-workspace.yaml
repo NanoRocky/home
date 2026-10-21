@@ -80,6 +80,27 @@ minimumReleaseAgeExclude:
   - postcss-lab-function@8.0.11
   - postcss-preset-env@11.5.2
   - javascript-obfuscator@5.7.0
+  - sass-embedded-all-unknown@1.106.0
+  - sass-embedded-android-arm64@1.106.0
+  - sass-embedded-android-arm@1.106.0
+  - sass-embedded-android-riscv64@1.106.0
+  - sass-embedded-android-x64@1.106.0
+  - sass-embedded-darwin-arm64@1.106.0
+  - sass-embedded-darwin-x64@1.106.0
+  - sass-embedded-linux-arm64@1.106.0
+  - sass-embedded-linux-arm@1.106.0
+  - sass-embedded-linux-musl-arm64@1.106.0
+  - sass-embedded-linux-musl-arm@1.106.0
+  - sass-embedded-linux-musl-riscv64@1.106.0
+  - sass-embedded-linux-musl-x64@1.106.0
+  - sass-embedded-linux-riscv64@1.106.0
+  - sass-embedded-linux-x64@1.106.0
+  - sass-embedded-unknown-all@1.106.0
+  - sass-embedded-win32-arm64@1.106.0
+  - sass-embedded-win32-x64@1.106.0
+  - sass-embedded@1.106.0
+  - sass@1.106.0
+  - vite@8.3.5
 
 overrides:
   glob: "^13.0.6"
