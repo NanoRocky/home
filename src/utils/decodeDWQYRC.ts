@@ -1,16 +1,29 @@
 import { removeLyricMetadata } from "@/utils/removeLyricMetadata";
 import i18n from "@/locales";
+import type { WordItem, LineItem, SongMeta } from "@/typings/player";
 
 /**
  * Decode QRC or YRC to text
  * Made by Pizero & NanoRocky
- * @param {string} i - yrc or qrc input
- * @returns {[number, number, [[number, number], string, number, number][]][]}
+ *
+ * @param {string} i - 原始 YRC 或 QRC 逐字歌词文本
+ * @param {boolean} [rmmd=false] - 是否剔除歌词元数据
+ * @param {SongMeta} [songMeta] - 当前歌曲信息（用于匹配歌手/歌名）
+ * @returns {Promise<LineItem[]>} 逐字歌词行数组 LineItem[]：
+ *   - LineItem: `[start: number, duration: number, stack: WordItem[]]`
+ *   - WordItem: `[position: [start: number, duration: number], text: string, lineIndex: number, wordIndex: number]`
  */
-export async function decodeDWQYRC(i: string, rmmd: boolean = false): Promise<LineItem[]> {
+export async function decodeDWQYRC(
+  i: string,
+  rmmd: boolean = false,
+  songMeta?: SongMeta,
+): Promise<LineItem[]> {
   try {
-    if (rmmd) i = await removeLyricMetadata(i);
+    if (rmmd) i = await removeLyricMetadata(i, false, songMeta);
     const lines = i
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
+      .replace(/([^\n\[\]])\s*(\[\d+,\s*\d+\])/g, "$1\n$2")
       .trim()
       .split("\n")
       .filter((line) => !/^\[ch:\d+\]/.test(line.trim()));
@@ -20,7 +33,7 @@ export async function decodeDWQYRC(i: string, rmmd: boolean = false): Promise<Li
       if (/^\[[a-z]+:.+\]$/i.test(rawLine)) continue;
       if (/^\[[a-z]+:.*?\]$/i.test(rawLine)) continue;
       if (/^\[[a-z]\]$/i.test(rawLine)) continue;
-      const match = rawLine.match(/^\[(\d+),(\d+)\](.*)$/);
+      const match = rawLine.match(/^\[(\d+),\s*(\d+)\](.*)$/);
       if (!match) continue;
       const start = parseInt(match[1]);
       const duration = parseInt(match[2]);
@@ -36,7 +49,7 @@ export async function decodeDWQYRC(i: string, rmmd: boolean = false): Promise<Li
           const textPart = parts[i + 1];
           const timeMatch = timePart.match(/^\((\d+),(\d+)(?:,\d+)?\)$/);
           if (timeMatch && textPart) {
-            const word = textPart.replace(" ", "&nbsp;");
+            const word = textPart.replace(/ /g, "\u00A0");
             stack.push([
               [parseInt(timeMatch[1]), parseInt(timeMatch[2])],
               word,
@@ -52,7 +65,7 @@ export async function decodeDWQYRC(i: string, rmmd: boolean = false): Promise<Li
           const timePart = parts[i + 1];
           const timeMatch = timePart.match(/^\((\d+),(\d+)(?:,\d+)?\)$/);
           if (timeMatch && textPart) {
-            const word = textPart.replace(" ", "&nbsp;");
+            const word = textPart.replace(/ /g, "\u00A0");
             stack.push([
               [parseInt(timeMatch[1]), parseInt(timeMatch[2])],
               word,
@@ -76,6 +89,4 @@ export async function decodeDWQYRC(i: string, rmmd: boolean = false): Promise<Li
   }
 }
 
-type WordItem = [position: [number, number], text: string, lineIndex: number, wordIndex: number];
-
-type LineItem = [start: number, duration: number, stack: WordItem[]];
+export type { WordItem, LineItem };

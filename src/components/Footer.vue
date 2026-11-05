@@ -1,27 +1,13 @@
 <template>
   <footer id="footer" :class="store.footerBlur ? 'blur' : null">
     <!-- 翻译歌词独立悬浮气泡 -->
-    <Transition
-      name="tr-fade"
-      mode="out-in"
-      @before-enter="onTrBeforeEnter"
-      @after-enter="onTrAfterEnter"
-      @before-leave="onTrBeforeLeave"
-      @after-leave="onTrAfterLeave"
-    >
-      <div
-        v-if="
-          store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText
-        "
-        class="translation-lrc"
-        :key="store.playerTrLrcText"
-        @mousedown="handleLrcMouseDown"
-        @touchstart.passive="handleLrcTouchStart"
-        @touchmove.passive="handleLrcTouchMove"
-        @touchend="handleLrcTouchEnd"
-        @touchcancel="handleLrcTouchCancel"
-        @contextmenu="handleContextMenu"
-      >
+    <Transition name="tr-fade" mode="out-in" @before-enter="onTrBeforeEnter" @after-enter="onTrAfterEnter"
+      @before-leave="onTrBeforeLeave" @after-leave="onTrAfterLeave">
+      <div v-if="
+        store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText
+      " class="translation-lrc" :key="store.playerTrLrcText" @mousedown="handleLrcMouseDown"
+        @touchstart.passive="handleLrcTouchStart" @touchmove.passive="handleLrcTouchMove" @touchend="handleLrcTouchEnd"
+        @touchcancel="handleLrcTouchCancel" @contextmenu="handleContextMenu">
         <span class="tr-text">{{ store.playerTrLrcText }}</span>
       </div>
     </Transition>
@@ -74,63 +60,36 @@
           </span>
         </span>
       </div>
-      <div
-        v-else
-        class="lrc"
-        @dblclick="toggleForceIcon"
-        @mousedown="handleLrcMouseDown"
-        @touchstart.passive="handleLrcTouchStart"
-        @touchmove.passive="handleLrcTouchMove"
-        @touchend="handleLrcTouchEnd"
-        @touchcancel="handleLrcTouchCancel"
-        @contextmenu="handleContextMenu"
-      >
+      <div v-else class="lrc" @dblclick="toggleForceIcon" @touchstart.passive="handleLrcTouchStart"
+        @touchmove.passive="handleLrcTouchMove" @touchend="handleLrcTouchEnd" @touchcancel="handleLrcTouchCancel"
+        @contextmenu="handleContextMenu">
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
         <!-- 歌词组件 -->
-        <Transition
-          name="fade"
-          mode="out-in"
-          :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
-          @before-leave="onBeforeLeave"
-          @before-enter="onBeforeEnter"
-          @after-enter="onAfterEnter"
-        >
-          <div
-            class="lrc-all"
-            ref="lrcAllRef"
+        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
+          @before-leave="onBeforeLeave" @before-enter="onBeforeEnter" @after-enter="onAfterEnter">
+          <div class="lrc-all" ref="lrcAllRef"
             :class="{ 'is-overflow': lyricGeo.isOverflow, 'is-centered': !lyricGeo.isOverflow }"
-            :key="lyricTransitionKey"
-          >
+            :key="lyricTransitionKey">
             <!-- 左侧 ICON 组 -->
             <div class="lrc-side-icons left-icons" ref="leftIconsRef">
               <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
               &nbsp;
-              <Icon
-                size="20"
-                style="transform: rotate(-18deg)"
-                class="paws-1"
-                color="var(--footer-music-paw-icon-color)"
-              >
+              <Icon size="20" style="transform: rotate(-18deg)" class="paws-1"
+                color="var(--footer-music-paw-icon-color)">
                 <paw />
               </Icon>
             </div>
             <!-- 中间歌词视口区域 -->
-            <div class="lrc-viewport" ref="lrcViewportRef">
+            <div class="lrc-viewport" ref="lrcViewportRef" @mousedown="handleLrcMouseDown">
               <div class="lrc-scroll-track" ref="lrcTrackRef">
                 <!-- 逐字模块 -->
                 <span v-if="!isLineByLine" class="dwrc-box" ref="dwrcBoxRef">
-                  <DwrcDot v-if="store.dwrcDot" ref="dwrcDotRef" />
-                  <span
-                    class="dwrc-2 lrc-text"
-                    id="dwrc-2-wrap"
-                    :data-line="store.playerLrc[0]?.[2]"
-                  >
-                    <span
-                      v-for="(i, index) in store.playerLrc"
-                      :key="`lrc-over-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }"
-                      :class="[
+                  <DwrcDot v-if="store.dwrcDot && store.playerDWRCShowPro" ref="dwrcDotRef" />
+                  <span v-if="store.playerDWRCShowPro" class="dwrc-2 lrc-text" id="dwrc-2-wrap"
+                    :data-line="store.playerLrc[0]?.[2]">
+                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
                         'dwrc-2-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
@@ -138,17 +97,11 @@
                           : 'fade-in-start',
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                      ]"
-                      v-html="i[4]"
-                    >
-                    </span>
+                      ]">{{ i[4] }}</span>
                   </span>
-                  <span class="dwrc-1 lrc-text" id="dwrc-1-wrap">
-                    <span
-                      v-for="(i, index) in store.playerLrc"
-                      :key="`lrc-char-${i[2]}-${i[3]}`"
-                      :style="{ '--char-duration': i[5] + 'ms' }"
-                      :class="[
+                  <span class="dwrc-1 lrc-text" id="dwrc-1-wrap" :data-line="store.playerLrc[0]?.[2]">
+                    <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }" :class="[
                         'dwrc-char',
                         i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
@@ -157,30 +110,18 @@
                         i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
                         i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
                         i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
-                      ]"
-                      :id="`lrc-char-${i[2]}-${i[3]}`"
-                      v-html="i[4]"
-                    >
-                    </span>
+                      ]" :id="`lrc-char-${i[2]}-${i[3]}`">{{ i[4] }}</span>
                   </span>
                 </span>
                 <!-- 逐行模块 -->
-                <span
-                  v-else
-                  class="lrc-text line-lrc-text lrc-char"
-                  ref="lineLrcRef"
-                  v-html="store.getPlayerLrc[0]?.[4]"
-                />
+                <span v-else class="lrc-text line-lrc-text lrc-char" ref="lineLrcRef">{{ store.getPlayerLrc[0]?.[4]
+                }}</span>
               </div>
             </div>
             <!-- 右侧 ICON 组 -->
             <div class="lrc-side-icons right-icons" ref="rightIconsRef">
-              <Icon
-                size="20"
-                style="transform: rotate(18deg)"
-                class="paws-2"
-                color="var(--footer-music-paw-icon-color)"
-              >
+              <Icon size="20" style="transform: rotate(18deg)" class="paws-2"
+                color="var(--footer-music-paw-icon-color)">
                 <paw />
               </Icon>
               &nbsp;
@@ -194,15 +135,16 @@
 </template>
 
 <script setup lang="ts">
+import config from "@/../package.json";
 import DwrcDot from "@/components/DwrcDot.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { MusicOne } from "@icon-park/vue-next";
 import { Icon } from "@vicons/utils";
 import Paw from "@vicons/ionicons5/es/Paw.js";
 import { mainStore } from "@/store";
-import config from "@/../package.json";
 import { onPilferDiscard } from "@/utils/translationLyric";
+import type { DwrcItem, DwrcTimelinePoint, DwrcLineCache } from "@/typings/player";
 import {
   ref,
   reactive,
@@ -225,11 +167,44 @@ const lrcViewportRef = ref<HTMLElement | null>(null);
 const lrcTrackRef = ref<HTMLElement | null>(null);
 const dwrcBoxRef = ref<HTMLElement | null>(null);
 const lineLrcRef = ref<HTMLElement | null>(null);
-
+const PADDING_LEFT = 8; // 开始左间距
+const PADDING_RIGHT = 8; // 结束右间距
+const MASK_MAX_WIDTH = 24; // 遮罩渐隐最大宽度
+const SCROLL_LERP = 0.15; // 阻尼平滑系数
 const fullYear = new Date().getFullYear();
-const audio = ref(null);
-const icon = ref(null);
 const { locale, t } = useI18n();
+const siteIcp = ref(import.meta.env.VITE_SITE_ICP);
+const siteMps = ref(import.meta.env.VITE_SITE_MPS);
+const siteMICP = ref(import.meta.env.VITE_SITE_MICP);
+const isExternalLyric = computed(() => store.isExternalLyric);
+
+let lastMiddleClickTime = 0;
+let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+let startX = 0;
+let startY = 0;
+let hasTriggeredLongPress = false;
+let activeMouseCleanup: (() => void) | null = null;
+let currentScrollX = 0;
+let lastAppliedScrollX = Number.NaN;
+let lastTrackEl: HTMLElement | null = null;
+let lastDotEl: HTMLElement | null = null;
+let lastDotVisible: boolean | null = null;
+let lastDotX = Number.NaN;
+let lastMaskLeft = -1;
+let lastMaskRight = -1;
+let lastMaskLeftColor = "";
+let lastMaskRightColor = "";
+let isTransitioning = false;
+let transitionTimer: any = null;
+let isComponentMounted = true;
+let cachedAudioEl: HTMLAudioElement | null = null;
+let dwrcLineCache: DwrcLineCache | null = null;
+let isTrLrcMounted = false;
+let resizeObserver: ResizeObserver | null = null;
+let dprMediaQuery: MediaQueryList | null = null;
+let dprChangeHandler: (() => void) | null = null;
+let lastLineIndex: any = null;
+let dwrcRAFId: number | null = null;
 
 // 加载配置数据
 // const siteStartDate = ref(import.meta.env.VITE_SITE_START);
@@ -241,9 +216,7 @@ const startYear = ref<number | null>(
 const ShowStartYear = computed(() => {
   return startYear.value !== null && startYear.value < fullYear;
 });
-const siteIcp = ref(import.meta.env.VITE_SITE_ICP);
-const siteMps = ref(import.meta.env.VITE_SITE_MPS);
-const siteMICP = ref(import.meta.env.VITE_SITE_MICP);
+
 const siteAuthor = computed(() => {
   if (locale.value !== "zh-CN" && import.meta.env.VITE_SITE_AUTHOR_EN) {
     return import.meta.env.VITE_SITE_AUTHOR_EN;
@@ -276,25 +249,15 @@ const toggleForceIcon = () => {
   if (store.forceShowBarIcon) {
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("启用进度图标常驻.mp3");
     }
   } else {
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("禁用进度图标常驻.mp3");
     }
   }
 };
-
-let lastMiddleClickTime = 0;
-let longPressTimer: ReturnType<typeof setTimeout> | null = null;
-let startX = 0;
-let startY = 0;
-let hasTriggeredLongPress = false;
 
 const clearLongPressTimer = () => {
   if (longPressTimer) {
@@ -302,12 +265,6 @@ const clearLongPressTimer = () => {
     longPressTimer = null;
   }
 };
-
-const isExternalLyric = computed(() => {
-  if (!store.lyricSource) return false;
-  if (store.lyricSource === "amll") return true;
-  return Boolean(store.songServer && store.lyricSource !== store.songServer);
-});
 
 const discardExternalLyric = () => {
   if (!isExternalLyric.value) return;
@@ -321,7 +278,8 @@ const discardExternalLyric = () => {
     onPilferDiscard(undefined, store);
   }
 
-  store.lyricSource = store.songServer;
+  store.lyricSource = null;
+  store.lyricRestoreVersion++;
 
   ElMessage({
     message: t("components.music.restoredOriginalLyric"),
@@ -358,23 +316,30 @@ const handleLrcMouseDown = (e: MouseEvent) => {
   }
   // 鼠标左键长按丢弃
   if (e.button === 0) {
+    activeMouseCleanup?.();
     hasTriggeredLongPress = false;
     startX = e.clientX;
     startY = e.clientY;
     clearLongPressTimer();
     longPressTimer = setTimeout(triggerLongPressDiscard, 600);
+    const cleanup = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (activeMouseCleanup === cleanup) {
+        activeMouseCleanup = null;
+      }
+    };
     const onMouseMove = (moveEvt: MouseEvent) => {
       if (Math.abs(moveEvt.clientX - startX) > 10 || Math.abs(moveEvt.clientY - startY) > 10) {
         clearLongPressTimer();
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
+        cleanup();
       }
     };
     const onMouseUp = () => {
       clearLongPressTimer();
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseup", onMouseUp);
+      cleanup();
     };
+    activeMouseCleanup = cleanup;
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
   }
@@ -424,11 +389,6 @@ const handleContextMenu = (e: MouseEvent) => {
   }
 };
 
-const PADDING_LEFT = 8; // 开始左间距
-const PADDING_RIGHT = 8; // 结束右间距
-const MASK_MAX_WIDTH = 24; // 遮罩渐隐最大宽度
-const SCROLL_LERP = 0.15; // 阻尼平滑系数
-
 const lyricGeo = reactive({
   viewportWidth: 0,
   viewportLeft: 0,
@@ -437,13 +397,130 @@ const lyricGeo = reactive({
   isOverflow: false,
 });
 
-let currentScrollX = 0;
-let lastMaskLeft = -1;
-let lastMaskRight = -1;
-let lastMaskLeftColor = "";
-let lastMaskRightColor = "";
-let isTransitioning = false;
-let transitionTimer: any = null;
+const invalidateDwrcLineCache = () => {
+  dwrcLineCache = null;
+};
+
+const getAudioEl = (): HTMLAudioElement | null => {
+  if (cachedAudioEl && cachedAudioEl.isConnected) {
+    return cachedAudioEl;
+  }
+  cachedAudioEl = document.querySelector("audio");
+  return cachedAudioEl;
+};
+
+const buildDwrcLineKey = (lrc: any[]): string => {
+  const len = lrc.length;
+  const first = lrc[0];
+  const last = lrc[len - 1];
+  return `${first?.[2]}:${len}:${first?.[8]}:${last?.[8]}:${first?.[4]}`;
+};
+
+const getOrBuildDwrcLineCache = (proMode: boolean): DwrcLineCache | null => {
+  const lrc = store.playerLrc;
+  if (!lrc || lrc.length === 0) return null;
+
+  const expectedLineAttr = String(lrc[0]?.[2] ?? "");
+  const lineKey = buildDwrcLineKey(lrc);
+  const dwrcSource = store.dwrcTemp;
+
+  if (
+    dwrcLineCache &&
+    dwrcLineCache.proMode === proMode &&
+    dwrcLineCache.dwrcSourceRef === dwrcSource &&
+    dwrcLineCache.lineKey === lineKey &&
+    dwrcLineCache.wrapEl.isConnected &&
+    (!dwrcLineCache.spans[0] || dwrcLineCache.spans[0].isConnected) &&
+    dwrcLineCache.wrapEl.getAttribute("data-line") === expectedLineAttr &&
+    dwrcLineCache.spans.length === lrc.length
+  ) {
+    return dwrcLineCache;
+  }
+
+  const boxEl =
+    dwrcBoxRef.value ||
+    (proMode
+      ? (document.getElementsByClassName("dwrc-box")[0] as HTMLElement | undefined)
+      : null);
+  if (!boxEl) return null;
+
+  const wrapSelector = proMode ? "#dwrc-2-wrap" : "#dwrc-1-wrap";
+  const wrapEl = boxEl.querySelector(wrapSelector);
+  if (!wrapEl || wrapEl.getAttribute("data-line") !== expectedLineAttr) {
+    return null;
+  }
+
+  const spanNodes = wrapEl.querySelectorAll("span") as NodeListOf<HTMLElement>;
+  if (spanNodes.length !== lrc.length) {
+    return null;
+  }
+
+  const len = lrc.length;
+  const spans = Array.from(spanNodes);
+  const starts = new Float64Array(len);
+  const durations = new Float64Array(len);
+  const clipStates = new Float64Array(len).fill(-1);
+  const timeline: DwrcTimelinePoint[] = [];
+
+  for (let i = 0; i < len; i++) {
+    const lrcItem = lrc[i] as any[];
+    const rawStart = lrcItem[8];
+    const start = rawStart === undefined ? Number.NaN : Number(rawStart);
+    const duration = Number(lrcItem[5]);
+    starts[i] = start;
+    durations[i] = duration;
+
+    if (Number.isNaN(start) || Number.isNaN(duration) || duration <= 0) continue;
+    const spanEl = spans[i];
+    if (!spanEl) continue;
+
+    const left = spanEl.offsetLeft;
+    const width = spanEl.offsetWidth;
+    timeline.push({ time: start, x: left });
+    timeline.push({ time: start + duration, x: left + width });
+  }
+
+  if (timeline.length > 1) {
+    timeline.sort((a, b) => a.time - b.time);
+  }
+
+  dwrcLineCache = {
+    wrapEl,
+    dwrcSourceRef: dwrcSource,
+    lineKey,
+    proMode,
+    spans,
+    starts,
+    durations,
+    clipStates,
+    timeline,
+    timelineCursor: 0,
+  };
+  return dwrcLineCache;
+};
+
+const interpolateTimelineX = (cache: DwrcLineCache, now: number): number => {
+  const { timeline } = cache;
+  const lastIdx = timeline.length - 1;
+  if (lastIdx < 0) return 0;
+  if (now <= timeline[0].time) return timeline[0].x;
+  if (now >= timeline[lastIdx].time) return timeline[lastIdx].x;
+
+  let j = Math.min(Math.max(0, cache.timelineCursor), lastIdx - 1);
+  while (j < lastIdx - 1 && now >= timeline[j + 1].time) {
+    j++;
+  }
+  while (j > 0 && now < timeline[j].time) {
+    j--;
+  }
+  cache.timelineCursor = j;
+
+  const curr = timeline[j];
+  const next = timeline[j + 1];
+  if (next.time === curr.time) return curr.x;
+  const progress = (now - curr.time) / (next.time - curr.time);
+  return curr.x + (next.x - curr.x) * progress;
+};
 
 const resetDynamicMask = (targetVp?: HTMLElement | null) => {
   lastMaskLeft = -1;
@@ -471,7 +548,9 @@ const onBeforeLeave = () => {
 const onBeforeEnter = (el: Element) => {
   isTransitioning = false;
   clearTimeout(transitionTimer);
+  invalidateDwrcLineCache();
   currentScrollX = 0;
+  lastAppliedScrollX = Number.NaN;
 
   const track = el.querySelector(".lrc-scroll-track") as HTMLElement;
   if (track) {
@@ -493,7 +572,7 @@ const onAfterEnter = () => {
   updateLyricGeometry();
 };
 
-let isTrLrcMounted = false;
+
 
 const isTranslationActive = () => {
   return !!(store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText);
@@ -534,7 +613,6 @@ watch(
   },
 );
 
-type DwrcItem = [number, number, any[]];
 const isLineByLine = computed(() => {
   return !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
 });
@@ -546,12 +624,13 @@ const lyricTransitionKey = computed(() => {
       : `lrc-line-null`;
   } else {
     return store.getPlayerLrc?.length > 0
-      ? `lrc-${store.getPlayerLrc[0]?.[2]}-${store.getPlayerLrc.length}`
+      ? `lrc-${store.getPlayerLrc[0]?.[2]}-${store.getPlayerLrc.length}-${store.getPlayerLrc[0]?.[4]}-${store.lyricSeekVersion}`
       : t("components.music.lrcSearching");
   }
 });
 
 const updateLyricGeometry = () => {
+  invalidateDwrcLineCache();
   if (!lrcAllRef.value) return;
 
   const lrcAllRect = lrcAllRef.value.getBoundingClientRect();
@@ -590,7 +669,6 @@ const updateLyricGeometry = () => {
   }
 };
 
-let resizeObserver: ResizeObserver | null = null;
 const setupResizeObserver = () => {
   if (typeof ResizeObserver === "undefined") return;
   resizeObserver = new ResizeObserver(() => {
@@ -608,21 +686,25 @@ watch([lrcAllRef, lrcViewportRef], ([newAll, newViewport], [oldAll, oldViewport]
   updateLyricGeometry();
 });
 
-let dprMediaQuery: MediaQueryList | null = null;
-const listenDprChange = () => {
-  if (typeof window === "undefined" || !window.matchMedia) return;
-  dprMediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dpr)`);
-  dprMediaQuery.addEventListener(
-    "change",
-    () => {
-      updateLyricGeometry();
-      listenDprChange();
-    },
-    { once: true },
-  );
+const cleanupDprListener = () => {
+  if (dprMediaQuery && dprChangeHandler) {
+    dprMediaQuery.removeEventListener("change", dprChangeHandler);
+  }
+  dprMediaQuery = null;
+  dprChangeHandler = null;
 };
 
-let lastLineIndex: any = null;
+const listenDprChange = () => {
+  if (typeof window === "undefined" || !window.matchMedia) return;
+  cleanupDprListener();
+  dprMediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+  dprChangeHandler = () => {
+    updateLyricGeometry();
+    listenDprChange();
+  };
+  dprMediaQuery.addEventListener("change", dprChangeHandler, { once: true });
+};
+
 watch(
   () => (isLineByLine.value ? store.getPlayerLrc?.[0]?.[2] : store.playerLrc?.[0]?.[2]),
   (newLine) => {
@@ -631,7 +713,9 @@ watch(
       if (store.isDragging) {
         isTransitioning = false;
         clearTimeout(transitionTimer);
+        invalidateDwrcLineCache();
         currentScrollX = 0;
+        lastAppliedScrollX = Number.NaN;
         resetDynamicMask();
         if (lrcTrackRef.value) {
           lrcTrackRef.value.style.transform = "translate3d(0, 0, 0)";
@@ -650,6 +734,7 @@ watch(
   () => {
     isTransitioning = false;
     clearTimeout(transitionTimer);
+    invalidateDwrcLineCache();
     nextTick(() => {
       updateLyricGeometry();
     });
@@ -661,7 +746,9 @@ watch(
   () => {
     isTransitioning = false;
     clearTimeout(transitionTimer);
+    invalidateDwrcLineCache();
     currentScrollX = 0;
+    lastAppliedScrollX = Number.NaN;
     resetDynamicMask();
     if (lrcTrackRef.value) {
       lrcTrackRef.value.style.transform = "translate3d(0, 0, 0)";
@@ -672,7 +759,16 @@ watch(
   },
 );
 
-let dwrcRAFId: number | null = null;
+watch(
+  () => store.playerDWRCShowPro,
+  () => {
+    invalidateDwrcLineCache();
+    nextTick(() => {
+      updateLyricGeometry();
+    });
+  },
+);
+
 
 const startDWRCLoop = () => {
   if (dwrcRAFId !== null) return;
@@ -683,104 +779,82 @@ const startDWRCLoop = () => {
     }
 
     const isLine = isLineByLine.value;
-    const audio = document.querySelector("audio");
+    const audioEl = getAudioEl();
     const now = store.isDragging
       ? store.dragProgressTime * 1000
-      : audio
-        ? audio.currentTime * 1000
+      : audioEl
+        ? audioEl.currentTime * 1000
         : 0;
 
     let currentProgressX = 0;
     if (store.playerDWRCShowPro && !isLine && store.playerLrc && store.playerLrc.length > 0) {
-      const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
       let dotX = 0;
       let dotVisible = false;
+      const cache = getOrBuildDwrcLineCache(true);
 
-      if (dwrc2) {
-        const wrap2 = dwrc2.querySelector("#dwrc-2-wrap");
-        if (wrap2 && wrap2.getAttribute("data-line") === store.playerLrc[0]?.[2]?.toString()) {
-          const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span") as NodeListOf<HTMLElement>;
-          if (outputDom.length === store.playerLrc.length) {
-            for (let i = 0; i < store.playerLrc.length; i++) {
-              const lrcItem = store.playerLrc[i] as any[];
-              const start = Number(lrcItem[8]);
-              const duration = Number(lrcItem[5]);
-              if (lrcItem[8] === undefined || isNaN(start) || isNaN(duration)) continue;
+      if (cache) {
+        const { spans, starts, durations, clipStates } = cache;
+        for (let i = 0; i < spans.length; i++) {
+          const start = starts[i];
+          const duration = durations[i];
+          if (Number.isNaN(start) || Number.isNaN(duration)) continue;
 
-              const outputItem = outputDom[i];
-              if (!outputItem) continue;
-
-              if (duration === 0) {
-                outputItem.style.clipPath = `inset(0 100% 0 0)`;
-              } else if (now >= start + duration) {
-                outputItem.style.clipPath = `inset(0 0% 0 0)`;
-              } else if (now >= start && now < start + duration) {
-                const progress = (now - start) / duration;
-                const clipRight = Math.max(0, Math.min(100, (1 - progress) * 100));
-                outputItem.style.clipPath = `inset(0 ${clipRight}% 0 0)`;
-              } else {
-                outputItem.style.clipPath = `inset(0 100% 0 0)`;
-              }
-            }
-
-            const timeline: { time: number; x: number }[] = [];
-            for (let i = 0; i < store.playerLrc.length; i++) {
-              const lrcItem = store.playerLrc[i] as any[];
-              const start = Number(lrcItem[8]);
-              const duration = Number(lrcItem[5]);
-              if (isNaN(start) || isNaN(duration) || duration <= 0) continue;
-
-              const outputItem = outputDom[i];
-              if (!outputItem) continue;
-
-              timeline.push({ time: start, x: outputItem.offsetLeft });
-              timeline.push({
-                time: start + duration,
-                x: outputItem.offsetLeft + outputItem.offsetWidth,
-              });
-            }
-
-            if (timeline.length > 0) {
-              timeline.sort((a, b) => a.time - b.time);
-
-              if (now <= timeline[0].time) {
-                dotX = timeline[0].x;
-              } else if (now >= timeline[timeline.length - 1].time) {
-                dotX = timeline[timeline.length - 1].x;
-              } else {
-                for (let j = 0; j < timeline.length - 1; j++) {
-                  const curr = timeline[j];
-                  const next = timeline[j + 1];
-                  if (now >= curr.time && now < next.time) {
-                    if (next.time === curr.time) {
-                      dotX = curr.x;
-                    } else {
-                      const progress = (now - curr.time) / (next.time - curr.time);
-                      dotX = curr.x + (next.x - curr.x) * progress;
-                    }
-                    break;
-                  }
-                }
-              }
-              dotVisible = true;
-            } else {
-              dotVisible = false;
-            }
+          let clipRight: number;
+          if (duration === 0 || now < start) {
+            clipRight = 100;
+          } else if (now >= start + duration) {
+            clipRight = 0;
+          } else {
+            const progress = (now - start) / duration;
+            clipRight = Math.max(0, Math.min(100, (1 - progress) * 100));
           }
+
+          const prevClip = clipStates[i];
+          if (
+            prevClip < 0 ||
+            (clipRight === 0 || clipRight === 100
+              ? prevClip !== clipRight
+              : Math.abs(prevClip - clipRight) > 0.01)
+          ) {
+            clipStates[i] = clipRight;
+            spans[i].style.clipPath = `inset(0 ${clipRight}% 0 0)`;
+          }
+        }
+
+        if (cache.timeline.length > 0) {
+          dotX = interpolateTimelineX(cache, now);
+          dotVisible = true;
         }
       }
 
-      if (dwrcDotRef.value && dwrcDotRef.value.dotRef) {
-        const dotEl = dwrcDotRef.value.dotRef;
-        if (dotVisible) {
-          dotEl.style.opacity = "1";
-          dotEl.style.transform = `translateX(${dotX}px)`;
-        } else {
-          dotEl.style.opacity = "0";
+      const dotEl = dwrcDotRef.value?.dotRef ?? null;
+      if (dotEl) {
+        const isNewDotEl = dotEl !== lastDotEl;
+        if (isNewDotEl) {
+          lastDotEl = dotEl;
         }
+        if (isNewDotEl || dotVisible !== lastDotVisible) {
+          lastDotVisible = dotVisible;
+          dotEl.style.opacity = dotVisible ? "1" : "0";
+        }
+        if (dotVisible && (isNewDotEl || Math.abs(dotX - lastDotX) > 0.01)) {
+          lastDotX = dotX;
+          dotEl.style.transform = `translateX(${dotX}px)`;
+        }
+      } else {
+        lastDotEl = null;
+        lastDotVisible = null;
+        lastDotX = Number.NaN;
       }
 
       currentProgressX = dotX;
+    } else if (!isLine && store.playerLrc && store.playerLrc.length > 0) {
+      if (lyricGeo.isOverflow) {
+        const cache = getOrBuildDwrcLineCache(false);
+        if (cache && cache.timeline.length > 0) {
+          currentProgressX = interpolateTimelineX(cache, now);
+        }
+      }
     } else if (isLine && store.getPlayerLrc?.length > 0) {
       const lrcItem = (store.getPlayerLrc[0] as any[]) || [];
       const duration = Number(lrcItem[5]) || 5000;
@@ -806,8 +880,16 @@ const startDWRCLoop = () => {
       currentScrollX = targetOffset;
     }
 
-    if (lrcTrackRef.value) {
-      lrcTrackRef.value.style.transform = `translate3d(${currentScrollX}px, 0, 0)`;
+    const trackEl = lrcTrackRef.value;
+    if (trackEl) {
+      if (trackEl !== lastTrackEl || currentScrollX !== lastAppliedScrollX) {
+        lastTrackEl = trackEl;
+        lastAppliedScrollX = currentScrollX;
+        trackEl.style.transform = `translate3d(${currentScrollX}px, 0, 0)`;
+      }
+    } else {
+      lastTrackEl = null;
+      lastAppliedScrollX = Number.NaN;
     }
     if (lyricGeo.isOverflow && lrcViewportRef.value) {
       const scrollDist = Math.abs(currentScrollX);
@@ -846,8 +928,15 @@ const stopDWRCLoop = () => {
 };
 
 onMounted(() => {
+  isComponentMounted = true;
   setupResizeObserver();
   listenDprChange();
+  if (typeof document !== "undefined" && document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      if (!isComponentMounted) return;
+      updateLyricGeometry();
+    });
+  }
   nextTick(() => {
     updateLyricGeometry();
   });
@@ -855,7 +944,14 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  isComponentMounted = false;
+  cachedAudioEl = null;
+  invalidateDwrcLineCache();
+  lastTrackEl = null;
+  lastDotEl = null;
   clearLongPressTimer();
+  activeMouseCleanup?.();
+  cleanupDprListener();
   if (resizeObserver) {
     resizeObserver.disconnect();
     resizeObserver = null;
@@ -1072,18 +1168,18 @@ onBeforeUnmount(() => {
   }
 
   to {
-    color: var(--footer-dwrc-start-color);
+    color: var(--footer-dwrc-end-color);
     opacity: 1;
     text-shadow:
-      0px 0px 3px var(--footer-dwrc-shadow-first-color),
-      0px 0px 0px rgba(255, 182, 193, 0.3),
-      0px 0px 0px rgba(255, 192, 203, 0.3),
-      0px 0px 0px rgba(255, 182, 193, 0.3),
-      0px 0px 0px rgba(255, 192, 203, 0.3),
-      0px 0px 0px rgba(255, 182, 193, 1),
-      0px 0px 0px rgba(255, 192, 203, 1),
-      0px 0px 0px rgba(255, 182, 193, 1),
-      0px 0px 0px rgba(255, 192, 203, 1);
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
+      0px 0px 2px rgba(176, 224, 230, 1),
+      0px 0px 2px rgba(230, 230, 250, 1),
+      0px 0px 0px rgba(255, 182, 193, 0),
+      0px 0px 0px rgba(255, 192, 203, 0),
+      0px 0px 0px rgba(255, 182, 193, 0),
+      0px 0px 0px rgba(255, 192, 203, 0),
+      0px 0px 0px rgba(255, 182, 193, 0),
+      0px 0px 0px rgba(255, 192, 203, 0);
   }
 }
 
@@ -1096,11 +1192,17 @@ onBeforeUnmount(() => {
   transform: translateY(1px);
   white-space: nowrap;
   clip-path: inset(0 100% 0 0);
-  will-change: clip-path, color, opacity;
   transition:
     opacity var(--short-time) linear,
     transform var(--short-time) linear,
     color var(--anim-time) linear;
+
+  &.fade-in,
+  &.fade-out,
+  &.long-tone,
+  &.long-tone-out {
+    will-change: clip-path, transform, opacity;
+  }
 
   &.fade-in-start {
     -webkit-transform: translateY(1px);
@@ -1339,20 +1441,16 @@ onBeforeUnmount(() => {
           height: 100%;
           overflow: hidden;
           position: relative;
-          mask-image: linear-gradient(
-            to right,
-            var(--mask-left-color, black) 0,
-            black var(--mask-left, 0px),
-            black calc(100% - var(--mask-right, 24px)),
-            var(--mask-right-color, transparent) 100%
-          );
-          -webkit-mask-image: linear-gradient(
-            to right,
-            var(--mask-left-color, black) 0,
-            black var(--mask-left, 0px),
-            black calc(100% - var(--mask-right, 24px)),
-            var(--mask-right-color, transparent) 100%
-          );
+          mask-image: linear-gradient(to right,
+              var(--mask-left-color, black) 0,
+              black var(--mask-left, 0px),
+              black calc(100% - var(--mask-right, 24px)),
+              var(--mask-right-color, transparent) 100%);
+          -webkit-mask-image: linear-gradient(to right,
+              var(--mask-left-color, black) 0,
+              black var(--mask-left, 0px),
+              black calc(100% - var(--mask-right, 24px)),
+              var(--mask-right-color, transparent) 100%);
         }
 
         .lrc-scroll-track {

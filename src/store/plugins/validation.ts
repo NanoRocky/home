@@ -1,5 +1,5 @@
 import { PiniaPluginContext } from "pinia";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import i18n from "@/locales";
 
 // Pinia 变量验证规则
@@ -62,8 +62,6 @@ export const validationPlugin = ({ store }: PiniaPluginContext) => {
         setTimeout(() => {
           if (store.webSpeech) {
             stopSpeech();
-            const voice = import.meta.env.VITE_TTS_Voice;
-            const vstyle = import.meta.env.VITE_TTS_Style;
             SpeechLocal("变量异常.mp3");
           }
         }, 300);

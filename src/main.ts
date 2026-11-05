@@ -54,48 +54,56 @@ const mountApp = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("重置2.mp3");
     }
     store.resetStore();
   }
 
   // PWA
-  navigator.serviceWorker.addEventListener("controllerchange", async () => {
-    // 弹出更新提醒
-    const updatedMsg = i18n.global.t("main.updated");
-    console.log(updatedMsg);
-    ElMessage(updatedMsg);
-    if (store.webSpeech) {
-      stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
-      SpeechLocal("网站更新.mp3");
-    }
-  });
-
-  const setupset = () =>
-    setTimeout(() => {
-      if (urlParams.get("set") != "reset" && store.imgLoadStatus === true) {
-        if (urlParams.get("bg")) {
-          store.coverType = Number(urlParams.get("bg"));
-        }
-        if (urlParams.get("bgc") && (store.coverType == 0 || urlParams.get("bg") == "0")) {
-          store.sBGCount = String(urlParams.get("bgc"));
-        }
-        if (urlParams.get("devs")) {
-          store.setV = Boolean(urlParams.get("devs"));
-        }
-        if (urlParams.get("pap")) {
-          store.playerAutoplay = Boolean(urlParams.get("pap"));
-        }
-      } else {
-        setupset();
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("controllerchange", async () => {
+      // 弹出更新提醒
+      const updatedMsg = i18n.global.t("main.updated");
+      console.log(updatedMsg);
+      ElMessage(updatedMsg);
+      if (store.webSpeech) {
+        stopSpeech();
+        SpeechLocal("网站更新.mp3");
       }
-    }, 300);
+    });
+  }
 
-  setupset();
+  const parseBoolParam = (val: string) =>
+    !["false", "0", "no", "off"].includes(val.trim().toLowerCase());
+
+  if (urlParams.get("set") !== "reset") {
+    const devsParam = urlParams.get("devs");
+    if (devsParam !== null && devsParam !== "") {
+      store.setV = parseBoolParam(devsParam);
+    }
+    const papParam = urlParams.get("pap");
+    if (papParam !== null && papParam !== "") {
+      store.playerAutoplay = parseBoolParam(papParam);
+    }
+
+    if (urlParams.get("bg") || urlParams.get("bgc")) {
+      const setupset = () =>
+        setTimeout(() => {
+          if (store.imgLoadStatus === true) {
+            if (urlParams.get("bg")) {
+              store.coverType = Number(urlParams.get("bg"));
+            }
+            if (urlParams.get("bgc") && (store.coverType == 0 || urlParams.get("bg") == "0")) {
+              store.sBGCount = String(urlParams.get("bgc"));
+            }
+          } else {
+            setupset();
+          }
+        }, 300);
+
+      setupset();
+    }
+  }
 };
 
 const checkAuthorAndMount = () => {

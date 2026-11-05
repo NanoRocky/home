@@ -4,37 +4,22 @@
       <Icon size="20" class="iconl">
         <Link />
       </Icon>
-      <span
-        class="title text-truncate-ellipsis"
-        v-if="store.mobileOpenState"
-        @click="store.setOpenState = !store.setOpenState"
-        >{{ $t("components.links.title") }}</span
-      >
+      <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
+        @click="store.setOpenState = !store.setOpenState">{{ $t("components.links.title") }}</span>
       <span class="title" v-else>{{ $t("components.links.title") }}</span>
     </div>
     <!-- 网站列表 -->
-    <Swiper
-      v-if="siteLinks[0]"
-      :modules="[Pagination, Mousewheel]"
-      :slides-per-view="1"
-      :space-between="40"
+    <Swiper v-if="siteLinks[0]" :modules="[Pagination, Mousewheel]" :slides-per-view="1" :space-between="40"
       :pagination="{
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'div',
-      }"
-      :mousewheel="true"
-    >
+      }" :mousewheel="true">
       <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">
-            <div
-              class="item cards"
-              :style="index < 3 ? 'margin-bottom: 20px' : null"
-              @click="jumpLink(item)"
-              @auxclick.stop="jumpLink(item, true)"
-              @mousedown="handleMouseDown"
-            >
+            <div class="item cards" :style="index < 3 ? 'margin-bottom: 20px' : null" @click="jumpLink(item)"
+              @auxclick.stop="jumpLink(item, true)" @mousedown="handleMouseDown">
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>
@@ -67,23 +52,20 @@ import Api from "@vicons/tabler/es/Api.js";
 import LibraryMusicSharp from "@vicons/material/es/LibraryMusicSharp.js";
 import VideogameAssetFilled from "@vicons/material/es/VideogameAssetFilled.js";
 import DrawFilledModule from "@vicons/material/lib/DrawFilled.js";
-const DrawFilled = DrawFilledModule.default || DrawFilledModule;
 import IosBasketball from "@vicons/ionicons4/es/IosBasketball.js";
 import GameController from "@vicons/ionicons5/es/GameController.js";
 import { mainStore } from "@/store";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Mousewheel } from "swiper/modules";
 import siteLinks from "@/assets/siteLinks.json";
+import type { SiteLink as AppSiteLink } from "@/typings/app";
 
+const DrawFilled = DrawFilledModule.default || DrawFilledModule;
 const store = mainStore();
 const siteLinksData = siteLinks as SiteLink[];
 declare const $openList: () => void;
 
-interface SiteLink {
-  icon: keyof typeof siteIcon;
-  name: string;
-  link: string;
-}
+type SiteLink = AppSiteLink<keyof typeof siteIcon>;
 
 // 计算网站链接
 const siteLinksList = computed(() => {

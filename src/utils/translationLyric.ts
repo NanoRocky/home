@@ -5,11 +5,10 @@
 
 import { mainStore } from "@/store";
 import i18n from "@/locales";
+import type { SongMeta, TranslationLrcLine } from "@/typings/player";
+import { removeLyricMetadata, isInstrumentalLyric } from "@/utils/removeLyricMetadata";
 
-export interface TranslationLrcLine {
-  time: number; // 毫秒 (ms)
-  text: string; // 翻译歌词文本
-}
+export type { TranslationLrcLine };
 
 /**
  * 将原始歌词 URL 转换为独立翻译歌词 URL
@@ -97,15 +96,26 @@ export function parseTranslationLrc(lrcText: string): TranslationLrcLine[] {
     if (times.length === 0) continue;
 
     const pureText = trimmed.replace(timeRegex, "").trim();
-    if (pureText) {
+
+    // 剔除翻译歌词中常见的 "//" 无翻译占位符及纯音乐/无歌词占位符
+    const strippedSlash = pureText.replace(/^\s*\/+\s*/, "").replace(/\s*\/+\s*$/, "");
+    const isPlaceholder =
+      !strippedSlash ||
+      /^\s*\/+\s*$/.test(pureText) ||
+      isInstrumentalLyric(strippedSlash) ||
+      isInstrumentalLyric(pureText);
+
+    const cleanText = isPlaceholder ? "" : pureText;
+
+    if (cleanText) {
       hasValidText = true;
     }
     for (const t of times) {
-      result.push({ time: t, text: pureText });
+      result.push({ time: t, text: cleanText });
     }
   }
 
-  // 若整首歌均无实质翻译歌词内容（如纯空时间戳），则视作无翻译歌词
+  // 若整首歌均无实质翻译歌词内容（如纯空时间戳或全部为 // 占位符），则视作无翻译歌词
   if (!hasValidText) {
     return [];
   }
@@ -114,21 +124,55 @@ export function parseTranslationLrc(lrcText: string): TranslationLrcLine[] {
 }
 
 /**
+ * 处理翻译歌词文本：根据开关执行元数据剔除，并解析结构化时间轴
+ * @param rawText 原始翻译歌词文本
+ * @param songMeta 歌曲标题与歌手信息
+ * @param store mainStore 实例
+ * @returns 解析并过滤后的翻译歌词数组
+ */
+export async function processTranslationLrc(
+  rawText: string,
+  songMeta?: SongMeta,
+  store = mainStore(),
+): Promise<TranslationLrcLine[]> {
+  if (!rawText || typeof rawText !== "string") return [];
+  let processedText = rawText;
+  if (store.playerRMMetadata) {
+    const meta = songMeta || currentSongMeta || {
+      title: store.playerTitle || store.getPlayerData?.name,
+      artist: store.playerArtist || store.getPlayerData?.artist,
+    };
+    processedText = await removeLyricMetadata(processedText, false, meta);
+  }
+  return parseTranslationLrc(processedText);
+}
+
+/**
  * 获取翻译歌词（支持优先从“偷取源”获取，失败时回退到“本源”；AMLL 等其他源直接回本源）
  * @param originalLrcUrl 本源歌词 URL
  * @param pilferLrcUrl 偷取源歌词 URL（若歌词是从隔壁偷的）
+ * @param songMeta 歌曲标题与歌手信息（用于元数据匹配）
+ * @param store mainStore 实例
  * @returns 解析好的翻译歌词行数组
  */
 export async function loadTranslationLyrics(
   originalLrcUrl?: string | null,
   pilferLrcUrl?: string | null,
+  songMeta?: SongMeta,
+  store = mainStore(),
 ): Promise<TranslationLrcLine[]> {
+  const meta = songMeta || currentSongMeta;
+
   if (pilferLrcUrl) {
     try {
-      const pilferTrLrc = await fetchTranslationLrc(pilferLrcUrl);
-      const parsedPilfer = parseTranslationLrc(pilferTrLrc);
-      if (parsedPilfer.length > 0) {
-        return parsedPilfer;
+      if (rawPilferTrLrc === null) {
+        rawPilferTrLrc = await fetchTranslationLrc(pilferLrcUrl);
+      }
+      if (rawPilferTrLrc) {
+        const parsedPilfer = await processTranslationLrc(rawPilferTrLrc, meta, store);
+        if (parsedPilfer.length > 0) {
+          return parsedPilfer;
+        }
       }
     } catch (e) {
       console.warn(i18n.global.t("console.player.pilferTranslationFailedFallback"), e);
@@ -137,8 +181,12 @@ export async function loadTranslationLyrics(
 
   if (originalLrcUrl) {
     try {
-      const originalTrLrc = await fetchTranslationLrc(originalLrcUrl);
-      return parseTranslationLrc(originalTrLrc);
+      if (rawOriginalTrLrc === null) {
+        rawOriginalTrLrc = await fetchTranslationLrc(originalLrcUrl);
+      }
+      if (rawOriginalTrLrc) {
+        return await processTranslationLrc(rawOriginalTrLrc, meta, store);
+      }
     } catch (e) {
       console.warn(i18n.global.t("console.player.fetchOriginalTranslationFailed"), e);
     }
@@ -147,9 +195,13 @@ export async function loadTranslationLyrics(
   return [];
 }
 
+let lastTrLinesRef: TranslationLrcLine[] | null = null;
+let lastTrCursor = -1;
+
 /**
  * 根据当前播放时间（秒），匹配当前行对应的翻译歌词
- * @param lines 解析后的翻译歌词数组
+ * 采用基于上次索引的双向游标查找（兼容正常播放、倍速、倒放与拖拽跳转，均摊 O(1)）
+ * @param lines 解析后的翻译歌词数组（已按时间升序排列）
  * @param currentTimeSec 当前播放时间 (秒)
  * @returns 当前时间点的翻译文本，未匹配到返回空字符串
  */
@@ -159,15 +211,17 @@ export function getTranslationLrcAtTime(
 ): string {
   if (!lines || lines.length === 0) return "";
   const currentMs = currentTimeSec * 1000;
-  let activeText = "";
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].time <= currentMs) {
-      activeText = lines[i].text;
-    } else {
-      break;
-    }
+  let c = lines === lastTrLinesRef ? lastTrCursor : -1;
+  if (c >= lines.length) c = lines.length - 1;
+  while (c >= 0 && lines[c].time > currentMs) {
+    c--;
   }
-  return activeText;
+  while (c + 1 < lines.length && lines[c + 1].time <= currentMs) {
+    c++;
+  }
+  lastTrLinesRef = lines;
+  lastTrCursor = c;
+  return c >= 0 ? lines[c].text : "";
 }
 
 // 模块内部状态缓存
@@ -175,21 +229,31 @@ let activeTrLines: TranslationLrcLine[] = [];
 let currentExpectedIndex = -1;
 let currentOriginalUrl: string | null = null;
 let currentPilferUrl: string | null = null;
+let currentSongMeta: SongMeta | undefined = undefined;
+let rawOriginalTrLrc: string | null = null;
+let rawPilferTrLrc: string | null = null;
+let trLoadToken = 0;
 
 /**
  * 歌曲开始加载或切换时初始化翻译歌词
  * @param originalUrl 本源歌词 URL
  * @param expectedIndex 歌曲索引（防切歌竞态）
  * @param store mainStore 实例（可选，默认自动获取）
+ * @param songMeta 歌曲标题与歌手信息（用于元数据匹配）
  */
 export async function initTranslationLrc(
   originalUrl: string,
   expectedIndex: number,
   store = mainStore(),
+  songMeta?: SongMeta,
 ) {
+  const token = ++trLoadToken;
   currentExpectedIndex = expectedIndex;
   currentOriginalUrl = originalUrl;
   currentPilferUrl = null;
+  currentSongMeta = songMeta;
+  rawOriginalTrLrc = null;
+  rawPilferTrLrc = null;
   activeTrLines = [];
 
   if (!store.playerTrLrc) {
@@ -200,8 +264,8 @@ export async function initTranslationLrc(
   store.playerTrLrcText = "";
 
   try {
-    const lines = await loadTranslationLyrics(originalUrl, null);
-    if (currentExpectedIndex !== expectedIndex) return;
+    const lines = await loadTranslationLyrics(originalUrl, null, songMeta, store);
+    if (token !== trLoadToken || currentExpectedIndex !== expectedIndex) return;
     activeTrLines = lines;
     if (lines.length === 0) {
       store.playerTrLrcText = "";
@@ -209,7 +273,7 @@ export async function initTranslationLrc(
       syncTranslationLrc(store.playerCurrentTime || 0, store);
     }
   } catch (err) {
-    if (currentExpectedIndex === expectedIndex) {
+    if (token === trLoadToken && currentExpectedIndex === expectedIndex) {
       activeTrLines = [];
       store.playerTrLrcText = "";
     }
@@ -221,20 +285,27 @@ export async function initTranslationLrc(
  * @param pilferUrl 偷取源的歌词 URL
  * @param expectedIndex 歌曲索引（防切歌竞态）
  * @param store mainStore 实例（可选，默认自动获取）
+ * @param songMeta 歌曲标题与歌手信息（用于元数据匹配）
  */
 export async function onPilferSuccess(
   pilferUrl: string,
   expectedIndex: number,
   store = mainStore(),
+  songMeta?: SongMeta,
 ) {
   if (currentExpectedIndex !== expectedIndex) return;
+  const token = ++trLoadToken;
   currentPilferUrl = pilferUrl;
+  rawPilferTrLrc = null;
+  if (songMeta) {
+    currentSongMeta = songMeta;
+  }
 
   if (!store.playerTrLrc) return;
 
   try {
-    const lines = await loadTranslationLyrics(currentOriginalUrl, pilferUrl);
-    if (currentExpectedIndex !== expectedIndex) return;
+    const lines = await loadTranslationLyrics(currentOriginalUrl, pilferUrl, currentSongMeta, store);
+    if (token !== trLoadToken || currentExpectedIndex !== expectedIndex) return;
     if (lines.length > 0) {
       activeTrLines = lines;
       syncTranslationLrc(store.playerCurrentTime || 0, store);
@@ -248,10 +319,20 @@ export async function onPilferSuccess(
  * 当丢弃偷取歌词时调用：清除偷取源，切换回本源翻译歌词
  * @param expectedIndex 歌曲索引（防切歌竞态，可选，默认当前索引）
  * @param store mainStore 实例（可选，默认自动获取）
+ * @param songMeta 歌曲标题与歌手信息（用于元数据匹配）
  */
-export async function onPilferDiscard(expectedIndex = currentExpectedIndex, store = mainStore()) {
+export async function onPilferDiscard(
+  expectedIndex = currentExpectedIndex,
+  store = mainStore(),
+  songMeta?: SongMeta,
+) {
   if (expectedIndex !== -1 && currentExpectedIndex !== expectedIndex) return;
+  const token = ++trLoadToken;
   currentPilferUrl = null;
+  rawPilferTrLrc = null;
+  if (songMeta) {
+    currentSongMeta = songMeta;
+  }
 
   if (!store.playerTrLrc) {
     store.playerTrLrcText = "";
@@ -259,8 +340,13 @@ export async function onPilferDiscard(expectedIndex = currentExpectedIndex, stor
   }
 
   try {
-    const lines = await loadTranslationLyrics(currentOriginalUrl, null);
-    if (expectedIndex !== -1 && currentExpectedIndex !== expectedIndex) return;
+    const lines = await loadTranslationLyrics(currentOriginalUrl, null, currentSongMeta, store);
+    if (
+      token !== trLoadToken ||
+      (expectedIndex !== -1 && currentExpectedIndex !== expectedIndex)
+    ) {
+      return;
+    }
     activeTrLines = lines;
     if (lines.length === 0) {
       store.playerTrLrcText = "";
@@ -268,7 +354,85 @@ export async function onPilferDiscard(expectedIndex = currentExpectedIndex, stor
       syncTranslationLrc(store.playerCurrentTime || 0, store);
     }
   } catch (err) {
-    if (expectedIndex === -1 || currentExpectedIndex === expectedIndex) {
+    if (
+      token === trLoadToken &&
+      (expectedIndex === -1 || currentExpectedIndex === expectedIndex)
+    ) {
+      activeTrLines = [];
+      store.playerTrLrcText = "";
+    }
+  }
+}
+
+/**
+ * 切换翻译歌词开关时调用：保留当前曲目的本源与偷取源 URL 记录
+ */
+export async function toggleTranslationLrc(
+  enabled: boolean,
+  fallbackOriginalUrl?: string | null,
+  expectedIndex = currentExpectedIndex,
+  store = mainStore(),
+  songMeta?: SongMeta,
+) {
+  const token = ++trLoadToken;
+  if (!enabled) {
+    activeTrLines = [];
+    store.playerTrLrcText = "";
+    return;
+  }
+
+  if (expectedIndex !== -1 && currentExpectedIndex === -1) {
+    currentExpectedIndex = expectedIndex;
+  }
+  const origUrl = currentOriginalUrl || fallbackOriginalUrl || null;
+  if (origUrl && !currentOriginalUrl) {
+    currentOriginalUrl = origUrl;
+  }
+  if (songMeta) {
+    currentSongMeta = songMeta;
+  }
+
+  try {
+    const lines = await loadTranslationLyrics(origUrl, currentPilferUrl, currentSongMeta, store);
+    if (token !== trLoadToken) return;
+    activeTrLines = lines;
+    if (lines.length === 0) {
+      store.playerTrLrcText = "";
+    } else {
+      syncTranslationLrc(store.playerCurrentTime || 0, store);
+    }
+  } catch {
+    if (token === trLoadToken) {
+      activeTrLines = [];
+      store.playerTrLrcText = "";
+    }
+  }
+}
+
+/**
+ * 当歌词元数据移除开关切换时调用：复用已缓存的翻译原始文本，重新执行过滤并同步
+ */
+export async function reprocessTranslationLrc(
+  store = mainStore(),
+  songMeta?: SongMeta,
+) {
+  if (!store.playerTrLrc) return;
+  const token = ++trLoadToken;
+  if (songMeta) {
+    currentSongMeta = songMeta;
+  }
+
+  try {
+    const lines = await loadTranslationLyrics(currentOriginalUrl, currentPilferUrl, currentSongMeta, store);
+    if (token !== trLoadToken) return;
+    activeTrLines = lines;
+    if (lines.length === 0) {
+      store.playerTrLrcText = "";
+    } else {
+      syncTranslationLrc(store.playerCurrentTime || 0, store);
+    }
+  } catch {
+    if (token === trLoadToken) {
       activeTrLines = [];
       store.playerTrLrcText = "";
     }
@@ -299,9 +463,13 @@ export function syncTranslationLrc(currentTimeSec: number, store = mainStore()) 
  * 清理当前翻译歌词状态
  */
 export function clearTranslationLrc(store = mainStore()) {
+  ++trLoadToken;
   activeTrLines = [];
   currentOriginalUrl = null;
   currentPilferUrl = null;
+  currentSongMeta = undefined;
+  rawOriginalTrLrc = null;
+  rawPilferTrLrc = null;
   currentExpectedIndex = -1;
   store.playerTrLrcText = "";
 }

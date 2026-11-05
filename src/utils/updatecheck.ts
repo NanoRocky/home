@@ -1,14 +1,9 @@
 import config from "@/../package.json";
 import i18n from "@/locales";
-import type { VersionInfo } from "@/utils/ver";
-// 这是一个“飞屋”模块，用于检测是否存在新版本。由于酪灰懒的一批，这个一点儿都不重要的模块由 AI 全权负责（？），酪灰只是瞅了几眼，就睡着了。所以有 BUG 记得用 issue 轰炸他！
+import type { VersionInfo, UpdateCheckResult } from "@/typings/version";
 
-export interface UpdateCheckResult {
-  status: "true" | "false" | "error";
-  latestVersion: string;
-  isPreview: "true" | "false";
-  versionType: string;
-}
+export type { UpdateCheckResult };
+// 这是一个“飞屋”模块，用于检测是否存在新版本。由于酪灰懒的一批，这个一点儿都不重要的模块由 AI 全权负责（？），酪灰只是瞅了几眼，就睡着了。所以有 BUG 记得用 issue 轰炸他！
 
 /**
  * 提取 GitHub 仓库所有者与仓库名

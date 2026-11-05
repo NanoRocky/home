@@ -22,7 +22,7 @@ export interface TXAdCodeResponse {
   };
 }
 
-interface TXWeatherResponse {
+export interface TXWeatherResponse {
   status: string;
   result: {
     realtime: Array<{
@@ -84,4 +84,9 @@ export interface XMBeaufortLevel {
   minSpeed: number;
   maxSpeed: number;
   description: string;
+}
+
+export interface WindConversionOptions {
+  returnRange?: boolean;
+  includeDescription?: boolean;
 }

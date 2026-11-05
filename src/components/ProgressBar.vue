@@ -1,25 +1,11 @@
 <template>
-  <div v-if="store.footerProgressBar" class="progress-bar">
-    <div
-      class="progress"
-      :class="{ dragging: isDragging }"
-      :style="{ transform: `scaleX(${(isDragging ? dragProgress : smoothProgress) / 100})` }"
-    ></div>
+  <div v-if="store.footerProgressBar" class="progress-bar" ref="progressBarRef">
+    <div class="progress" :class="{ dragging: isDragging }" ref="progressFillRef"></div>
 
-    <div
-      class="progress-icon-wrapper"
-      :class="{ dragging: isDragging }"
-      :style="{ transform: `translate3d(${isDragging ? dragProgress : smoothProgress}%, 0, 0)` }"
-    >
-      <img
-        v-if="store.showProgressIcon"
-        src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
-        class="progress-icon"
-        draggable="false"
-        @mousedown="handleMouseDown"
-        @touchstart.prevent="handleTouchStart"
-        ref="icon"
-      />
+    <div class="progress-icon-wrapper" :class="{ dragging: isDragging }" ref="progressWrapperRef">
+      <img v-if="store.showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
+        class="progress-icon" draggable="false" @mousedown="handleMouseDown" @touchstart.prevent="handleTouchStart"
+        ref="icon" />
       <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
         <ReloadCircle />
       </Icon>
@@ -28,12 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { MusicOne } from "@icon-park/vue-next";
 import { Icon } from "@vicons/utils";
-import Paw from "@vicons/ionicons5/es/Paw.js";
 import ReloadCircle from "@vicons/ionicons5/es/ReloadCircle.js";
 import { mainStore } from "@/store";
-import config from "@/../package.json";
 import { ref, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
 import { throttle } from "lodash-es";
 
@@ -43,18 +26,50 @@ const audio = ref<HTMLAudioElement | null>(null);
 const icon = ref<HTMLElement | null>(null);
 const touchIdentifier = ref<number | null>(null);
 const isDragging = ref(false);
-const dragProgress = ref(0);
+const progressBarRef = ref<HTMLElement | null>(null);
+const progressFillRef = ref<HTMLElement | null>(null);
+const progressWrapperRef = ref<HTMLElement | null>(null);
+let dragProgressVal = 0;
+let smoothProgressVal = 0;
+let lastAppliedProgress = -1;
 let dragTimer: ReturnType<typeof setTimeout> | null = null;
+let footerEl: Element | null = null;
 
-const smoothProgress = ref(0);
 let animationFrameId: number | null = null;
+
+const applyProgressTransform = (percent: number, force = false) => {
+  const clamped = Math.min(100, Math.max(0, percent));
+  if (!force && clamped === lastAppliedProgress) return;
+  lastAppliedProgress = clamped;
+  if (progressFillRef.value) {
+    progressFillRef.value.style.transform = `scaleX(${clamped / 100})`;
+  }
+  if (progressWrapperRef.value) {
+    progressWrapperRef.value.style.transform = `translate3d(${clamped}%, 0, 0)`;
+  }
+};
+
+watch([progressFillRef, progressWrapperRef], () => {
+  applyProgressTransform(isDragging.value ? dragProgressVal : smoothProgressVal, true);
+});
 
 const updateProgress = () => {
   if (!isDragging.value && store.playerState) {
+    if (!audio.value || !audio.value.isConnected) {
+      audio.value = document.querySelector("audio");
+    }
     if (audio.value && store.playerDuration) {
-      smoothProgress.value = (audio.value.currentTime / store.playerDuration) * 100;
-    } else if (store.playerCurrentTime && store.playerDuration) {
-      smoothProgress.value = (store.playerCurrentTime / store.playerDuration) * 100;
+      smoothProgressVal = Math.min(
+        100,
+        Math.max(0, (audio.value.currentTime / store.playerDuration) * 100),
+      );
+      applyProgressTransform(smoothProgressVal);
+    } else if (store.playerCurrentTime != null && store.playerDuration) {
+      smoothProgressVal = Math.min(
+        100,
+        Math.max(0, (store.playerCurrentTime / store.playerDuration) * 100),
+      );
+      applyProgressTransform(smoothProgressVal);
     }
   }
   animationFrameId = requestAnimationFrame(updateProgress);
@@ -80,22 +95,26 @@ const handleMouseLeave = () => {
 };
 
 const handleMouseDown = (e: MouseEvent) => {
+  const progressBar = progressBarRef.value || document.querySelector(".progress-bar");
+  if (!progressBar) return;
+  const rect = progressBar.getBoundingClientRect();
+  if (!rect.width) return;
   if (dragTimer) clearTimeout(dragTimer);
   isDragging.value = true;
   isSeeking.value = true;
-  const progressBar = document.querySelector(".progress-bar");
-  const rect = progressBar!.getBoundingClientRect();
-  const initialX = e.clientX - rect.left;
-  dragProgress.value = (initialX / rect.width) * 100;
+  const initialX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+  dragProgressVal = (initialX / rect.width) * 100;
+  smoothProgressVal = dragProgressVal;
+  applyProgressTransform(dragProgressVal, true);
   store.isDragging = true;
-  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
+  store.dragProgressTime = (dragProgressVal / 100) * (store.playerDuration || 0);
 };
 
 const onMouseUp = () => {
   if (!isDragging.value) return;
   isSeeking.value = false;
   if (audio.value && store.playerDuration) {
-    audio.value.currentTime = (dragProgress.value / 100) * store.playerDuration;
+    audio.value.currentTime = (dragProgressVal / 100) * store.playerDuration;
   }
   if (dragTimer) clearTimeout(dragTimer);
   dragTimer = setTimeout(() => {
@@ -106,40 +125,52 @@ const onMouseUp = () => {
 
 const onMouseMove = throttle((e: MouseEvent) => {
   if (!isSeeking.value) return;
-  const progressBar = document.querySelector(".progress-bar");
-  const rect = progressBar!.getBoundingClientRect();
+  const progressBar = progressBarRef.value || document.querySelector(".progress-bar");
+  if (!progressBar) return;
+  const rect = progressBar.getBoundingClientRect();
+  if (!rect.width) return;
   let offsetX = e.clientX - rect.left;
   offsetX = Math.max(0, Math.min(rect.width, offsetX));
-  dragProgress.value = (offsetX / rect.width) * 100;
-  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
+  dragProgressVal = (offsetX / rect.width) * 100;
+  smoothProgressVal = dragProgressVal;
+  applyProgressTransform(dragProgressVal);
+  store.dragProgressTime = (dragProgressVal / 100) * (store.playerDuration || 0);
 }, 16);
 
 // 触摸事件处理
 const handleTouchStart = (e: TouchEvent) => {
   if (e.touches.length > 1) return;
+  const progressBar = progressBarRef.value || document.querySelector(".progress-bar");
+  if (!progressBar) return;
+  const rect = progressBar.getBoundingClientRect();
+  if (!rect.width) return;
   if (dragTimer) clearTimeout(dragTimer);
   isDragging.value = true;
   isSeeking.value = true;
   touchIdentifier.value = e.touches[0].identifier;
-  const progressBar = document.querySelector(".progress-bar");
-  const rect = progressBar!.getBoundingClientRect();
-  const initialX = e.touches[0].clientX - rect.left;
-  dragProgress.value = (initialX / rect.width) * 100;
+  const initialX = Math.max(0, Math.min(rect.width, e.touches[0].clientX - rect.left));
+  dragProgressVal = (initialX / rect.width) * 100;
+  smoothProgressVal = dragProgressVal;
+  applyProgressTransform(dragProgressVal, true);
   store.isDragging = true;
-  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
+  store.dragProgressTime = (dragProgressVal / 100) * (store.playerDuration || 0);
 };
 
 const onTouchMove = throttle((e: TouchEvent) => {
   if (!isSeeking.value || touchIdentifier.value === null) return;
   const touch = Array.from(e.touches).find((t) => t.identifier === touchIdentifier.value);
   if (!touch) return;
-  e.preventDefault();
-  const progressBar = document.querySelector(".progress-bar");
-  const rect = progressBar!.getBoundingClientRect();
+  if (e.cancelable) e.preventDefault();
+  const progressBar = progressBarRef.value || document.querySelector(".progress-bar");
+  if (!progressBar) return;
+  const rect = progressBar.getBoundingClientRect();
+  if (!rect.width) return;
   let offsetX = touch.clientX - rect.left;
   offsetX = Math.max(0, Math.min(rect.width, offsetX));
-  dragProgress.value = (offsetX / rect.width) * 100;
-  store.dragProgressTime = (dragProgress.value / 100) * store.playerDuration!;
+  dragProgressVal = (offsetX / rect.width) * 100;
+  smoothProgressVal = dragProgressVal;
+  applyProgressTransform(dragProgressVal);
+  store.dragProgressTime = (dragProgressVal / 100) * (store.playerDuration || 0);
 }, 16);
 
 const onTouchEnd = () => {
@@ -147,7 +178,7 @@ const onTouchEnd = () => {
   isSeeking.value = false;
   touchIdentifier.value = null;
   if (audio.value && store.playerDuration) {
-    audio.value.currentTime = (dragProgress.value / 100) * store.playerDuration;
+    audio.value.currentTime = (dragProgressVal / 100) * store.playerDuration;
   }
   if (dragTimer) clearTimeout(dragTimer);
   dragTimer = setTimeout(() => {
@@ -171,25 +202,26 @@ watch(
     if (value) {
       store.showProgressIconState = 2;
       store.showProgressIcon = true;
-    } else {
+    } else if (store.showProgressIconState === 2) {
       store.showProgressIconState = 0;
       store.showProgressIcon = false;
     }
   },
+  { immediate: true },
 );
 
 onMounted(() =>
   nextTick(() => {
     audio.value = document.querySelector("audio");
     animationFrameId = requestAnimationFrame(updateProgress);
-    const progressBarShowCheck = document.querySelector("#footer");
-    if (progressBarShowCheck) {
-      progressBarShowCheck.addEventListener("mouseenter", handleMouseEnter);
-      progressBarShowCheck.addEventListener("mouseleave", handleMouseLeave);
+    footerEl = document.querySelector("#footer");
+    if (footerEl) {
+      footerEl.addEventListener("mouseenter", handleMouseEnter);
+      footerEl.addEventListener("mouseleave", handleMouseLeave);
     }
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("touchmove", onTouchMove);
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
     document.addEventListener("touchend", onTouchEnd);
     document.addEventListener("touchcancel", onTouchEnd);
   }),
@@ -198,6 +230,22 @@ onMounted(() =>
 onBeforeUnmount(() => {
   if (animationFrameId !== null) {
     cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+  if (dragTimer) {
+    clearTimeout(dragTimer);
+    dragTimer = null;
+  }
+  if (isDragging.value) {
+    isDragging.value = false;
+    store.isDragging = false;
+  }
+  onMouseMove.cancel();
+  onTouchMove.cancel();
+  if (footerEl) {
+    footerEl.removeEventListener("mouseenter", handleMouseEnter);
+    footerEl.removeEventListener("mouseleave", handleMouseLeave);
+    footerEl = null;
   }
   document.removeEventListener("mouseup", onMouseUp);
   document.removeEventListener("mousemove", onMouseMove);
@@ -227,6 +275,7 @@ onBeforeUnmount(() => {
     position: relative;
     user-select: none;
     transform-origin: left center;
+    transform: scaleX(0);
     will-change: transform;
 
     &.dragging {
@@ -241,6 +290,7 @@ onBeforeUnmount(() => {
     width: 100%;
     height: 0;
     pointer-events: none;
+    transform: translate3d(0%, 0, 0);
     will-change: transform;
 
     &.dragging .progress-icon {
@@ -257,8 +307,10 @@ onBeforeUnmount(() => {
       height: 32px;
       color: black;
       animation: spin 1s linear infinite;
-      z-index: 2; /* 确保它在图标上方 */
-      pointer-events: none; /* 让点击事件穿透到下方的猫爪 */
+      z-index: 2;
+      /* 确保它在图标上方 */
+      pointer-events: none;
+      /* 让点击事件穿透到下方的猫爪 */
 
       @keyframes spin {
         0% {

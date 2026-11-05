@@ -1,13 +1,7 @@
 import config from "@/../package.json";
+import type { VersionType, VersionInfo } from "@/typings/version";
 
-export type VersionType = "preview" | "development" | "beta" | "release";
-
-export interface VersionInfo {
-  version: string;
-  type: VersionType;
-  channel: string;
-  upa: string;
-}
+export type { VersionType, VersionInfo };
 
 /**
  * 解析项目版本号

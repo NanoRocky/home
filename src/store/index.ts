@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import type { MainState, NoteItem } from "@/typings/store";
+import { markRaw } from "vue";
+import type { MainState, NoteItem, MetadataConfig } from "@/typings/store";
 import i18n, { type LocaleKey, supportedLocales, getBrowserLanguage } from "@/locales";
 import { validationPlugin, validationRules } from "@/store/plugins/validation";
 
@@ -64,8 +65,9 @@ export const storeState: MainState = {
   dwrcEnable: true, // 【状态】调用逐字歌词
   dwrcLoading: false, // 【状态】逐字歌词加载
   LrcMetaDataLoading: false, // 【状态】歌词元数据加载
-  LrcMetaDataCache: null as { exact?: string[]; contains?: string[] } | string[] | null, // 【缓存】歌词元数据关键词缓存
+  LrcMetaDataCache: null as MetadataConfig | null, // 【缓存】歌词元数据关键词/规则缓存
   lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
+  lyricRestoreVersion: 0, // 【状态】外部歌词恢复版本，用于通知播放器还原原始歌词
   forceShowBarIcon: false, // 【开关】进度图标常驻
   dwrcDot: true, // 【开关】显示逐字歌词进度小红点
   songServer: null as string | null, // 【缓存】当前歌曲本源服务器
@@ -133,7 +135,7 @@ export const mainStore = defineStore("main", {
     },
     // 更改歌词
     setPlayerLrc(value) {
-      this.playerLrc = value;
+      this.playerLrc = Array.isArray(value) ? markRaw(value) : value;
     },
     // 更改歌曲数据
     setPlayerData(title: string | null, artist: string | null, album: string | null = null) {

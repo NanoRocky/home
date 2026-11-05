@@ -45,19 +45,11 @@ import Music from "@/components/Music.vue";
 import Hitokoto from "@/components/Hitokoto.vue";
 import Weather from "@/components/Weather.vue";
 import { useI18n } from "vue-i18n";
+import type { CurrentTime } from "@/typings/app";
 
 const store = mainStore();
 const { locale } = useI18n();
 
-interface CurrentTime {
-  year: number;
-  month: number;
-  day: number;
-  weekday: string;
-  hour: number;
-  minute: number;
-  second: number;
-}
 
 // 当前时间
 const currentTime = ref<CurrentTime>({

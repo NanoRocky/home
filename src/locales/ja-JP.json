@@ -125,7 +125,19 @@
       "fetchTranslationLrcFailed": "翻訳歌詞の取得に失敗しました:",
       "pilferTranslationFailedFallback": "盗用元からの翻訳歌詞取得に失敗したため、オリジナル元へフォールバックします:",
       "fetchOriginalTranslationFailed": "オリジナル元からの翻訳歌詞取得に失敗しました:",
-      "updatePilferTranslationFailed": "盗用した翻訳歌詞の更新に失敗しました:"
+      "updatePilferTranslationFailed": "盗用した翻訳歌詞の更新に失敗しました:",
+      "pilferEmptyDiscard": "盗用した歌詞が空、またはインスト・プレースホルダーのみのため、盗用を中止します",
+      "pilferNonVerbatimDiscard": "オリジナル元に既にLRCが存在し、{currentServer} から取得した歌詞が一文字ずつの歌詞ではない（通常のLRCのみ）ため、通常のLRCを破棄してオリジナル元の歌詞を保持します",
+      "pilferNonVerbatimFallback": "オリジナル元に有効な歌詞がないため、{currentServer} からの通常のLRCを標準歌詞としてダウングレード描画します",
+      "playlistEmptyOrFailed": "プレイリストが空か、読み込みに失敗しました",
+      "lrcRequestFailsStatus": "LRC 歌詞ファイルのリクエストに失敗しました: ステータス {status}",
+      "dwrcRequestFailed": "DWRC リクエストに失敗しました: {status}",
+      "pilferEmptyNameDiscard": "現在の曲名が空のため、盗用を中止します",
+      "pilferSearchFailed": "歌詞盗用検索に失敗しました: {status}",
+      "pilferLrcFetchFailed": "盗用元歌詞の取得に失敗しました: {status}",
+      "pilferAlignFallback": "オリジナル元の歌詞が破損または無効な状態のため、アライメント失敗後にフォールバックを有効化します。",
+      "pilferProcessError": "[DWRC-Pilfer] 歌詞盗用処理でエラーが発生しました:",
+      "maxLoadErrorsReached": "音楽の読み込みに {count} 回連続で失敗したため、自動スキップを停止しました"
     },
     "notes": {
       "parseFailed": "ノートデータの解析に失敗しました。初期ノートにフォールバックします：",
@@ -150,6 +162,8 @@
       "titlePlaceholder": "ノートのタイトルを入力...",
       "contentPlaceholder": "何かメモを書こうニャ...",
       "pageFlipHint": "PGUP / PGDN でページ送り",
+      "pageUp": "前のページ",
+      "pageDown": "次のページ",
       "musicPlayingHint": "音楽再生中 (曲送り優先)",
       "shortcutHint": "Alt + N 閉じる | Esc 終了",
       "totalNotes": "合計 {count} 件のノート",
@@ -306,10 +320,14 @@
       "songErrorPostfix": " ...",
       "lrcSearching": "猫が歌詞を探しているニャ...",
       "lrcNotFound": "猫はこの曲の歌詞を見つけられなかったニャ qwq",
+      "instrumental": "インストゥルメンタルをお楽しみください",
       "autoPlayError": "現在のブラウザのポリシーでは自動再生が許可されていないようです。手動で再生してニャ！",
       "externalLyricLoaded": "猫は他のソースから歌詞を読み込みました。フッターの歌詞をマウス中ボタンでダブルクリックすると破棄できます。",
       "externalLyricLoadedMobile": "猫は他のソースから歌詞を読み込みました。フッターの歌詞を長押しすると破棄できます。",
-      "restoredOriginalLyric": "元の歌詞に戻しました。"
+      "restoredOriginalLyric": "元の歌詞に戻しました。",
+      "notAvailable": "歌詞がありません",
+      "lrcNoticeFailed": "LRC 歌詞ファイルのリクエストに失敗しました",
+      "songLoadFailedStop": "音楽の読み込みに {count} 回連続で失敗したため、猫は試行を停止しましたニャ qwq"
     },
     "weather": {
       "moduleName": "天気",
@@ -354,7 +372,16 @@
       },
       "windPowerUnit": " 級",
       "wind": "風",
-      "windDirections": ["北", "北東", "東", "東南", "南", "南西", "西", "北西"],
+      "windDirections": [
+        "北",
+        "北東",
+        "東",
+        "東南",
+        "南",
+        "南西",
+        "西",
+        "北西"
+      ],
       "beaufortScale": [
         "無風",
         "至軽風",

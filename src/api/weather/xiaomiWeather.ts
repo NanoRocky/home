@@ -14,6 +14,7 @@ import type {
   XMWeatherStatusItem,
   XMWeatherStatusData,
   XMBeaufortLevel,
+  WindConversionOptions,
 } from "@/typings/weather";
 
 const xmAdcodeDataTyped = xmAdcodeData as XMAdcodeItem[];
@@ -161,10 +162,7 @@ export const BEAUFORT_SCALE = (): XMBeaufortLevel[] => {
   ];
 };
 
-export interface WindConversionOptions {
-  returnRange?: boolean;
-  includeDescription?: boolean;
-}
+export type { WindConversionOptions };
 
 export function convertWindSpeed(speed: number, options: WindConversionOptions = {}): string {
   const { returnRange = false, includeDescription = false } = options;

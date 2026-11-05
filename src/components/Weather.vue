@@ -10,13 +10,11 @@
           : weatherData.weather.winddirection + $t("components.weather.wind")
       }}&nbsp;
     </span>
-    <span class="sm-hidden"
-      >{{
-        weatherData.weather.windpower?.endsWith($t("components.weather.windPowerUnit") || "级")
-          ? weatherData.weather.windpower
-          : weatherData.weather.windpower + $t("components.weather.windPowerUnit")
-      }}&nbsp;</span
-    >
+    <span class="sm-hidden">{{
+      weatherData.weather.windpower?.endsWith($t("components.weather.windPowerUnit") || "级")
+        ? weatherData.weather.windpower
+        : weatherData.weather.windpower + $t("components.weather.windPowerUnit")
+    }}&nbsp;</span>
   </div>
   <div class="weather" v-else>
     <span>{{ $t("console.weather.weatherFetchFailed").replace("：", "") }}</span>
@@ -53,7 +51,6 @@ const { t } = useI18n();
 
 // 加载密钥
 const txkey = import.meta.env.VITE_TX_WEATHER_KEY; // 腾讯天气密钥
-const txskey = import.meta.env.VITE_TX_WEATHER_SKEY; // 选择性对腾讯天气接口加密
 const gdkey = import.meta.env.VITE_GD_WEATHER_KEY; // 高德天气密钥
 
 // 天气数据

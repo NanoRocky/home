@@ -1,23 +1,28 @@
 import { removeLyricMetadata } from "@/utils/removeLyricMetadata";
 import { devLog } from "@/utils/debugLog";
-
-type LyricEntry = {
-  index: number;
-  normalized: string;
-  original: string;
-  startMs: number | null;
-};
+import type { LyricEntry, MatchResult, SongMeta } from "@/typings/player";
 
 const punctuationAndSpace =
   /[\s!"#$%&'()*+,\-.\/:;<=>?@[\]^_`{|}~·！？。，、；：“”‘’（）【】《》〈〉—…～]/g;
 
-const normalizeLyricLine = (line: string): string => {
-  const stripped = line
-    .replace(/\[[^\]]*\]/g, "")
-    .replace(/\(\d+(?:,\d+)*\)/g, "")
+const stripTimeTags = (line: string): string =>
+  line.replace(/\[[^\]]*\]/g, "").replace(/\(\d+(?:,\d+)*\)/g, "");
+
+const colonPrefixRegex = /^.*?[:：]/;
+
+const normalizeLyricLine = (
+  line: string,
+): { normalized: string; hasStrippedPrefix: boolean } => {
+  const withoutTags = stripTimeTags(line);
+  const hasStrippedPrefix = colonPrefixRegex.test(withoutTags);
+  const stripped = withoutTags
+    .replace(colonPrefixRegex, "")
     .normalize("NFKC")
     .toLowerCase();
-  return stripped.replace(punctuationAndSpace, "");
+  return {
+    normalized: stripped.replace(punctuationAndSpace, ""),
+    hasStrippedPrefix,
+  };
 };
 
 const parseStartTimeMs = (line: string): number | null => {
@@ -48,9 +53,15 @@ const buildEntries = (cleanedText: string): LyricEntry[] => {
   const lines = cleanedText.split(/\r?\n/);
   const entries: LyricEntry[] = [];
   lines.forEach((line, index) => {
-    const normalized = normalizeLyricLine(line);
+    const { normalized, hasStrippedPrefix } = normalizeLyricLine(line);
     if (!normalized) return;
-    entries.push({ index, normalized, original: line, startMs: parseStartTimeMs(line) });
+    entries.push({
+      index,
+      normalized,
+      original: line,
+      startMs: parseStartTimeMs(line),
+      hasStrippedPrefix,
+    });
   });
   return entries;
 };
@@ -108,11 +119,6 @@ const adjustLineWithOffset = (line: string, offset: number): string | null => {
   });
   return updated;
 };
-
-interface MatchResult {
-  sourceIdx: number;
-  pilferIdx: number;
-}
 
 const anchoredMatch = (
   sourceEntries: LyricEntry[],
@@ -191,15 +197,36 @@ const anchoredMatch = (
           `在 p=${p} s=${s} 成功建立匹配。目标行: `,
           matches.map((m) => sourceEntries[m.sourceIdx].normalized).join(" | "),
         );
+        const isCleanForCalibration = (sEntry: LyricEntry, pEntry: LyricEntry): boolean => {
+          if (sEntry.hasStrippedPrefix || pEntry.hasStrippedPrefix) {
+            return false;
+          }
+          const sClean = stripTimeTags(sEntry.original).trim();
+          const pClean = stripTimeTags(pEntry.original).trim();
+          return !/[:：【】\[\]]/.test(sClean) && !/[:：【】\[\]]/.test(pClean);
+        };
+
         for (const m of matches) {
-          const sourceOriginal = sourceEntries[m.sourceIdx].original
-            .replace(/\[[^\]]*\]/g, "")
-            .replace(/\([^)]*\)/g, "")
-            .trim();
-          if (!/[:：【】\[\]]/.test(sourceOriginal)) {
+          if (isCleanForCalibration(sourceEntries[m.sourceIdx], pilferEntries[m.pilferIdx])) {
             return { sourceIdx: m.sourceIdx, pilferIdx: m.pilferIdx };
           }
         }
+
+        let nextS = s + targetLinesCount;
+        let nextP = currentPilferIdx;
+        while (nextS < sourceEntries.length && nextP < pilferEntries.length) {
+          const sEntry = sourceEntries[nextS];
+          const pEntry = pilferEntries[nextP];
+          if (sEntry.normalized !== pEntry.normalized) {
+            break;
+          }
+          if (isCleanForCalibration(sEntry, pEntry)) {
+            return { sourceIdx: nextS, pilferIdx: nextP };
+          }
+          nextS++;
+          nextP++;
+        }
+
         return { sourceIdx: matches[0].sourceIdx, pilferIdx: matches[0].pilferIdx };
       }
     }
@@ -212,21 +239,64 @@ const anchoredMatch = (
   return null;
 };
 
+export const isLrcContentEmpty = (lrcText?: string | null): boolean => {
+  if (!lrcText || !lrcText.trim()) return true;
+  const stripped = lrcText.replace(/\[[^\]]*\]/g, "").trim();
+  if (
+    !stripped ||
+    /Not avail[ia]ble|暂无歌词|纯音乐[，,\s\-_*•]*(?:请欣赏|无歌词)?|此歌曲为(?:没有填词的)?纯音乐|没有填词|无歌词/i.test(
+      stripped,
+    )
+  ) {
+    return true;
+  }
+  const timeRegex = /\[\d{1,2}:\d{1,2}(?:[.:]\d{1,3})?\]|\[\d+,\s*\d+\]/;
+  const lines = lrcText.split(/\r?\n/);
+  for (const line of lines) {
+    if (timeRegex.test(line)) {
+      const textOnly = line.replace(/\[[^\]]*\]/g, "").trim();
+      if (
+        textOnly &&
+        !/^(作[词曲]|编曲|监制|歌手|制作人|录音|混音|和声|合声|OP|SP|UP|发行|出品|统筹|企划|推广|封面)[:：]/.test(
+          textOnly,
+        ) &&
+        !/^(纯音乐[，,\s\-_*•]*(?:请欣赏|无歌词)?|此歌曲为(?:没有填词的)?纯音乐|暂无歌词)$/.test(
+          textOnly,
+        )
+      ) {
+        return false;
+      }
+    }
+  }
+  return true;
+};
+
 export async function alignPilferedLyrics(
   pilferLyric: string,
   originalLineLyric?: string,
+  songMeta?: SongMeta,
 ): Promise<string | null> {
   if (!pilferLyric || typeof pilferLyric !== "string") {
     return null;
   }
-  if (!originalLineLyric || !originalLineLyric.trim()) {
+  if (isLrcContentEmpty(pilferLyric)) {
+    devLog("DWRC-Match", "偷取歌词为空或仅包含纯音乐/占位符，放弃偷取");
+    return null;
+  }
+  if (isLrcContentEmpty(originalLineLyric)) {
+    devLog("DWRC-Match", "源歌词为空或占位符状态，跳过对齐，直接使用偷取歌词");
     return pilferLyric;
   }
-  const cleanedSource = await removeLyricMetadata(originalLineLyric, true);
+  const cleanedSource = await removeLyricMetadata(originalLineLyric!, true, songMeta);
+  const cleanedPilfer = await removeLyricMetadata(pilferLyric, true, songMeta);
+  if (!cleanedPilfer.trim()) {
+    devLog("DWRC-Match", "偷取歌词剔除元数据后无有效词条，放弃偷取");
+    return null;
+  }
   if (!cleanedSource.trim()) {
+    devLog("DWRC-Match", "源歌词剔除元数据后无有效词条而偷取歌词有效，直接采用偷取歌词");
     return pilferLyric;
   }
-  const cleanedPilfer = await removeLyricMetadata(pilferLyric, true);
   const sourceEntries = buildEntries(cleanedSource);
   const pilferEntries = buildEntries(cleanedPilfer);
   devLog(
@@ -240,8 +310,12 @@ export async function alignPilferedLyrics(
     devLog("DWRC-Match", "剔除后的源文本第一句起始歌词:", sourceEntries[0].original);
   if (pilferEntries.length > 0)
     devLog("DWRC-Match", "剔除后的偷取文本第一句起始歌词:", pilferEntries[0].original);
-  if (!sourceEntries.length || !pilferEntries.length) {
-    devLog("DWRC-Match", "放弃匹配: 有效词条不足");
+  if (!pilferEntries.length) {
+    devLog("DWRC-Match", "放弃匹配: 偷取歌词有效词条不足");
+    return null;
+  }
+  if (!sourceEntries.length) {
+    devLog("DWRC-Match", "源文件无有效词条，直接采用偷取歌词");
     return pilferLyric;
   }
 
@@ -258,8 +332,8 @@ export async function alignPilferedLyrics(
     "DWRC-Match",
     `对齐时间后的偏移量: 源=${sourceStart} 替换=${pilferStart} 偏移=${offset}ms`,
   );
-  if (Math.abs(offset) < 1500 && Math.abs(offset) > -1500) {
-    devLog("DWRC-Match", "偏移量小于 1500ms, 忽略微小偏移");
+  if (Math.abs(offset) < 1000) {
+    devLog("DWRC-Match", "偏移量小于 1000ms, 忽略微小偏移");
     offset = 0;
   }
   const originalPilferLines = pilferLyric.split(/\r?\n/);

@@ -1,22 +1,11 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
-    <img
-      v-show="store.imgLoadStatus"
-      :src="currentBgUrl"
-      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
-      alt="cover"
-      @load="imgLoadComplete"
-      @error.once="imgLoadError"
-      @animationend="imgAnimationEnd"
-    />
+    <img v-show="store.imgLoadStatus" :src="currentBgUrl"
+      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]" alt="cover"
+      @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
     <!-- 新壁纸层 -->
-    <img
-      v-if="isTransitioning"
-      :src="nextBgUrl"
-      :class="['bg', 'next', { 'blur-in': isBlurringIn }]"
-      alt="cover"
-    />
+    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
@@ -29,7 +18,7 @@
 <script setup lang="js">
 import { mainStore } from "@/store";
 import Error from "@icon-park/vue-next/es/icons/Error";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
 import { initLantern, closeLantern } from "@/utils/season/lantern";
@@ -68,7 +57,7 @@ const getNonRepeatingRandom = (maxCount, storageKey) => {
   try {
     const saved = localStorage.getItem(storageKey);
     if (saved) history = JSON.parse(saved);
-  } catch (e) {}
+  } catch (e) { }
   let rand = Math.floor(Math.random() * maxCount + 1);
   let attempts = 0;
   while (history.includes(rand) && attempts < 50) {
@@ -81,7 +70,7 @@ const getNonRepeatingRandom = (maxCount, storageKey) => {
   }
   try {
     localStorage.setItem(storageKey, JSON.stringify(history));
-  } catch (e) {}
+  } catch (e) { }
   return rand;
 };
 
@@ -187,8 +176,6 @@ const changeBg = async (type) => {
         }
         if (store.webSpeech) {
           stopSpeech();
-          const voice = import.meta.env.VITE_TTS_Voice;
-          const vstyle = import.meta.env.VITE_TTS_Style;
           SpeechLocal("壁纸加载失败.mp3");
         }
       }
@@ -287,8 +274,6 @@ const imgLoadError = async () => {
   }
   if (store.webSpeech) {
     stopSpeech();
-    const voice = import.meta.env.VITE_TTS_Voice;
-    const vstyle = import.meta.env.VITE_TTS_Style;
     SpeechLocal("壁纸加载失败.mp3");
   }
 };

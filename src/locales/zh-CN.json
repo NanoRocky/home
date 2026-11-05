@@ -125,7 +125,19 @@
       "fetchTranslationLrcFailed": "获取翻译歌词失败:",
       "pilferTranslationFailedFallback": "从偷取源获取翻译歌词失败，回退到本源:",
       "fetchOriginalTranslationFailed": "从本源获取翻译歌词失败:",
-      "updatePilferTranslationFailed": "更新偷取翻译歌词失败:"
+      "updatePilferTranslationFailed": "更新偷取翻译歌词失败:",
+      "pilferEmptyDiscard": "偷取歌词为空或仅包含纯音乐/占位符，放弃偷取",
+      "pilferNonVerbatimDiscard": "本源已有 LRC，且从 {currentServer} 获取的歌词非逐字歌词(仅为普通LRC)，丢弃该普通LRC，保留本源歌词",
+      "pilferNonVerbatimFallback": "本源无有效歌词，将来自 {currentServer} 的普通LRC作为普通歌词进行降级渲染",
+      "playlistEmptyOrFailed": "播放列表为空或加载失败",
+      "lrcRequestFailsStatus": "LRC 歌词文件请求失败: 状态码 {status}",
+      "dwrcRequestFailed": "DWRC 逐字歌词请求失败: {status}",
+      "pilferEmptyNameDiscard": "当前歌曲名称为空，放弃偷取",
+      "pilferSearchFailed": "跨平台偷歌词搜索失败: {status}",
+      "pilferLrcFetchFailed": "偷取源歌词获取失败: {status}",
+      "pilferAlignFallback": "本源歌词处于损坏或无有效歌词状态，对齐失败后启用兜底。",
+      "pilferProcessError": "[DWRC-Pilfer] 偷歌词处理异常:",
+      "maxLoadErrorsReached": "连续 {count} 次加载音乐失败，已停止自动切歌加载"
     },
     "notes": {
       "parseFailed": "解析便签数据失败，已回退至初始便签：",
@@ -150,6 +162,8 @@
       "titlePlaceholder": "输入便签标题喵...",
       "contentPlaceholder": "写点什么好喵...",
       "pageFlipHint": "PGUP / PGDN 翻页",
+      "pageUp": "上一页",
+      "pageDown": "下一页",
       "musicPlayingHint": "音乐播放中 (切曲优先)",
       "shortcutHint": "Alt + N 关闭 | Esc 退出",
       "totalNotes": "共 {count} 篇便签",
@@ -306,10 +320,14 @@
       "songErrorPostfix": " 出现错误...",
       "lrcSearching": "猫猫正在翻找歌词...",
       "lrcNotFound": "猫猫没有找到这首歌的歌词诶qwq",
+      "instrumental": "纯音乐，请欣赏",
       "autoPlayError": "当前浏览器策略疑似不允许自动播放，请手动播放喵！",
       "externalLyricLoaded": "猫猫已从其它源加载歌词，可使用鼠标中键双击底部歌词丢弃",
       "externalLyricLoadedMobile": "猫猫已从其它源加载歌词，可长按底部歌词丢弃",
-      "restoredOriginalLyric": "已恢复原歌词"
+      "restoredOriginalLyric": "已恢复原歌词",
+      "notAvailable": "暂无歌词",
+      "lrcNoticeFailed": "LRC 歌词文件请求失败",
+      "songLoadFailedStop": "连续 {count} 次加载音乐失败，猫猫已停止继续尝试qwq"
     },
     "weather": {
       "moduleName": "天气",

@@ -29,22 +29,12 @@ export interface MainState {
   playerArtist: string | null;
   playerAlbum: string | null;
   playerLrc:
-    | [
-        boolean,
-        string | number,
-        string | number,
-        string | number,
-        string,
-        string | number,
-        string | number,
-        string,
-        string | number,
-      ][]
-    | [boolean, string, string, string, string, string, string][]
-    | [boolean, string, string, string, string, string][]
-    | [boolean, string, string, string, string][]
-    | [boolean, string][]
-    | any[];
+  | [boolean, string | number, string | number, string | number, string, string | number, string | number, string, string | number,][]
+  | [boolean, string, string, string, string, string, string][]
+  | [boolean, string, string, string, string, string][]
+  | [boolean, string, string, string, string][]
+  | [boolean, string][]
+  | any[];
   playerLrcShow: boolean;
   footerBlur: boolean;
   footerProgressBar: boolean;
@@ -69,8 +59,9 @@ export interface MainState {
   dwrcEnable: boolean;
   dwrcLoading: boolean;
   LrcMetaDataLoading: boolean;
-  LrcMetaDataCache: { exact?: string[]; contains?: string[] } | string[] | null;
+  LrcMetaDataCache: MetadataConfig | null;
   lyricSeekVersion: number;
+  lyricRestoreVersion: number;
   forceShowBarIcon: boolean;
   dwrcDot: boolean;
   songServer: string | null;
@@ -98,3 +89,17 @@ export interface NoteItem {
   createdAt: number;
   updatedAt: number;
 }
+
+export interface MetadataRule {
+  name: string;
+  description?: string;
+  pattern: string;
+}
+
+export interface MetadataConfig {
+  $schema?: string;
+  version: string;
+  description?: string;
+  rules: MetadataRule[];
+}
+

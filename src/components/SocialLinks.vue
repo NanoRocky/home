@@ -2,17 +2,9 @@
   <!-- 社交链接 -->
   <div :class="['social', store.socialTipPosition || 'right']" @dblclick="togglesocial">
     <div class="link">
-      <span
-        v-for="item in socialLinks"
-        :key="item.name"
-        class="icon-item"
-        @click="openLink(item.url)"
-        @auxclick.stop="openLink(item.url)"
-        @mousedown="handleMouseDown"
-        @mouseenter="socialTip = item.tip"
-        @mouseleave="socialTip = t('components.social.TipI')"
-        @dblclick.stop
-      >
+      <span v-for="item in socialLinks" :key="item.name" class="icon-item" @click="openLink(item.url)"
+        @auxclick.stop="openLink(item.url)" @mousedown="handleMouseDown" @mouseenter="socialTip = item.tip"
+        @mouseleave="socialTip = t('components.social.TipI')" @dblclick.stop>
         <img class="icon" :src="item.icon" height="24" />
       </span>
     </div>
@@ -23,7 +15,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import socialLinks from "@/assets/socialLinks.json";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { mainStore } from "@/store";
 
 const { t } = useI18n();

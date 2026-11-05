@@ -19,12 +19,8 @@
           </section>
         </div>
         <!-- 移动端菜单按钮 -->
-        <Icon
-          class="menu"
-          size="24"
-          v-show="!store.backgroundShow"
-          @click="store.mobileOpenState = !store.mobileOpenState"
-        >
+        <Icon class="menu" size="24" v-show="!store.backgroundShow"
+          @click="store.mobileOpenState = !store.mobileOpenState">
           <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
         </Icon>
         <!-- 搜索框 -->
@@ -33,12 +29,9 @@
         <Notes />
         <!-- 页脚 -->
         <Teleport to="body" :disabled="!shouldElevateFooter">
-          <Transition name="fade" mode="out-in">
-            <Footer
-              class="f-ter"
-              :class="{ 'is-elevated': shouldElevateFooter }"
-              v-show="!store.backgroundShow && !store.setOpenState"
-            />
+          <Transition name="fade">
+            <Footer class="f-ter" :class="{ 'is-elevated': shouldElevateFooter }"
+              v-show="!store.backgroundShow && !store.setOpenState" />
           </Transition>
         </Teleport>
       </main>
@@ -63,7 +56,7 @@ import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { getColor } from "@/utils/getColor";
 import { useI18n } from "vue-i18n";
 import { ElConfigProvider } from "element-plus";
@@ -187,8 +180,6 @@ onMounted(() => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("鼠标右键.mp3");
     }
     return false;
@@ -205,8 +196,6 @@ onMounted(() => {
       });
       if (store.webSpeech) {
         stopSpeech();
-        const voice = import.meta.env.VITE_TTS_Voice;
-        const vstyle = import.meta.env.VITE_TTS_Style;
         SpeechLocal("壁纸预览.mp3");
       }
     }

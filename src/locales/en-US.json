@@ -125,7 +125,19 @@
       "fetchTranslationLrcFailed": "Failed to fetch translation lyrics:",
       "pilferTranslationFailedFallback": "Failed to fetch translation lyrics from stolen source, falling back to original:",
       "fetchOriginalTranslationFailed": "Failed to fetch translation lyrics from original source:",
-      "updatePilferTranslationFailed": "Failed to update stolen translation lyrics:"
+      "updatePilferTranslationFailed": "Failed to update stolen translation lyrics:",
+      "pilferEmptyDiscard": "Pilfered lyrics are empty or only contain instrumental/placeholder, aborting pilfer",
+      "pilferNonVerbatimDiscard": "Original source already has LRC, and lyrics from {currentServer} are not word-by-word lyrics (standard LRC only). Discarding standard LRC and retaining original source lyrics",
+      "pilferNonVerbatimFallback": "Original source has no valid lyrics. Degrading standard LRC from {currentServer} to render as standard lyrics",
+      "playlistEmptyOrFailed": "Playlist is empty or failed to load",
+      "lrcRequestFailsStatus": "LRC file request fails: status {status}",
+      "dwrcRequestFailed": "DWRC request failed: {status}",
+      "pilferEmptyNameDiscard": "Current song name is empty, aborting pilfer",
+      "pilferSearchFailed": "Pilfer search failed: {status}",
+      "pilferLrcFetchFailed": "Pilfer lrc fetch failed: {status}",
+      "pilferAlignFallback": "Original lyrics are corrupted or invalid, enabling fallback after alignment failure.",
+      "pilferProcessError": "[DWRC-Pilfer] Error processing pilfered lyrics:",
+      "maxLoadErrorsReached": "Failed to load music {count} times consecutively, stopped auto-skipping"
     },
     "notes": {
       "parseFailed": "Failed to parse notes data, falling back to initial note:",
@@ -150,6 +162,8 @@
       "titlePlaceholder": "Note title...",
       "contentPlaceholder": "Write something meow...",
       "pageFlipHint": "PGUP / PGDN flip page",
+      "pageUp": "Previous Page",
+      "pageDown": "Next Page",
       "musicPlayingHint": "Music playing (track switch first)",
       "shortcutHint": "Alt + N Close | Esc Exit",
       "totalNotes": "{count} notes in total",
@@ -306,10 +320,14 @@
       "songErrorPostfix": "...",
       "lrcSearching": "Cat is searching for lyrics...",
       "lrcNotFound": "Cat didn't find the lyrics for this song qwq",
+      "instrumental": "Instrumental, please enjoy",
       "autoPlayError": "Current browser policy seems to prevent autoplay, please play manually meow!",
       "externalLyricLoaded": "Cat has loaded lyrics from an alternate source. Double-click with middle mouse button on footer lyrics to discard.",
       "externalLyricLoadedMobile": "Cat has loaded lyrics from an alternate source. Long-press footer lyrics to discard.",
-      "restoredOriginalLyric": "Original lyrics restored."
+      "restoredOriginalLyric": "Original lyrics restored.",
+      "notAvailable": "Not available",
+      "lrcNoticeFailed": "LRC file request fails",
+      "songLoadFailedStop": "Failed to load music {count} times in a row, Cat has stopped trying qwq"
     },
     "weather": {
       "loading": "Loading weather data...",
