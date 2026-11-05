@@ -51,11 +51,7 @@ export type WordItem = [
   wordIndex: number,
 ];
 
-export type LineItem = [
-  start: number,
-  duration: number,
-  stack: WordItem[],
-];
+export type LineItem = [start: number, duration: number, stack: WordItem[]];
 
 export type DWRCItem = LineItem;
 export type DwrcItem = [number, number, any[]];

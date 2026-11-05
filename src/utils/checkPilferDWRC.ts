@@ -10,15 +10,10 @@ const stripTimeTags = (line: string): string =>
 
 const colonPrefixRegex = /^.*?[:：]/;
 
-const normalizeLyricLine = (
-  line: string,
-): { normalized: string; hasStrippedPrefix: boolean } => {
+const normalizeLyricLine = (line: string): { normalized: string; hasStrippedPrefix: boolean } => {
   const withoutTags = stripTimeTags(line);
   const hasStrippedPrefix = colonPrefixRegex.test(withoutTags);
-  const stripped = withoutTags
-    .replace(colonPrefixRegex, "")
-    .normalize("NFKC")
-    .toLowerCase();
+  const stripped = withoutTags.replace(colonPrefixRegex, "").normalize("NFKC").toLowerCase();
   return {
     normalized: stripped.replace(punctuationAndSpace, ""),
     hasStrippedPrefix,

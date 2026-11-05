@@ -4,22 +4,37 @@
       <Icon size="20" class="iconl">
         <Link />
       </Icon>
-      <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
-        @click="store.setOpenState = !store.setOpenState">{{ $t("components.links.title") }}</span>
+      <span
+        class="title text-truncate-ellipsis"
+        v-if="store.mobileOpenState"
+        @click="store.setOpenState = !store.setOpenState"
+        >{{ $t("components.links.title") }}</span
+      >
       <span class="title" v-else>{{ $t("components.links.title") }}</span>
     </div>
     <!-- 网站列表 -->
-    <Swiper v-if="siteLinks[0]" :modules="[Pagination, Mousewheel]" :slides-per-view="1" :space-between="40"
+    <Swiper
+      v-if="siteLinks[0]"
+      :modules="[Pagination, Mousewheel]"
+      :slides-per-view="1"
+      :space-between="40"
       :pagination="{
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'div',
-      }" :mousewheel="true">
+      }"
+      :mousewheel="true"
+    >
       <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">
-            <div class="item cards" :style="index < 3 ? 'margin-bottom: 20px' : null" @click="jumpLink(item)"
-              @auxclick.stop="jumpLink(item, true)" @mousedown="handleMouseDown">
+            <div
+              class="item cards"
+              :style="index < 3 ? 'margin-bottom: 20px' : null"
+              @click="jumpLink(item)"
+              @auxclick.stop="jumpLink(item, true)"
+              @mousedown="handleMouseDown"
+            >
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>

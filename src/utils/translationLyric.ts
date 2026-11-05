@@ -138,10 +138,11 @@ export async function processTranslationLrc(
   if (!rawText || typeof rawText !== "string") return [];
   let processedText = rawText;
   if (store.playerRMMetadata) {
-    const meta = songMeta || currentSongMeta || {
-      title: store.playerTitle || store.getPlayerData?.name,
-      artist: store.playerArtist || store.getPlayerData?.artist,
-    };
+    const meta = songMeta ||
+      currentSongMeta || {
+        title: store.playerTitle || store.getPlayerData?.name,
+        artist: store.playerArtist || store.getPlayerData?.artist,
+      };
     processedText = await removeLyricMetadata(processedText, false, meta);
   }
   return parseTranslationLrc(processedText);
@@ -304,7 +305,12 @@ export async function onPilferSuccess(
   if (!store.playerTrLrc) return;
 
   try {
-    const lines = await loadTranslationLyrics(currentOriginalUrl, pilferUrl, currentSongMeta, store);
+    const lines = await loadTranslationLyrics(
+      currentOriginalUrl,
+      pilferUrl,
+      currentSongMeta,
+      store,
+    );
     if (token !== trLoadToken || currentExpectedIndex !== expectedIndex) return;
     if (lines.length > 0) {
       activeTrLines = lines;
@@ -341,10 +347,7 @@ export async function onPilferDiscard(
 
   try {
     const lines = await loadTranslationLyrics(currentOriginalUrl, null, currentSongMeta, store);
-    if (
-      token !== trLoadToken ||
-      (expectedIndex !== -1 && currentExpectedIndex !== expectedIndex)
-    ) {
+    if (token !== trLoadToken || (expectedIndex !== -1 && currentExpectedIndex !== expectedIndex)) {
       return;
     }
     activeTrLines = lines;
@@ -354,10 +357,7 @@ export async function onPilferDiscard(
       syncTranslationLrc(store.playerCurrentTime || 0, store);
     }
   } catch (err) {
-    if (
-      token === trLoadToken &&
-      (expectedIndex === -1 || currentExpectedIndex === expectedIndex)
-    ) {
+    if (token === trLoadToken && (expectedIndex === -1 || currentExpectedIndex === expectedIndex)) {
       activeTrLines = [];
       store.playerTrLrcText = "";
     }
@@ -412,10 +412,7 @@ export async function toggleTranslationLrc(
 /**
  * 当歌词元数据移除开关切换时调用：复用已缓存的翻译原始文本，重新执行过滤并同步
  */
-export async function reprocessTranslationLrc(
-  store = mainStore(),
-  songMeta?: SongMeta,
-) {
+export async function reprocessTranslationLrc(store = mainStore(), songMeta?: SongMeta) {
   if (!store.playerTrLrc) return;
   const token = ++trLoadToken;
   if (songMeta) {
@@ -423,7 +420,12 @@ export async function reprocessTranslationLrc(
   }
 
   try {
-    const lines = await loadTranslationLyrics(currentOriginalUrl, currentPilferUrl, currentSongMeta, store);
+    const lines = await loadTranslationLyrics(
+      currentOriginalUrl,
+      currentPilferUrl,
+      currentSongMeta,
+      store,
+    );
     if (token !== trLoadToken) return;
     activeTrLines = lines;
     if (lines.length === 0) {

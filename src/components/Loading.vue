@@ -120,7 +120,6 @@ const siteName = import.meta.env.VITE_SITE_NAME;
       visibility 0.3s 1s ease-out;
 
     .loader {
-
       .loader-circle,
       .loader-text {
         opacity: 0;

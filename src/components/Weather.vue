@@ -10,11 +10,13 @@
           : weatherData.weather.winddirection + $t("components.weather.wind")
       }}&nbsp;
     </span>
-    <span class="sm-hidden">{{
-      weatherData.weather.windpower?.endsWith($t("components.weather.windPowerUnit") || "级")
-        ? weatherData.weather.windpower
-        : weatherData.weather.windpower + $t("components.weather.windPowerUnit")
-    }}&nbsp;</span>
+    <span class="sm-hidden"
+      >{{
+        weatherData.weather.windpower?.endsWith($t("components.weather.windPowerUnit") || "级")
+          ? weatherData.weather.windpower
+          : weatherData.weather.windpower + $t("components.weather.windPowerUnit")
+      }}&nbsp;</span
+    >
   </div>
   <div class="weather" v-else>
     <span>{{ $t("console.weather.weatherFetchFailed").replace("：", "") }}</span>

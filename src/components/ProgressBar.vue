@@ -3,9 +3,15 @@
     <div class="progress" :class="{ dragging: isDragging }" ref="progressFillRef"></div>
 
     <div class="progress-icon-wrapper" :class="{ dragging: isDragging }" ref="progressWrapperRef">
-      <img v-if="store.showProgressIcon" src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
-        class="progress-icon" draggable="false" @mousedown="handleMouseDown" @touchstart.prevent="handleTouchStart"
-        ref="icon" />
+      <img
+        v-if="store.showProgressIcon"
+        src="https://file.nanorocky.top/home/images/icon/ProgressBar.ico"
+        class="progress-icon"
+        draggable="false"
+        @mousedown="handleMouseDown"
+        @touchstart.prevent="handleTouchStart"
+        ref="icon"
+      />
       <Icon v-if="!store.playerCanplay" size="32" color="white" class="ReloadCircle">
         <ReloadCircle />
       </Icon>

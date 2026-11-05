@@ -104,13 +104,7 @@ export async function removeLyricMetadata(
     .replace(/\[(\d):(\d{2}(?:[.:]\d{1,3})?)\]/g, "[0$1:$2]");
 
   const lines = normalizedText.split("\n");
-  devLog(
-    "DWRC-Metadata",
-    "开始处理元数据, 规则数:",
-    rules.length,
-    "原歌词行数:",
-    lines.length,
-  );
+  devLog("DWRC-Metadata", "开始处理元数据, 规则数:", rules.length, "原歌词行数:", lines.length);
 
   let lrcTitle = "";
   let lrcArtist = "";
@@ -171,7 +165,7 @@ export async function removeLyricMetadata(
 
       if (
         /^(?:男|女|合|[男女合]声|[男女合]唱|全员|众人|群星|独白|对白|旁白|念白|合奏)$/i.test(
-          cleanPrefix
+          cleanPrefix,
         )
       ) {
         devLog("DWRC-Metadata", `匹配到元数据: [声部提示行] => ${pureText}`);

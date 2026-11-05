@@ -1,7 +1,12 @@
 <template>
   <div class="mobileset" v-if="store.mobileOpenState" @click.stop>
-    <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
-      @click="store.setOpenState = false" />
+    <close-one
+      class="close"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.setOpenState = false"
+    />
     <el-row>
       <el-col class="left">
         <div class="logo text-truncate-ellipsis">
@@ -25,8 +30,13 @@
     </el-row>
   </div>
   <div class="set" v-else @click.stop>
-    <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
-      @click="store.setOpenState = false" />
+    <close-one
+      class="close"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.setOpenState = false"
+    />
     <el-row :gutter="40">
       <el-col :span="12" class="left">
         <div class="logo text-truncate-ellipsis">
@@ -34,17 +44,34 @@
           <span class="sm">.{{ siteUrl[1] }}</span>
         </div>
         <div class="version">
-          <el-tooltip :content="$t('components.settings.tooltips.version')" placement="top" effect="color"
-            :show-arrow="false">
+          <el-tooltip
+            :content="$t('components.settings.tooltips.version')"
+            placement="top"
+            effect="color"
+            :show-arrow="false"
+          >
             <div class="num" @dblclick="toggleVer">v&nbsp;{{ config.version }}</div>
           </el-tooltip>
-          <el-tooltip :content="$t('components.settings.tooltips.poweredBy')" placement="top" effect="color"
-            :show-arrow="false">
+          <el-tooltip
+            :content="$t('components.settings.tooltips.poweredBy')"
+            placement="top"
+            effect="color"
+            :show-arrow="false"
+          >
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
-          <el-tooltip :content="$t('components.settings.tooltips.extensionUpdates')" placement="top" effect="color"
-            :show-arrow="false">
-            <file-editing-one class="github" theme="outline" size="24" @click="jumpTo(config.efug)" />
+          <el-tooltip
+            :content="$t('components.settings.tooltips.extensionUpdates')"
+            placement="top"
+            effect="color"
+            :show-arrow="false"
+          >
+            <file-editing-one
+              class="github"
+              theme="outline"
+              size="24"
+              @click="jumpTo(config.efug)"
+            />
           </el-tooltip>
         </div>
       </el-col>

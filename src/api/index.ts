@@ -80,7 +80,9 @@ export const getPlayerList = async (server, type, id, serverse, idse, uuid) => {
 };
 
 export const getLrcMetaDataWords = async () => {
-  const res = await fetch("https://main.nanorocky.top/fs/home_meting_metadata/metadata_Keywords_v3.json");
+  const res = await fetch(
+    "https://main.nanorocky.top/fs/home_meting_metadata/metadata_Keywords_v3.json",
+  );
   if (!res.ok) {
     throw new Error(`Failed to fetch metadata rules: ${res.status}`);
   }

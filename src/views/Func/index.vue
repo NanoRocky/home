@@ -50,7 +50,6 @@ import type { CurrentTime } from "@/typings/app";
 const store = mainStore();
 const { locale } = useI18n();
 
-
 // 当前时间
 const currentTime = ref<CurrentTime>({
   year: 0,
