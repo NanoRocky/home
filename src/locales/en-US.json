@@ -47,7 +47,8 @@
     "wallpaper": {
       "previewDisabled": "Wallpaper preview is disabled. The default wallpapers are NanoRocky's collection, all rights reserved. They are for decoration only and cannot be previewed or downloaded. Sorry!",
       "previewEnable": "Enable Wallpaper Preview",
-      "previewDisable": "Disable Wallpaper Preview"
+      "previewDisable": "Disable Wallpaper Preview",
+      "download": "Download Wallpaper"
     }
   },
   "views": {
@@ -429,6 +430,7 @@
       "TipI": "Find NanoRocky"
     },
     "background": {
+      "download": "Download Wallpaper",
       "loadConfigFailed": "Failed to load wallpaper config:",
       "loadFailedSwitched": "Wallpaper load failed, temporarily switched to default",
       "loadError": "Wallpaper load failed",

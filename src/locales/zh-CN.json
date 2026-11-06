@@ -47,7 +47,8 @@
     "wallpaper": {
       "previewDisabled": "已停用壁纸预览状态，本站默认壁纸为酪灰的收藏小图库，版权归原主所有，只做装饰，不提供预览和下载喔~ 果咩纳塞！",
       "previewEnable": "开启壁纸预览",
-      "previewDisable": "关闭壁纸预览"
+      "previewDisable": "关闭壁纸预览",
+      "download": "下载壁纸"
     }
   },
   "views": {
@@ -330,6 +331,7 @@
       "songLoadFailedStop": "连续 {count} 次加载音乐失败，猫猫已停止继续尝试qwq"
     },
     "weather": {
+      "loading": "天气数据加载中...",
       "moduleName": "天气",
       "failedToFetchData": "天气数据获取失败",
       "failedToParseTemp": "无法解析温度数据",
@@ -419,6 +421,7 @@
       "TipI": "Find NanoRocky"
     },
     "background": {
+      "download": "下载壁纸",
       "loadConfigFailed": "无法加载壁纸配置文件:",
       "loadFailedSwitched": "壁纸加载失败，已临时切换回默认",
       "loadError": "壁纸加载失败",

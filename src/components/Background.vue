@@ -20,7 +20,7 @@
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
       <a v-if="store.backgroundShow" class="down" target="_blank">
-        {{ $t("background.disabled") }}
+        {{ $t("app.wallpaper.previewDisabled") }}
       </a>
     </Transition>
   </div>

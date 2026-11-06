@@ -47,7 +47,8 @@
     "wallpaper": {
       "previewDisabled": "壁紙のプレビューは無効化されています。デフォルトの壁紙は NanoRocky のコレクションであり、著作権は原著作者に帰属します。装飾目的のみで、プレビューやダウンロードはできません。ごめんね！",
       "previewEnable": "壁紙プレビューを有効化",
-      "previewDisable": "壁紙プレビューを無効化"
+      "previewDisable": "壁紙プレビューを無効化",
+      "download": "壁紙をダウンロード"
     }
   },
   "views": {
@@ -330,6 +331,7 @@
       "songLoadFailedStop": "音楽の読み込みに {count} 回連続で失敗したため、猫は試行を停止しましたニャ qwq"
     },
     "weather": {
+      "loading": "天気データを読み込み中...",
       "moduleName": "天気",
       "failedToFetchData": "天気データの取得に失敗しました",
       "failedToParseTemp": "温度データを解析できませんでした",
@@ -419,6 +421,7 @@
       "TipI": "Find NanoRocky"
     },
     "background": {
+      "download": "壁紙をダウンロード",
       "loadConfigFailed": "壁紙設定ファイルの読み込みに失敗しました:",
       "loadFailedSwitched": "壁紙の読み込みに失敗しました。一時的にデフォルトに戻しました",
       "loadError": "壁紙の読み込みに失敗しました",

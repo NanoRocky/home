@@ -63,7 +63,7 @@ const mountApp = () => {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener("controllerchange", async () => {
       // 弹出更新提醒
-      const updatedMsg = i18n.global.t("main.updated");
+      const updatedMsg = i18n.global.t("views.main.siteUpdated");
       console.log(updatedMsg);
       ElMessage(updatedMsg);
       if (store.webSpeech) {
