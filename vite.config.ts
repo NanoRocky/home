@@ -24,7 +24,8 @@ console.log = (...args) => {
 export default ({ mode }: { mode: string }): UserConfig => {
     const env = loadEnv(mode, process.cwd());
     const hasEnvFile = existsSync(resolve(import.meta.dirname, ".env"));
-    const hasEnvLocal = existsSync(resolve(import.meta.dirname, ".env.local"));
+    const hasProcessViteEnv = Object.keys(process.env).some((key) => key.startsWith("VITE_"));
+    const hasEnvLocal = existsSync(resolve(import.meta.dirname, ".env.local")) || hasProcessViteEnv;
     return defineConfig({
         define: {
             "import.meta.env.VITE_HAS_ENV_FILE": hasEnvFile,

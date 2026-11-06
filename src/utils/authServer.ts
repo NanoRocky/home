@@ -16,7 +16,9 @@ let x: number | null = null,
 const d = (msg: string) => byt(md(ut(msg)));
 const f = () => Math.floor(Date.now() / 1000),
   o = (v: number) => v.toString(16),
-  c = (q: URLSearchParams) => (q.delete("sig"), q.delete("sign"));
+  c = (q: URLSearchParams) => (q.delete("sig"), q.delete("sign")),
+  nu = (u: string) =>
+    new URL(u, typeof window !== "undefined" ? window.location.origin : "http://localhost");
 
 function gud(): string {
   if (ud) {
@@ -52,7 +54,7 @@ async function gst() {
 
 export async function gwp(u: string, s: string, b: Record<string, any>) {
   // 备注：POST 方法需要传入 body ！
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname,
     q = ul.searchParams,
     ui = gud();
@@ -73,7 +75,7 @@ export async function gwp(u: string, s: string, b: Record<string, any>) {
 }
 
 export async function gwg(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname,
     q = ul.searchParams,
     ui = gud();
@@ -92,7 +94,7 @@ export async function gwg(u: string, s: string) {
 }
 
 export async function gwgt(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname,
     q = ul.searchParams,
     ui = gud();
@@ -112,7 +114,7 @@ export async function gwgt(u: string, s: string) {
 }
 
 export async function gwggd(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     q = ul.searchParams,
     ui = gud();
   if (ui) q.set("uuid", ui);
@@ -130,7 +132,7 @@ export async function gwggd(u: string, s: string) {
 }
 
 export async function gwggdt(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     q = ul.searchParams,
     ui = gud();
   q.set("time", (await gst()).toString());
@@ -149,7 +151,7 @@ export async function gwggdt(u: string, s: string) {
 }
 
 export async function gwggt(u: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     q = ul.searchParams,
     ui = gud();
   q.set("time", (await gst()).toString());
@@ -168,7 +170,7 @@ export async function gwggt(u: string) {
 }
 
 export async function gasA(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname,
     q = ul.searchParams,
     t = await gst(),
@@ -181,7 +183,7 @@ export async function gasA(u: string, s: string) {
 }
 
 export async function gasB(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname.replace(/^\/?\d{12}\/[0-9a-f]{32}\//i, "").replace(/^\//, ""),
     q = ul.searchParams,
     ui = gud(),
@@ -195,7 +197,7 @@ export async function gasB(u: string, s: string) {
 }
 
 export async function gasC(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname.replace(/^\/?[0-9a-f]{32}\/[0-9a-f]+\//i, "").replace(/^\//, ""),
     q = ul.searchParams,
     ui = gud(),
@@ -206,7 +208,7 @@ export async function gasC(u: string, s: string) {
 }
 
 export async function gasDH(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname,
     q = ul.searchParams,
     t = await gst(),
@@ -219,7 +221,7 @@ export async function gasDH(u: string, s: string) {
 }
 
 export async function gasDI(u: string, s: string) {
-  const ul = new URL(u),
+  const ul = nu(u),
     p = ul.pathname,
     q = ul.searchParams,
     t = o(await gst()),
