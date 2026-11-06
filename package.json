@@ -81,15 +81,17 @@
     "workbox-build": "^7.4.1"
   },
   "overrides": {
-    "glob": "^13.0.6",
+    "glob": "^14.0.4",
     "@jridgewell/sourcemap-codec": "^1.6.0",
     "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.6.0",
-    "source-map": "^0.8.0"
+    "source-map": "^0.8.0",
+    "minimatch": "^11.0.5"
   },
   "resolutions": {
-    "glob": "^13.0.6",
+    "glob": "^14.0.4",
     "@jridgewell/sourcemap-codec": "^1.6.0",
     "sourcemap-codec": "npm:@jridgewell/sourcemap-codec@^1.6.0",
-    "source-map": "^0.8.0"
+    "source-map": "^0.8.0",
+    "minimatch": "^11.0.5"
   }
 }
