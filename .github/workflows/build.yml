@@ -34,14 +34,6 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      - name: Configure environment
-        run: |
-          if (-not (Test-Path .env)) {
-            Copy-Item .env.example .env
-            Write-Host "Created .env from example"
-          } else {
-            Write-Host ".env already exists"
-          }
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build Website

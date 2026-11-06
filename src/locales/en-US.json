@@ -15,20 +15,20 @@
       "continue": "Continue",
       "cancel": "Cancel",
       "reset": "Reset",
-      "resetAll": "Reset All Settings"
+      "resetAll": "Reset All"
     },
     "unit": {
-      "sec": "Sec",
-      "year": "Year",
-      "month": "Month",
-      "day": "Day"
+      "sec": "s",
+      "year": "Y",
+      "month": "M",
+      "day": "D"
     },
     "version": {
       "preview": "Preview",
       "dev": "Dev",
-      "early": "Early Access",
+      "early": "Beta",
       "stable": "Stable",
-      "unknown": "Unknown Version"
+      "unknown": "Unknown"
     }
   },
   "app": {
@@ -37,33 +37,33 @@
       "home": "Home: ",
       "github": "Github: ",
       "update": "Update: ",
-      "maintainedBy": "Currently maintained by NanoRocky.",
+      "maintainedBy": "Maintained by NanoRocky.",
       "title": "NanoRocky's Homepage"
     },
     "event": {
-      "rightClickWarning": "For a better experience, right-click has been eaten by the cat!",
-      "themeChangeFailed": "Theme switch failed, falling back to follow system."
+      "rightClickWarning": "Right-click is eaten by the cat!",
+      "themeChangeFailed": "Theme switch failed, reverted to system."
     },
     "wallpaper": {
-      "previewDisabled": "Wallpaper preview is disabled. The default wallpapers are NanoRocky's collection, all rights reserved. They are for decoration only and cannot be previewed or downloaded. Sorry!",
-      "previewEnable": "Enable Wallpaper Preview",
-      "previewDisable": "Disable Wallpaper Preview",
-      "download": "Download Wallpaper"
+      "previewDisabled": "Preview disabled. Default wallpapers are NanoRocky's collection (display only)~",
+      "previewEnable": "Wallpaper Preview On",
+      "previewDisable": "Wallpaper Preview Off",
+      "download": "Download"
     }
   },
   "views": {
     "main": {
       "devMode": "Currently in development mode.",
-      "resettingConfig": "Restoring default configuration, please wait...",
-      "siteUpdated": "Website updated, please refresh the page meow!",
-      "noConfigWarningLog": "Warning: You seem to have no configuration file enabled, the project may encounter exceptions! Please configure the .env file before running the project!",
-      "noConfigDetect": "It seems you haven't created a configuration file, the project may encounter exceptions!",
-      "corruptedDetect": "Error: Project files corrupted, please re-acquire..",
+      "resettingConfig": "Restoring defaults...",
+      "siteUpdated": "Site updated, please refresh meow!",
+      "noConfigWarningLog": "Warning: No configuration file enabled! Please configure .env before running!",
+      "noConfigDetect": "No configuration file found, issues may occur!",
+      "corruptedDetect": "Error: Project files corrupted, please re-download.",
       "canceled": "Canceled"
     },
     "moreSet": {
-      "pokeMore": "Why are you still poking! Is there something that secret miaow...?",
-      "poke": "Eh? Are you looking for... something secret?"
+      "pokeMore": "Still poking?! Is it that secret miaow...?",
+      "poke": "Eh? Looking for something secret?"
     }
   },
   "console": {
@@ -88,28 +88,28 @@
       "weatherAMapLog1": "Using AMap Weather API",
       "weatherAMapLog2": "Using AMap Weather API, authentication enabled",
       "weatherAMapLog": "AMap API IP fetch failed, calling extra API for IPv4 address...",
-      "calcTempError": "Cat doesn't know how to calculate the temperature data qwq:",
+      "calcTempError": "Cat can't calculate temperature data qwq:",
       "xiaomiWeatherLog": "Using Xiaomi Weather API",
       "missingKeyUseBackup": "Weather API key not configured, using backup API",
       "useAMap": "Using AMap Weather API",
       "aMapFailedUseBackup": "AMap Weather API failed, trying backup API",
       "tencentFailedUseAMap": "Tencent Weather API failed, trying AMap Weather API",
-      "weatherFetchFailed": "Cat doesn't know today's weather qwq:",
-      "weatherError": "Weather info fetch failed",
-      "weaUnknown": "Unknown Weather",
-      "windUnknown": "Unknown Wind Scale",
+      "weatherFetchFailed": "Weather unavailable qwq：",
+      "weatherError": "Weather fetch failed",
+      "weaUnknown": "Unknown",
+      "windUnknown": "Unknown",
       "xiaomiIntf": "Using Xiaomi Weather API",
-      "areaUnknown": "Unknown Area",
-      "googleKeyMissing": "Google Weather API key not configured, cannot load weather",
-      "googleGeolocationStart": "Getting location using Google Geolocation API...",
-      "googleWeatherStart": "Getting weather data using Google Weather API..."
+      "areaUnknown": "Unknown",
+      "googleKeyMissing": "Google Weather API key not configured",
+      "googleGeolocationStart": "Getting location via Google Geolocation API...",
+      "googleWeatherStart": "Getting weather via Google Weather API..."
     },
     "store": {
       "notSupportedChangeContext1": "Unsupported to set variable '",
       "notSupportedChangeContext2": "' to '",
       "notSupportedChangeContext3": "'. Changes blocked.",
       "resetting": "Restoring default configuration...",
-      "resetComplete": "Reset complete, page will refresh shortly..."
+      "resetComplete": "Reset complete, refreshing..."
     },
     "api": {
       "jsonpFailed": "JSONP request failed",
@@ -120,278 +120,282 @@
       "musicLoaded": "Music loaded",
       "play": "Play",
       "amllFail": "AMLL TTML Database call failed...",
-      "dwrcPilfering": "Currently playing \"{name}\" - '{artist}' from {songServer}. Cat has successfully stolen word-by-word lyrics from {currentServer}~",
+      "dwrcPilfering": "Playing \"{name}\" - '{artist}' ({songServer}), pilfered verbatim lyrics from {currentServer}~",
       "syncDWRCLrcError": "Error in syncDWRCLrc:",
-      "autoPlayError": "Autoplay failed, likely restricted by browser policies. Please try clicking the play button manually:",
+      "autoPlayError": "Autoplay restricted by browser policy. Please click play manually:",
       "fetchTranslationLrcFailed": "Failed to fetch translation lyrics:",
-      "pilferTranslationFailedFallback": "Failed to fetch translation lyrics from stolen source, falling back to original:",
-      "fetchOriginalTranslationFailed": "Failed to fetch translation lyrics from original source:",
-      "updatePilferTranslationFailed": "Failed to update stolen translation lyrics:",
-      "pilferEmptyDiscard": "Pilfered lyrics are empty or only contain instrumental/placeholder, aborting pilfer",
-      "pilferNonVerbatimDiscard": "Original source already has LRC, and lyrics from {currentServer} are not word-by-word lyrics (standard LRC only). Discarding standard LRC and retaining original source lyrics",
-      "pilferNonVerbatimFallback": "Original source has no valid lyrics. Degrading standard LRC from {currentServer} to render as standard lyrics",
+      "pilferTranslationFailedFallback": "Failed to fetch pilfered translation, falling back to original:",
+      "fetchOriginalTranslationFailed": "Failed to fetch original translation:",
+      "updatePilferTranslationFailed": "Failed to update pilfered translation:",
+      "pilferEmptyDiscard": "Pilfered lyrics empty or instrumental only, aborting",
+      "pilferNonVerbatimDiscard": "Original has LRC and {currentServer} is standard LRC only, retaining original",
+      "pilferNonVerbatimFallback": "No valid original lyrics, rendering standard LRC from {currentServer}",
       "playlistEmptyOrFailed": "Playlist is empty or failed to load",
-      "lrcRequestFailsStatus": "LRC file request fails: status {status}",
+      "lrcRequestFailsStatus": "LRC request failed: status {status}",
       "dwrcRequestFailed": "DWRC request failed: {status}",
       "pilferEmptyNameDiscard": "Current song name is empty, aborting pilfer",
       "pilferSearchFailed": "Pilfer search failed: {status}",
       "pilferLrcFetchFailed": "Pilfer lrc fetch failed: {status}",
-      "pilferAlignFallback": "Original lyrics are corrupted or invalid, enabling fallback after alignment failure.",
+      "pilferAlignFallback": "Original lyrics invalid, enabling fallback after alignment failure.",
       "pilferProcessError": "[DWRC-Pilfer] Error processing pilfered lyrics:",
       "maxLoadErrorsReached": "Failed to load music {count} times consecutively, stopped auto-skipping"
     },
     "notes": {
       "parseFailed": "Failed to parse notes data, falling back to initial note:",
       "saveFailed": "Failed to save notes:",
-      "showSaveFilePickerFallback": "Failed to invoke save file picker, falling back to standard download:",
+      "showSaveFilePickerFallback": "Failed to invoke save file picker, falling back to download:",
       "exportFailed": "Failed to export notes:",
       "showOpenFilePickerFallback": "Failed to invoke open file picker, falling back to file input:",
       "importFailed": "Failed to import notes:"
+    },
+    "metadata": {
+      "compileRuleFailed": "Failed to compile rule [{name}]:",
+      "startProcess": "Processing metadata, rules: {rules}, lyric lines: {lines}",
+      "matchBracket": "Matched metadata: [Enclosed brackets] => {text}",
+      "matchTitleArtist": "Matched metadata: [Title-Artist] => {text}",
+      "matchArtistCue": "Matched metadata: [Artist cue (current artist)] => {text}",
+      "matchVoicePartCue": "Matched metadata: [Vocal part cue] => {text}",
+      "matchNameCue": "Matched metadata: [Standalone name/vocal cue] => {text}",
+      "matchRule": "Matched metadata: [Rule match] => {text}",
+      "strippedSummary": "Stripped {stripped} metadata lines. Remaining lines: {remaining}",
+      "firstLineAfterStrip": "First lyric line after stripping:",
+      "emptyFallbackInstrumental": "No lyrics left after stripping metadata, treating as instrumental"
     }
   },
   "components": {
     "search": {
-      "placeholder": "Search or type a URL...",
-      "noSpace": "Not enough space to show the search bar meow~",
-      "hint": "Press Enter to search, Alt+Q / Esc to close"
+      "placeholder": "Search or enter URL...",
+      "noSpace": "Not enough space for search bar meow~",
+      "hint": "Enter to search · Alt+Q / Esc to close"
     },
     "notes": {
       "title": "Notes",
       "newNote": "New Note",
-      "deleteNote": "Delete Current Note",
+      "deleteNote": "Delete Note",
       "deleteConfirm": "Delete this note meow?",
       "titlePlaceholder": "Note title...",
       "contentPlaceholder": "Write something meow...",
-      "pageFlipHint": "PGUP / PGDN flip page",
-      "pageUp": "Previous Page",
-      "pageDown": "Next Page",
-      "musicPlayingHint": "Music playing (track switch first)",
-      "shortcutHint": "Alt + N Close | Esc Exit",
-      "totalNotes": "{count} notes in total",
-      "untitled": "Untitled Note",
+      "pageFlipHint": "PGUP / PGDN Flip",
+      "pageUp": "Prev",
+      "pageDown": "Next",
+      "musicPlayingHint": "Playing (Track first)",
+      "shortcutHint": "Alt+N / Esc Close",
+      "totalNotes": "{count} notes",
+      "untitled": "Untitled",
       "welcomeTitle": "Welcome to Notes meow~",
-      "welcomeContent": "Jot down your sparks and important thoughts here!\n\n💡 Quick Tips:\n• Press Alt + N anytime to toggle the notes card\n• Supports multiple notes, click + on top to add\n• When music is paused, press PGUP / PGDN to flip notes\n• When music is playing, PGUP / PGDN switches music tracks first\n• All notes are auto-saved in your browser localStorage!",
-      "created": "New note created meow",
+      "welcomeContent": "Jot down your sparks and thoughts here!\n\n💡 Quick Tips:\n• Press Alt + N anytime to toggle Notes\n• Click + on top to create multiple notes\n• When music is paused, PGUP / PGDN flips notes\n• When music is playing, PGUP / PGDN switches tracks first\n• All notes are auto-saved locally in your browser!",
+      "created": "Note created meow",
       "deleted": "Note deleted meow",
       "characters": "chars",
-      "exportNotes": "Export Notes (JSON)",
-      "importNotes": "Import Notes (JSON)",
-      "exportSuccess": "Notes exported successfully meow~",
-      "importSuccess": "Successfully imported and merged {count} notes meow!",
-      "importError": "Import failed, invalid file format meow",
+      "exportNotes": "Export (JSON)",
+      "importNotes": "Import (JSON)",
+      "exportSuccess": "Notes exported meow~",
+      "importSuccess": "Imported {count} notes meow!",
+      "importError": "Invalid file format meow",
       "bookmarkList": "Notes List",
       "closeTab": "Close Tab",
       "selectJsonHint": "Please select a JSON note file meow!",
       "resize": "Drag to resize"
     },
     "settings": {
-      "globalSettings": "Global Settings",
+      "globalSettings": "Settings",
       "menu": {
-        "mobile": "Mobile Settings Menu",
-        "desktop": "Desktop Settings Menu"
+        "mobile": "Mobile Settings",
+        "desktop": "Desktop Settings"
       },
       "wallpaper": {
-        "changeSuccess": "Wallpaper changed successfully meow!",
+        "changeSuccess": "Wallpaper updated meow!",
         "backgrounds": {
-          "0": "NanoRocky's Collection",
+          "0": "Rocky's Picks",
           "1": "Random Fluff",
           "2": "Random Furry",
           "3": "Random Anime",
-          "4": "Random Cat Ears",
-          "5": "Random Scenery",
-          "6": "Bing Daily Random Image"
+          "4": "Cat Ears",
+          "5": "Scenery",
+          "6": "Bing Daily"
         },
-        "adjust": "Wallpaper Adjustment",
-        "specify": "Specify wallpaper temporarily for built-in wallpapers",
-        "idEmpty": "Wallpaper ID cannot be empty!",
-        "idNotNumber": "Wallpaper ID must be numeric!",
-        "notBuiltin": "Currently not using a built-in wallpaper, this feature is not supported!",
-        "advanced": "Advanced Wallpaper Settings",
-        "autoSwitch": "Auto Wallpaper Switch",
-        "setSuccess": "Wallpaper ID set: {id}"
+        "adjust": "Wallpaper ID",
+        "specify": "Set built-in wallpaper by ID",
+        "idEmpty": "ID cannot be empty!",
+        "idNotNumber": "ID must be numeric!",
+        "notBuiltin": "Only available for built-in wallpapers!",
+        "advanced": "Wallpaper Timer",
+        "autoSwitch": "Auto Switch",
+        "setSuccess": "Wallpaper ID: {id}"
       },
-      "noMoreOptions": "No more options for now qwq",
+      "noMoreOptions": "Nothing else here qwq",
       "tabs": {
-        "personalWallpaper": "Personal Wallpaper",
-        "themeSettings": "Theme Settings",
-        "personalization": "Personalization",
-        "playerConfig": "Player Config",
-        "lyricSettings": "Lyric Settings",
-        "voiceSettings": "Voice Settings",
-        "otherSettings": "Other Settings",
-        "devSettings": "Dev Settings"
+        "personalWallpaper": "Wallpaper",
+        "themeSettings": "Theme",
+        "personalization": "Appearance",
+        "playerConfig": "Player",
+        "lyricSettings": "Lyrics",
+        "voiceSettings": "Voice",
+        "otherSettings": "Others",
+        "devSettings": "Developer"
       },
       "theme": {
         "text": "Theme Mode",
-        "system": "Follow System",
-        "time": "Follow Time",
-        "bg": "Follow Background",
-        "light": "Light Mode",
-        "dark": "Dark Mode"
+        "system": "System",
+        "time": "Schedule",
+        "bg": "Adaptive",
+        "light": "Light",
+        "dark": "Dark"
       },
       "personalization": {
-        "siteStartShow": "Site Start Date Display",
-        "musicClick": "Click Music to Open Panel",
-        "seasonalEffects": "Show Seasonal Effects",
-        "footerBlur": "Footer Background Blur",
-        "footerProgressBar": "Show Footer Music Progress Bar",
-        "title": "Personalization Settings",
-        "customName": "Show Custom Name in Info Area"
+        "siteStartShow": "Show Site Uptime",
+        "musicClick": "Music Panel on Click",
+        "seasonalEffects": "Seasonal Effects",
+        "footerBlur": "Footer Blur",
+        "footerProgressBar": "Footer Progress Bar",
+        "title": "Personalization",
+        "customName": "Show Custom Name"
       },
       "player": {
         "autoplay": "Autoplay",
-        "randomOrder": "Random Order",
+        "randomOrder": "Shuffle",
         "loopMode": "Loop Mode",
-        "loopAll": "List",
-        "loopOne": "Single",
-        "loopNone": "No Loop"
+        "loopAll": "All",
+        "loopOne": "One",
+        "loopNone": "Off"
       },
       "lyric": {
-        "showFooterLyric": "Show Footer Lyric",
-        "showDwrcDot": "Show DWRC Progress Dot",
-        "useAMLL": "Enable AMLL TTML Database for missing lyrics",
-        "amllNetworkWarning": "(May slow down lyric loading in unstable GitHub networks)",
-        "useAMLLMirror": "Use mirror for AMLL TTML Database",
-        "enableDWRC": "DWRC Master Switch",
-        "enableDWRCPro": "DWRC Enhanced Effect",
-        "removeMetadata": "Remove Metadata from DWRC",
-        "pilfer": "Pilfer Lyrics (Use alternate source on fail)",
-        "translate": "Show Translation Lyrics",
-        "notesAvoidFooter": "Avoid Masking Footer in Notes",
-        "notesAvoidFooterTip": "Keep footer lyrics, progress bar and translation unmasked when Notes is open, maintaining safe margins"
+        "showFooterLyric": "Footer Lyrics",
+        "showDwrcDot": "Lyric Progress Dot",
+        "useAMLL": "Use AMLL TTML DB",
+        "amllNetworkWarning": "(May slow loading on unstable networks)",
+        "useAMLLMirror": "Use AMLL Mirror",
+        "enableDWRC": "Word-by-Word Lyrics",
+        "enableDWRCPro": "Enhanced Lyric Effect",
+        "removeMetadata": "Hide Lyric Metadata",
+        "pilfer": "Cross-Source Match",
+        "translate": "Show Translation",
+        "notesAvoidFooter": "Notes Avoid Footer",
+        "notesAvoidFooterTip": "Keep footer lyrics unmasked when Notes is open"
       },
       "voice": {
-        "enableSwitch": "Web Voice Interaction Master Switch",
-        "announceSongName": "Announce Song Name"
+        "enableSwitch": "Voice Interaction",
+        "announceSongName": "Announce Song"
       },
       "tooltips": {
         "version": "Version",
         "poweredBy": "Powered by imsyy",
-        "extensionUpdates": "Extension Function Updates by NanoRocky",
-        "sourceCode": "Github Source Code Repository",
-        "extensionUpdateRepo": "Extension Update Repository"
+        "extensionUpdates": "Extension Updates by NanoRocky",
+        "sourceCode": "GitHub Repository",
+        "extensionUpdateRepo": "Extension Repository"
       },
       "updateLog": {
-        "title": "Update Log"
+        "title": "Changelog"
       },
       "seasonalEffects": {
         "title": "Seasonal Effects",
-        "winterSnow": "Winter Snow",
-        "autumnFirefly": "Autumn Fireflies",
-        "springLantern": "Spring Lanterns"
+        "winterSnow": " Snow",
+        "autumnFirefly": " Fireflies",
+        "springLantern": " Lanterns"
       },
       "system": {
-        "weatherProvider": "Weather Provider",
+        "weatherProvider": "Weather API",
         "providerTencent": "Tencent",
         "providerAMap": "AMap",
         "providerGoogle": "Google",
         "providerXiaomi": "Xiaomi",
         "providerOioweb": "oioweb",
-        "languageSettings": "Language Settings",
+        "languageSettings": "Language",
         "autoLang": "Auto",
-        "channel": "Channel",
-        "checkUpdate": "Check for Updates",
-        "checkButton": "Check Update",
+        "channel": "ch",
+        "checkUpdate": "Updates",
+        "checkButton": "Check Now",
         "updateFound": "Update Found",
-        "alreadyLatest": "Already latest version! v{version}, {type}.",
-        "newVersion": "New version v{version}, {type} found, come and experience it!",
-        "checkError": "Update check error, please try again later~",
-        "restoringDefault": "Restoring default configuration, please wait...",
-        "loadingInitial": "Loading initial settings, please wait...",
-        "confirmReset": "Are you sure you want to reset all settings? The operation will be executed after clicking 3 times.",
+        "alreadyLatest": "Up to date! v{version} ({type}).",
+        "newVersion": "New version v{version} ({type}) available!",
+        "checkError": "Update check failed, try later~",
+        "restoringDefault": "Restoring defaults...",
+        "loadingInitial": "Loading initial settings...",
+        "confirmReset": "Reset all settings? Click 3 times to confirm.",
         "debug": "Debug",
-        "detailedLogs": "Detailed Logs"
+        "detailedLogs": "Verbose Logs"
       }
     },
     "music": {
-      "musicList": "Music List",
-      "backToHitokoto": "Back to Hitokoto",
-      "partyNotStarted": "Party hasn't started (?)",
-      "playerLoadFailed": "Announcer disappeared, music failed to load qwq",
-      "playErrorNext": "Error playing song, moving to next in 2s",
-      "playError": "Error playing song",
+      "musicList": "Playlist",
+      "backToHitokoto": "Quote",
+      "partyNotStarted": "Party not started (?)",
+      "playerLoadFailed": "Music failed to load qwq",
+      "playErrorNext": "Playback error, skipping in 2s",
+      "playError": "Playback error",
       "playing": "Playing \"",
-      "ofSong": "\" by \"",
+      "ofSong": "\" - \"",
       "lyricLoading": "Loading lyrics...",
-      "progressIconDisabled": "Progress ICON persist disabled",
+      "progressIconDisabled": "Progress icon disabled",
       "eh": "Eh?",
-      "songLoadFailedNext": "Cat 'can't sing' this song qwq, playing next in 2s",
-      "studioError": "A slight glitch in the studio, please try again later qwq",
-      "songErrorLog": "Cat encountered an error playing: ",
+      "songLoadFailedNext": "Can't play this song qwq, skipping in 2s",
+      "studioError": "Studio glitch, try again later qwq",
+      "songErrorLog": "Error playing: ",
       "songErrorPostfix": "...",
-      "lrcSearching": "Cat is searching for lyrics...",
-      "lrcNotFound": "Cat didn't find the lyrics for this song qwq",
-      "instrumental": "Instrumental, please enjoy",
-      "autoPlayError": "Current browser policy seems to prevent autoplay, please play manually meow!",
-      "externalLyricLoaded": "Cat has loaded lyrics from an alternate source. Double-click with middle mouse button on footer lyrics to discard.",
-      "externalLyricLoadedMobile": "Cat has loaded lyrics from an alternate source. Long-press footer lyrics to discard.",
-      "restoredOriginalLyric": "Original lyrics restored.",
-      "notAvailable": "Not available",
-      "lrcNoticeFailed": "LRC file request fails",
-      "songLoadFailedStop": "Failed to load music {count} times in a row, Cat has stopped trying qwq"
+      "lrcSearching": "Finding lyrics...",
+      "lrcNotFound": "No lyrics found qwq",
+      "instrumental": "Instrumental",
+      "autoPlayError": "Autoplay blocked, please play manually meow!",
+      "externalLyricLoaded": "Alternate lyrics loaded (middle-click twice on footer lyrics to discard)",
+      "externalLyricLoadedMobile": "Alternate lyrics loaded (long-press footer lyrics to discard)",
+      "restoredOriginalLyric": "Original lyrics restored",
+      "notAvailable": "No lyrics",
+      "lrcNoticeFailed": "LRC request failed",
+      "songLoadFailedStop": "Failed to load {count} tracks in a row, stopped trying qwq"
     },
     "weather": {
-      "loading": "Loading weather data...",
+      "loading": "Loading weather...",
       "moduleName": "Weather",
-      "failedToFetchData": "Weather data fetch failed",
-      "failedToParseTemp": "Failed to parse temperature data",
-      "failedToFetchLocation": "Location fetch failed",
-      "failedToLoadWeather": "Weather load failed",
-      "unknownRegion": "Unknown Region",
-      "internationalRegion": "Intl Region",
+      "failedToFetchData": "Weather error",
+      "failedToParseTemp": "Temp error",
+      "failedToFetchLocation": "Location error",
+      "failedToLoadWeather": "Weather error",
+      "unknownRegion": "Unknown",
+      "internationalRegion": "Overseas",
       "googleWindDirections": {
-        "NORTH": "North",
-        "SOUTH": "South",
-        "EAST": "East",
-        "WEST": "West",
-        "NORTHEAST": "Northeast",
-        "NORTHWEST": "Northwest",
-        "SOUTHEAST": "Southeast",
-        "SOUTHWEST": "Southwest",
-        "NORTH_NORTHEAST": "North-northeast",
-        "EAST_NORTHEAST": "East-northeast",
-        "EAST_SOUTHEAST": "East-southeast",
-        "SOUTH_SOUTHEAST": "South-southeast",
-        "SOUTH_SOUTHWEST": "South-southwest",
-        "WEST_SOUTHWEST": "West-southwest",
-        "WEST_NORTHWEST": "West-northwest",
-        "NORTH_NORTHWEST": "North-northwest"
+        "NORTH": "N",
+        "SOUTH": "S",
+        "EAST": "E",
+        "WEST": "W",
+        "NORTHEAST": "NE",
+        "NORTHWEST": "NW",
+        "SOUTHEAST": "SE",
+        "SOUTHWEST": "SW",
+        "NORTH_NORTHEAST": "NNE",
+        "EAST_NORTHEAST": "ENE",
+        "EAST_SOUTHEAST": "ESE",
+        "SOUTH_SOUTHEAST": "SSE",
+        "SOUTH_SOUTHWEST": "SSW",
+        "WEST_SOUTHWEST": "WSW",
+        "WEST_NORTHWEST": "WNW",
+        "NORTH_NORTHWEST": "NNW"
       },
       "googleConditions": {
         "CLEAR": "Clear",
-        "MOSTLY_CLEAR": "Mostly clear",
-        "PARTLY_CLOUDY": "Partly cloudy",
-        "MOSTLY_CLOUDY": "Mostly cloudy",
+        "MOSTLY_CLEAR": "Mostly Clear",
+        "PARTLY_CLOUDY": "Partly Cloudy",
+        "MOSTLY_CLOUDY": "Mostly Cloudy",
         "CLOUDY": "Cloudy",
         "WINDY": "Windy",
-        "WIND_AND_RAIN": "Wind and rain",
-        "LIGHT_RAIN_SHOWERS": "Light rain showers",
-        "CHANCE_OF_SHOWERS": "Chance of showers",
-        "SCATTERED_SHOWERS": "Scattered showers",
-        "RAIN_SHOWERS": "Rain showers",
-        "HEAVY_RAIN_SHOWERS": "Heavy rain showers",
-        "TYPE_UNSPECIFIED": "Unknown weather"
+        "WIND_AND_RAIN": "Wind & Rain",
+        "LIGHT_RAIN_SHOWERS": "Light Showers",
+        "CHANCE_OF_SHOWERS": "Chance Showers",
+        "SCATTERED_SHOWERS": "Showers",
+        "RAIN_SHOWERS": "Showers",
+        "HEAVY_RAIN_SHOWERS": "Heavy Showers",
+        "TYPE_UNSPECIFIED": "Unknown"
       },
-      "windPowerUnit": " Scale",
-      "wind": "Wind",
-      "windDirections": [
-        "North",
-        "Northeast",
-        "East",
-        "Southeast",
-        "South",
-        "Southwest",
-        "West",
-        "Northwest"
-      ],
+      "windPowerUnit": " Lv",
+      "wind": " Wind",
+      "windDirections": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
       "beaufortScale": [
         "Calm",
         "Light Air",
         "Light Breeze",
         "Gentle Breeze",
-        "Moderate Breeze",
+        "Moderate",
         "Fresh Breeze",
-        "Strong Breeze",
+        "Strong",
         "Near Gale",
         "Gale",
         "Strong Gale",
@@ -401,28 +405,28 @@
       ]
     },
     "hitokoto": {
-      "openPlayer": "Open Music Player",
-      "failedToFetch": "Failed to fetch Hitokoto",
+      "openPlayer": "Music Player",
+      "failedToFetch": "Quote load failed",
       "defaultText": "Cat is thinking...",
       "defaultFrom": "NanoRocky"
     },
     "links": {
-      "title": "Website List"
+      "title": "Links"
     },
     "message": {
-      "resolutionTooLow": "Current resolution is too low to open the expansion box qwq [So 'small' yet trying to open it! (bushi)]"
+      "resolutionTooLow": "Screen resolution too low to open the box qwq!"
     },
     "timeCapsule": {
-      "days": "Days",
+      "days": "d",
       "title": "Time Capsule",
-      "month": "This Month",
-      "hours": "Hours",
-      "year": "This Year",
-      "passed": "Passed",
+      "month": "Month",
+      "hours": "hrs",
+      "year": "Year",
+      "passed": " passed",
       "day": "Today",
-      "remaining": "Remaining",
-      "week": "This Week",
-      "sitePassed": "This site has survived for {years} years, {months} months, and {days} days"
+      "remaining": "Left",
+      "week": "Week",
+      "sitePassed": "Online for {years}y {months}m {days}d"
     },
     "social": {
       "defaultTip": "Want to be friends meow?",
@@ -430,11 +434,11 @@
       "TipI": "Find NanoRocky"
     },
     "background": {
-      "download": "Download Wallpaper",
+      "download": "Download",
       "loadConfigFailed": "Failed to load wallpaper config:",
-      "loadFailedSwitched": "Wallpaper load failed, temporarily switched to default",
+      "loadFailedSwitched": "Wallpaper failed, switched to default",
       "loadError": "Wallpaper load failed",
-      "loadSuccess": "Wallpaper loaded and animation complete"
+      "loadSuccess": "Wallpaper loaded"
     },
     "moreContent": {
       "hello": "Hello~"
@@ -443,43 +447,43 @@
   "utils": {
     "time": {
       "today": "Today",
-      "thisWeek": "This Week",
-      "thisMonth": "This Month",
-      "thisYear": "This Year",
+      "thisWeek": "Week",
+      "thisMonth": "Month",
+      "thisYear": "Year",
       "weekdays": {
-        "sun": "Sunday",
-        "mon": "Monday",
-        "tue": "Tuesday",
-        "wed": "Wednesday",
-        "thu": "Thursday",
-        "fri": "Friday",
-        "sat": "Saturday"
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat"
       },
       "greetings": {
-        "lateNight1": "Good midnight, time to sleep!",
-        "morning1": "Good morning, you're up early~",
-        "morning2": "Good morning, it's a new day~",
-        "forenoon": "Good forenoon!",
-        "noon": "Good noon, take a break and recharge~",
+        "lateNight1": "Late night, time to sleep!",
+        "morning1": "Good morning, up early~",
+        "morning2": "Good morning, a brand new day~",
+        "forenoon": "Good morning!",
+        "noon": "Good noon, take a break~",
         "afternoon": "Good afternoon!",
-        "dusk": "Good dusk, enjoy a delicious dinner and relax~",
-        "evening": "Good evening, have some fun and relax your mind~",
-        "lateNight2": "Good late night! It's getting late, good night w",
-        "lateNight3": "Good late night! It's almost midnight, rest early~"
+        "dusk": "Good evening, enjoy dinner~",
+        "evening": "Good evening, time to relax~",
+        "lateNight2": "Getting late, good night w",
+        "lateNight3": "Almost midnight, rest early~"
       },
       "welcome": " Welcome here~",
-      "todayIs": "Today is",
+      "todayIs": "Today is ",
       "holidays": {
         "qingming": "Qingming Festival",
         "wenchuan": "Wenchuan Earthquake Memorial Day",
-        "kangzhan": "Chinese People's Anti-Japanese War Memorial Day",
-        "jiuyiba": "September 18th Incident Memorial Day",
-        "nanjing": "Nanjing Massacre Victims National Memorial Day"
+        "kangzhan": "Anti-Japanese War Memorial Day",
+        "jiuyiba": "Sept 18th Memorial Day",
+        "nanjing": "National Memorial Day"
       }
     },
     "system": {
       "canvasError": "Unable to get 2d context from canvas",
-      "imageColorError": "Unable to process image to extract color"
+      "imageColorError": "Unable to extract color from image"
     },
     "speech": {
       "noFileNameProvided": "No file name provided",
@@ -491,6 +495,6 @@
     }
   },
   "validation": {
-    "invalidValue": "Unsupported to set variable '{key}' to '{value}'. Changes blocked."
+    "invalidValue": "Unsupported value '{value}' for '{key}'. Changes blocked."
   }
 }

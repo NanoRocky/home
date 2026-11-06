@@ -3,17 +3,17 @@
   <div :class="['social', store.socialTipPosition || 'right']" @dblclick="togglesocial">
     <div class="link">
       <span
-        v-for="item in socialLinks"
-        :key="item.name"
+        v-for="item in socialLinksData"
+        :key="getSocialName(item)"
         class="icon-item"
         @click="openLink(item.url)"
         @auxclick.stop="openLink(item.url)"
         @mousedown="handleMouseDown"
-        @mouseenter="socialTip = item.tip"
-        @mouseleave="socialTip = t('components.social.TipI')"
+        @mouseenter="activeItem = item"
+        @mouseleave="activeItem = null"
         @dblclick.stop
       >
-        <img class="icon" :src="item.icon" height="24" />
+        <img class="icon" :src="item.icon" :alt="getSocialName(item)" height="24" />
       </span>
     </div>
     <span class="tip" @dblclick="togglesocial">{{ socialTip }}</span>
@@ -25,11 +25,38 @@ import { useI18n } from "vue-i18n";
 import socialLinks from "@/assets/socialLinks.json";
 import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { mainStore } from "@/store";
+import type { SocialLink } from "@/typings/app";
 
-const { t } = useI18n();
-// 社交链接提示
-const socialTip = ref(t("components.social.Tip"));
+const { t, locale } = useI18n();
 const store = mainStore();
+const socialLinksData = socialLinks as SocialLink[];
+
+// 当前悬浮的社交项
+const activeItem = ref<SocialLink | null>(null);
+
+// 获取当前语言下的社交名称
+const getSocialName = (item: SocialLink) => {
+  if (locale.value !== "zh-CN" && item.name_en?.trim()) {
+    return item.name_en;
+  }
+  return item.name;
+};
+
+// 获取当前语言下的社交提示
+const getSocialTip = (item: SocialLink) => {
+  if (locale.value !== "zh-CN" && item.tip_en?.trim()) {
+    return item.tip_en;
+  }
+  return item.tip;
+};
+
+// 社交链接提示（随语言与悬浮状态自动响应）
+const socialTip = computed(() => {
+  if (activeItem.value) {
+    return getSocialTip(activeItem.value);
+  }
+  return t("components.social.TipI");
+});
 
 const openLink = (url: string) => {
   if (url.startsWith("mailto:")) {
@@ -53,8 +80,6 @@ const togglesocial = () => {
   });
   if (store.webSpeech) {
     stopSpeech();
-    const voice = import.meta.env.VITE_TTS_Voice;
-    const vstyle = import.meta.env.VITE_TTS_Style;
     SpeechLocal("戳戳社.mp3");
   }
 };

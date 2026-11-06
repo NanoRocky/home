@@ -32,7 +32,7 @@ import { getXMWT } from "@/api/weather/xiaomiWeather";
 import { getGoogleWeather } from "@/api/weather/googleWeather";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { useI18n } from "vue-i18n";
 
 import type {
@@ -204,8 +204,6 @@ const getWeatherData = async () => {
     onError(t("console.weather.weatherFetchFailed").replace("：", ""));
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("天气加载失败.mp3");
     }
   }

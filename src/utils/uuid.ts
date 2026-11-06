@@ -4,10 +4,7 @@ export const PUBLIC_UUID_VERSION = 4;
 /** 当前程序序列号版本 */
 export const CLIENT_UUID_SERIAL_VERSION = 2;
 
-/** 第一段暗号 */
 export const MAGIC_PREFIX = "6e72";
-
-/** 第二段暗号 */
 export const MAGIC_MID = "686f";
 
 const calcChecksum = (payload: string): string => {

@@ -7,6 +7,7 @@ export interface MainState {
   sBGCount: string | null;
   autoBGSwitchInterval: number;
   seasonalEffects: boolean;
+  mourningMode: boolean;
   msgNameShow: boolean;
   siteStartShow: boolean;
   musicClick: boolean;

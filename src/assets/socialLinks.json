@@ -1,44 +1,58 @@
 [
   {
     "name": "Github",
+    "name_en": "GitHub",
     "icon": "https://file.nanorocky.top/home/images/icon/github.png",
     "tip": "催眠学",
+    "tip_en": "Hypnology",
     "url": "https://github.com/NanoRocky/"
   },
   {
     "name": "Steam",
+    "name_en": "Steam",
     "icon": "https://file.nanorocky.top/home/images/icon/steam.png",
     "tip": "谁家的辣鸡宽带！我要和蒸汽学共眠！",
+    "tip_en": "Curse this laggy ISP! Let me sleep with Steam!",
     "url": "https://steamcommunity.com/id/NanoRocky/"
   },
   {
     "name": "BiliBili",
+    "name_en": "BiliBili",
     "icon": "https://file.nanorocky.top/home/images/icon/bilibili.png",
     "tip": "哔哔叭叭小破站",
+    "tip_en": "Beep-boop Bilibili~",
     "url": "https://space.bilibili.com/454187211/dynamic"
   },
   {
     "name": "QQ",
+    "name_en": "QQ",
     "icon": "https://file.nanorocky.top/home/images/icon/qq.png",
     "tip": "蕉个朋友~",
+    "tip_en": "Let's be friends~",
     "url": "https://qm.qq.com/q/ZSyVZILbuA"
   },
   {
     "name": "Twitter",
+    "name_en": "Twitter",
     "icon": "https://file.nanorocky.top/home/images/icon/twitter.png",
     "tip": "迅雷！（bushi）",
+    "tip_en": "Wait, isn't this Xunlei?! (jk)",
     "url": "https://x.com/NanoRocky_Sama"
   },
   {
     "name": "Email",
+    "name_en": "Email",
     "icon": "https://file.nanorocky.top/home/images/icon/email.png",
     "tip": "律师函马上到你邮箱！（bushi）",
+    "tip_en": "A lawyer's letter is on its way to your inbox! (jk)",
     "url": "mailto:psdhh3525987739w@outlook.com"
   },
   {
     "name": "Telegram",
+    "name_en": "Telegram",
     "icon": "https://file.nanorocky.top/home/images/icon/telegram.png",
     "tip": "喂？喂！没有信号！",
+    "tip_en": "Hello? Hello?! No signal!",
     "url": "https://t.me/NanoRocky_Sama"
   }
 ]

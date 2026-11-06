@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { helloInit } from "@/utils/getTime.js";
+import { helloInit, checkDays } from "@/utils/getTime.js";
 import { HamburgerButton, CloseSmall } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 import { Icon } from "@vicons/utils";
@@ -69,10 +69,15 @@ import { useI18n } from "vue-i18n";
 import { ElConfigProvider } from "element-plus";
 import ep_zh_CN from "element-plus/dist/locale/zh-cn.mjs";
 import ep_en_US from "element-plus/dist/locale/en.mjs";
+import ep_ja_JP from "element-plus/dist/locale/ja.mjs";
 
 const store = mainStore();
 const { locale, t } = useI18n();
-const elLocale = computed(() => (locale.value === "zh-CN" ? ep_zh_CN : ep_en_US));
+const elLocale = computed(() => {
+  if (locale.value === "ja-JP") return ep_ja_JP;
+  if (locale.value === "en-US") return ep_en_US;
+  return ep_zh_CN;
+});
 const timeThemeInterval = ref<any>(null);
 
 const shouldElevateFooter = computed(() => {
@@ -99,6 +104,8 @@ const loadComplete = () => {
   nextTick(() => {
     // 欢迎提示
     helloInit(store);
+    // 默哀模式
+    checkDays(store);
   });
 };
 

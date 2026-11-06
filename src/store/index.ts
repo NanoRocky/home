@@ -15,6 +15,7 @@ export const storeState: MainState = {
   sBGCount: null as string | null, // 【状态】使用内置壁纸时用于临时指定壁纸的接口
   autoBGSwitchInterval: 0 as number, // 【开关】自动切换壁纸设置
   seasonalEffects: true, // 【开关】季节特效
+  mourningMode: false, // 【开关】默哀模式
   msgNameShow: true, // 【开关】信息区域显示自定义名而非原本的 URL
   siteStartShow: true, // 【开关】建站日期显示
   musicClick: true, // 【开关】音乐链接是否跳转
@@ -55,7 +56,6 @@ export const storeState: MainState = {
   playerDWRCATDB: true, // 【开关】允许接入 AMLL TTML Database
   playerDWRCATDBF: false, // 【开关】接入 AMLL TTML Database 时使用镜像加速
   playerDWRCPilfer: true, // 【开关】拆东墙补西墙
-  /* 这个移除元数据功能暂只能对非直接从 API 获得的歌词有效，因为它不经由 APlayer 处理，可以被拦截并替换。所以也就只支持逐字。 */
   playerRMMetadata: true, // 【开关】移除歌词中的元数据
   playerCurrentTime: null as number | null, // 【缓存】当前歌曲已播放时间
   playerDuration: null as number | null, // 【缓存】当前歌曲总时长
@@ -174,10 +174,10 @@ export const mainStore = defineStore("main", {
     // 重置所有设置
     resetStore() {
       this.$reset = () => {
-        console.log("正在恢复默认配置...");
+        console.log(i18n.global.t("console.store.resetting"));
         setTimeout(() => {
           this.$state = JSON.parse(JSON.stringify(storeState));
-          console.log("重置完成，页面即将刷新...");
+          console.log(i18n.global.t("console.store.resetComplete"));
           setTimeout(() => {
             window.location.href = window.location.pathname;
           }, 1200);

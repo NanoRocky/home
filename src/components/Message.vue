@@ -37,7 +37,7 @@ import QuoteLeft from "@vicons/fa/es/QuoteLeft.js";
 import QuoteRight from "@vicons/fa/es/QuoteRight.js";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { useI18n } from "vue-i18n";
 const store = mainStore();
 const { locale, t } = useI18n();
@@ -115,8 +115,6 @@ const changeBox = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = import.meta.env.VITE_TTS_Voice;
-      const vstyle = import.meta.env.VITE_TTS_Style;
       SpeechLocal("分辨率不足.mp3");
     }
   }
@@ -129,8 +127,6 @@ watch(
     if (value) {
       if (store.webSpeech) {
         stopSpeech();
-        const voice = import.meta.env.VITE_TTS_Voice;
-        const vstyle = import.meta.env.VITE_TTS_Style;
         SpeechLocal("惊讶.mp3");
       }
     }

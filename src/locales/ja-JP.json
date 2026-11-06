@@ -147,6 +147,19 @@
       "exportFailed": "ノートの出力に失敗しました：",
       "showOpenFilePickerFallback": "ファイル選択ダイアログの呼び出しに失敗したため、ファイル入力にフォールバックします：",
       "importFailed": "ノートの取り込みに失敗しました："
+    },
+    "metadata": {
+      "compileRuleFailed": "ルール [{name}] のコンパイルに失敗しました:",
+      "startProcess": "メタデータ処理を開始、ルール数: {rules}、元の歌詞行数: {lines}",
+      "matchBracket": "メタデータに一致: [括弧で囲まれた行] => {text}",
+      "matchTitleArtist": "メタデータに一致: [曲名-アーティスト名] => {text}",
+      "matchArtistCue": "メタデータに一致: [アーティスト表記(現在の歌手)] => {text}",
+      "matchVoicePartCue": "メタデータに一致: [パート表記] => {text}",
+      "matchNameCue": "メタデータに一致: [単独の人名/パート表記] => {text}",
+      "matchRule": "メタデータに一致: [ルール一致] => {text}",
+      "strippedSummary": "計 {stripped} 行のメタデータを除外しました。残り行数: {remaining}",
+      "firstLineAfterStrip": "除外後の最初の歌詞行:",
+      "emptyFallbackInstrumental": "メタデータ除外後に歌詞が残っていないため、インスト曲として処理します"
     }
   },
   "components": {

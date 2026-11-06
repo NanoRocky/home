@@ -2,71 +2,85 @@
   {
     "icon": "Blog",
     "name": "空间",
+    "name_en": "Qzone",
     "link": "https://user.qzone.qq.com/3525987739"
   },
   {
     "icon": "Cloud",
     "name": "云盘",
+    "name_en": "Cloud",
     "link": "https://cloud.nanorocky.top/"
   },
   {
     "icon": "CompactDisc",
     "name": "音乐",
+    "name_en": "Music",
     "link": "https://music.163.com/#/user/home?id=2016399293"
   },
   {
     "icon": "Google",
     "name": "搜索",
+    "name_en": "Search",
     "link": "https://www.google.com/"
   },
   {
     "icon": "WikipediaW",
     "name": "Wiki",
+    "name_en": "Wiki",
     "link": "https://www.wikipedia.org/"
   },
   {
     "icon": "DeviceTv",
     "name": "哔哩哔哩",
+    "name_en": "BiliBili",
     "link": "https://space.bilibili.com/454187211/dynamic"
   },
   {
     "icon": "Youtube",
     "name": "Youtube",
+    "name_en": "YouTube",
     "link": "https://www.youtube.com/@NanoRocky"
   },
   {
     "icon": "Api",
     "name": "MetingApi",
+    "name_en": "MetingApi",
     "link": "https://metingapi.nanorocky.top/"
   },
   {
     "icon": "LibraryMusicSharp",
     "name": "音乐钥匙",
+    "name_en": "MusicUnlock",
     "link": "https://main.nanorocky.top/musicunlock/"
   },
   {
     "icon": "IosBasketball",
     "name": "篮球",
+    "name_en": "Basketball",
     "link": "https://main.nanorocky.top/kunball/"
   },
   {
     "icon": "VideogameAssetFilled",
     "name": "马老师",
+    "name_en": "Super Mario",
     "link": "https://main.nanorocky.top/backbone/super-mario-bros/index.html"
   },
   {
     "icon": "GameController",
     "name": "星球大战",
+    "name_en": "Star Battle",
     "link": "https://main.nanorocky.top/starbattle/"
   },
   {
     "icon": "Book",
     "name": "笔记",
+    "name_en": "Notes",
     "link": ""
   },
   {
     "icon": "LaptopCode",
     "name": "渣渣服务器",
+    "name_en": "Potato Server",
     "link": ""
   }
 ]

@@ -124,6 +124,34 @@ export const helloInit = (store) => {
   }
 };
 
+// 默哀模式
+const anniversaries: Record<string, string> = {
+  "4.4": "utils.time.holidays.qingming",
+  "5.12": "utils.time.holidays.wenchuan",
+  "7.7": "utils.time.holidays.kangzhan",
+  "9.18": "utils.time.holidays.jiuyiba",
+  "12.13": "utils.time.holidays.nanjing",
+};
+export const checkDays = (store?: { mourningMode?: boolean }) => {
+  if (store && !store.mourningMode) return;
+  const myDate = new Date();
+  const mon = myDate.getMonth() + 1;
+  const date = myDate.getDate();
+  const key = `${mon}.${date}`;
+  if (Object.prototype.hasOwnProperty.call(anniversaries, key)) {
+    const holidayMessage = `${i18n.global.t("utils.time.todayIs")}${i18n.global.t(anniversaries[key])}`;
+    console.log(holidayMessage);
+    const gray = document.createElement("style");
+    gray.innerHTML = "html{filter: grayscale(100%)}";
+    document.head.appendChild(gray);
+    ElMessage({
+      message: holidayMessage,
+      duration: 14000,
+      icon: h(SpaCandle, { theme: "filled", fill: "#efefef" }),
+    });
+  }
+};
+
 // 建站日期统计
 export const siteDateStatistics = (startDate) => {
   const currentDate = new Date();

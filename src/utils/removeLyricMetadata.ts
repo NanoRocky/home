@@ -32,7 +32,10 @@ function compileRules(config: MetadataConfig): RegExp[] {
         try {
           compiled.push(new RegExp(rule.pattern, "i"));
         } catch (e) {
-          console.error(`[DWRC-Metadata] 编译规则 [${rule.name}] 失败:`, e);
+          console.error(
+            `[DWRC-Metadata] ${i18n.global.t("console.metadata.compileRuleFailed", { name: rule.name })}`,
+            e,
+          );
         }
       }
     }
@@ -95,6 +98,13 @@ export async function removeLyricMetadata(
   }
   const rawConfig = await loadKeywords();
   const rules = compileRules(rawConfig);
+  const store = mainStore();
+
+  const logMeta = (key: string, params?: Record<string, any>, ...rest: any[]) => {
+    if (import.meta.env.DEV && store.setV && store.devDebugLog) {
+      devLog("DWRC-Metadata", params ? i18n.global.t(key, params) : i18n.global.t(key), ...rest);
+    }
+  };
 
   const normalizedText = lrcText
     .replace(/\r\n/g, "\n")
@@ -104,7 +114,7 @@ export async function removeLyricMetadata(
     .replace(/\[(\d):(\d{2}(?:[.:]\d{1,3})?)\]/g, "[0$1:$2]");
 
   const lines = normalizedText.split("\n");
-  devLog("DWRC-Metadata", "开始处理元数据, 规则数:", rules.length, "原歌词行数:", lines.length);
+  logMeta("console.metadata.startProcess", { rules: rules.length, lines: lines.length });
 
   let lrcTitle = "";
   let lrcArtist = "";
@@ -116,7 +126,6 @@ export async function removeLyricMetadata(
     if (lrcTitle && lrcArtist) break;
   }
 
-  const store = mainStore();
   const rawTitle = songMeta?.title || lrcTitle || store.playerTitle;
   const rawArtist = songMeta?.artist || lrcArtist || store.playerArtist;
   const title = rawTitle ? rawTitle.replace(/\s+/g, "").toLowerCase() : "";
@@ -137,7 +146,7 @@ export async function removeLyricMetadata(
 
     // 全闭合书名号/括号包裹，例如《晴天》、[制作名单]
     if (/^[《「【〖『].+[》」】〗』]$/.test(pureText)) {
-      devLog("DWRC-Metadata", `匹配到元数据: [全闭合括号包裹] => ${pureText}`);
+      logMeta("console.metadata.matchBracket", { text: pureText });
       return "STRICT_META";
     }
 
@@ -145,7 +154,7 @@ export async function removeLyricMetadata(
     if (title && artist) {
       const pt = pureText.replace(/\s+/g, "").toLowerCase();
       if (pt === `${title}-${artist}` || pt === `${artist}-${title}`) {
-        devLog("DWRC-Metadata", `匹配到元数据: [歌名-歌手名] => ${pureText}`);
+        logMeta("console.metadata.matchTitleArtist", { text: pureText });
         return "STRICT_META";
       }
     }
@@ -159,7 +168,7 @@ export async function removeLyricMetadata(
         artist &&
         (cleanPrefix === artist || artist.includes(cleanPrefix) || cleanPrefix.includes(artist))
       ) {
-        devLog("DWRC-Metadata", `匹配到元数据: [歌手提示行(匹配当前歌手)] => ${pureText}`);
+        logMeta("console.metadata.matchArtistCue", { text: pureText });
         return "STRICT_META";
       }
 
@@ -168,12 +177,12 @@ export async function removeLyricMetadata(
           cleanPrefix,
         )
       ) {
-        devLog("DWRC-Metadata", `匹配到元数据: [声部提示行] => ${pureText}`);
+        logMeta("console.metadata.matchVoicePartCue", { text: pureText });
         return "STRICT_META";
       }
 
       if (cleanPrefix.length >= 1 && cleanPrefix.length <= 10) {
-        devLog("DWRC-Metadata", `匹配到元数据: [独立人名/声部提示行] => ${pureText}`);
+        logMeta("console.metadata.matchNameCue", { text: pureText });
         return "STRICT_META";
       }
     }
@@ -181,7 +190,7 @@ export async function removeLyricMetadata(
     // 正则规则匹配
     for (const rule of rules) {
       if (rule.test(pureText)) {
-        devLog("DWRC-Metadata", `匹配到元数据: [规则匹配] => ${pureText}`);
+        logMeta("console.metadata.matchRule", { text: pureText });
         return "STRICT_META";
       }
     }
@@ -284,13 +293,16 @@ export async function removeLyricMetadata(
 
   const strippedCount = lines.length - finalLines.length;
   if (strippedCount > 0) {
-    devLog("DWRC-Metadata", `共剥离 ${strippedCount} 行元数据。剥离后剩余行数:`, finalLines.length);
+    logMeta("console.metadata.strippedSummary", {
+      stripped: strippedCount,
+      remaining: finalLines.length,
+    });
     if (!isPilfering && finalLines.length > 0) {
-      devLog("DWRC-Metadata", `独立剔除后的第一句起始歌词:`, finalLines[0]);
+      logMeta("console.metadata.firstLineAfterStrip", undefined, finalLines[0]);
     }
     if (finalLines.length === 0) {
       if (!isPilfering) {
-        devLog("DWRC-Metadata", "元数据剔除后无歌词剩余，作为纯音乐处理，保留纯音乐提示");
+        logMeta("console.metadata.emptyFallbackInstrumental");
         return buildInstrumentalFallback();
       }
       return "";
@@ -300,7 +312,7 @@ export async function removeLyricMetadata(
 
   if (finalLines.length === 0) {
     if (!isPilfering) {
-      devLog("DWRC-Metadata", "元数据剔除后无歌词剩余，作为纯音乐处理，保留纯音乐提示");
+      logMeta("console.metadata.emptyFallbackInstrumental");
       return buildInstrumentalFallback();
     }
     return "";

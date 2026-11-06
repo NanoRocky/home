@@ -38,7 +38,7 @@
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>
-              <span class="name text-truncate-ellipsis">{{ item.name }}</span>
+              <span class="name text-truncate-ellipsis">{{ getSiteName(item) }}</span>
             </div>
           </el-col>
         </el-row>
@@ -50,6 +50,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@vicons/utils";
+import { useI18n } from "vue-i18n";
 // 可前往 https://www.xicons.org 自行挑选并在此处引入
 import Link from "@vicons/fa/es/Link.js";
 import Blog from "@vicons/fa/es/Blog.js";
@@ -76,11 +77,20 @@ import siteLinks from "@/assets/siteLinks.json";
 import type { SiteLink as AppSiteLink } from "@/typings/app";
 
 const DrawFilled = DrawFilledModule.default || DrawFilledModule;
+const { locale } = useI18n();
 const store = mainStore();
 const siteLinksData = siteLinks as SiteLink[];
 declare const $openList: () => void;
 
 type SiteLink = AppSiteLink<keyof typeof siteIcon>;
+
+// 获取当前语言下的站点名称
+const getSiteName = (item: SiteLink) => {
+  if (locale.value !== "zh-CN" && item.name_en?.trim()) {
+    return item.name_en;
+  }
+  return item.name;
+};
 
 // 计算网站链接
 const siteLinksList = computed(() => {

@@ -147,6 +147,19 @@
       "exportFailed": "导出便签失败：",
       "showOpenFilePickerFallback": "调用打开文件选择器失败，已回退至文件选择输入框：",
       "importFailed": "导入便签失败："
+    },
+    "metadata": {
+      "compileRuleFailed": "编译规则 [{name}] 失败:",
+      "startProcess": "开始处理元数据, 规则数: {rules} 原歌词行数: {lines}",
+      "matchBracket": "匹配到元数据: [全闭合括号包裹] => {text}",
+      "matchTitleArtist": "匹配到元数据: [歌名-歌手名] => {text}",
+      "matchArtistCue": "匹配到元数据: [歌手提示行(匹配当前歌手)] => {text}",
+      "matchVoicePartCue": "匹配到元数据: [声部提示行] => {text}",
+      "matchNameCue": "匹配到元数据: [独立人名/声部提示行] => {text}",
+      "matchRule": "匹配到元数据: [规则匹配] => {text}",
+      "strippedSummary": "共剥离 {stripped} 行元数据。剥离后剩余行数: {remaining}",
+      "firstLineAfterStrip": "独立剔除后的第一句起始歌词:",
+      "emptyFallbackInstrumental": "元数据剔除后无歌词剩余，作为纯音乐处理，保留纯音乐提示"
     }
   },
   "components": {

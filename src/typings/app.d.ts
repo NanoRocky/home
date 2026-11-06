@@ -35,5 +35,15 @@ export interface SearchEngine {
 export interface SiteLink<TIcon = string> {
   icon: TIcon;
   name: string;
+  name_en?: string;
   link: string;
+}
+
+export interface SocialLink {
+  name: string;
+  name_en?: string;
+  icon: string;
+  tip: string;
+  tip_en?: string;
+  url: string;
 }
