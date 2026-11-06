@@ -912,8 +912,6 @@ const startDWRCLoop = () => {
       const lrcItem = (store.getPlayerLrc[0] as any[]) || [];
       const duration = Number(lrcItem[5]) || 5000;
       const start = Number(lrcItem[8]) || 0;
-      const rawText = String(lrcItem[4] || "").replace(/<[^>]+>/g, "");
-      const charCount = rawText.length || 1;
       const elapsed = Math.max(0, now - start);
 
       const progress = Math.min(1, Math.max(0, elapsed / duration));

@@ -135,7 +135,7 @@ export async function removeLyricMetadata(
     const temp = line
       .replace(/\[[^\]]*\]/g, "")
       .replace(/\(\d+,\d+(?:,\d+)?\)/g, "")
-      .replace(/<[^>]*>/g, "")
+      .replace(/<-?\d[\d:.,\s-]*>/g, "")
       .replace(/\{[^}]*\}/g, "");
     const pureText = temp.trim().normalize("NFKC");
 

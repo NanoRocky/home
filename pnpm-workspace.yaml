@@ -152,9 +152,13 @@ minimumReleaseAgeExclude:
   - vue@3.5.45
   - element-plus@2.14.8
   - vue-eslint-parser@10.4.2
+  - '@isaacs/nonrecursive-glob-match@1.1.0'
+  - glob@14.0.4
+  - minimatch@11.0.5
 
 overrides:
-  glob: "^13.0.6"
+  glob: "^14.0.4"
   "@jridgewell/sourcemap-codec": "^1.6.0"
   sourcemap-codec: "npm:@jridgewell/sourcemap-codec@^1.6.0"
   "source-map": "^0.8.0"
+  "minimatch": "^11.0.5"
