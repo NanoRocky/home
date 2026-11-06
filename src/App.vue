@@ -1,35 +1,53 @@
 <template>
-  <!-- 加载 -->
-  <Loading />
-  <!-- 壁纸 -->
-  <Background @loadComplete="loadComplete" @imageLoaded="onImageLoaded" />
-  <!-- 主界面 -->
-  <Transition name="fade" mode="out-in">
-    <main id="main" v-if="store.imgLoadStatus">
-      <div class="page-container" v-show="!store.backgroundShow">
-        <section class="all" v-show="!store.setOpenState">
-          <MainLeft />
-          <MainRight v-show="!store.boxOpenState" />
-          <Box v-show="store.boxOpenState" />
-        </section>
-        <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
-          <MoreSet />
-        </section>
-      </div>
-      <!-- 移动端菜单按钮 -->
-      <Icon class="menu" size="24" v-show="!store.backgroundShow"
-        @click="store.mobileOpenState = !store.mobileOpenState">
-        <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
-      </Icon>
-      <!-- 页脚 -->
-      <Transition name="fade" mode="out-in">
-        <Footer class="f-ter" v-show="!store.backgroundShow && !store.setOpenState" />
-      </Transition>
-    </main>
-  </Transition>
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <el-config-provider :locale="elLocale">
+    <!-- 加载 -->
+    <Loading />
+    <!-- 壁纸 -->
+    <Background @loadComplete="loadComplete" @imageLoaded="onImageLoaded" />
+    <!-- 主界面 -->
+    <Transition name="fade" mode="out-in">
+      <main id="main" v-if="store.imgLoadStatus">
+        <div class="page-container" v-show="!store.backgroundShow">
+          <section class="all" v-show="!store.setOpenState">
+            <MainLeft />
+            <MainRight v-show="!store.boxOpenState" />
+            <Box v-show="store.boxOpenState" />
+          </section>
+          <section class="more" v-show="store.setOpenState" @click="store.setOpenState = false">
+            <MoreSet />
+          </section>
+        </div>
+        <!-- 移动端菜单按钮 -->
+        <Icon
+          class="menu"
+          size="24"
+          v-show="!store.backgroundShow"
+          @click="store.mobileOpenState = !store.mobileOpenState"
+        >
+          <component :is="store.mobileOpenState ? CloseSmall : HamburgerButton" />
+        </Icon>
+        <!-- 搜索框 -->
+        <SearchInput />
+        <!-- 笔记框 -->
+        <Notes />
+        <!-- 页脚 -->
+        <Teleport to="body" :disabled="!shouldElevateFooter">
+          <Transition name="fade">
+            <Footer
+              class="f-ter"
+              :class="{ 'is-elevated': shouldElevateFooter }"
+              v-show="!store.backgroundShow && !store.setOpenState"
+            />
+          </Transition>
+        </Teleport>
+      </main>
+    </Transition>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { helloInit, checkDays } from "@/utils/getTime.js";
 import { HamburgerButton, CloseSmall } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
@@ -39,15 +57,42 @@ import MainLeft from "@/views/Main/Left.vue";
 import MainRight from "@/views/Main/Right.vue";
 import Background from "@/components/Background.vue";
 import Footer from "@/components/Footer.vue";
+import SearchInput from "@/components/SearchInput.vue";
+import Notes from "@/components/Notes.vue";
 import Box from "@/views/Box/index.vue";
 import MoreSet from "@/views/MoreSet/index.vue";
 import cursorInit from "@/utils/cursor.js";
 import config from "@/../package.json";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { getColor } from "@/utils/getColor";
+import { useI18n } from "vue-i18n";
+import { ElConfigProvider } from "element-plus";
+import ep_zh_CN from "element-plus/dist/locale/zh-cn.mjs";
+import ep_en_US from "element-plus/dist/locale/en.mjs";
+import ep_ja_JP from "element-plus/dist/locale/ja.mjs";
 
 const store = mainStore();
+const { locale, t } = useI18n();
+const elLocale = computed(() => {
+  if (locale.value === "ja-JP") return ep_ja_JP;
+  if (locale.value === "en-US") return ep_en_US;
+  return ep_zh_CN;
+});
 const timeThemeInterval = ref<any>(null);
+
+const shouldElevateFooter = computed(() => {
+  return !!(
+    store.noteOpenState &&
+    store.notesAvoidFooter &&
+    store.playerLrcShow &&
+    !store.mobileOpenState &&
+    !store.boxOpenState &&
+    !store.musicBoxOpenState &&
+    !store.setOpenState &&
+    !store.mobileFuncState &&
+    !store.backgroundShow
+  );
+});
 
 // 页面宽度
 const getWidth = () => {
@@ -60,7 +105,7 @@ const loadComplete = () => {
     // 欢迎提示
     helloInit(store);
     // 默哀模式
-    checkDays();
+    checkDays(store);
   });
 };
 
@@ -86,17 +131,17 @@ const handleThemeChange = (e?: any) => {
 };
 
 const onImageLoaded = (img: HTMLImageElement) => {
-  if (store.theme === 'bg') {
+  if (store.theme === "bg") {
     getColor(img)
       .then((theme) => {
         document.documentElement.dataset.theme = theme;
       })
       .catch((err) => {
         console.error(err);
-        ElMessage.error("背景主题切换失败，已回退到跟随系统");
+        ElMessage.error(t("app.event.themeChangeFailed"));
         store.theme = "system";
       });
-  };
+  }
 };
 
 watch(
@@ -105,7 +150,7 @@ watch(
     if (timeThemeInterval.value) {
       clearInterval(timeThemeInterval.value);
       timeThemeInterval.value = null;
-    };
+    }
     if (theme === "light") {
       document.documentElement.dataset.theme = "light";
     } else if (theme === "dark") {
@@ -120,18 +165,18 @@ watch(
           document.documentElement.dataset.theme = "dark";
         } else {
           document.documentElement.dataset.theme = "light";
-        };
+        }
       };
       setTimeTheme();
       timeThemeInterval.value = setInterval(setTimeTheme, 60000);
     } else if (theme === "bg") {
-      const bgImg = document.querySelector('.bg') as HTMLImageElement;
+      const bgImg = document.querySelector(".bg") as HTMLImageElement;
       if (bgImg && bgImg.complete) {
         onImageLoaded(bgImg);
-      };
-    };
+      }
+    }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -143,40 +188,36 @@ onMounted(() => {
   // 屏蔽右键
   document.oncontextmenu = () => {
     ElMessage({
-      message: "为了浏览体验，本站禁用右键",
+      message: t("app.event.rightClickWarning"),
       grouping: true,
       duration: 2000,
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("鼠标右键.mp3");
-    };
+    }
     return false;
   };
 
   // 鼠标中键事件
   window.addEventListener("mousedown", (event) => {
+    if (
+      !store.backgroundShow &&
+      (store.noteOpenState || store.setOpenState || store.musicBoxOpenState || store.boxOpenState)
+    )
+      return;
     if (event.button == 1) {
       store.backgroundShow = !store.backgroundShow;
       ElMessage({
-        message: `已${store.backgroundShow ? "开启" : "退出"}壁纸展示状态`,
+        message: store.backgroundShow
+          ? t("app.wallpaper.previewEnable")
+          : t("app.wallpaper.previewDisable"),
         grouping: true,
       });
       if (store.webSpeech) {
-        if (store.backgroundShow) {
-          stopSpeech();
-          const voice = envConfig.VITE_TTS_Voice;
-          const vstyle = envConfig.VITE_TTS_Style;
-          SpeechLocal("壁纸预览已启用.mp3");
-        } else {
-          stopSpeech();
-          const voice = envConfig.VITE_TTS_Voice;
-          const vstyle = envConfig.VITE_TTS_Style;
-          SpeechLocal("壁纸预览已退出.mp3");
-        };
-      };
+        stopSpeech();
+        SpeechLocal(store.backgroundShow ? "壁纸预览已启用.mp3" : "壁纸预览已退出.mp3");
+      }
     }
   });
 
@@ -188,7 +229,7 @@ onMounted(() => {
   const styleTitle1 = "font-size: 20px;font-weight: 600;color: rgb(244,167,89);";
   const styleTitle2 = "font-size:12px;color: rgb(244,167,89);";
   const styleContent = "color: rgb(30,152,255);";
-  const title1 = "無名の主页";
+  const title1 = t("app.info.title");
   const title2 = `
  _____ __  __  _______     ____     __
 |_   _|  \\/  |/ ____\\ \\   / /\\ \\   / /
@@ -196,7 +237,7 @@ onMounted(() => {
   | | | |\\/| |\\___ \\  \\   /    \\   /
  _| |_| |  | |____) |  | |      | |
 |_____|_|  |_|_____/   |_|      |_|`;
-  const content = `\n\n版本: ${config.version}\n主页: ${config.home}\nGithub: ${config.github}\nUpdate: ${config.efug}\n当前为酪灰维护版本。`;
+  const content = `\n\n${t("app.info.version")}${config.version}\n${t("app.info.home")}${config.home}\n${t("app.info.github")}${config.github}\n${t("app.info.update")}${config.efug}\n${t("app.info.maintainedBy")}`;
   console.info(`%c${title1} %c${title2} %c${content}`, styleTitle1, styleTitle2, styleContent);
 });
 
@@ -251,7 +292,6 @@ onBeforeUnmount(() => {
       animation: fade 0.5s;
     }
 
-
     @media (max-width: 1200px) {
       padding: 0;
     }
@@ -262,7 +302,7 @@ onBeforeUnmount(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 84%;
+    top: 80.5%;
     left: calc(50% - 28px);
     width: 56px;
     height: 34px;
@@ -286,7 +326,8 @@ onBeforeUnmount(() => {
     }
   }
 
-  @media (max-height: 650px) {
+  // PC 端：高度不足 650px 启动纵向滚动条
+  @media (min-width: 721px) and (max-height: 650px) {
     overflow-y: auto;
     overflow-x: hidden;
 
@@ -299,44 +340,75 @@ onBeforeUnmount(() => {
       }
     }
 
-    .menu {
-      top: calc(650px * 0.84);
-      left: calc(360px * 0.5 - 25px);
-
-      @media (min-width: 360px) {
-        left: calc(50% - 25px);
-      }
-    }
-
     .f-ter {
       top: calc(650px - 46px);
+      bottom: auto;
+      padding-left: 6px;
+    }
+  }
 
-      @media (min-width: 360px) {
-        padding-left: 6px;
+  // 移动端响应式与最小分辨率 (355px × 745px)
+  @media (max-width: 720px) {
+    -webkit-overflow-scrolling: touch;
+
+    @media (max-width: 355px) {
+      overflow-x: auto;
+
+      .page-container {
+        width: 355px;
+      }
+
+      .menu {
+        left: calc(355px * 0.5 - 28px);
+      }
+
+      .f-ter {
+        width: 355px;
+      }
+
+      @media (min-height: 746px) {
+        overflow-y: hidden;
+      }
+    }
+
+    @media (max-height: 745px) {
+      overflow-y: auto;
+
+      .page-container {
+        height: 745px;
+
+        .more {
+          height: 745px;
+          width: calc(100% + 6px);
+        }
+      }
+
+      .menu {
+        top: calc(745px * 0.805);
+      }
+
+      .f-ter {
+        top: calc(745px - 46px);
+        bottom: auto;
+      }
+
+      @media (min-width: 356px) {
+        overflow-x: hidden;
+
+        .f-ter {
+          padding-left: 6px;
+        }
       }
     }
   }
+}
 
-  @media (max-width: 360px) {
-    overflow-x: auto;
-    overflow: hidden;
-
-    .page-container {
-      width: 360px;
-    }
-
-    .menu {
-      left: calc(360px * 0.5 - 28px);
-    }
-
-    .f-ter {
-      width: 360px;
-    }
-
-    @media (min-height: 721px) {
-      overflow-y: hidden;
-    }
-  }
-
+.f-ter.is-elevated {
+  position: fixed !important;
+  bottom: 0 !important;
+  top: auto !important;
+  left: 0 !important;
+  width: 100% !important;
+  z-index: 101 !important;
 }
 </style>

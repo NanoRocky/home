@@ -1,6 +1,7 @@
 import { mainStore } from "@/store";
 let animationFrameId: number | null = null;
-let intervalId: ReturnType<typeof setInterval> | null = null;
+let lastDrawTime = 0;
+const fpsInterval = 1000 / 60;
 let canvas: HTMLCanvasElement | null = null;
 let snowflakeCount: number = 0;
 
@@ -18,7 +19,7 @@ const resizeCanvas = () => {
   if (canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-  };
+  }
 };
 
 const createCanvas = () => {
@@ -39,9 +40,9 @@ const createCanvas = () => {
 const initSnowfall = () => {
   const store = mainStore();
   store.showSnowfall = true;
-  if (animationFrameId || intervalId) {
+  if (animationFrameId) {
     closeSnowfall();
-  };
+  }
   createCanvas();
   const ctx = canvas?.getContext("2d");
   if (!ctx || !canvas) return;
@@ -59,7 +60,7 @@ const initSnowfall = () => {
         radius: Math.random() * 2 + 1,
         angle: Math.random() * Math.PI * 2,
       });
-    };
+    }
   };
   const drawSnowflakes = () => {
     ctx.clearRect(0, 0, canvas!.width, canvas!.height);
@@ -78,11 +79,7 @@ const initSnowfall = () => {
       flake.angle += 0.02;
       flake.x += flake.speedX + Math.sin(flake.angle) * 0.3;
       flake.y += flake.speedY;
-      if (
-        flake.y > canvas!.height ||
-        flake.x > canvas!.width + 50 ||
-        flake.x < -50
-      ) {
+      if (flake.y > canvas!.height || flake.x > canvas!.width + 50 || flake.x < -50) {
         flake.x = Math.random() * canvas!.width;
         flake.y = -flake.radius;
         flake.speedX = Math.random() * 0.6 + 0.2;
@@ -90,24 +87,20 @@ const initSnowfall = () => {
         flake.radius = Math.random() * 2 + 1;
         flake.opacity = Math.random() * 0.7 + 0.3;
         flake.angle = Math.random() * Math.PI * 2;
-      };
-    };
+      }
+    }
   };
-  const updateSnowflakes = () => {
-    drawSnowflakes();
+  const updateSnowflakes = (timestamp: number) => {
     animationFrameId = requestAnimationFrame(updateSnowflakes);
+    if (timestamp - lastDrawTime < fpsInterval) return;
+    lastDrawTime = timestamp;
+    drawSnowflakes();
   };
   window.addEventListener("resize", resizeCanvas);
   resizeCanvas();
   createSnowflakes();
-  updateSnowflakes();
-  intervalId = setInterval(() => {
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-      updateSnowflakes();
-    };
-  }, 1000 / 30);
+  lastDrawTime = performance.now();
+  updateSnowflakes(lastDrawTime);
 };
 
 const detectDevice = () => {
@@ -117,25 +110,21 @@ const detectDevice = () => {
       return "tablet";
     } else {
       return "mobile";
-    };
+    }
   } else {
     return "pc";
-  };
+  }
 };
 
 const closeSnowfall = () => {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
-  };
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
-  };
+  }
   if (canvas && canvas.parentNode === document.body) {
     document.body.removeChild(canvas);
     canvas = null;
-  };
+  }
   snowflakes.length = 0;
   window.removeEventListener("resize", resizeCanvas);
   const store = mainStore();

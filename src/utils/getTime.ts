@@ -2,6 +2,7 @@ import { h } from "vue";
 import { SpaCandle } from "@icon-park/vue-next";
 import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
 import dayjs from "dayjs";
+import i18n from "@/locales";
 
 // 时钟
 export const getCurrentTime = () => {
@@ -12,7 +13,15 @@ export const getCurrentTime = () => {
   let hour = time.getHours() < 10 ? "0" + time.getHours() : time.getHours();
   let minute = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
   let second = time.getSeconds() < 10 ? "0" + time.getSeconds() : time.getSeconds();
-  let weekday = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+  let weekday = [
+    i18n.global.t("utils.time.weekdays.sun"),
+    i18n.global.t("utils.time.weekdays.mon"),
+    i18n.global.t("utils.time.weekdays.tue"),
+    i18n.global.t("utils.time.weekdays.wed"),
+    i18n.global.t("utils.time.weekdays.thu"),
+    i18n.global.t("utils.time.weekdays.fri"),
+    i18n.global.t("utils.time.weekdays.sat"),
+  ];
   let currentTime = {
     year,
     month,
@@ -29,10 +38,10 @@ export const getCurrentTime = () => {
 export const getTimeCapsule = () => {
   const now = dayjs();
   const dayText = {
-    day: "今日",
-    week: "本周",
-    month: "本月",
-    year: "本年",
+    day: i18n.global.t("utils.time.today"),
+    week: i18n.global.t("utils.time.thisWeek"),
+    month: i18n.global.t("utils.time.thisMonth"),
+    year: i18n.global.t("utils.time.thisYear"),
   };
   /**
    * 计算时间差的函数
@@ -76,65 +85,67 @@ export const helloInit = (store) => {
   let hellosound: string | null = null;
   stopSpeech();
   if (hour < 5) {
-    hello = "凌晨好，该睡了啦！";
+    hello = i18n.global.t("utils.time.greetings.lateNight1");
     hellosound = "欢迎1.mp3";
   } else if (hour < 7) {
-    hello = "早上好，起的真早哦~";
+    hello = i18n.global.t("utils.time.greetings.morning1");
     hellosound = "欢迎2.mp3";
   } else if (hour < 9) {
-    hello = "早上好，又是新的一天~";
+    hello = i18n.global.t("utils.time.greetings.morning2");
     hellosound = "欢迎3.mp3";
   } else if (hour < 11) {
-    hello = "上午好！";
+    hello = i18n.global.t("utils.time.greetings.forenoon");
     hellosound = "欢迎4.mp3";
   } else if (hour < 14) {
-    hello = "中午好，辛苦了一个上午，补充下能量吧~";
+    hello = i18n.global.t("utils.time.greetings.noon");
     hellosound = "欢迎5.mp3";
   } else if (hour < 17) {
-    hello = "下午好！";
+    hello = i18n.global.t("utils.time.greetings.afternoon");
     hellosound = "欢迎6.mp3";
   } else if (hour < 18) {
-    hello = "傍晚好，吃顿美味的晚餐休息休息吧~";
+    hello = i18n.global.t("utils.time.greetings.dusk");
     hellosound = "欢迎7.mp3";
   } else if (hour < 22) {
-    hello = "晚上好，娱乐一下，放松心情~";
+    hello = i18n.global.t("utils.time.greetings.evening");
     hellosound = "欢迎8.mp3";
   } else if (hour < 23) {
-    hello = "深夜好！夜深了，晚安噢w";
+    hello = i18n.global.t("utils.time.greetings.lateNight2");
     hellosound = "欢迎9.mp3";
   } else {
-    hello = "深夜好！都快凌晨了啦，早点休息哦~";
+    hello = i18n.global.t("utils.time.greetings.lateNight3");
     hellosound = "欢迎10.mp3";
-  };
+  }
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `<strong>${hello}</strong> 欢迎来到我的主页`,
+    message: `<strong>${hello}</strong> ${i18n.global.t("utils.time.welcome")}`,
   });
   if (store.webSpeech) {
     SpeechLocal(hellosound);
-  };
+  }
 };
 
 // 默哀模式
-const anniversaries = {
-  4.4: "清明节",
-  5.12: "汶川大地震纪念日",
-  7.7: "中国人民抗日战争纪念日",
-  9.18: "九·一八事变纪念日",
-  12.13: "南京大屠杀死难者国家公祭日",
+const anniversaries: Record<string, string> = {
+  "4.4": "utils.time.holidays.qingming",
+  "5.12": "utils.time.holidays.wenchuan",
+  "7.7": "utils.time.holidays.kangzhan",
+  "9.18": "utils.time.holidays.jiuyiba",
+  "12.13": "utils.time.holidays.nanjing",
 };
-export const checkDays = () => {
+export const checkDays = (store?: { mourningMode?: boolean }) => {
+  if (store && !store.mourningMode) return;
   const myDate = new Date();
   const mon = myDate.getMonth() + 1;
   const date = myDate.getDate();
   const key = `${mon}.${date}`;
   if (Object.prototype.hasOwnProperty.call(anniversaries, key)) {
-    console.log(`今天是${anniversaries[key]}`);
+    const holidayMessage = `${i18n.global.t("utils.time.todayIs")}${i18n.global.t(anniversaries[key])}`;
+    console.log(holidayMessage);
     const gray = document.createElement("style");
     gray.innerHTML = "html{filter: grayscale(100%)}";
     document.head.appendChild(gray);
     ElMessage({
-      message: `今天是${anniversaries[key]}`,
+      message: holidayMessage,
       duration: 14000,
       icon: h(SpaCandle, { theme: "filled", fill: "#efefef" }),
     });
@@ -160,5 +171,5 @@ export const siteDateStatistics = (startDate) => {
     months += 12;
   }
 
-  return `本站已经苟活了 ${years} 年 ${months} 月 ${days} 天`;
+  return [years, months, days];
 };

@@ -1,5 +1,30 @@
 <template>
   <footer id="footer" :class="store.footerBlur ? 'blur' : null">
+    <!-- 翻译歌词独立悬浮气泡 -->
+    <Transition
+      name="tr-fade"
+      mode="out-in"
+      @before-enter="onTrBeforeEnter"
+      @after-enter="onTrAfterEnter"
+      @before-leave="onTrBeforeLeave"
+      @after-leave="onTrAfterLeave"
+    >
+      <div
+        v-if="
+          store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText
+        "
+        class="translation-lrc"
+        :key="store.playerTrLrcText"
+        @mousedown="handleLrcMouseDown"
+        @touchstart.passive="handleLrcTouchStart"
+        @touchmove.passive="handleLrcTouchMove"
+        @touchend="handleLrcTouchEnd"
+        @touchcancel="handleLrcTouchCancel"
+        @contextmenu="handleContextMenu"
+      >
+        <span class="tr-text">{{ store.playerTrLrcText }}</span>
+      </div>
+    </Transition>
     <Transition name="fade" mode="out-in">
       <div v-if="!store.playerState || !store.playerLrcShow" class="power">
         <span>
@@ -42,61 +67,117 @@
           </span>
         </span>
       </div>
-      <div v-else class="lrc" @dblclick="toggleForceIcon">
+      <div
+        v-else
+        class="lrc"
+        @dblclick="toggleForceIcon"
+        @touchstart.passive="handleLrcTouchStart"
+        @touchmove.passive="handleLrcTouchMove"
+        @touchend="handleLrcTouchEnd"
+        @touchcancel="handleLrcTouchCancel"
+        @contextmenu="handleContextMenu"
+      >
         <!-- 音乐进度条 -->
         <ProgressBar v-if="store.footerProgressBar" />
-        <Transition name="fade" mode="out-in" :id="`lrc-line-${store.playerLrc[0][2]}`"
-          v-if="!(!store.dwrcEnable || store.dwrcTemp.length == 0 || store.dwrcLoading)">
-          <!-- &amp; -->
-          <!-- 逐字模块山 -->
-          <div class="lrc-all"
-            :key="store.playerLrc.length != 0 ? `lrc-line-${store.playerLrc[0][2]}-${store.lyricSeekVersion}` : `lrc-line-null`">
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
-            &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg);" class="paws-1"
-              color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            <span class="dwrc-box">
-              <span class="dwrc-2 lrc-text text-truncate-ellipsis" id="dwrc-2-wrap">
-                <span v-for="(i, index) in store.playerLrc" :key="`lrc-over-char-${i[2]}-${i[3]}`" v-html="i[4]">
+        <!-- 歌词组件 -->
+        <Transition
+          name="fade"
+          mode="out-in"
+          :id="`lrc-line-${store.playerLrc[0]?.[2] ?? 0}`"
+          @before-leave="onBeforeLeave"
+          @before-enter="onBeforeEnter"
+          @after-enter="onAfterEnter"
+        >
+          <div
+            class="lrc-all"
+            ref="lrcAllRef"
+            :class="{ 'is-overflow': lyricGeo.isOverflow, 'is-centered': !lyricGeo.isOverflow }"
+            :key="lyricTransitionKey"
+          >
+            <!-- 左侧 ICON 组 -->
+            <div class="lrc-side-icons left-icons" ref="leftIconsRef">
+              <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
+              &nbsp;
+              <Icon
+                size="20"
+                style="transform: rotate(-18deg)"
+                class="paws-1"
+                color="var(--footer-music-paw-icon-color)"
+              >
+                <paw />
+              </Icon>
+            </div>
+            <!-- 中间歌词视口区域 -->
+            <div class="lrc-viewport" ref="lrcViewportRef" @mousedown="handleLrcMouseDown">
+              <div class="lrc-scroll-track" ref="lrcTrackRef">
+                <!-- 逐字模块 -->
+                <span v-if="!isLineByLine" class="dwrc-box" ref="dwrcBoxRef">
+                  <DwrcDot v-if="store.dwrcDot && store.playerDWRCShowPro" ref="dwrcDotRef" />
+                  <span
+                    v-if="store.playerDWRCShowPro"
+                    class="dwrc-2 lrc-text"
+                    id="dwrc-2-wrap"
+                    :data-line="store.playerLrc[0]?.[2]"
+                  >
+                    <span
+                      v-for="(i, index) in store.playerLrc"
+                      :key="`lrc-over-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }"
+                      :class="[
+                        'dwrc-2-char',
+                        i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
+                          ? 'long-tone'
+                          : 'fade-in-start',
+                        i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
+                      ]"
+                      >{{ i[4] }}</span
+                    >
+                  </span>
+                  <span
+                    class="dwrc-1 lrc-text"
+                    id="dwrc-1-wrap"
+                    :data-line="store.playerLrc[0]?.[2]"
+                  >
+                    <span
+                      v-for="(i, index) in store.playerLrc"
+                      :key="`lrc-char-${i[2]}-${i[3]}`"
+                      :style="{ '--char-duration': i[5] + 'ms' }"
+                      :class="[
+                        'dwrc-char',
+                        i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0
+                          ? 'long-tone'
+                          : 'fade-in-start',
+                        i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
+                        i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
+                        i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1',
+                      ]"
+                      :id="`lrc-char-${i[2]}-${i[3]}`"
+                      >{{ i[4] }}</span
+                    >
+                  </span>
                 </span>
-              </span>
-              <span class="dwrc-1 lrc-text text-truncate-ellipsis" id="dwrc-1-wrap">
-                <span v-for="(i, index) in store.playerLrc" :key="`lrc-char-${i[2]}-${i[3]}`" :class="[
-                  'dwrc-char',
-                  i[0] && Number(i[6]) > 0 ? 'fade-in' : 'fade-in-start',
-                  i[0] && Number(i[5]) > 1019 && Number(i[6]) > 0 ? 'long-tone' : 'fade-in-start',
-                  i[0] && Number(i[6]) <= 0 ? 'fade-out' : '',
-                  i[0] && Number(i[5]) > 1019 && Number(i[6]) <= 0 ? 'long-tone-out' : '',
-                  i[1] ? 'dwrc-style-s2' : 'dwrc-style-s1'
-                ]" :id="`lrc-char-${i[2]}-${i[3]}`" v-html="i[4]">
-                </span>
-              </span>
-            </span>
-            <Icon size="20" style="transform: rotate(18deg);" class="paws-2" color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            &nbsp;
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
-          </div>
-        </Transition>
-        <Transition name="fade" mode="out-in" v-else>
-          <!-- 逐行模块 -->
-          <div class="lrc-all" :key="store.getPlayerLrc.length > 0 ?
-            `lrc-${store.getPlayerLrc[0][2]}-${store.getPlayerLrc.length}` : '歌词加载中...'">
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
-            &nbsp;
-            <Icon size="20" style="transform: rotate(-18deg);" class="paws-3"
-              color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            <span class="lrc-text text-truncate-ellipsis" v-html="store.getPlayerLrc[0][4]" :class="`lrc-char`" />
-            <Icon size="20" style="transform: rotate(18deg);" class="paws-4" color="var(--footer-music-paw-icon-color)">
-              <paw />
-            </Icon>
-            &nbsp;
-            <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
+                <!-- 逐行模块 -->
+                <span v-else class="lrc-text line-lrc-text lrc-char" ref="lineLrcRef">{{
+                  store.getPlayerLrc[0]?.[4]
+                }}</span>
+              </div>
+            </div>
+            <!-- 右侧 ICON 组 -->
+            <div class="lrc-side-icons right-icons" ref="rightIconsRef">
+              <Icon
+                size="20"
+                style="transform: rotate(18deg)"
+                class="paws-2"
+                color="var(--footer-music-paw-icon-color)"
+              >
+                <paw />
+              </Icon>
+              &nbsp;
+              <music-one theme="filled" size="18" fill="var(--footer-music-icon-color)" />
+            </div>
           </div>
         </Transition>
       </div>
@@ -105,156 +186,832 @@
 </template>
 
 <script setup lang="ts">
+import config from "@/../package.json";
+import DwrcDot from "@/components/DwrcDot.vue";
 import ProgressBar from "@/components/ProgressBar.vue";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { MusicOne } from "@icon-park/vue-next";
 import { Icon } from "@vicons/utils";
-import { Paw } from "@vicons/ionicons5";
+import Paw from "@vicons/ionicons5/es/Paw.js";
 import { mainStore } from "@/store";
-import config from "@/../package.json";
-import { ref, watch, computed, onMounted, nextTick, onUpdated, onBeforeUnmount } from "vue";
+import { onPilferDiscard } from "@/utils/translationLyric";
+import type { DwrcItem, DwrcTimelinePoint, DwrcLineCache } from "@/typings/player";
+import {
+  ref,
+  reactive,
+  watch,
+  computed,
+  onMounted,
+  nextTick,
+  onUpdated,
+  onBeforeUnmount,
+} from "vue";
+import { useI18n } from "vue-i18n";
 import { throttle } from "lodash-es";
 
 const store = mainStore();
+const dwrcDotRef = ref<InstanceType<typeof DwrcDot> | null>(null);
+const lrcAllRef = ref<HTMLElement | null>(null);
+const leftIconsRef = ref<HTMLElement | null>(null);
+const rightIconsRef = ref<HTMLElement | null>(null);
+const lrcViewportRef = ref<HTMLElement | null>(null);
+const lrcTrackRef = ref<HTMLElement | null>(null);
+const dwrcBoxRef = ref<HTMLElement | null>(null);
+const lineLrcRef = ref<HTMLElement | null>(null);
+const PADDING_LEFT = 8; // 开始左间距
+const PADDING_RIGHT = 8; // 结束右间距
+const MASK_MAX_WIDTH = 24; // 遮罩渐隐最大宽度
+const SCROLL_LERP = 0.15; // 阻尼平滑系数
 const fullYear = new Date().getFullYear();
-const lrcContainer = ref(null);
-const scrollPosition = ref(0);
-const currentLine = ref(0);
-const audio = ref(null);
-const icon = ref(null);
+const { locale, t } = useI18n();
+const siteIcp = ref(import.meta.env.VITE_SITE_ICP);
+const siteMps = ref(import.meta.env.VITE_SITE_MPS);
+const siteMICP = ref(import.meta.env.VITE_SITE_MICP);
+const isExternalLyric = computed(() => store.isExternalLyric);
+
+let lastMiddleClickTime = 0;
+let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+let startX = 0;
+let startY = 0;
+let hasTriggeredLongPress = false;
+let activeMouseCleanup: (() => void) | null = null;
+let currentScrollX = 0;
+let lastAppliedScrollX = Number.NaN;
+let lastTrackEl: HTMLElement | null = null;
+let lastDotEl: HTMLElement | null = null;
+let lastDotVisible: boolean | null = null;
+let lastDotX = Number.NaN;
+let lastMaskLeft = -1;
+let lastMaskRight = -1;
+let lastMaskLeftColor = "";
+let lastMaskRightColor = "";
+let isTransitioning = false;
+let transitionTimer: any = null;
+let isComponentMounted = true;
+let cachedAudioEl: HTMLAudioElement | null = null;
+let dwrcLineCache: DwrcLineCache | null = null;
+let isTrLrcMounted = false;
+let resizeObserver: ResizeObserver | null = null;
+let dprMediaQuery: MediaQueryList | null = null;
+let dprChangeHandler: (() => void) | null = null;
+let lastLineIndex: any = null;
+let dwrcRAFId: number | null = null;
 
 // 加载配置数据
-// const siteStartDate = ref(envConfig.VITE_SITE_START);
+// const siteStartDate = ref(import.meta.env.VITE_SITE_START);
 const startYear = ref<number | null>(
-  envConfig.VITE_SITE_START?.length >= 4 ?
-    parseInt(envConfig.VITE_SITE_START.substring(0, 4)) : null
+  import.meta.env.VITE_SITE_START?.length >= 4
+    ? parseInt(import.meta.env.VITE_SITE_START.substring(0, 4))
+    : null,
 );
 const ShowStartYear = computed(() => {
   return startYear.value !== null && startYear.value < fullYear;
 });
-const siteIcp = ref(envConfig.VITE_SITE_ICP);
-const siteMps = ref(envConfig.VITE_SITE_MPS);
-const siteMICP = ref(envConfig.VITE_SITE_MICP);
-const siteAuthor = ref(envConfig.VITE_SITE_AUTHOR);
+
+const siteAuthor = computed(() => {
+  if (locale.value !== "zh-CN" && import.meta.env.VITE_SITE_AUTHOR_EN) {
+    return import.meta.env.VITE_SITE_AUTHOR_EN;
+  }
+  return import.meta.env.VITE_SITE_AUTHOR || "imsyy";
+});
 
 const siteUrl = computed(() => {
-  const url = envConfig.VITE_SITE_URL;
+  const url = import.meta.env.VITE_SITE_URL;
   if (!url) return "https://www.imsyy.top/";
   let fullUrl = url;
   if (!/^https?:\/\//i.test(url)) {
     fullUrl = "https://" + url;
-  };
-  fullUrl = fullUrl.replace(/^http:\/\//i, 'https://');
+  }
+  fullUrl = fullUrl.replace(/^http:\/\//i, "https://");
   try {
     const urlObj = new URL(fullUrl);
     return urlObj.toString();
   } catch (e) {
     return "https://www.imsyy.top/";
-  };
+  }
 });
 
 const toggleForceIcon = () => {
   store.forceShowBarIcon = !store.forceShowBarIcon;
   ElMessage({
     dangerouslyUseHTMLString: true,
-    message: `${store.forceShowBarIcon ? '诶？' : '进度 ICON 常驻已禁用'}`,
+    message: `${store.forceShowBarIcon ? t("components.music.eh") : t("components.music.progressIconDisabled")}`,
   });
   if (store.forceShowBarIcon) {
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("启用进度图标常驻.mp3");
-    };
+    }
   } else {
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("禁用进度图标常驻.mp3");
-    };
-  };
+    }
+  }
 };
 
-// dwrc part
-watch(() => store.getPlayerLrc, (_new, _old) => {
-  type DwrcItem = [number, number, any[]];
-  const isLineByLine = !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
-  if (!store.playerDWRCShowPro || isLineByLine) {
+const clearLongPressTimer = () => {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+};
+
+const discardExternalLyric = () => {
+  if (!isExternalLyric.value) return;
+  const source = store.lyricSource;
+  store.dwrcTemp = [];
+  store.dwrcEnable = false;
+  store.dwrcLoading = false;
+  store.lyricSeekVersion++;
+
+  if (source !== "amll") {
+    onPilferDiscard(undefined, store);
+  }
+
+  store.lyricSource = null;
+  store.lyricRestoreVersion++;
+
+  ElMessage({
+    message: t("components.music.restoredOriginalLyric"),
+    grouping: true,
+  });
+};
+
+const triggerLongPressDiscard = () => {
+  hasTriggeredLongPress = true;
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    try {
+      navigator.vibrate(50);
+    } catch {
+      // 忽略不支持震动
+    }
+  }
+  discardExternalLyric();
+};
+
+const handleLrcMouseDown = (e: MouseEvent) => {
+  if (!isExternalLyric.value) return;
+  // 鼠标中键双击丢弃
+  if (e.button === 1) {
+    e.stopPropagation();
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastMiddleClickTime < 350) {
+      lastMiddleClickTime = 0;
+      discardExternalLyric();
+    } else {
+      lastMiddleClickTime = now;
+    }
     return;
-  };
-  const audio = document.querySelector('audio');
-  if (!audio) {
-    return;
-  };
-  const now = audio.currentTime * 1000;
-  const dwrc2 = document.getElementsByClassName("dwrc-box")[0] as HTMLElement;
-  if (!dwrc2 || dwrc2 == undefined) {
-    return;
-  };
-  const outputDom = dwrc2.querySelectorAll("#dwrc-2-wrap span");
-  const inputDom = dwrc2.querySelectorAll("#dwrc-1-wrap span");
-  if (inputDom.length == 0 || outputDom.length == 0) {
-    return;
-  };
-  const dwrcFiltered = (store.dwrcTemp as DwrcItem[]).filter(
-    (i) => i[0] < now && now < i[0] + i[1]
-  );
-  if (dwrcFiltered.length == 0) {
-    return;
-  };
-  const nowLine = dwrcFiltered[dwrcFiltered.length - 1][2];
-  for (let i = 0; i < nowLine.length; i++) {
-    const item = nowLine[i] as [[number, number], any, any, any];
-    const [[start, duration], _a, _b, _c] = item;
-    const inputItem = inputDom[i] as HTMLElement;
-    if (!inputItem || inputItem.hasAttribute('data-start')) {
-      continue;
+  }
+  // 鼠标左键长按丢弃
+  if (e.button === 0) {
+    activeMouseCleanup?.();
+    hasTriggeredLongPress = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    clearLongPressTimer();
+    longPressTimer = setTimeout(triggerLongPressDiscard, 600);
+    const cleanup = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (activeMouseCleanup === cleanup) {
+        activeMouseCleanup = null;
+      }
     };
-    const computedStyle = window.getComputedStyle(inputItem);
-    const width = parseFloat(computedStyle.width);
-    if (isNaN(width)) {
-      inputItem.removeAttribute('data-start');
-      continue;
+    const onMouseMove = (moveEvt: MouseEvent) => {
+      if (Math.abs(moveEvt.clientX - startX) > 10 || Math.abs(moveEvt.clientY - startY) > 10) {
+        clearLongPressTimer();
+        cleanup();
+      }
     };
-    const outputItem = outputDom[i] as HTMLElement;
-    const animateOptions: KeyframeAnimationOptions = {
-      delay: Math.max(0, start - now),
-      duration: duration,
-      fill: "forwards" as FillMode,
-      easing: "linear",
+    const onMouseUp = () => {
+      clearLongPressTimer();
+      cleanup();
     };
-    outputItem.style.transform = "translateY(-1px)";
-    const outputAnimate = outputItem.animate(
-      [
-        { width: 0 },
-        { width: `${width}px` },
-      ],
-      animateOptions,
-    );
-    outputAnimate.onfinish = () => {
-      outputItem.style.transform = "translateY(1px)";
-      outputItem.animate(
-        [
-          { transform: "translateY(-1px)" },
-          { transform: "translateY(1px)" },
-        ],
-        {
-          duration: 300,
-          fill: "forwards",
-          easing: "linear",
-        }
-      );
-    };
-    inputItem.setAttribute("data-start", "true");
-  };
+    activeMouseCleanup = cleanup;
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  }
+};
+
+const handleLrcTouchStart = (e: TouchEvent) => {
+  if (!isExternalLyric.value) return;
+  if (e.touches.length !== 1) return;
+  hasTriggeredLongPress = false;
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+
+  clearLongPressTimer();
+  longPressTimer = setTimeout(triggerLongPressDiscard, 600);
+};
+
+const handleLrcTouchMove = (e: TouchEvent) => {
+  if (!longPressTimer) return;
+  if (e.touches.length !== 1) {
+    clearLongPressTimer();
+    return;
+  }
+  const moveX = Math.abs(e.touches[0].clientX - startX);
+  const moveY = Math.abs(e.touches[0].clientY - startY);
+  if (moveX > 10 || moveY > 10) {
+    clearLongPressTimer();
+  }
+};
+
+const handleLrcTouchEnd = (e: TouchEvent) => {
+  clearLongPressTimer();
+  if (hasTriggeredLongPress) {
+    if (e.cancelable) e.preventDefault();
+    e.stopPropagation();
+    hasTriggeredLongPress = false;
+  }
+};
+
+const handleLrcTouchCancel = () => {
+  clearLongPressTimer();
+  hasTriggeredLongPress = false;
+};
+
+const handleContextMenu = (e: MouseEvent) => {
+  if (isExternalLyric.value && hasTriggeredLongPress) {
+    e.preventDefault();
+  }
+};
+
+const lyricGeo = reactive({
+  viewportWidth: 0,
+  viewportLeft: 0,
+  contentWidth: 0,
+  maxScroll: 0,
+  isOverflow: false,
 });
 
+const invalidateDwrcLineCache = () => {
+  dwrcLineCache = null;
+};
+
+const getAudioEl = (): HTMLAudioElement | null => {
+  if (cachedAudioEl && cachedAudioEl.isConnected) {
+    return cachedAudioEl;
+  }
+  cachedAudioEl = document.querySelector("audio");
+  return cachedAudioEl;
+};
+
+const buildDwrcLineKey = (lrc: any[]): string => {
+  const len = lrc.length;
+  const first = lrc[0];
+  const last = lrc[len - 1];
+  return `${first?.[2]}:${len}:${first?.[8]}:${last?.[8]}:${first?.[4]}`;
+};
+
+const getOrBuildDwrcLineCache = (proMode: boolean): DwrcLineCache | null => {
+  const lrc = store.playerLrc;
+  if (!lrc || lrc.length === 0) return null;
+
+  const expectedLineAttr = String(lrc[0]?.[2] ?? "");
+  const lineKey = buildDwrcLineKey(lrc);
+  const dwrcSource = store.dwrcTemp;
+
+  if (
+    dwrcLineCache &&
+    dwrcLineCache.proMode === proMode &&
+    dwrcLineCache.dwrcSourceRef === dwrcSource &&
+    dwrcLineCache.lineKey === lineKey &&
+    dwrcLineCache.wrapEl.isConnected &&
+    (!dwrcLineCache.spans[0] || dwrcLineCache.spans[0].isConnected) &&
+    dwrcLineCache.wrapEl.getAttribute("data-line") === expectedLineAttr &&
+    dwrcLineCache.spans.length === lrc.length
+  ) {
+    return dwrcLineCache;
+  }
+
+  const boxEl =
+    dwrcBoxRef.value ||
+    (proMode ? (document.getElementsByClassName("dwrc-box")[0] as HTMLElement | undefined) : null);
+  if (!boxEl) return null;
+
+  const wrapSelector = proMode ? "#dwrc-2-wrap" : "#dwrc-1-wrap";
+  const wrapEl = boxEl.querySelector(wrapSelector);
+  if (!wrapEl || wrapEl.getAttribute("data-line") !== expectedLineAttr) {
+    return null;
+  }
+
+  const spanNodes = wrapEl.querySelectorAll("span") as NodeListOf<HTMLElement>;
+  if (spanNodes.length !== lrc.length) {
+    return null;
+  }
+
+  const len = lrc.length;
+  const spans = Array.from(spanNodes);
+  const starts = new Float64Array(len);
+  const durations = new Float64Array(len);
+  const clipStates = new Float64Array(len).fill(-1);
+  const timeline: DwrcTimelinePoint[] = [];
+
+  for (let i = 0; i < len; i++) {
+    const lrcItem = lrc[i] as any[];
+    const rawStart = lrcItem[8];
+    const start = rawStart === undefined ? Number.NaN : Number(rawStart);
+    const duration = Number(lrcItem[5]);
+    starts[i] = start;
+    durations[i] = duration;
+
+    if (Number.isNaN(start) || Number.isNaN(duration) || duration <= 0) continue;
+    const spanEl = spans[i];
+    if (!spanEl) continue;
+
+    const left = spanEl.offsetLeft;
+    const width = spanEl.offsetWidth;
+    timeline.push({ time: start, x: left });
+    timeline.push({ time: start + duration, x: left + width });
+  }
+
+  if (timeline.length > 1) {
+    timeline.sort((a, b) => a.time - b.time);
+  }
+
+  dwrcLineCache = {
+    wrapEl,
+    dwrcSourceRef: dwrcSource,
+    lineKey,
+    proMode,
+    spans,
+    starts,
+    durations,
+    clipStates,
+    timeline,
+    timelineCursor: 0,
+  };
+  return dwrcLineCache;
+};
+
+const interpolateTimelineX = (cache: DwrcLineCache, now: number): number => {
+  const { timeline } = cache;
+  const lastIdx = timeline.length - 1;
+  if (lastIdx < 0) return 0;
+  if (now <= timeline[0].time) return timeline[0].x;
+  if (now >= timeline[lastIdx].time) return timeline[lastIdx].x;
+
+  let j = Math.min(Math.max(0, cache.timelineCursor), lastIdx - 1);
+  while (j < lastIdx - 1 && now >= timeline[j + 1].time) {
+    j++;
+  }
+  while (j > 0 && now < timeline[j].time) {
+    j--;
+  }
+  cache.timelineCursor = j;
+
+  const curr = timeline[j];
+  const next = timeline[j + 1];
+  if (next.time === curr.time) return curr.x;
+  const progress = (now - curr.time) / (next.time - curr.time);
+  return curr.x + (next.x - curr.x) * progress;
+};
+
+const resetDynamicMask = (targetVp?: HTMLElement | null) => {
+  lastMaskLeft = -1;
+  lastMaskRight = -1;
+  lastMaskLeftColor = "";
+  lastMaskRightColor = "";
+  const vp = targetVp || lrcViewportRef.value;
+  if (vp) {
+    const vpStyle = vp.style;
+    vpStyle.setProperty("--mask-left", "0px");
+    vpStyle.setProperty("--mask-left-color", "black");
+    vpStyle.setProperty("--mask-right", `${MASK_MAX_WIDTH}px`);
+    vpStyle.setProperty("--mask-right-color", "transparent");
+  }
+};
+
+const onBeforeLeave = () => {
+  isTransitioning = true;
+  clearTimeout(transitionTimer);
+  transitionTimer = setTimeout(() => {
+    isTransitioning = false;
+  }, 400);
+};
+
+const onBeforeEnter = (el: Element) => {
+  isTransitioning = false;
+  clearTimeout(transitionTimer);
+  invalidateDwrcLineCache();
+  currentScrollX = 0;
+  lastAppliedScrollX = Number.NaN;
+
+  const track = el.querySelector(".lrc-scroll-track") as HTMLElement;
+  if (track) {
+    track.style.transform = "translate3d(0, 0, 0)";
+  }
+  const vp = el.querySelector(".lrc-viewport") as HTMLElement;
+  if (vp) {
+    resetDynamicMask(vp);
+  }
+
+  nextTick(() => {
+    updateLyricGeometry();
+  });
+};
+
+const onAfterEnter = () => {
+  isTransitioning = false;
+  clearTimeout(transitionTimer);
+  updateLyricGeometry();
+};
+
+const isTranslationActive = () => {
+  return !!(store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText);
+};
+
+const onTrBeforeEnter = (el: Element) => {
+  if (!isTrLrcMounted) {
+    el.classList.add("is-motion");
+    isTrLrcMounted = true;
+  } else {
+    el.classList.remove("is-motion");
+  }
+};
+
+const onTrBeforeLeave = (el: Element) => {
+  if (!isTranslationActive()) {
+    el.classList.add("is-motion");
+    isTrLrcMounted = false;
+  } else {
+    el.classList.remove("is-motion");
+  }
+};
+
+const onTrAfterEnter = (el: Element) => {
+  el.classList.remove("is-motion");
+};
+
+const onTrAfterLeave = (el: Element) => {
+  el.classList.remove("is-motion");
+};
+
+watch(
+  () => store.playerState && store.playerLrcShow && store.playerTrLrc && store.playerTrLrcText,
+  (val) => {
+    if (!val) {
+      isTrLrcMounted = false;
+    }
+  },
+);
+
+const isLineByLine = computed(() => {
+  return !store.dwrcEnable || (store.dwrcTemp as DwrcItem[]).length === 0 || store.dwrcLoading;
+});
+
+const lyricTransitionKey = computed(() => {
+  if (!isLineByLine.value) {
+    return store.playerLrc?.length > 0
+      ? `lrc-line-${store.playerLrc[0]?.[2]}-${store.playerLrc.length}-${store.playerLrc[0]?.[4]}-${store.lyricSeekVersion}`
+      : `lrc-line-null`;
+  } else {
+    return store.getPlayerLrc?.length > 0
+      ? `lrc-${store.getPlayerLrc[0]?.[2]}-${store.getPlayerLrc.length}-${store.getPlayerLrc[0]?.[4]}-${store.lyricSeekVersion}`
+      : t("components.music.lrcSearching");
+  }
+});
+
+const updateLyricGeometry = () => {
+  invalidateDwrcLineCache();
+  if (!lrcAllRef.value) return;
+
+  const lrcAllRect = lrcAllRef.value.getBoundingClientRect();
+  const leftIconsWidth = leftIconsRef.value ? leftIconsRef.value.getBoundingClientRect().width : 50;
+  const rightIconsWidth = rightIconsRef.value
+    ? rightIconsRef.value.getBoundingClientRect().width
+    : 50;
+
+  const sideMargin = 8;
+  const maxAvailableViewportWidth = Math.max(
+    0,
+    lrcAllRect.width - (leftIconsWidth + rightIconsWidth + sideMargin),
+  );
+
+  const contentEl = dwrcBoxRef.value || lineLrcRef.value;
+  const contentWidth = contentEl ? contentEl.getBoundingClientRect().width : 0;
+
+  lyricGeo.contentWidth = contentWidth;
+
+  const availableWidth = maxAvailableViewportWidth - PADDING_LEFT - PADDING_RIGHT;
+  lyricGeo.isOverflow = contentWidth > availableWidth + 1 && availableWidth > 0;
+
+  if (lyricGeo.isOverflow) {
+    const vpRect = lrcViewportRef.value?.getBoundingClientRect();
+    lyricGeo.viewportWidth =
+      vpRect && vpRect.width > contentWidth ? vpRect.width : maxAvailableViewportWidth;
+    lyricGeo.viewportLeft = vpRect ? vpRect.left : lrcAllRect.left + leftIconsWidth + 4;
+    lyricGeo.maxScroll = Math.max(
+      0,
+      contentWidth + PADDING_LEFT + PADDING_RIGHT - lyricGeo.viewportWidth,
+    );
+  } else {
+    lyricGeo.viewportWidth = contentWidth;
+    lyricGeo.viewportLeft = lrcAllRect.left + (lrcAllRect.width - contentWidth) / 2;
+    lyricGeo.maxScroll = 0;
+  }
+};
+
+const setupResizeObserver = () => {
+  if (typeof ResizeObserver === "undefined") return;
+  resizeObserver = new ResizeObserver(() => {
+    updateLyricGeometry();
+  });
+  if (lrcAllRef.value) resizeObserver.observe(lrcAllRef.value);
+  if (lrcViewportRef.value) resizeObserver.observe(lrcViewportRef.value);
+};
+
+watch([lrcAllRef, lrcViewportRef], ([newAll, newViewport], [oldAll, oldViewport]) => {
+  if (oldAll && resizeObserver) resizeObserver.unobserve(oldAll);
+  if (oldViewport && resizeObserver) resizeObserver.unobserve(oldViewport);
+  if (newAll && resizeObserver) resizeObserver.observe(newAll);
+  if (newViewport && resizeObserver) resizeObserver.observe(newViewport);
+  updateLyricGeometry();
+});
+
+const cleanupDprListener = () => {
+  if (dprMediaQuery && dprChangeHandler) {
+    dprMediaQuery.removeEventListener("change", dprChangeHandler);
+  }
+  dprMediaQuery = null;
+  dprChangeHandler = null;
+};
+
+const listenDprChange = () => {
+  if (typeof window === "undefined" || !window.matchMedia) return;
+  cleanupDprListener();
+  dprMediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+  dprChangeHandler = () => {
+    updateLyricGeometry();
+    listenDprChange();
+  };
+  dprMediaQuery.addEventListener("change", dprChangeHandler, { once: true });
+};
+
+watch(
+  () => (isLineByLine.value ? store.getPlayerLrc?.[0]?.[2] : store.playerLrc?.[0]?.[2]),
+  (newLine) => {
+    if (newLine !== undefined && newLine !== lastLineIndex) {
+      lastLineIndex = newLine;
+      if (store.isDragging) {
+        isTransitioning = false;
+        clearTimeout(transitionTimer);
+        invalidateDwrcLineCache();
+        currentScrollX = 0;
+        lastAppliedScrollX = Number.NaN;
+        resetDynamicMask();
+        if (lrcTrackRef.value) {
+          lrcTrackRef.value.style.transform = "translate3d(0, 0, 0)";
+        }
+        nextTick(() => {
+          updateLyricGeometry();
+        });
+      }
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => store.lyricSeekVersion,
+  () => {
+    isTransitioning = false;
+    clearTimeout(transitionTimer);
+    invalidateDwrcLineCache();
+    nextTick(() => {
+      updateLyricGeometry();
+    });
+  },
+);
+
+watch(
+  () => [store.playerLrcShow, isLineByLine.value],
+  () => {
+    isTransitioning = false;
+    clearTimeout(transitionTimer);
+    invalidateDwrcLineCache();
+    currentScrollX = 0;
+    lastAppliedScrollX = Number.NaN;
+    resetDynamicMask();
+    if (lrcTrackRef.value) {
+      lrcTrackRef.value.style.transform = "translate3d(0, 0, 0)";
+    }
+    nextTick(() => {
+      updateLyricGeometry();
+    });
+  },
+);
+
+watch(
+  () => store.playerDWRCShowPro,
+  () => {
+    invalidateDwrcLineCache();
+    nextTick(() => {
+      updateLyricGeometry();
+    });
+  },
+);
+
+const startDWRCLoop = () => {
+  if (dwrcRAFId !== null) return;
+  const loop = () => {
+    if (isTransitioning) {
+      dwrcRAFId = requestAnimationFrame(loop);
+      return;
+    }
+
+    const isLine = isLineByLine.value;
+    const audioEl = getAudioEl();
+    const now = store.isDragging
+      ? store.dragProgressTime * 1000
+      : audioEl
+        ? audioEl.currentTime * 1000
+        : 0;
+
+    let currentProgressX = 0;
+    if (store.playerDWRCShowPro && !isLine && store.playerLrc && store.playerLrc.length > 0) {
+      let dotX = 0;
+      let dotVisible = false;
+      const cache = getOrBuildDwrcLineCache(true);
+
+      if (cache) {
+        const { spans, starts, durations, clipStates } = cache;
+        for (let i = 0; i < spans.length; i++) {
+          const start = starts[i];
+          const duration = durations[i];
+          if (Number.isNaN(start) || Number.isNaN(duration)) continue;
+
+          let clipRight: number;
+          if (duration === 0 || now < start) {
+            clipRight = 100;
+          } else if (now >= start + duration) {
+            clipRight = 0;
+          } else {
+            const progress = (now - start) / duration;
+            clipRight = Math.max(0, Math.min(100, (1 - progress) * 100));
+          }
+
+          const prevClip = clipStates[i];
+          if (
+            prevClip < 0 ||
+            (clipRight === 0 || clipRight === 100
+              ? prevClip !== clipRight
+              : Math.abs(prevClip - clipRight) > 0.01)
+          ) {
+            clipStates[i] = clipRight;
+            spans[i].style.clipPath = `inset(0 ${clipRight}% 0 0)`;
+          }
+        }
+
+        if (cache.timeline.length > 0) {
+          dotX = interpolateTimelineX(cache, now);
+          dotVisible = true;
+        }
+      }
+
+      const dotEl = dwrcDotRef.value?.dotRef ?? null;
+      if (dotEl) {
+        const isNewDotEl = dotEl !== lastDotEl;
+        if (isNewDotEl) {
+          lastDotEl = dotEl;
+        }
+        if (isNewDotEl || dotVisible !== lastDotVisible) {
+          lastDotVisible = dotVisible;
+          dotEl.style.opacity = dotVisible ? "1" : "0";
+        }
+        if (dotVisible && (isNewDotEl || Math.abs(dotX - lastDotX) > 0.01)) {
+          lastDotX = dotX;
+          dotEl.style.transform = `translateX(${dotX}px)`;
+        }
+      } else {
+        lastDotEl = null;
+        lastDotVisible = null;
+        lastDotX = Number.NaN;
+      }
+
+      currentProgressX = dotX;
+    } else if (!isLine && store.playerLrc && store.playerLrc.length > 0) {
+      if (lyricGeo.isOverflow) {
+        const cache = getOrBuildDwrcLineCache(false);
+        if (cache && cache.timeline.length > 0) {
+          currentProgressX = interpolateTimelineX(cache, now);
+        }
+      }
+    } else if (isLine && store.getPlayerLrc?.length > 0) {
+      const lrcItem = (store.getPlayerLrc[0] as any[]) || [];
+      const duration = Number(lrcItem[5]) || 5000;
+      const start = Number(lrcItem[8]) || 0;
+      const rawText = String(lrcItem[4] || "").replace(/<[^>]+>/g, "");
+      const charCount = rawText.length || 1;
+      const elapsed = Math.max(0, now - start);
+
+      const progress = Math.min(1, Math.max(0, elapsed / duration));
+      currentProgressX = progress * lyricGeo.contentWidth;
+    }
+
+    let targetOffset = 0;
+    if (lyricGeo.isOverflow) {
+      const screen65 = window.innerWidth * 0.65;
+      const headScreenX = lyricGeo.viewportLeft + PADDING_LEFT + currentProgressX;
+      const rawOffset = screen65 - headScreenX;
+      targetOffset = Math.max(-lyricGeo.maxScroll, Math.min(0, rawOffset));
+    }
+    if (Math.abs(targetOffset - currentScrollX) > 0.05) {
+      currentScrollX += (targetOffset - currentScrollX) * SCROLL_LERP;
+    } else {
+      currentScrollX = targetOffset;
+    }
+
+    const trackEl = lrcTrackRef.value;
+    if (trackEl) {
+      if (trackEl !== lastTrackEl || currentScrollX !== lastAppliedScrollX) {
+        lastTrackEl = trackEl;
+        lastAppliedScrollX = currentScrollX;
+        trackEl.style.transform = `translate3d(${currentScrollX}px, 0, 0)`;
+      }
+    } else {
+      lastTrackEl = null;
+      lastAppliedScrollX = Number.NaN;
+    }
+    if (lyricGeo.isOverflow && lrcViewportRef.value) {
+      const scrollDist = Math.abs(currentScrollX);
+      const leftFade = Math.min(MASK_MAX_WIDTH, Math.max(0, Math.round(scrollDist)));
+      const leftColor = leftFade > 0 ? "transparent" : "black";
+
+      const remainingDist = Math.max(0, lyricGeo.maxScroll - scrollDist);
+      const rightFade = Math.min(MASK_MAX_WIDTH, Math.max(0, Math.round(remainingDist)));
+      const rightColor = rightFade > 0 ? "transparent" : "black";
+
+      const vpStyle = lrcViewportRef.value.style;
+      if (leftFade !== lastMaskLeft || leftColor !== lastMaskLeftColor) {
+        lastMaskLeft = leftFade;
+        lastMaskLeftColor = leftColor;
+        vpStyle.setProperty("--mask-left", `${leftFade}px`);
+        vpStyle.setProperty("--mask-left-color", leftColor);
+      }
+      if (rightFade !== lastMaskRight || rightColor !== lastMaskRightColor) {
+        lastMaskRight = rightFade;
+        lastMaskRightColor = rightColor;
+        vpStyle.setProperty("--mask-right", `${rightFade}px`);
+        vpStyle.setProperty("--mask-right-color", rightColor);
+      }
+    }
+
+    dwrcRAFId = requestAnimationFrame(loop);
+  };
+  dwrcRAFId = requestAnimationFrame(loop);
+};
+
+const stopDWRCLoop = () => {
+  if (dwrcRAFId !== null) {
+    cancelAnimationFrame(dwrcRAFId);
+    dwrcRAFId = null;
+  }
+};
+
+onMounted(() => {
+  isComponentMounted = true;
+  setupResizeObserver();
+  listenDprChange();
+  if (typeof document !== "undefined" && document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      if (!isComponentMounted) return;
+      updateLyricGeometry();
+    });
+  }
+  nextTick(() => {
+    updateLyricGeometry();
+  });
+  startDWRCLoop();
+});
+
+onBeforeUnmount(() => {
+  isComponentMounted = false;
+  cachedAudioEl = null;
+  invalidateDwrcLineCache();
+  lastTrackEl = null;
+  lastDotEl = null;
+  clearLongPressTimer();
+  activeMouseCleanup?.();
+  cleanupDprListener();
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+    resizeObserver = null;
+  }
+  clearTimeout(transitionTimer);
+  stopDWRCLoop();
+});
 </script>
 
 <style lang="scss" scoped>
 // 逐字模块1
 .dwrc-char {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
   opacity: 1;
   -webkit-transform: translateY(1px);
@@ -265,9 +1022,9 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   font-weight: 520;
   font-size: 1.05rem;
   transition:
-    // opacity 0.3s linear,
-    color 0.5s linear,
-    transform 0.3s linear;
+    opacity var(--short-time) linear,
+    color var(--anim-time) linear,
+    transform var(--short-time) linear;
 
   &.fade-in-start {
     text-shadow: 0px 0px 2px var(--footer-dwrc-shadow-first-color);
@@ -275,37 +1032,39 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.fade-in {
     opacity: 1;
     -webkit-transform: translateY(-1px);
     transform: translateY(-1px);
-    animation: colorFade 0.7s ease-in-out forwards;
+    animation: colorFade var(--anim-time) linear forwards;
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.fade-out {
     opacity: 1 !important;
+    color: var(--footer-dwrc-end-color) !important;
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
-    text-shadow: 0px 0px 6px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.fade-enter-active {
-    animation: float-up 0.3s linear forwards;
+    animation: float-up var(--short-time) linear forwards;
   }
 
   &.long-tone {
@@ -314,42 +1073,44 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     transform: translateY(-1px);
     animation: pulse 1.2s ease-in-out forwards !important;
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.long-tone-out {
     opacity: 1 !important;
+    color: var(--footer-dwrc-end-color) !important;
     -webkit-transform: translateY(1px);
     transform: translateY(1px);
     animation: pulse-out 0.7s ease-in-out forwards !important;
     animation-iteration-count: 1;
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.dwrc-style-s1 {
     opacity: 0.6;
     color: var(--footer-dwrc-start-color);
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 
   &.dwrc-style-s2 {
     opacity: 1;
     color: var(--footer-dwrc-end-color);
-    text-shadow: 0px 0px 6px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
     transition:
-      color 0.5s linear,
-      opacity 0.3s linear,
-      transform 0.3s linear;
+      color var(--anim-time) linear,
+      opacity var(--short-time) linear,
+      transform var(--short-time) linear;
   }
 }
 
@@ -365,11 +1126,31 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   }
 }
 
+.lrc-all {
+  position: relative;
+
+  .paws-1,
+  .paws-2,
+  .paws-3,
+  .paws-4 {
+    flex-shrink: 0;
+  }
+
+  .paws-1 {
+    transform: rotate(-18deg) translateY(-2px) !important;
+  }
+
+  .paws-2 {
+    transform: rotate(18deg) translateY(-2px) !important;
+  }
+}
+
 @keyframes colorFade {
   from {
     color: var(--footer-dwrc-start-color);
     opacity: 0.6;
-    text-shadow: 0px 0px 3px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 3px var(--footer-dwrc-shadow-first-color),
       0px 0px 0px rgba(176, 224, 230, 1),
       0px 0px 0px rgba(230, 230, 250, 1);
   }
@@ -377,7 +1158,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   to {
     color: var(--footer-dwrc-end-color);
     opacity: 1;
-    text-shadow: 0px 0px 6px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
       0px 0px 2px rgba(176, 224, 230, 1),
       0px 0px 2px rgba(230, 230, 250, 1);
   }
@@ -387,7 +1169,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   from {
     color: var(--footer-dwrc-start-color);
     opacity: 0.6;
-    text-shadow: 0px 0px 3px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      0px 0px 3px var(--footer-dwrc-shadow-first-color),
       0px 0px 0px rgba(255, 182, 193, 0.3),
       0px 0px 0px rgba(255, 192, 203, 0.3),
       0px 0px 0px rgba(255, 182, 193, 0.3),
@@ -401,7 +1184,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   to {
     color: var(--footer-dwrc-end-color);
     opacity: 1;
-    text-shadow: 3px 3px 7px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      3px 3px 7px var(--footer-dwrc-shadow-first-color),
       0px 0px 4px rgba(255, 182, 193, 0.3),
       0px 0px 4px rgba(255, 192, 203, 0.3),
       0px 0px 8px rgba(255, 182, 193, 0.3),
@@ -417,7 +1201,8 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   from {
     color: var(--footer-dwrc-end-color);
     opacity: 1;
-    text-shadow: 3px 3px 7px var(--footer-dwrc-shadow-first-color),
+    text-shadow:
+      3px 3px 7px var(--footer-dwrc-shadow-first-color),
       0px 0px 4px rgba(255, 182, 193, 0.3),
       0px 0px 4px rgba(255, 192, 203, 0.3),
       0px 0px 8px rgba(255, 182, 193, 0.3),
@@ -429,72 +1214,122 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   }
 
   to {
-    color: var(--footer-dwrc-start-color);
+    color: var(--footer-dwrc-end-color);
     opacity: 1;
-    text-shadow: 0px 0px 3px var(--footer-dwrc-shadow-first-color),
-      0px 0px 0px rgba(255, 182, 193, 0.3),
-      0px 0px 0px rgba(255, 192, 203, 0.3),
-      0px 0px 0px rgba(255, 182, 193, 0.3),
-      0px 0px 0px rgba(255, 192, 203, 0.3),
-      0px 0px 0px rgba(255, 182, 193, 1),
-      0px 0px 0px rgba(255, 192, 203, 1),
-      0px 0px 0px rgba(255, 182, 193, 1),
-      0px 0px 0px rgba(255, 192, 203, 1);
+    text-shadow:
+      0px 0px 6px var(--footer-dwrc-shadow-first-color),
+      0px 0px 2px rgba(176, 224, 230, 1),
+      0px 0px 2px rgba(230, 230, 250, 1),
+      0px 0px 0px rgba(255, 182, 193, 0),
+      0px 0px 0px rgba(255, 192, 203, 0),
+      0px 0px 0px rgba(255, 182, 193, 0),
+      0px 0px 0px rgba(255, 192, 203, 0),
+      0px 0px 0px rgba(255, 182, 193, 0),
+      0px 0px 0px rgba(255, 192, 203, 0);
   }
 }
 
 // 逐字模块2
-#dwrc-2-wrap>span {
+.dwrc-2-char {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
+  -webkit-transform: translateY(1px);
   transform: translateY(1px);
   white-space: nowrap;
-  overflow: hidden;
-  width: 0;
-  opacity: 0.8;
+  clip-path: inset(0 100% 0 0);
   transition:
-    opacity 0.3s linear,
-    color 0.5s linear,
-    transform 0.3s linear,
-    width 0.3s linear;
+    opacity var(--short-time) linear,
+    transform var(--short-time) linear,
+    color var(--anim-time) linear;
+
+  &.fade-in,
+  &.fade-out,
+  &.long-tone,
+  &.long-tone-out {
+    will-change: clip-path, transform, opacity;
+  }
+
+  &.fade-in-start {
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+
+  &.fade-in {
+    opacity: 1;
+    -webkit-transform: translateY(-1px);
+    transform: translateY(-1px);
+  }
+
+  &.fade-out {
+    opacity: 1 !important;
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+
+  &.long-tone {
+    opacity: 1;
+    -webkit-transform: translateY(-1px);
+    transform: translateY(-1px);
+  }
+
+  &.long-tone-out {
+    opacity: 1 !important;
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px);
+  }
+}
+
+.dwrc-box {
+  position: relative;
+  display: inline-block;
 }
 
 #dwrc-2-wrap {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline-block;
   position: absolute;
+  left: 0;
+  top: 0;
   width: auto;
   opacity: 0.8;
   color: var(--footer-dwrc-two-color);
-  text-shadow: 0 0 6px rgba(0, 191, 255, 0.8),
+  text-shadow:
+    0 0 6px rgba(0, 191, 255, 0.8),
     0px 0px 2px rgba(176, 224, 230, 0.8),
     0px 0px 2px rgba(230, 230, 250, 0.8);
   font-family: MiSans VF;
   font-weight: 520;
   font-size: 1.05rem;
-  overflow: hidden;
+  overflow: visible;
+  text-overflow: clip;
   white-space: nowrap;
   transition:
-    opacity 0.3s linear,
-    color 0.5s linear,
-    transform 0.3s linear,
-    width 0.3s linear;
+    opacity var(--short-time) linear,
+    transform var(--short-time) linear,
+    color var(--anim-time) linear;
 }
 
 // 逐行部分
 .lrc-char {
+  --anim-time: var(--char-duration, 0.5s);
+  --short-time: min(var(--char-duration, 0.3s), 0.3s);
   display: inline;
   opacity: 1;
   -webkit-background-clip: text;
   background-clip: text;
   color: var(--footer-dwrc-end-color);
-  text-shadow: 0 0 6px var(--footer-dwrc-shadow-first-color),
+  text-shadow:
+    0 0 6px var(--footer-dwrc-shadow-first-color),
     0 0 2px rgba(255, 165, 0, 1),
     0 0 2px rgba(255, 179, 71, 1);
   font-family: MiSans VF;
   font-weight: 520;
   font-size: 1.05rem;
   transition:
-    opacity 0.3s linear,
-    color 0.5s linear;
+    opacity var(--short-time) linear,
+    color var(--anim-time) linear;
 }
 
 // End
@@ -514,6 +1349,76 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
   white-space: nowrap;
   color: var(--footer-font-color);
 
+  &.is-elevated {
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 101 !important;
+    pointer-events: auto;
+  }
+
+  .translation-lrc {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1.4;
+    padding: 4px 14px;
+    border-radius: 6px;
+    background-color: var(--card-background-color);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    font-size: 0.85rem;
+    color: var(--text-color);
+    white-space: nowrap;
+    max-width: 80vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    pointer-events: auto;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    &.tr-fade-enter-active,
+    &.tr-fade-leave-active {
+      transition:
+        opacity 0.2s linear,
+        transform 0.2s linear;
+    }
+
+    &.tr-fade-enter-from,
+    &.tr-fade-leave-to {
+      opacity: 0;
+    }
+
+    &.tr-fade-enter-to,
+    &.tr-fade-leave-from {
+      opacity: 1;
+    }
+
+    &.tr-fade-enter-from.is-motion,
+    &.tr-fade-leave-to.is-motion {
+      transform: translateX(-50%) translateY(4px);
+    }
+
+    &.tr-fade-enter-to.is-motion,
+    &.tr-fade-leave-from.is-motion {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 720px) {
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      max-width: 90vw;
+      bottom: calc(100% + 6px);
+    }
+  }
+
   .power {
     animation: fade 0.3s;
   }
@@ -526,17 +1431,106 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
     justify-content: center;
     z-index: 1;
     justify-content: flex-start;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 
     .lrc-all {
-      width: 98%;
+      width: 100%;
+      height: 46px;
       display: flex;
       flex-direction: row;
-      justify-content: center;
       align-items: center;
       white-space: nowrap;
+      position: relative;
+
+      .lrc-side-icons {
+        display: inline-flex;
+        align-items: center;
+        flex-shrink: 0;
+        user-select: none;
+      }
+
+      &.is-centered {
+        justify-content: center;
+
+        .lrc-viewport {
+          flex: 0 1 auto;
+          overflow: visible;
+          mask-image: none;
+          -webkit-mask-image: none;
+        }
+
+        .lrc-scroll-track {
+          padding: 0 8px;
+        }
+      }
+
+      &.is-overflow {
+        justify-content: space-between;
+
+        .lrc-side-icons {
+          z-index: 2;
+
+          &.left-icons {
+            margin-left: 4px;
+          }
+
+          &.right-icons {
+            margin-right: 4px;
+          }
+        }
+
+        .lrc-viewport {
+          flex: 1;
+          min-width: 0;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+          mask-image: linear-gradient(
+            to right,
+            var(--mask-left-color, black) 0,
+            black var(--mask-left, 0px),
+            black calc(100% - var(--mask-right, 24px)),
+            var(--mask-right-color, transparent) 100%
+          );
+          -webkit-mask-image: linear-gradient(
+            to right,
+            var(--mask-left-color, black) 0,
+            black var(--mask-left, 0px),
+            black calc(100% - var(--mask-right, 24px)),
+            var(--mask-right-color, transparent) 100%
+          );
+        }
+
+        .lrc-scroll-track {
+          display: inline-flex;
+          align-items: center;
+          white-space: nowrap;
+          will-change: transform;
+          padding-left: 8px;
+          padding-right: 8px;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+      }
+
+      .line-lrc-text {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        text-overflow: clip !important;
+        overflow: visible !important;
+      }
+
+      #dwrc-1-wrap,
+      #dwrc-2-wrap {
+        text-overflow: clip !important;
+        overflow: visible !important;
+        white-space: nowrap !important;
+      }
 
       .lrc-text {
-        margin: 0 8px;
+        margin: 0;
       }
 
       .i-icon {
@@ -553,6 +1547,7 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
         width: auto;
         height: auto;
         z-index: 0;
+        display: inline-block;
 
         .dwrc-1,
         .dwrc-2 {
@@ -589,7 +1584,9 @@ watch(() => store.getPlayerLrc, (_new, _old) => {
       white-space: nowrap;
       font-size: 1.05rem;
       opacity: 0.6;
-      transition: opacity 0.3s, color 0.3s;
+      transition:
+        opacity 0.3s,
+        color 0.3s;
     }
 
     .lrc-line.active {

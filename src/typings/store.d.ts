@@ -1,56 +1,115 @@
 export interface MainState {
-    imgLoadStatus: boolean;
-    innerWidth: number | null;
-    coverType: number;
-    sBGCount: string | null;
-    autoBGSwitchInterval : number;
-    seasonalEffects: boolean;
-    msgNameShow: boolean;
-    siteStartShow: boolean;
-    musicClick: boolean;
-    musicBoxOpenState: boolean;
-    musicIsOk: boolean;
-    musicVolume: number;
-    musicOpenState: boolean;
-    backgroundShow: boolean;
-    boxOpenState: boolean;
-    mobileOpenState: boolean;
-    mobileFuncState: boolean;
-    setOpenState: boolean;
-    setV: boolean;
-    playerState: boolean;
-    playerCanplay: boolean;
-    playerTitle: string | null;
-    playerArtist: string | null;
-    playerAlbum: string | null;
-    playerLrc: [boolean, string, string, string, string, string, string][] | [boolean, string, string, string, string, string][] | [boolean, string, string, string, string][] | [boolean, string][];
-    playerLrcShow: boolean;
-    footerBlur: boolean;
-    footerProgressBar: boolean;
-    playerAutoplay: boolean;
-    playerLoop: "all" | "one" | "none";
-    playerOrder: "list" | "random";
-    webSpeech: boolean;
-    playerSpeechName: boolean;
-    playerTrLrc: boolean;
-    playerDWRCShow: boolean;
-    playerDWRCShowPro: boolean;
-    playerDWRCATDB: boolean;
-    playerDWRCATDBF: boolean;
-    playerDWRCPilfer: boolean;
-    playerRMMetadata: boolean;
-    playerCurrentTime: number | null;
-    playerDuration: number | null;
-    dwrcIndex: number | null;
-    dwrcTemp: any[];
-    dwrcEnable: boolean;
-    dwrcLoading: boolean;
-    lyricSeekVersion: number;
-    forceShowBarIcon: boolean;
-    showFirefly: boolean;
-    showSnowfall: boolean;
-    showLantern: boolean;
-    showProgressIcon: boolean;
-    showProgressIconState: number;
-    theme: "system" | "time" | "bg" | "light" | "dark";
-};
+  imgLoadStatus: boolean;
+  language: string;
+  langStatus: string | null;
+  innerWidth: number | null;
+  coverType: number;
+  sBGCount: string | null;
+  autoBGSwitchInterval: number;
+  seasonalEffects: boolean;
+  mourningMode: boolean;
+  msgNameShow: boolean;
+  siteStartShow: boolean;
+  musicClick: boolean;
+  musicBoxOpenState: boolean;
+  musicIsOk: boolean;
+  musicVolume: number;
+  musicOpenState: boolean;
+  backgroundShow: boolean;
+  boxOpenState: boolean;
+  mobileOpenState: boolean;
+  mobileFuncState: boolean;
+  setOpenState: boolean;
+  searchOpenState: boolean;
+  searchEngine: string;
+  setV: boolean;
+  devDebugLog: boolean;
+  playerState: boolean;
+  playerCanplay: boolean;
+  playerTitle: string | null;
+  playerArtist: string | null;
+  playerAlbum: string | null;
+  playerLrc:
+    | [
+        boolean,
+        string | number,
+        string | number,
+        string | number,
+        string,
+        string | number,
+        string | number,
+        string,
+        string | number,
+      ][]
+    | [boolean, string, string, string, string, string, string][]
+    | [boolean, string, string, string, string, string][]
+    | [boolean, string, string, string, string][]
+    | [boolean, string][]
+    | any[];
+  playerLrcShow: boolean;
+  footerBlur: boolean;
+  footerProgressBar: boolean;
+  playerAutoplay: boolean;
+  playerLoop: "all" | "one" | "none";
+  playerOrder: "list" | "random";
+  webSpeech: boolean;
+  playerSpeechName: boolean;
+  playerTrLrc: boolean;
+  playerTrLrcText: string;
+  playerDWRCShow: boolean;
+  playerDWRCShowPro: boolean;
+  playerDWRCATDB: boolean;
+  playerDWRCATDBF: boolean;
+  playerDWRCPilfer: boolean;
+  playerRMMetadata: boolean;
+  playerCurrentTime: number | null;
+  playerDuration: number | null;
+  playerLyricMetadataByServer: boolean;
+  dwrcIndex: number | null;
+  dwrcTemp: any[];
+  dwrcEnable: boolean;
+  dwrcLoading: boolean;
+  LrcMetaDataLoading: boolean;
+  LrcMetaDataCache: MetadataConfig | null;
+  lyricSeekVersion: number;
+  lyricRestoreVersion: number;
+  forceShowBarIcon: boolean;
+  dwrcDot: boolean;
+  songServer: string | null;
+  lyricSource: string | null;
+  isDragging: boolean;
+  dragProgressTime: number;
+  showFirefly: boolean;
+  showSnowfall: boolean;
+  showLantern: boolean;
+  showProgressIcon: boolean;
+  showProgressIconState: number;
+  theme: "system" | "time" | "bg" | "light" | "dark";
+  weatherProvider: "auto" | "tencent" | "amap" | "google" | "xiaomi" | "oioweb";
+  socialTipPosition: "right" | "down";
+  noteOpenState: boolean;
+  userNotes: NoteItem[];
+  notesAvoidFooter: boolean;
+  clientUUID: string;
+}
+
+export interface NoteItem {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface MetadataRule {
+  name: string;
+  description?: string;
+  pattern: string;
+}
+
+export interface MetadataConfig {
+  $schema?: string;
+  version: string;
+  description?: string;
+  rules: MetadataRule[];
+}

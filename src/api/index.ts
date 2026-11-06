@@ -1,24 +1,23 @@
-// import axios from "axios";
 import fetchJsonp from "fetch-jsonp";
-import { gwg, gwgt } from "@/utils/authServer";
+import { gwgt, gwggdt, gwggt, gasA } from "@/utils/authServer";
+import i18n from "@/locales";
 
 /**
  * JSONP 请求模块
+ *
+ * 请求 JSONP，并返回 JSON 【关于为什么要有这个呢...请腾讯自觉扫一下（x）】
  */
-// JSONP 请求函数，并返回 JSON 【关于为什么要有这个呢...请腾讯自觉扫一下（x）】
-const loadJSONP = (url, callbackName) => {
+export const loadJSONP = (url, callbackName) => {
   return new Promise((resolve, reject) => {
-    // 定义 JSONP 回调函数
     (window as any)[callbackName] = (data: any) => {
-      resolve(data); // 解析 JSON 数据
-      delete (window as any)[callbackName]; // 清理全局变量，防止污染
+      resolve(data);
+      delete (window as any)[callbackName];
     };
-    // 创建 script 标签
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = url;
     script.onerror = () => {
-      reject(new Error('JSONP 请求失败'));
-      delete (window as any)[callbackName]; // 出错时也要清理
+      reject(new Error(i18n.global.t("console.api.jsonpFailed")));
+      delete (window as any)[callbackName];
     };
     document.body.appendChild(script);
   });
@@ -29,64 +28,65 @@ const loadJSONP = (url, callbackName) => {
  */
 
 // 获取音乐播放列表
-export const getPlayerList = async (server, type, id, serverse, idse, playerTrLrc) => {
-  let dataf: any[] = [], data3: any[] = [], data1: any[] = [], data2: any[] = [];
-  if (serverse != null && idse != null) {
+export const getPlayerList = async (server, type, id, serverse, idse, uuid) => {
+  const key = import.meta.env.VITE_METING_SKEY;
+  const fetchSource = async (s: string, i: string, sourceNum: number) => {
     try {
-      const res1 = await fetch(
-        `${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
-      );
-      data1 = await res1.json();
+      const baseUrl = `${import.meta.env.VITE_SONG_API}?server=${s}&type=${type}&id=${i}`;
+      const url = key ? await gasA(baseUrl, key) : `${baseUrl}${uuid ? `&uuid=${uuid}` : ""}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      return Array.isArray(json) ? json : [];
     } catch (e) {
-      data1 = [];
-      console.error("音乐源 1 请求失败:", e);
-    };
-    try {
-      const res2 = await fetch(
-        `${envConfig.VITE_SONG_API}?server=${serverse}&type=${type}&id=${idse}`,
-      );
-      data2 = await res2.json();
-    } catch (e) {
-      data2 = [];
-      console.error("音乐源 2 请求失败:", e);
-    };
-    dataf = [...data2 || [], ...data1 || []];
-  } else {
-    try {
-      const res1 = await fetch(
-        `${envConfig.VITE_SONG_API}?server=${server}&type=${type}&id=${id}`,
-      );
-      data3 = await res1.json();
-    } catch (e) {
-      data3 = [];
-      console.error("音乐源 1 请求失败:", e);
-    };
-    dataf = [...data3 || []];
+      console.error(i18n.global.t(`console.api.musicSource${sourceNum}Failed`), e);
+      return [];
+    }
   };
-  const data = dataf;
+  const hasSecondary = serverse != null && idse != null;
+  const [data1, data2] = await Promise.all([
+    fetchSource(server, id, 1),
+    hasSecondary ? fetchSource(serverse, idse, 2) : Promise.resolve([]),
+  ]);
+  const data = hasSecondary ? [...data2, ...data1] : data1;
   if (data.length > 0 && data[0]?.url?.startsWith("@")) {
     const [handle, jsonpCallback, jsonpCallbackFunction, url] = data[0].url.split("@").slice(1);
     const jsonpData = await fetchJsonp(url).then((res) => res.json());
     const sipList = jsonpData.req_0?.data?.sip || [];
-    const domain = (sipList.find((i: string) => !i.startsWith("http://ws")) || sipList[0] || "").replace("http://", "https://");
+    const domain = (
+      sipList.find((i: string) => !i.startsWith("http://ws")) ||
+      sipList[0] ||
+      ""
+    ).replace("http://", "https://");
     return data.map((v, i) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
-      album: v.album || envConfig.VITE_SITE_NAME,
+      album: v.album || import.meta.env.VITE_SITE_NAME,
       url: domain + (jsonpData.req_0?.data?.midurlinfo[i]?.purl || ""),
+      rawUrl: domain + (jsonpData.req_0?.data?.midurlinfo[i]?.purl || ""),
       cover: v.cover || v.pic,
-      lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
+      lrc: v.lrc,
     }));
   } else {
     return data.map((v) => ({
       name: v.name || v.title,
       artist: v.artist || v.author,
-      album: v.album || envConfig.VITE_SITE_NAME,   // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
+      album: v.album || import.meta.env.VITE_SITE_NAME, // 没办法，Netease 的 SONG 接口压根不返回专辑名，搜索接口倒是有...
       url: v.url,
+      rawUrl: v.url,
       cover: v.cover || v.pic,
-      lrc: playerTrLrc && v.lrc ? `${v.lrc}${v.lrc.includes("?") ? "&" : "?"}trlrc=true` : v.lrc,
+      lrc: v.lrc,
     }));
   }
+};
+
+export const getLrcMetaDataWords = async () => {
+  const res = await fetch(
+    "https://main.nanorocky.top/fs/home_meting_metadata/metadata_Keywords_v3.json",
+  );
+  if (!res.ok) {
+    throw new Error(`Failed to fetch metadata rules: ${res.status}`);
+  }
+  return await res.json();
 };
 
 /**
@@ -120,7 +120,7 @@ export const getTXWeather = async (key, adcode) => {
 export const getTXAdcodeS = async (key, skey) => {
   const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   const url = `https://apis.map.qq.com/ws/location/v1/ip?key=${key}&output=jsonp&callback=${callback}`;
-  const urls = await gwg(url, skey);
+  const urls = await gwgt(url, skey);
   return await loadJSONP(urls, callback);
 };
 
@@ -128,10 +128,9 @@ export const getTXAdcodeS = async (key, skey) => {
 export const getTXWeatherS = async (key, adcode, skey) => {
   const callback = `jsonpCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   const url = `https://apis.map.qq.com/ws/weather/v1/?key=${key}&adcode=${adcode}&type=now&output=jsonp&callback=${callback}`;
-  const urls = await gwg(url, skey);
+  const urls = await gwgt(url, skey);
   return await loadJSONP(urls, callback);
 };
-
 
 // 获取高德地理位置信息
 export const getGDAdcode = async (key) => {
@@ -147,8 +146,95 @@ export const getGDAdcodeI = async (ipv4, key) => {
 
 // 获取高德地理天气信息
 export const getGDWeather = async (key, city) => {
-  const res = await fetch(`https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`);
+  const res = await fetch(
+    `https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`,
+  );
   return await res.json();
+};
+
+// 获取高德地理位置信息（鉴权模式）
+export const getGDAdcodeS = async (key, skey) => {
+  const url = `https://restapi.amap.com/v3/ip?key=${key}`;
+  const signedUrl = await gwggdt(url, skey);
+  const res = await fetch(signedUrl);
+  return await res.json();
+};
+
+// 获取高德地理位置信息带IP（鉴权模式）
+export const getGDAdcodeIS = async (ipv4, key, skey) => {
+  const url = `https://restapi.amap.com/v3/ip?ip=${ipv4}&key=${key}`;
+  const signedUrl = await gwggdt(url, skey);
+  const res = await fetch(signedUrl);
+  return await res.json();
+};
+
+// 获取高德地理天气信息（鉴权模式）
+export const getGDWeatherS = async (key, city, skey) => {
+  const url = `https://restapi.amap.com/v3/weather/weatherInfo?key=${key}&city=${city}`;
+  const signedUrl = await gwggdt(url, skey);
+  const res = await fetch(signedUrl);
+  return await res.json();
+};
+
+// 获取 Google 定位坐标 (根据请求 IP 自动解析)
+export const getGoogleGeolocationAPI = async (key: string) => {
+  return await fetch(`https://www.googleapis.com/geolocation/v1/geolocate?key=${key}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  });
+};
+
+// 获取 Google 定位坐标
+export const getGoogleGeolocationAPIS = async (key: string) => {
+  const url = await gwggt(`https://www.googleapis.com/geolocation/v1/geolocate?key=${key}`);
+  return await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  });
+};
+
+// 获取 Google 逆地理编码 (将坐标转换为城市名称)
+export const getGoogleCityNameAPI = async (
+  lat: number,
+  lng: number,
+  key: string,
+  languageCode: string,
+) => {
+  return await fetch(`https://geocode.googleapis.com/v4/geocode/destinations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": key,
+      "X-Goog-FieldMask": "*",
+      "Accept-Language": languageCode,
+    },
+    body: JSON.stringify({
+      locationQuery: {
+        location: {
+          latitude: lat,
+          longitude: lng,
+        },
+      },
+    }),
+  });
+};
+
+// 获取 Google 天气数据
+export const getGoogleWeatherFetchAPI = async (
+  lat: number,
+  lng: number,
+  key: string,
+  languageCode: string,
+) => {
+  return await fetch(
+    `https://weather.googleapis.com/v1/currentConditions:lookup?location.latitude=${lat}&location.longitude=${lng}&languageCode=${languageCode}&key=${key}`,
+  );
 };
 
 // 补充的获取 IPV4 地址的 API
@@ -202,14 +288,15 @@ export const getIPV4AddrLocation = async (ipv4) => {
  * Github 测试
  */
 export const testGitHubConnectivity = async (): Promise<number> => {
-  const testUrl = 'https://raw.githubusercontent.com/NanoRocky/home/blob/EFU/public/images/icon/github.png';
+  const testUrl =
+    "https://raw.githubusercontent.com/NanoRocky/home/blob/EFU/public/images/icon/github.png";
   const timeout = 3000;
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
     const response = await fetch(testUrl, {
-      method: 'HEAD',
-      signal: controller.signal
+      method: "HEAD",
+      signal: controller.signal,
     });
     clearTimeout(timeoutId);
     if (response.ok) {

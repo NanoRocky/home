@@ -1,82 +1,322 @@
-import metadataKeywords from '@/assets/metadata_Keywords.json';
+import metadataKeywords from "@/assets/metadata_Keywords.json";
+import { mainStore } from "@/store";
+import { getLrcMetaDataWords } from "@/api";
+import { devLog } from "@/utils/debugLog";
+import i18n from "@/locales";
+
+import type { MetadataConfig, MetadataRule } from "@/typings/store";
+import type { SongMeta } from "@/typings/player";
+export type { MetadataConfig, MetadataRule };
+
+export const isInstrumentalLyric = (text?: string | null): boolean => {
+  if (!text) return false;
+  return /纯音乐[，,\s\-_*•]*(?:请您?欣赏|无歌词)?|此歌曲为(?:没有填词的)?(?:纯音乐|DJ(?:舞曲)?|伴奏|器乐)|Instrumental/i.test(
+    text,
+  );
+};
+
+let cachedCompiledRules: RegExp[] | null = null;
+let lastRawConfigRef: any = null;
+
+function compileRules(config: MetadataConfig): RegExp[] {
+  if (config === lastRawConfigRef && cachedCompiledRules) {
+    return cachedCompiledRules;
+  }
+  lastRawConfigRef = config;
+
+  const compiled: RegExp[] = [];
+
+  if (config && Array.isArray(config.rules)) {
+    for (const rule of config.rules) {
+      if (rule && typeof rule.pattern === "string") {
+        try {
+          compiled.push(new RegExp(rule.pattern, "i"));
+        } catch (e) {
+          console.error(
+            `[DWRC-Metadata] ${i18n.global.t("console.metadata.compileRuleFailed", { name: rule.name })}`,
+            e,
+          );
+        }
+      }
+    }
+  }
+
+  cachedCompiledRules = compiled;
+  return compiled;
+}
+
+async function loadKeywords(): Promise<MetadataConfig> {
+  // return metadataKeywords as MetadataConfig;
+  const store = mainStore();
+  if (store.LrcMetaDataCache && Array.isArray(store.LrcMetaDataCache.rules)) {
+    return store.LrcMetaDataCache;
+  }
+  if (store.LrcMetaDataLoading) {
+    while (store.LrcMetaDataLoading) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    return store.LrcMetaDataCache && Array.isArray(store.LrcMetaDataCache.rules)
+      ? store.LrcMetaDataCache
+      : (metadataKeywords as MetadataConfig);
+  }
+  if (!store.playerLyricMetadataByServer) {
+    store.LrcMetaDataCache = metadataKeywords as MetadataConfig;
+    return store.LrcMetaDataCache;
+  }
+  store.LrcMetaDataLoading = true;
+  try {
+    const res = await getLrcMetaDataWords();
+    const remoteConfig = res?.rules ? res : res?.data?.rules ? res.data : null;
+    if (remoteConfig && Array.isArray(remoteConfig.rules)) {
+      store.LrcMetaDataCache = remoteConfig;
+    } else {
+      store.LrcMetaDataCache = metadataKeywords as MetadataConfig;
+    }
+  } catch (error) {
+    store.LrcMetaDataCache = metadataKeywords as MetadataConfig;
+  } finally {
+    store.LrcMetaDataLoading = false;
+  }
+  return store.LrcMetaDataCache || (metadataKeywords as MetadataConfig);
+}
 
 /**
  * 剔除歌词中的元数据信息
  * 支持 LRC 逐行、网易云 YRC 逐字、QQ QRC 逐字三种格式
  * @param lrcText 原始歌词文本
+ * @param isPilfering 是否正在进行偷歌词比对
+ * @param songMeta 当前曲目的标题与歌手信息（避免切歌加载时误读上一首缓存）
  * @returns 去除头部和尾部元数据后的歌词文本
  */
-export function removeLyricMetadata(lrcText: string): string {
-    if (!lrcText || typeof lrcText !== 'string') {
-        return '';
-    };
-    const lines = lrcText.split('\n');
+export async function removeLyricMetadata(
+  lrcText: string,
+  isPilfering = false,
+  songMeta?: SongMeta,
+): Promise<string> {
+  if (!lrcText || typeof lrcText !== "string") {
+    return "";
+  }
+  const rawConfig = await loadKeywords();
+  const rules = compileRules(rawConfig);
+  const store = mainStore();
 
-    /**
-     * 判断一行是否是元数据行
-     * 创建临时变量，移除所有括号内的内容，保留纯字符进行判断
-     */
-    const isMetadataLine = (line: string): boolean => {
-        if (/^\[(?:ti|ar|al|by|offset|ch):/i.test(line.trim())) {
-            return false;
-        };
-        const temp = line.replace(/[\[\{]\w+[:\d,]*[\]\}]/g, '').replace(/\(\d+(?:,\d+)*\)/g, '');
-        const pureText = temp.trim();
-        for (const keyword of metadataKeywords) {
-            if (pureText.includes(keyword)) {
-                return true;
-            };
-        };
-        return false;
-    };
+  const logMeta = (key: string, params?: Record<string, any>, ...rest: any[]) => {
+    if (import.meta.env.DEV && store.setV && store.devDebugLog) {
+      devLog("DWRC-Metadata", params ? i18n.global.t(key, params) : i18n.global.t(key), ...rest);
+    }
+  };
 
-    let startIndex = 0;
-    let firstLyricLineIndex = -1;
-    let isFirstLyricLine = true;
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (!line || /^\[(?:ti|ar|al|by|offset|ch):/i.test(line) || !/^\[[\d,:.\s]+\]/.test(line)) {
-            continue;
-        };
-        const pureContent = line.replace(/\[[^\]]*\]/g, '').replace(/\([^)]*\)/g, '').trim();
-        if (!pureContent) {
-            continue;
-        };
-        if (isFirstLyricLine) {
-            isFirstLyricLine = false;
-            if (!isMetadataLine(line)) {
-                firstLyricLineIndex = i;
-                continue;
-            };
-        };
-        const isMetadata = isMetadataLine(line);
-        if (isMetadata) {
-            if (firstLyricLineIndex !== -1) {
-                firstLyricLineIndex = -1;
-            };
-            continue;
-        };
-        if (firstLyricLineIndex !== -1) {
-            startIndex = firstLyricLineIndex;
+  const normalizedText = lrcText
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .replace(/([^\n\[\]])\s*(\[\d+,\s*\d+\])/g, "$1\n$2")
+    .replace(/([^\n\[\]])\s*(\[\d{1,2}:\d{1,2}(?:\.\d{1,3})?\])/g, "$1\n$2")
+    .replace(/\[(\d):(\d{2}(?:[.:]\d{1,3})?)\]/g, "[0$1:$2]");
+
+  const lines = normalizedText.split("\n");
+  logMeta("console.metadata.startProcess", { rules: rules.length, lines: lines.length });
+
+  let lrcTitle = "";
+  let lrcArtist = "";
+  for (const line of lines) {
+    const tiMatch = line.match(/^\[ti:\s*(.*?)\s*\]/i);
+    if (tiMatch && tiMatch[1]) lrcTitle = tiMatch[1].trim();
+    const arMatch = line.match(/^\[ar:\s*(.*?)\s*\]/i);
+    if (arMatch && arMatch[1]) lrcArtist = arMatch[1].trim();
+    if (lrcTitle && lrcArtist) break;
+  }
+
+  const rawTitle = songMeta?.title || lrcTitle || store.playerTitle;
+  const rawArtist = songMeta?.artist || lrcArtist || store.playerArtist;
+  const title = rawTitle ? rawTitle.replace(/\s+/g, "").toLowerCase() : "";
+  const artist = rawArtist ? rawArtist.replace(/\s+/g, "").toLowerCase() : "";
+
+  const getLineType = (line: string): "STRICT_META" | "EMPTY" | "REAL" => {
+    const temp = line
+      .replace(/\[[^\]]*\]/g, "")
+      .replace(/\(\d+,\d+(?:,\d+)?\)/g, "")
+      .replace(/<[^>]*>/g, "")
+      .replace(/\{[^}]*\}/g, "");
+    const pureText = temp.trim().normalize("NFKC");
+
+    // 空行或纯符号
+    if (!/[a-zA-Z0-9\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/.test(pureText)) {
+      return "EMPTY";
+    }
+
+    // 全闭合书名号/括号包裹，例如《晴天》、[制作名单]
+    if (/^[《「【〖『].+[》」】〗』]$/.test(pureText)) {
+      logMeta("console.metadata.matchBracket", { text: pureText });
+      return "STRICT_META";
+    }
+
+    // 匹配 歌名-歌手名 或 歌手名-歌名
+    if (title && artist) {
+      const pt = pureText.replace(/\s+/g, "").toLowerCase();
+      if (pt === `${title}-${artist}` || pt === `${artist}-${title}`) {
+        logMeta("console.metadata.matchTitleArtist", { text: pureText });
+        return "STRICT_META";
+      }
+    }
+
+    const colonMatch = pureText.match(/^(.+?)[:：]\s*$/);
+    if (colonMatch) {
+      const prefix = colonMatch[1].replace(/^[（(\[{【]|[）)\]}】]$/g, "").trim();
+      const cleanPrefix = prefix.replace(/\s+/g, "").toLowerCase();
+
+      if (
+        artist &&
+        (cleanPrefix === artist || artist.includes(cleanPrefix) || cleanPrefix.includes(artist))
+      ) {
+        logMeta("console.metadata.matchArtistCue", { text: pureText });
+        return "STRICT_META";
+      }
+
+      if (
+        /^(?:男|女|合|[男女合]声|[男女合]唱|全员|众人|群星|独白|对白|旁白|念白|合奏)$/i.test(
+          cleanPrefix,
+        )
+      ) {
+        logMeta("console.metadata.matchVoicePartCue", { text: pureText });
+        return "STRICT_META";
+      }
+
+      if (cleanPrefix.length >= 1 && cleanPrefix.length <= 10) {
+        logMeta("console.metadata.matchNameCue", { text: pureText });
+        return "STRICT_META";
+      }
+    }
+
+    // 正则规则匹配
+    for (const rule of rules) {
+      if (rule.test(pureText)) {
+        logMeta("console.metadata.matchRule", { text: pureText });
+        return "STRICT_META";
+      }
+    }
+
+    return "REAL";
+  };
+
+  const lineTypes: ("STRICT_META" | "EMPTY" | "REAL")[] = lines.map((line) => getLineType(line));
+
+  let endOfTopMetaIndex = -1;
+  let consecutiveRealCount = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const type = lineTypes[i];
+    if (type === "STRICT_META") {
+      if (consecutiveRealCount < 2) {
+        endOfTopMetaIndex = i;
+        consecutiveRealCount = 0;
+      } else {
+        break;
+      }
+    } else if (type === "REAL") {
+      consecutiveRealCount++;
+      if (consecutiveRealCount >= 2 && endOfTopMetaIndex !== -1) {
+        break;
+      }
+      if (consecutiveRealCount >= 3 && endOfTopMetaIndex === -1) {
+        break;
+      }
+    }
+  }
+
+  let startOfBottomMetaIndex = lines.length;
+  let foundBottomMeta = false;
+  let consecutiveRealInBottom = 0;
+
+  for (let i = lines.length - 1; i > endOfTopMetaIndex; i--) {
+    const type = lineTypes[i];
+    const isTag = /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim());
+
+    if (type === "STRICT_META" || isTag) {
+      foundBottomMeta = true;
+      startOfBottomMetaIndex = i;
+      consecutiveRealInBottom = 0;
+    } else if (type === "EMPTY") {
+      if (foundBottomMeta) {
+        startOfBottomMetaIndex = i;
+      }
+    } else {
+      // type === "REAL"
+      if (!foundBottomMeta) {
+        const prev1 = i - 1 > endOfTopMetaIndex ? lineTypes[i - 1] : "REAL";
+        const prev2 = i - 2 > endOfTopMetaIndex ? lineTypes[i - 2] : "REAL";
+        if (prev1 === "STRICT_META" || prev2 === "STRICT_META") {
+          consecutiveRealInBottom++;
+          if (consecutiveRealInBottom > 1) {
+            break;
+          }
         } else {
-            startIndex = i;
-        };
-        break;
-    };
-    let endIndex = lines.length - 1;
-    for (let i = lines.length - 1; i >= startIndex; i--) {
-        const line = lines[i].trim();
-        if (!line || /^\[(?:ti|ar|al|by|offset|ch):/i.test(line) || !/^\[[\d,:.\s]+\]/.test(line)) {
-            endIndex = i;
-            continue;
-        };
-        const pureContent = line.replace(/\[[^\]]*\]/g, '').replace(/\([^)]*\)/g, '').trim();
-        if (!pureContent || isMetadataLine(line)) {
-            endIndex = i;
-            continue;
-        };
-        endIndex = i;
-        break;
-    };
-    return lines.slice(startIndex, endIndex + 1).join('\n');
-};
+          break;
+        }
+      } else {
+        const prev1 = i - 1 > endOfTopMetaIndex ? lineTypes[i - 1] : "REAL";
+        const prev2 = i - 2 > endOfTopMetaIndex ? lineTypes[i - 2] : "REAL";
+        if (prev1 === "STRICT_META" || prev2 === "STRICT_META") {
+          startOfBottomMetaIndex = i;
+        } else {
+          break;
+        }
+      }
+    }
+  }
+
+  const finalLines: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const type = lineTypes[i];
+
+    // 过滤掉顶部的元数据和空行
+    if (i <= endOfTopMetaIndex) {
+      if (
+        type === "STRICT_META" ||
+        type === "EMPTY" ||
+        /^\[(?:ti|ar|al|by|offset|ch):/i.test(lines[i].trim())
+      ) {
+        continue;
+      }
+    }
+
+    if (i >= startOfBottomMetaIndex) {
+      continue;
+    }
+
+    finalLines.push(lines[i]);
+  }
+
+  const isVerbatimFormat = /\[\d+,\s*\d+\]/.test(normalizedText);
+  const buildInstrumentalFallback = () => {
+    const instText = i18n.global.t("components.music.instrumental") || "纯音乐，请欣赏";
+    return isVerbatimFormat ? `[0,5000](0,5000)${instText}` : `[00:00.00]${instText}`;
+  };
+
+  const strippedCount = lines.length - finalLines.length;
+  if (strippedCount > 0) {
+    logMeta("console.metadata.strippedSummary", {
+      stripped: strippedCount,
+      remaining: finalLines.length,
+    });
+    if (!isPilfering && finalLines.length > 0) {
+      logMeta("console.metadata.firstLineAfterStrip", undefined, finalLines[0]);
+    }
+    if (finalLines.length === 0) {
+      if (!isPilfering) {
+        logMeta("console.metadata.emptyFallbackInstrumental");
+        return buildInstrumentalFallback();
+      }
+      return "";
+    }
+    return finalLines.join("\n");
+  }
+
+  if (finalLines.length === 0) {
+    if (!isPilfering) {
+      logMeta("console.metadata.emptyFallbackInstrumental");
+      return buildInstrumentalFallback();
+    }
+    return "";
+  }
+
+  return lrcText;
+}

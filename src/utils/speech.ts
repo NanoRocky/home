@@ -1,4 +1,5 @@
 import { gasA, gasC } from "@/utils/authServer";
+import i18n from "@/locales";
 
 let currentAudio: HTMLAudioElement | null = null;
 let audioQueue: string[] = [];
@@ -38,15 +39,15 @@ export function Speech(
     if (timeoutId) {
       clearTimeout(timeoutId);
       timeoutId = null;
-    };
+    }
     if (currentAudio) {
       currentAudio.pause();
       currentAudio = null;
-    };
+    }
     // 创建新的 AbortController 实例，并中断旧请求
     if (controller) {
       controller.abort();
-    };
+    }
     controller = new AbortController();
     const { signal } = controller;
     const formData = new FormData();
@@ -59,20 +60,17 @@ export function Speech(
     // 在指定的 delay 后开始请求
     timeoutId = setTimeout(async () => {
       try {
-        const speechapi = envConfig.VITE_TTS_API;
-        const key = envConfig.VITE_TTS_SKEY;
+        const speechapi = import.meta.env.VITE_TTS_API;
+        const key = import.meta.env.VITE_TTS_SKEY;
         if (!speechapi || speechapi === "" || speechapi === null) {
-          console.error("语音服务API未配置。");
+          console.error(i18n.global.t("console.voice.apiNotConfigured"));
           return;
-        };
+        }
         if (!key) {
           speechapiUrlS = speechapi;
         } else {
-          const speechapiurl = new URL(speechapi);
-          const path = speechapiurl.pathname;
-          const sign = await gasA(path, key);
-          speechapiUrlS = `${speechapi}?sign=${sign}`;
-        };
+          speechapiUrlS = await gasA(speechapi, key);
+        }
         const response = await fetch(speechapiUrlS, {
           method: "POST",
           body: formData,
@@ -81,7 +79,7 @@ export function Speech(
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error);
-        };
+        }
 
         const blob = await response.blob();
         const audioUrl = URL.createObjectURL(blob);
@@ -91,29 +89,25 @@ export function Speech(
 
         if (!isPlaying) {
           playNext(resolve, reject);
-        };
-
+        }
       } catch (error) {
         const err = error as Error;
         if (err.name === "AbortError") {
-          console.log("Request canceled");
+          console.log(i18n.global.t("console.voice.requestCanceled"));
         } else {
-          console.error("Error:", err.message);
+          console.error(i18n.global.t("console.voice.error"), err.message);
           reject(err);
-        };
-      };
+        }
+      }
     }, delay);
   });
 }
 
-function playNext(
-  resolve: () => void,
-  reject: (reason?: any) => void
-) {
+function playNext(resolve: () => void, reject: (reason?: any) => void) {
   if (audioQueue.length === 0) {
     isPlaying = false;
     return;
-  };
+  }
 
   isPlaying = true;
 
@@ -121,11 +115,11 @@ function playNext(
   if (!nextAudioUrl) {
     isPlaying = false;
     return;
-  };
+  }
   if (currentAudio) {
     currentAudio.pause();
     currentAudio = null;
-  };
+  }
 
   const audio = new Audio();
   audio.src = nextAudioUrl;
@@ -145,7 +139,7 @@ function playNext(
 
   // 将当前播放的语音赋值给全局变量
   currentAudio = audio;
-};
+}
 
 /**
  * 停止当前播放的语音，并清空播放队列。
@@ -154,18 +148,18 @@ export function stopSpeech() {
   if (currentAudio) {
     currentAudio.pause();
     currentAudio = null;
-  };
+  }
   audioQueue = [];
   isPlaying = false;
   if (controller) {
     controller.abort();
     controller = null;
-  };
+  }
   if (timeoutId) {
     clearTimeout(timeoutId);
     timeoutId = null;
-  };
-};
+  }
+}
 
 /**
  * SpeechLocal
@@ -177,38 +171,35 @@ export function stopSpeech() {
  * @param {number} [delay=0] - 等待时间【毫秒】后发出请求，防止频繁点击产生请求洪水（默认提前生成的不等待）
  * @returns {Promise<void>} - 一个 Promise，在语音播放完成时解析或出现错误时拒绝
  */
-export function SpeechLocal(
-  fileName: string,
-  delay = 0
-): Promise<void> {
+export function SpeechLocal(fileName: string, delay = 0): Promise<void> {
   return new Promise<void>(async (resolve, reject) => {
     if (!fileName) {
-      reject(new Error("No file name provided"));
+      reject(new Error(i18n.global.t("utils.speech.noFileNameProvided")));
       return;
-    };
+    }
 
     const audioUrl = `/speechlocal/${fileName}`;
-    const key = envConfig.VITE_SFILE_SKEY;
+    const key = import.meta.env.VITE_SFILE_SKEY;
     if (key) {
       const fileUrl = audioUrl;
       audioUrlS = await gasC(fileUrl, key);
     } else {
       audioUrlS = audioUrl;
-    };
+    }
     if (!audioUrlS) {
-      reject(new Error("Failed to generate audio URL"));
+      reject(new Error(i18n.global.t("utils.speech.failedToGenerateAudioURL")));
       return;
-    };
+    }
     // 如果有现有的等待，取消之前的 timeout
     if (timeoutId) {
       clearTimeout(timeoutId);
       timeoutId = null;
-    };
+    }
     // 清除之前的音频
     if (currentAudio) {
       currentAudio.pause();
       currentAudio = null;
-    };
+    }
     timeoutId = setTimeout(async () => {
       // 停止当前正在播放的语音
       audioQueue = [];
@@ -216,31 +207,28 @@ export function SpeechLocal(
       if (controller) {
         controller.abort();
         controller = null;
-      };
+      }
 
       // 添加新音频到队列并播放
       audioQueue.push(audioUrlS!);
       if (!isPlaying) {
         playNextLocal(resolve, reject);
-      };
+      }
     }, delay);
   });
-};
+}
 
-function playNextLocal(
-  resolve: () => void,
-  reject: (reason?: any) => void
-) {
+function playNextLocal(resolve: () => void, reject: (reason?: any) => void) {
   if (audioQueue.length === 0) {
     isPlaying = false;
     return;
-  };
+  }
   isPlaying = true;
   const nextAudioUrl = audioQueue.shift();
   if (!nextAudioUrl) {
     isPlaying = false;
     return;
-  };
+  }
   const audio = new Audio();
   audio.src = nextAudioUrl;
 
@@ -248,7 +236,7 @@ function playNextLocal(
   audio.oncanplaythrough = () => {
     if (currentAudio) {
       currentAudio.pause();
-    };
+    }
     currentAudio = audio;
     currentAudio.play();
   };
@@ -264,4 +252,4 @@ function playNextLocal(
     reject(error);
     playNextLocal(resolve, reject);
   };
-};
+}

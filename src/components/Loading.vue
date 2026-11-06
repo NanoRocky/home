@@ -18,9 +18,7 @@
 import { mainStore } from "@/store";
 
 const store = mainStore();
-
-// 配置
-const siteName = envConfig.VITE_SITE_NAME;
+const siteName = import.meta.env.VITE_SITE_NAME;
 </script>
 
 <style lang="scss" scoped>
@@ -32,6 +30,7 @@ const siteName = envConfig.VITE_SITE_NAME;
   height: 100%;
   z-index: 999;
   overflow: hidden;
+
   .loader {
     width: 100%;
     height: 100%;
@@ -42,6 +41,7 @@ const siteName = envConfig.VITE_SITE_NAME;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     .loader-circle {
       width: 150px;
       height: 150px;
@@ -77,6 +77,7 @@ const siteName = envConfig.VITE_SITE_NAME;
         animation: spin 1s linear infinite;
       }
     }
+
     .loader-text {
       display: flex;
       flex-direction: column;
@@ -85,6 +86,7 @@ const siteName = envConfig.VITE_SITE_NAME;
       z-index: 2;
       margin-top: 40px;
       font-size: 24px;
+
       .tip {
         margin-top: 6px;
         font-size: 18px;
@@ -92,6 +94,7 @@ const siteName = envConfig.VITE_SITE_NAME;
       }
     }
   }
+
   .loader-section {
     position: fixed;
     top: 0;
@@ -99,19 +102,23 @@ const siteName = envConfig.VITE_SITE_NAME;
     height: 100%;
     background: #333;
     z-index: 1;
+
     &.section-left {
       left: 0;
     }
+
     &.section-right {
       right: 0;
     }
   }
+
   &.loaded {
     visibility: hidden;
     transform: translateY(-100%);
     transition:
       transform 0.3s 1s ease-out,
       visibility 0.3s 1s ease-out;
+
     .loader {
       .loader-circle,
       .loader-text {
@@ -119,11 +126,13 @@ const siteName = envConfig.VITE_SITE_NAME;
         transition: opacity 0.3s ease-out;
       }
     }
+
     .loader-section {
       &.section-left {
         transform: translateX(-100%);
         transition: transform 0.5s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
       }
+
       &.section-right {
         transform: translateX(100%);
         transition: transform 0.5s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -136,6 +145,7 @@ const siteName = envConfig.VITE_SITE_NAME;
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -145,6 +155,7 @@ const siteName = envConfig.VITE_SITE_NAME;
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(-360deg);
   }

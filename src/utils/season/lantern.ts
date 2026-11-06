@@ -15,9 +15,9 @@ export function initLantern() {
   store.showLantern = true;
   if (styleElement || lanternContainer) {
     closeLantern();
-  };
-  styleElement = document.createElement('style');
-  styleElement.type = 'text/css';
+  }
+  styleElement = document.createElement("style");
+  styleElement.type = "text/css";
   styleElement.innerHTML = `
     .j-china-lantern .lantern__warpper {
       position: fixed;
@@ -162,8 +162,8 @@ export function initLantern() {
       }
     }
   `;
-  lanternContainer = document.createElement('div');
-  lanternContainer.className = 'j-china-lantern';
+  lanternContainer = document.createElement("div");
+  lanternContainer.className = "j-china-lantern";
   lanternContainer.innerHTML = `
     <div class="lantern__warpper">
       <div class="lantern__box">
@@ -203,11 +203,11 @@ export function closeLantern() {
   if (styleElement && styleElement.parentNode === document.head) {
     document.head.removeChild(styleElement);
     styleElement = null;
-  };
+  }
   if (lanternContainer && lanternContainer.parentNode === document.body) {
     document.body.removeChild(lanternContainer);
     lanternContainer = null;
-  };
+  }
   const store = mainStore();
   store.showLantern = false;
-};
+}

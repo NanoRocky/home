@@ -31,38 +31,69 @@
 
 <script setup lang="ts">
 import { Icon } from "@vicons/utils";
-import { QuoteLeft, QuoteRight } from "@vicons/fa";
+import QuoteLeft from "@vicons/fa/es/QuoteLeft.js";
+import QuoteRight from "@vicons/fa/es/QuoteRight.js";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
+import { useI18n } from "vue-i18n";
 const store = mainStore();
+const { locale, t } = useI18n();
 
 // 主页站点logo
-const siteLogo = envConfig.VITE_SITE_MAIN_LOGO;
+const siteLogo = import.meta.env.VITE_SITE_MAIN_LOGO;
 // 站点链接
 const siteUrl = computed(() => {
   let mns: string | null = null;
   if (store.msgNameShow) {
-    mns = envConfig.VITE_SITE_MAIN_NAME  ||  envConfig.VITE_SITE_URL || "imsyy.top";
+    if (locale.value != "zh-CN" && import.meta.env.VITE_SITE_MAIN_NAME_EN) {
+      mns =
+        import.meta.env.VITE_SITE_MAIN_NAME_EN ||
+        import.meta.env.VITE_SITE_MAIN_NAME ||
+        import.meta.env.VITE_SITE_URL ||
+        "imsyy.top";
+    } else {
+      mns = import.meta.env.VITE_SITE_MAIN_NAME || import.meta.env.VITE_SITE_URL || "imsyy.top";
+    }
     // 这里并没有处理显示自定义内容后的分段点，因为这个点看着也不错，有种写字时封笔的感觉，就不处理啦~
     // 才不是懒的！（x）
   } else {
-    mns = envConfig.VITE_SITE_URL || "imsyy.top";
-  };
+    mns = import.meta.env.VITE_SITE_URL || "imsyy.top";
+  }
   const url = mns;
   if (!url) return "imsyy.top".split(".");
   let urlFormat = url;
   // 判断协议前缀
   urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
-  const domainOnly = urlFormat.split('/')[0];
-  const hostname = domainOnly.split(':')[0];
+  const domainOnly = urlFormat.split("/")[0];
+  const hostname = domainOnly.split(":")[0];
   return hostname.split(".");
 });
 
 // 简介区域文字
-const descriptionText = reactive({
-  hello: envConfig.VITE_DESC_HELLO,
-  text: envConfig.VITE_DESC_TEXT,
+const descriptionText = computed(() => {
+  if (store.boxOpenState) {
+    return {
+      hello:
+        locale.value != "zh-CN" && import.meta.env.VITE_DESC_HELLO_OTHER_EN
+          ? import.meta.env.VITE_DESC_HELLO_OTHER_EN || import.meta.env.VITE_DESC_HELLO_OTHER
+          : import.meta.env.VITE_DESC_HELLO_OTHER,
+      text:
+        locale.value != "zh-CN" && import.meta.env.VITE_DESC_TEXT_OTHER_EN
+          ? import.meta.env.VITE_DESC_TEXT_OTHER_EN || import.meta.env.VITE_DESC_TEXT_OTHER
+          : import.meta.env.VITE_DESC_TEXT_OTHER,
+    };
+  }
+  return {
+    hello:
+      locale.value != "zh-CN" && import.meta.env.VITE_DESC_HELLO_EN
+        ? import.meta.env.VITE_DESC_HELLO_EN || import.meta.env.VITE_DESC_HELLO
+        : import.meta.env.VITE_DESC_HELLO,
+    text:
+      locale.value != "zh-CN" && import.meta.env.VITE_DESC_TEXT_EN
+        ? import.meta.env.VITE_DESC_TEXT_EN || import.meta.env.VITE_DESC_TEXT
+        : import.meta.env.VITE_DESC_TEXT,
+  };
 });
 
 // 切换右侧功能区
@@ -71,7 +102,7 @@ const changeBox = () => {
     store.boxOpenState = !store.boxOpenState;
   } else {
     ElMessage({
-      message: "当前显示分辨率不足以打开拓展盒子啦qwq【这么“小”还想开impart！（bushi）】",
+      message: t("message.resolutionLow"),
       grouping: true,
       icon: h(Error, {
         theme: "filled",
@@ -80,11 +111,9 @@ const changeBox = () => {
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("分辨率不足.mp3");
-    };
-  };
+    }
+  }
 };
 
 // 监听状态变化
@@ -92,22 +121,14 @@ watch(
   () => store.boxOpenState,
   (value) => {
     if (value) {
-      descriptionText.hello = envConfig.VITE_DESC_HELLO_OTHER;
-      descriptionText.text = envConfig.VITE_DESC_TEXT_OTHER;
       if (store.webSpeech) {
         stopSpeech();
-        const voice = envConfig.VITE_TTS_Voice;
-        const vstyle = envConfig.VITE_TTS_Style;
         SpeechLocal("惊讶.mp3");
-      };
-    } else {
-      descriptionText.hello = envConfig.VITE_DESC_HELLO;
-      descriptionText.text = envConfig.VITE_DESC_TEXT;
-    };
+      }
+    }
   },
 );
 </script>
-
 
 <style lang="scss" scoped>
 .message {

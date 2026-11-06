@@ -1,32 +1,32 @@
 import config from "@/../package.json";
-let updateauthor: string | null = null;
-let typer: string | null = null;
+import type { VersionType, VersionInfo } from "@/typings/version";
 
-export const parseVersion = (ver: string) => {
-    const versionMatch = ver.match(/^(\d+\.\d+\.\d+)/);
-    const isDevelopment = /\.dev\b/.test(ver);
-    const isPreview = /\.pre\b/.test(ver);
-    const isBeta = /\.beta\b/.test(ver);
-    const channelMatch = ver.match(/\[([^\]]+)\]$/);
-    if (isPreview) {
-        typer = 'preview';
-    } else if (isDevelopment) {
-        typer = 'development'
-    } else if (isBeta) {
-        typer = 'beta';
-    } else {
-        typer = 'release';
-    };
-    if (channelMatch?.[1] != 'imsyy') {
-        updateauthor = config.efua;
-    } else {
-        updateauthor = config.author;
-    };
-    return {
-        version: versionMatch?.[1] || '0.0.0',
-        type: typer,
-        channel: channelMatch?.[1] || 'imsyy',
-        upa: updateauthor
-    };
+export type { VersionType, VersionInfo };
+
+/**
+ * 解析项目版本号
+ * 格式如: "4.4.1.dev [EFU]" -> { version: "4.4.1", type: "development", channel: "EFU", upa: "NanoRocky" }
+ */
+export const parseVersion = (ver: string): VersionInfo => {
+  const versionMatch = ver.match(/^(\d+\.\d+\.\d+)/);
+  const channelMatch = ver.match(/\[([^\]]+)\]$/);
+
+  let type: VersionType = "release";
+  if (/\.pre\b/i.test(ver)) {
+    type = "preview";
+  } else if (/\.dev\b/i.test(ver)) {
+    type = "development";
+  } else if (/\.beta\b/i.test(ver)) {
+    type = "beta";
+  }
+
+  const channel = channelMatch?.[1] || "imsyy";
+  const upa = channel !== "imsyy" ? config.efua : config.author;
+
+  return {
+    version: versionMatch?.[1] || "0.0.0",
+    type,
+    channel,
+    upa,
+  };
 };
-

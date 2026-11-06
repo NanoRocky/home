@@ -1,16 +1,22 @@
 import { defineStore } from "pinia";
-import type { MainState } from "@/typings/store";
+import { markRaw } from "vue";
+import type { MainState, NoteItem, MetadataConfig } from "@/typings/store";
+import i18n, { type LocaleKey, supportedLocales, getBrowserLanguage } from "@/locales";
 import { validationPlugin, validationRules } from "@/store/plugins/validation";
 
 export const storeState: MainState = {
   // 这些变量，非有能力的开发者请只操作【开关】项来实现个性化的默认设置，其余变量勿动！
+  clientUUID: "" as string, // 【状态】客户端唯一 UUID
   imgLoadStatus: false, // 【状态】壁纸加载状态
+  language: "auto", // 【开关】默认语言设置
+  langStatus: null as string | null, // 【状态】当前语言状态
   innerWidth: null as number | null, // 【状态】当前窗口宽度
   coverType: 0 as number, // 【开关】壁纸种类
   sBGCount: null as string | null, // 【状态】使用内置壁纸时用于临时指定壁纸的接口
   /* 0 不切换，1 等待 15 秒，2 等待 30 秒，3 等待 45 秒。 */
-  autoBGSwitchInterval : 2 as number, // 【开关】自动切换壁纸设置
+  autoBGSwitchInterval: 2 as number, // 【开关】自动切换壁纸设置
   seasonalEffects: true, // 【开关】季节特效
+  mourningMode: true, // 【开关】默哀模式
   msgNameShow: false, // 【开关】信息区域显示自定义名而非原本的 URL
   siteStartShow: true, // 【开关】建站日期显示
   musicClick: true, // 【开关】音乐链接是否跳转
@@ -23,13 +29,19 @@ export const storeState: MainState = {
   mobileOpenState: false, // 【状态】移动端开启状态
   mobileFuncState: false, // 【状态】移动端功能区开启状态
   setOpenState: false, // 【状态】设置页面开启状态
+  searchOpenState: false, // 【状态】搜索框开启状态
+  noteOpenState: false, // 【状态】笔记框开启状态
+  userNotes: [] as NoteItem[], // 【缓存】用户笔记数据
+  notesAvoidFooter: true as boolean, // 【开关】便签避让底栏歌词
+  searchEngine: "bing" as string, // 【开关】默认搜索引擎
   setV: false, // 【状态】开发者模式
+  devDebugLog: false, // 【开关】调试日志输出
   playerState: false, // 【状态】当前播放状态
   playerCanplay: false, // 【状态】当前音乐是否完成加载
   playerTitle: null as string | null, // 【缓存】当前播放歌曲名
   playerArtist: null as string | null, // 【缓存】当前播放歌手名
   playerAlbum: null as string | null, // 【缓存】当前播放专辑名
-  playerLrc: [[true, "歌词加载中..."]], // 【缓存】当前播放歌词
+  playerLrc: [[true, i18n.global.t("components.music.lrcSearching")]], // 【缓存】当前播放歌词
   playerLrcShow: true, // 【开关】是否显示底栏歌词
   footerBlur: true, // 【开关】底栏模糊
   footerProgressBar: true, // 【开关】是否显示底栏进度条
@@ -38,37 +50,45 @@ export const storeState: MainState = {
   playerOrder: "random", // 【开关】循环顺序 "list", "random"
   webSpeech: true, // 【开关】网页语音交互总开关（包含播报歌名功能）
   playerSpeechName: true, // 【开关】播报歌名
-  playerTrLrc: false, // 【开关】逐行歌词调用翻译歌词开关
+  playerTrLrc: true, // 【开关】翻译歌词显示开关
+  playerTrLrcText: "", // 【缓存】当前翻译歌词
   playerDWRCShow: true, // 【开关】逐字歌词解析总开关
   playerDWRCShowPro: true, // 【开关】逐字效果增强开关
   playerDWRCATDB: true, // 【开关】允许接入 AMLL TTML Database
   playerDWRCATDBF: true, // 【开关】接入 AMLL TTML Database 时使用镜像加速
   playerDWRCPilfer: true, // 【开关】拆东墙补西墙
-  /* 这个移除元数据功能暂只能对非直接从 API 获得的歌词有效，因为它不经由 APlayer 处理，可以被拦截并替换。所以也就只支持逐字。 */
-  playerRMMetadata: false, // 【开关】移除歌词中的元数据
+  playerRMMetadata: true, // 【开关】移除歌词中的元数据
   playerCurrentTime: null as number | null, // 【缓存】当前歌曲已播放时间
   playerDuration: null as number | null, // 【缓存】当前歌曲总时长
+  playerLyricMetadataByServer: true, // 【开关】从服务器获取歌词元数据关键词
   dwrcIndex: -1 as number | null, // 【缓存】逐字歌词进度存储
   dwrcTemp: [] as any[], // 【缓存】逐字歌词
   dwrcEnable: true, // 【状态】调用逐字歌词
   dwrcLoading: false, // 【状态】逐字歌词加载
+  LrcMetaDataLoading: false, // 【状态】歌词元数据加载
+  LrcMetaDataCache: null as MetadataConfig | null, // 【缓存】歌词元数据关键词/规则缓存
   lyricSeekVersion: 0, // 【状态】歌词跳转版本，用于重置动画
+  lyricRestoreVersion: 0, // 【状态】外部歌词恢复版本，用于通知播放器还原原始歌词
   forceShowBarIcon: false, // 【开关】进度图标常驻
+  dwrcDot: true, // 【开关】显示逐字歌词进度小红点
+  songServer: null as string | null, // 【缓存】当前歌曲本源服务器
+  lyricSource: null as string | null, // 【状态】当前歌词源类型
+  isDragging: false, // 【状态】是否正在拖拽进度条
+  dragProgressTime: 0, // 【状态】当前拖拽停留的模拟时间 (秒)
   showFirefly: false, // 【状态】萤火虫特效
   showSnowfall: false, // 【状态】雪花特效
   showLantern: false, // 【状态】灯笼特效
   showProgressIcon: false, // 【状态】进度条图标显示状态
   showProgressIconState: 0, // 【状态】进度条图标持续显示状态，0: 未悬停不显示，1: 已悬停显示，2: 始终显示
   theme: "system", // 【开关】主题，"system"/"time"/"bg"/"light"/"dark"。
+  weatherProvider: "auto", // 【开关】天气接口提供商，"auto"/"tencent"/"amap"/"google"/"xiaomi"/"oioweb"
+  socialTipPosition: "down", // 【开关】社交链接提示位置，"right"/"down"
 };
 
 export const mainStore = defineStore("main", {
-  state: (): MainState => (
+  state: (): MainState =>
     // 主要状态，使用这个方法是为了添加重置功能..烦诶，pinia 你还得努力啊，你不努力那...那..那就不努力叭..哼唧（）
-    JSON.parse(
-      JSON.stringify(storeState)
-    )
-  ),
+    JSON.parse(JSON.stringify(storeState)),
   getters: {
     // 获取歌词
     getPlayerLrc(state) {
@@ -85,6 +105,12 @@ export const mainStore = defineStore("main", {
     // 获取页面宽度
     getInnerWidth(state) {
       return state.innerWidth;
+    },
+    // 是否为从其它外部源加载的歌词
+    isExternalLyric(state): boolean {
+      if (!state.lyricSource) return false;
+      if (state.lyricSource === "amll") return true;
+      return Boolean(state.songServer && state.lyricSource !== state.songServer);
     },
   },
   actions: {
@@ -110,12 +136,13 @@ export const mainStore = defineStore("main", {
     },
     // 更改歌词
     setPlayerLrc(value) {
-      this.playerLrc = value;
+      this.playerLrc = Array.isArray(value) ? markRaw(value) : value;
     },
     // 更改歌曲数据
-    setPlayerData(title, artist) {
+    setPlayerData(title: string | null, artist: string | null, album: string | null = null) {
       this.playerTitle = title;
       this.playerArtist = artist;
+      this.playerAlbum = album;
     },
     // 更改壁纸加载状态
     setImgLoadStatus(value) {
@@ -126,16 +153,32 @@ export const mainStore = defineStore("main", {
       if (this.coverType == 0) {
         this.sBGCount = value;
       } else {
-        return 'not use';
-      };
+        return "not use";
+      }
+    },
+    setLanguage(lang: string) {
+      this.language = lang;
+      if (lang === "auto") {
+        const langc = getBrowserLanguage() || "zh-CN";
+        i18n.global.locale.value = langc;
+        this.langStatus = langc;
+      } else if (supportedLocales.includes(lang as LocaleKey)) {
+        i18n.global.locale.value = lang as LocaleKey;
+        this.langStatus = lang;
+      } else {
+        this.language = "auto";
+        const langc = getBrowserLanguage() || "zh-CN";
+        i18n.global.locale.value = langc;
+        this.langStatus = langc;
+      }
     },
     // 重置所有设置
     resetStore() {
       this.$reset = () => {
-        console.log('正在恢复默认配置...');
+        console.log(i18n.global.t("console.store.resetting"));
         setTimeout(() => {
           this.$state = JSON.parse(JSON.stringify(storeState));
-          console.log('重置完成，页面即将刷新...');
+          console.log(i18n.global.t("console.store.resetComplete"));
           setTimeout(() => {
             window.location.href = window.location.pathname;
           }, 1200);
@@ -150,35 +193,43 @@ export const mainStore = defineStore("main", {
       storage: localStorage,
       pick: [
         // 持久性存储，这里的变量永久存储于浏览器，用于存储用户的自定义设置
-        'coverType',
-        'musicVolume',
-        'siteStartShow',
-        'musicClick',
-        'playerLrcShow',
-        'footerBlur',
-        'footerProgressBar',
-        'playerAutoplay',
-        'playerLoop',
-        'playerOrder',
-        'webSpeech',
-        'playerSpeechName',
-        'playerTrLrc',
-        'playerDWRCShow',
-        'playerDWRCShowPro',
-        'playerDWRCATDB',
-        'playerDWRCATDBF',
-        'playerDWRCPilfer',
-        'playerRMMetadata',
-        'seasonalEffects',
-        'theme',
+        "clientUUID",
+        "coverType",
+        "musicVolume",
+        "siteStartShow",
+        "musicClick",
+        "playerLrcShow",
+        "footerBlur",
+        "footerProgressBar",
+        "playerAutoplay",
+        "playerLoop",
+        "playerOrder",
+        "webSpeech",
+        "playerSpeechName",
+        "playerTrLrc",
+        "playerDWRCShow",
+        "playerDWRCShowPro",
+        "playerDWRCATDB",
+        "playerDWRCATDBF",
+        "playerDWRCPilfer",
+        "playerRMMetadata",
+        "seasonalEffects",
+        "theme",
+        "dwrcDot",
+        "searchEngine",
+        "userNotes",
+        "notesAvoidFooter",
       ],
     },
     {
       storage: sessionStorage,
       pick: [
         // 会话性存储，这里的变量在重新打开页面时恢复默认值，多个窗口不互通，用于存储一些特殊的仅本次生效的设置
-        'setV',
-        'msgNameShow'
+        "setV",
+        "devDebugLog",
+        "msgNameShow",
+        "language",
+        "weatherProvider",
       ],
     },
   ],

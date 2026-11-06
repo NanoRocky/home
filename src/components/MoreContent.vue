@@ -1,17 +1,19 @@
 <template>
   <div class="more-content">
     <span class="greeting">
-      您可在此编写任意内容
+      {{ $t("components.moreContent.hello") }}
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, h } from 'vue';
+import { ref, h } from "vue";
+import { gasC } from "@/utils/authServer";
 import { Error } from "@icon-park/vue-next";
 import { mainStore } from "@/store";
 
 const store = mainStore();
+const key = import.meta.env.VITE_SFILE_SKEY;
 </script>
 
 <style lang="scss" scoped>
@@ -34,7 +36,5 @@ const store = mainStore();
     padding: 0 10px;
     color: var(--text-color);
   }
-
 }
 </style>
-

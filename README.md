@@ -1,278 +1,321 @@
-简体中文 | [English](./README_EN.md)
+<div align="center">
 
-> [!IMPORTANT]
-> ## 致大家
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;嘿！恭喜你看到这里~ 这是酪灰基于原作者 imsyy 主页的修改版本！修改版本添加了更多的功能，但是也会带来更高的性能占用！（主要来自逐字歌词以及季节效果渲染），也添加了安全更新，增强安全性。<p>
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;酪灰作为 Vue 初学者，因为热爱，拉着同学 Pizero 完善了这个项目，因此这些代码可能会很 shi，并可能充斥着不少 BUG。欢迎在遇到 BUG 时进行反馈，也欢迎各位大佬帮助！<p>
->#### 关于问题反馈以及求助
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;遇到问题请在 Github 上提 issue ，需要帮助请在 Github 上发 discussion ，看到了会回复。除特殊情况外，<b>请不要直接通过其它社交方式联系酪灰！</b>酪灰不是客服，不提供售后服务，并没有那么多的时间来回复私聊。还请谅解！<p>
->### 最后，喜欢本项目的话麻烦给个 STAR ！阿里嘎多~
+# 無名の主页 (EFU)
 
-<p>&nbsp;<p>
+**简体中文** | [English](./README_EN.md)
 
-> [!WARNING]
-> ## hmm...
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下一个版本原计划是添加 i18n ，由于工作量巨大且...某个笨蛋最近迷上了 洛克王国 ，故这个更新可能会遥遥无期(x)... 等腾点时间出来叭（<p>
-
-<p>&nbsp;<p>
-<strong><h2>無名の主页</h2></strong>
+<p>
+  <a title="Vue" target="_blank" href="https://cn.vuejs.org/"><img src="https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white" alt="Vue"></a>
+  <a title="Vite" target="_blank" href="https://cn.vitejs.dev/"><img src="https://img.shields.io/badge/Vite-8.x-646CFF?logo=vite&logoColor=white" alt="Vite"></a>
+  <a title="TypeScript" target="_blank" href="https://www.typescriptlang.org/zh/"><img src="https://img.shields.io/badge/TypeScript-7.x-3178C6?logo=typescript&logoColor=white" alt="TypeScript"></a>
+  <a title="Copyright" target="_blank" href="https://nanorocky.top/"><img src="https://img.shields.io/badge/Copyright%20%C2%A9%202023--2026-NanoRocky-red" alt="Copyright"></a>
 </p>
 
-![無名の主页](/screenshots/main.png)<p>
-![無名の主页](/screenshots/main1.png)<p>
-![無名の主页](/screenshots/main2.png)<p>
+</div>
 
-### 👀 Demo
+> [!IMPORTANT]
+> ### 致大家
+> - 嘿！恭喜你看到这里~ 这是**酪灰（NanoRocky）**基于原作者 [imsyy](https://github.com/imsyy/) 个人主页维护的扩展功能修改版（EFU）！修改版新增了逐字歌词、多语言国际化、快捷搜索、本地便签、季节特效等大量功能，同时持续跟进依赖升级与安全性更新（注：开启逐字歌词与季节特效会带来相对更高的性能占用）。
+> - 酪灰作为 Vue 初学者，因为热爱拉着同学 [Pizero](https://github.com/pizeroLOL/) 一起完善了这个项目，代码或许不够完美，也可能存在尚未发现的 BUG。欢迎遇到问题时积极反馈，也欢迎各位大佬指点与贡献 PR！
+> - **关于问题反馈与求助**：遇到 BUG 请在 GitHub 提交 **Issue**，使用求助请在 GitHub 发起 **Discussion**，看到后会回复。除特殊情况外，**请不要直接通过其它社交渠道私聊联系酪灰**！酪灰不是客服，不提供一对一售后服务，也没有足够精力逐一回复私聊，还请谅解！
+> - **最后，如果喜欢本项目的话，麻烦点亮右上角的 ⭐ Star 支持一下！阿里嘎多~**
 
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;由于 workbox 缓存原因，查看最新效果可能需要 `Ctrl` + `F5` 强制刷新浏览器缓存噢！
+---
 
-- [酪灰の主页](https://nanorocky.top/)
+## 📸 界面预览
 
-> 【小贴士】如果您的项目不需要 workbox 的本地缓存，比如有 CDN 的情况下，或者是遇到访问子路径自动跳转主页的情况，可以取消注释 `vite.config.ts` 内的两行代码：
+![预览图 1](/screenshots/main.png)
+![预览图 2](/screenshots/main1.png)
+![预览图 3](/screenshots/main2.png)
+
+## 👀 在线预览
+
+**Demo**：
+- [酪灰の主页](https://nanorocky.top/)（注：酪灰的个人主页运行的是私有分支配置，部分壁纸与细节与公开版略有差异。这些可能是私有配置，或是还未推送的功能改进。）
+- [無名の主页 by EFU](https://imhmpv.main.nanorocky.top/) （该预览页面始终自动与 EFU 分支同步）
+- [無名の主页](https://imsyy.top/) （原作者的主页，不再作为参考）
+
+> [!TIP]
+> - 由于开启了 Workbox（PWA）本地缓存，站点更新后可能需要按 `Ctrl + F5` 强制刷新才能立即看到最新效果。
+---
+
+## 🎉 功能特性
+
+- [x] **流畅载入动画与毛玻璃卡片 UI**：支持桌面端与移动端响应式布局适配
+- [x] **多语言国际化（i18n）**：内置 **简体中文 / English / 日本語**，支持自动识别浏览器语言及站点自定义英文名/链接翻译
+- [x] **多模式主题切换**：支持跟随系统、跟随时间、跟随壁纸自动取色、浅色模式、深色模式
+- [x] **季节氛围特效与纪念日默哀**：内置冬日飘雪、秋夜萤火虫、春节灯笼特效
+- [x] **快捷搜索框（`Alt + Q`）**：支持多搜索引擎快速切换与网址直达
+- [x] **本地多标签便签（`Alt + N`）**：支持新建多篇便签、本地自动持久化、JSON 导入导出、拖拽调整窗口及底栏歌词自动避让
+- [x] **时间与时光胶囊**：实时时钟、Hitokoto 一言、日/周/月/年时光进度条及建站天数统计
+- [x] **多源实时天气**：支持腾讯位置服务、高德开放平台、Google Weather（海外）及免 Key 备用天气接口自动降级
+- [x] **增强型音乐播放器与逐字歌词**：
+  - 支持网易云音乐 / QQ 音乐双歌单合并播放与底栏可拖拽进度条
+  - 支持 YRC / QRC 逐字歌词解析、增强动效与进度提示点
+  - 支持接入 **AMLL TTML Database**（含镜像加速）及跨平台歌词匹配补全
+  - 支持翻译歌词同步显示、歌词首尾元数据智能剥离、中键双击/长按还原外部歌词
+- [x] **网页语音交互**：支持本地预生成通知语音播报 + TTS 接口实时歌名播报
+
+### ⌨️ 常用快捷操作
+
+| 操作 / 快捷键 | 功能说明 |
+| :--- | :--- |
+| `Alt + Q` | 呼出 / 收起快捷搜索框（`Esc` 关闭） |
+| `Alt + N` | 呼出 / 收起本地便签面板（音乐暂停时 `PgUp / PgDn` 可翻页） |
+| `鼠标中键单击`（空白处） | 开启 / 退出壁纸展示预览模式 |
+| `鼠标中键双击` / `移动端长按`（底栏歌词） | 当加载了外部源歌词时，丢弃外部歌词并恢复本源歌词 |
+---
+
+## ⚙️ 部署指南
+
+> [!TIP]
+> - 如果您的部署环境不需要 Workbox 本地缓存（例如已配置 CDN 缓存），或遇到访问子路径自动跳回主页的问题，可在 `vite.config.ts` 中取消注释以下两行配置：
+>   ```ts
+>   selfDestroying: true,
+>   injectRegister: false,
+>   ```
+
+### 1. 配置文件说明（重要）
+
+仓库根目录自带一份默认配置模板 `/.env`（请勿删除，否则会触发文件损坏保护提示）。  
+在进行自定义配置时，**请将 `/.env` 复制一份并重命名为 `/.env.local`**，然后在 `/.env.local` 中修改您的自定义配置。
+
+### 2. 本地 / 手动构建部署
+
+1. **准备运行环境**（详见 `package.json` 中的 `engines` 约束）：
+   - [Git](https://git-scm.com/)
+   - [Node.js](https://nodejs.org/zh-cn/)：`>= 24.22.2 < 25` 或 `>= 26.13.0`
+   - `pnpm`：`>= 12.14.0`
+
+2. **拉取源码、安装依赖并构建**：
 
 ```bash
-selfDestroying: true,
-injectRegister: false,
-```
+# 仅克隆 EFU 分支源码并进入目录
+git clone -b EFU --single-branch https://github.com/NanoRocky/home.git
+cd home
 
-### 🎉 功能
+# 全局安装或启用 pnpm
+corepack enable
+corepack prepare pnpm@latest --activate
 
-- [x] 载入动画
-- [x] 站点简介
-- [x] Hitokoto 一言
-- [x] 日期及时间
-- [x] 实时天气
-- [x] 时光进度条
-- [x] 音乐播放器
-- [x] 移动端适配
-- [x] 逐字歌词兼容
+# 复制生成本地用户配置文件并按需编辑
+cp .env .env.local
 
-### ⚙️ 自动部署
-
-如果遇到构建环境或者打包过程出现错误，则可以采用 `Github Actions` 来进行自动构建
-
-- 在成功 `fork` 仓库后，前往 `Actions` 页面，若您是首次开启，则会出现下面的提示，点击开启
-
-  ![步骤1](/screenshots/step1.jpg)
-
-- 然后在仓库中进行任意修改后均会触发工作流的运行，在工作流完成后，会在下方生成一个可供下载的压缩包，这就是构建出的静态文件，可自行上传至服务器
-
-  ![步骤2](/screenshots/step2.jpg)
-
-### ⚙️ 手动部署
-
-- **安装** [node.js](https://nodejs.org/zh-cn/) **环境**
-
-  > node > 24.13.0 <p>
-  > npm > 10.15.0
-
-- 然后以 **管理员权限** 运行 `PowerShell` 终端，并 `cd` 到 项目根目录
-- 在 `终端` 中输入：
-
-```bash
-# 安装 pnpm
-npm install -g pnpm
-
-# 安装依赖
+# 安装项目依赖
 pnpm install
 
-# 预览
+# 本地开发预览
 pnpm dev
 
-# 构建
+# 生产环境打包构建
 pnpm build
 ```
 
-> 构建完成后，静态资源会在 **`dist` 目录** 中生成，可将 **`dist` 文件夹下的文件**上传至服务器，也可使用 `Vercel` 等托管平台一键导入并自动部署
+> 构建完成后，静态资源将生成在 **`dist`** 目录中，将 `dist` 目录下的全部文件上传至 Nginx / 静态服务器即可。
 
-### ⚙️ Docker 部署
+### 3. GitHub Actions 自动构建
 
-> 安装及配置 Docker 将不在此处说明，请自行解决
+如果本地构建环境受限，可使用仓库内置的 `GitHub Actions` 自动打包：
+
+1. 点击右上角 **Fork** 本仓库后，进入您仓库的 `Actions` 页面并点击开启工作流：
+   ![步骤 1](/screenshots/step1.jpg)
+2. 按需修改配置并提交代码后会自动触发构建工作流；构建完成后，在工作流页面底部下载生成的静态资源压缩包并上传至服务器即可：
+   ![步骤 2](/screenshots/step2.jpg)
+
+### 4. Docker 部署
+
+项目默认监听 `12445` 端口（如需包含自定义配置，请先在构建上下文目录准备好 `.env.local`）：
 
 ```bash
-# 构建
+# 构建镜像
 docker build -t home .
-# 运行
-docker run -p 12445:12445 -d home
+
+# 启动容器
+docker run -p 12445:12445 -d --name home home
 ```
 
-### ⚙️ Vercel 部署
+### 5. Vercel 等平台一键部署
 
-> 其他部署平台大致相同，在此不做说明
+1. 点击右上角 `Fork`，将本仓库复制到您的 `GitHub` 账号下。
+2. 在导入项目部署前，可在您的私有仓库中新增 `.env.local`（需自行调整 `.gitignore`）或直接在修改 `/.env` 并在平台环境变量中配置所需参数。
+3. 在 Vercel 中导入仓库并点击 `Deploy` 完成部署。
 
-1. 点击本仓库右上角的 `Fork`，复制本仓库到你的 `GitHub` 账号
-2. 复制 `/.env.example` 文件并重命名为 `/.env`（ 重要 ）
-3. 按需修改 `/.env` 文件中的配置
-4. 点击 `Deploy`，即可成功部署
+---
 
-### 网站链接
+## 🛠️ 个性化配置指南
 
-在 `src/assets/siteLinks.json` 中可以自定义网站链接（以指向自己的网站）:
+### 网站列表 (`siteLinks.json`)
+
+在 `src/assets/siteLinks.json` 中自定义右侧卡片的网站导航链接（可选配置 `name_en` 以支持非中文语言自动切换英文标题）：
 
 ```json
-{
-  "icon": "Blog",
-  "name": "博客",
-  "link": "https://blog.your.domain/"
-},
+[
+  {
+    "icon": "Blog",
+    "name": "博客",
+    "name_en": "Blog",
+    "link": "https://blog.your.domain/"
+  }
+]
 ```
 
-其中 `icon` 网站链接的图标可以在 `src/components/Links/index.vue` 中添加:
+如需新增图标，可前往 [xicons](https://www.xicons.org/) 挑选并在 `src/components/Links.vue` 中按需引入并注册到 `siteIcon`：
 
-```js
-// 可前往 https://www.xicons.org 自行挑选并在此处引入
-// 此处引入的是 fa 类型
-import {
-  Link,
-  Blog,
-  CompactDisc,
-  Cloud,
-  Compass,
-  Book,
-  Fire,
-  LaptopCode,
-} from "@vicons/fa";
+```ts
+import Blog from "@vicons/fa/es/Blog.js";
+import Cloud from "@vicons/fa/es/Cloud.js";
 
-...
-
-// 网站链接图标
-const siteIcon = {
+const siteIcon: Record<string, Component> = {
   Blog,
   Cloud,
-  CompactDisc,
-  Compass,
-  Book,
-  Fire,
-  LaptopCode,
+  // 在此处注册新引入的图标组件
 };
 ```
 
-### 社交链接
+### 社交链接 (`socialLinks.json`)
 
-在 `src/assets/socialLinks.json` 中可以自定义社交链接。
+在 `src/assets/socialLinks.json` 中自定义左下角社交图标、跳转地址及悬浮提示（同样支持可选字段 `name_en` 与 `tip_en`）：
 
-### 天气
+```json
+[
+  {
+    "name": "Github",
+    "name_en": "GitHub",
+    "icon": "/images/icon/github.png",
+    "tip": "去 Github 看看",
+    "tip_en": "Visit my GitHub",
+    "url": "https://github.com/imsyy"
+  }
+]
+```
 
-天气及地区获取需要 `腾讯位置服务` 与 `高德开放平台` 相关 API
+### 实时天气
 
-- 前往 [腾讯位置服务](https://lbs.qq.com/) 或 [高德开放平台控制台](https://console.amap.com/dev/index) 创建一个 `Web 服务` 类型的 `Key`，并将 `Key` 填入 `.env` 中对应参数中。
-- 注：高德开放平台的 FREE IP定位接口不支持 IPV6，如果遇到高德接口异常，请检查网络环境是否有 IPV6，系统是否使用 IPV6 优先。你也可以在浏览器开发者选项中看到“远程地址”是否为 IPV6 地址。腾讯接口同时支持 IPV4 和 IPV6。
+支持多种天气数据源，推荐前往以下平台申请免费 `Web 服务 API Key` 并填入 `.env.local`：
 
-也可自行更换其他方式。
+- **腾讯位置服务（推荐）**：前往 [腾讯位置服务控制台](https://lbs.qq.com/) 创建应用并启用 WebServiceAPI，填入 `VITE_TX_WEATHER_KEY`（同时支持 IPv4 与 IPv6）。
+- **高德开放平台**：前往 [高德开放平台控制台](https://console.amap.com/dev/index) 创建 `Web 服务` Key，填入 `VITE_GD_WEATHER_KEY`（注：高德免费 IP 定位接口暂不支持 IPv6，在 IPv6 优先网络下会尝试回退获取 IPv4）。
+- **Google Weather**：面向海外访问环境，可将 Key 填入 `VITE_GOOGLE_WEATHER_KEY`。
 
->[!WARNING]
->强烈建议自行注册天气 Token ，它们是免费且稳定的！<p>
->内置了三个免费接口，目前仅剩 小米天气 可正常工作。由于这些非公开接口没有 CORS 不允许跨域，必须使用中转。并且拥有较高的速率限制，所以经常失效。如果您希望使用这个接口，记得捐赠酪灰，帮助其承担服务器费用！<p>
+> [!WARNING]
+> **强烈建议自行申请并配置天气 Key ！**  
+> 未配置 Key 时将回退至内置免 Key 备用接口。<br>
+> 由于部分非公开接口不支持跨域（CORS），需经由中转服务访问且速率限制严格，可能出现限流或不可用。<br>
+> 如果您长期依赖内置中转接口，欢迎赞助酪灰帮助分担服务器开销！
 
-### 音乐
+### 音乐播放器与歌词
 
-> 本项目采用了 `Aplayer` 音乐播放器，可实现快速自定义歌单
-> \*仅支持 **中国大陆地区**
+本项目基于 `APlayer` 与 `Meting-API` 实现歌单解析（默认音乐源主要面向**中国大陆地区**网络环境）。<br>
+请在 `.env.local` 中修改音乐相关参数：
 
-请在 `.env` 文件中更改歌曲相关参数即可实现自定义歌单列表
-
-```bash
-# 歌曲 API 地址 （强烈建议自行搭建 Meting-Api）
+```ini
+# 歌曲 API 地址（强烈建议自行部署 Meting-API）
 VITE_SONG_API = "https://metingapi.nanorocky.top/"
-# 歌曲服务器 ( netease-网易云, tencent-qq音乐 )
+# 歌曲服务器 ( netease: 网易云音乐, tencent: QQ 音乐 )
 VITE_SONG_SERVER = "netease"
 VITE_SONG_SERVER_SECOND = "tencent"
-# 播放类型 ( song-歌曲, playlist-播放列表, album-专辑, search-搜索, artist-艺术家 )
+# 播放类型 ( song: 单曲, playlist: 歌单, album: 专辑, search: 搜索, artist: 歌手 )
 VITE_SONG_TYPE = "playlist"
-# 播放 ID
-VITE_SONG_ID = "3035221869"
+# 播放 ID（支持双歌单合并；如无需副歌单或无需播放器，留空即可）
+VITE_SONG_ID = "9379831714"
 VITE_SONG_ID_SECOND = "9518088898"
 ```
->目前已支持设置两个歌单进行合并，如不需要，留空即可。<p>
->如果需要使用网易云音乐逐字歌词，请使用 [修改版 Meting-Api](https://github.com/NanoRocky/meting-api/) ！<p>
 
->[!WARNING]
->这里提供的 api 有较高的速率限制，且不太稳定，强烈建议自行搭建 Meting-API！你也可以赞助酪灰帮助他承担服务费用！阿里嘎多！<p>
->注意：提供的 api 可能出现Q音接口抛 401 的情况，并非服务异常，Q音接口需要将项目编译后挂到正常域名并使用 https only，使用正常 443 端口，才能正常工作。<p>
+> [!WARNING]
+> - 如需启用**逐字歌词**与**服务端歌词元数据规则**功能，请使用 [修改版 Meting-API](https://github.com/NanoRocky/meting-api/) 自行部署！
+> - 示例中提供的公共 API 设有较严格的速率限制，仅作体验用途，强烈建议自行搭建服务（或赞助酪灰分担服务器费用，阿里嘎多！）。
+> - **注意**：使用公共 API 请求 QQ 音乐接口时若返回 `401` 或 `418` 并非服务端故障，需要将前端编译部署至正式域名并启用标准 `443` 端口的 `HTTPS` 访问。
 
-### 字体
+### 网站壁纸与图标
 
-现采用 `MiSans` and `HarmonyOS Sans` 字体，采用字体拆分，提升加载速度。
+#### 1. 本地默认壁纸
 
-> `https://cdn-font.hyperos.mi.com/font/css?family=MiSans_VF:VF:Chinese_Simplify,Latin&display=swap` <p>
-> `https://s1.hdslb.com/bfs/static/jinkela/long/font/regular.css`
+本地壁纸存放在 `public/images/` 目录下（PC 端命名为 `background1.avif`、`background2.avif`...；移动端竖屏命名为 `backgroundp1.avif`、`backgroundp2.avif`...）：
 
+1. 先编辑 `src/components/Background.vue` 中的兜底默认数量（确保实际图片数量不小于该值）：
+   ```ts
+   let bgImageCount = 10; // PC 版壁纸数量兜底值
+   let bgImageCountP = 3; // 移动版壁纸数量兜底值
+   ```
+2. 再编辑 `public/images/config.json`：
+   ```json
+   {
+     "bgImageCount": 10,
+     "bgImageCountP": 3
+   }
+   ```
+   后续增减壁纸图片时，只需直接修改 `public/images/config.json` 中的数量即可热生效，无需重新编译项目！<br>
+- Warning：仍建议始终确保实际图片数量不小于内置值。
 
-### 网站图标及网站背景
+#### 2. 网站图标
 
-#### 网站背景
+可在 `public/images/icon/` 目录中替换站点 Favicon、Logo、Apple Touch Icon 与社交平台图标，或在 `.env.local` 中修改对应路径。
 
-可以在 `public/images` 中修改网站背景。<p>
+### 网页语音交互
 
-如果想要添加更多的本地图片作为网站背景，可以将图片重命名 `background+数字` 的形式，并进行修改：<p>
+- **本地预生成语音**：存放于 `public/speechlocal/` 目录下，用于固定提示场景以获得极低延迟，可直接替换同名音频文件（建议配合 CDN 或浏览器缓存使用）。
+- **实时 TTS 语音**：用于切歌时动态播报歌手与歌名，需自行部署 TTS 服务并将接口地址填入 `.env.local` 的 `VITE_TTS_API`。若使用 Azure 语音服务，可直接使用 [AzureSpeechAPI-by-PHP](https://github.com/NanoRocky/AzureSpeechAPI-by-PHP) 快速部署。
 
->· 先编辑 `src/components/Background/index.vue`
-```js
-// 设置一个默认值，防止在无法加载 JSON 文件时壁纸失效。应该尽量保证壁纸数始终不小于这个默认值
-let bgImageCount = 10; // PC 版壁纸
-let bgImageCountP = 2; // 移动版壁纸
+### 更多默认开关设置
+
+在 `src/store/index.ts` 的 `storeState` 中，带有 `【开关】` 标注的字段均为可自定义的默认项，例如：
+
+```ts
+coverType: 0 as number,            // 【开关】默认壁纸种类 (0: 本地默认, 1: 必应每日, 2: 随机风景, 3: 随机二次元)
+autoBGSwitchInterval: 2 as number, // 【开关】自动切换壁纸间隔 (0: 关闭, 1: 15s, 2: 30s, 3: 45s)
+seasonalEffects: true,             // 【开关】季节特效
+mourningMode: true,                // 【开关】纪念日默哀模式
+playerAutoplay: true,              // 【开关】音乐自动播放
+playerDWRCShow: true,              // 【开关】逐字歌词解析总开关
+webSpeech: true,                   // 【开关】网页语音交互总开关
+socialTipPosition: "right",        // 【开关】社交链接提示位置 ("right" | "down")
 ```
 
->· 再编辑 `public/images/config.json`
-```js
-{
-  "bgImageCount": 10, // PC 版壁纸
-  "bgImageCountP": 2 // 移动版壁纸
-}
-```
-后续添加或减少壁纸，可直接编辑 `config.json` ，而无需重新编译项目。但必须确保壁纸数始终大于或等于 `index.vue` 中的配置。
+> 注：持久化在 `localStorage` 中的用户偏好仅对**首次访问**的新访客应用新的默认值；访问过站点的客户端如需立即应用修改后的默认值，需在设置中点击“重置所有设置”、访问 `?set=reset` 或清除浏览器站点数据。
 
-如需配置默认壁纸选项，请编辑 `src/store/index.js`
+### 字体说明
 
-```js
-coverType: "0", // 壁纸种类
-```
+项目采用 `MiSans` 与 `HarmonyOS Sans` 在线分片字体方案，兼顾排版美观与首屏加载速度：
 
-#### 网站图标
+- `https://cdn-font.hyperos.mi.com/font/css?family=MiSans_VF:VF:Chinese_Simplify,Latin&display=swap`
+- `https://s1.hdslb.com/bfs/static/jinkela/long/font/regular.css`
 
-可以在 `public/images/icon` 中修改网站图标。
+---
 
-#### 语音交互
-
->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;语音交互区分 预生成 与 实时生成。<p>
->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;预生成的语音需要提前生成并放在 `public/speechlocal/` 路径下，替换原有音频。预生成的音频是为固定不变的通知设计的，有更低的语音延迟（推荐使用 CDN 或对音频文件启用客户端缓存）。<p>
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;实时生成的语音用于音乐播放器歌名播报，需自行搭建并填写在 `.env` 内。如果也使用 Azure ，您可直接使用[AzureSpeechAPI-by-PHP](https://github.com/NanoRocky/AzureSpeechAPI-by-PHP) 完成 API 部署。
-
-#### 更多默认设置
-
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;·&nbsp;自动播放，逐字开关，语音交互开关 等其它默认设置，请编辑 `src/store/index.js` ，但这些设置仅对编辑后首次打开网页的用户生效，覆盖用户设置需要清除网页数据
+## 🧰 技术栈与数据服务
 
 ### 技术栈
 
-- [Vue](https://cn.vuejs.org/)
-- [Vite](https://vitejs.cn/vite3-cn/)
-- [Pinia](https://pinia.vuejs.org/zh/)
-- [IconPark](https://iconpark.oceanengine.com/official)
-- [xicons](https://xicons.org/)
-- [TypeScript](https://www.typescriptlang.org/zh/)
-- [Aplayer](https://aplayer.js.org/)
+- [Vue 3](https://cn.vuejs.org/) · [Vite](https://cn.vitejs.dev/) · [TypeScript](https://www.typescriptlang.org/zh/) · [Pinia](https://pinia.vuejs.org/zh/)
+- [Element Plus](https://element-plus.org/zh-CN/) · [UnoCSS](https://unocss.dev/) · [Vue I18n](https://vue-i18n.intlify.dev/) · [Swiper](https://swiperjs.com/)
+- [APlayer](https://aplayer.js.org/) · [AppleMusic-like Lyrics](https://github.com/Steve-xmh/applemusic-like-lyrics) · [IconPark](https://iconpark.oceanengine.com/official) · [xicons](https://xicons.org/)
 
-### API
+### 相关 API 与服务
 
-- [韩小韩 WebAPI 接口](https://api.vvhan.com/)
-- [搏天 API](https://api.btstu.cn/doc/sjbz.php)
-- [教书先生 API](https://api.oioweb.cn/doc/weather/GetWeather)
-- [高德开放平台](https://lbs.amap.com/)
-- [腾讯位置服务](https://lbs.qq.com/)
-- [Hitokoto 一言](https://hitokoto.cn/)
-- [Meting API](https://github.com/injahow/meting-api)
-- [Meting API 酪灰修改版](https://github.com/NanoRocky/meting-api)
+- [腾讯位置服务](https://lbs.qq.com/) · [高德开放平台](https://lbs.amap.com/) · [Google Maps Platform](https://developers.google.com/maps/documentation/weather)
+- [教书先生 API](https://api.oioweb.cn/) · [UAPIs](https://uapis.cn/) · [萌狐 API](https://img.moehu.org/)
+- [Hitokoto 一言](https://hitokoto.cn/) · [Meting API](https://github.com/injahow/meting-api/) · [Meting API（酪灰修改版）](https://github.com/NanoRocky/meting-api/)
 
-## Star History
+---
+
+## 📈 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=imsyy/home&type=Date)](https://star-history.com/#imsyy/home&Date)
 
-## 特别鸣谢
+## 💖 特别鸣谢
+
 - [AMLL TTML Database](https://github.com/Steve-xmh/amll-ttml-db)
 - [Meting API](https://github.com/injahow/meting-api)
 
-### 感谢原作者 imsyy 和帮助本项目的小伙伴们！
-- [imsyy](https://github.com/imsyy/)
-- [这个哔养得](https://github.com/pizeroLOL/)
+### 感谢原作者与帮助本项目的小伙伴们！
 
-<a title="SSL" target="_blank" href="https://myssl.com/seal/detail?domain=nanorocky.top"><img src="https://img.shields.io/badge/MySSL-安全认证-brightgreen"></a>&nbsp;<a title="CDN" target="_blank" href="https://cdnjs.com/"><img src="https://img.shields.io/badge/CDN-Cloudflare-blue"></a>&nbsp;<a title="CDN2" target="_blank" href="https://cdnjs.com/"><img src="https://img.shields.io/badge/CDN-Tencent EdgeOne-blue"></a>&nbsp;<a title="Copyright" target="_blank" href="https://nanorocky.top/"><img src="https://img.shields.io/badge/Copyright%20%C2%A9%202023--2025-酪灰-red"></a>
+- [imsyy](https://github.com/imsyy/)（原项目作者）
+- [Pizero](https://github.com/pizeroLOL/)（这个哔养得）
+
+---
+
+<div align="center">
+  <a title="CDN" target="_blank" href="https://www.cloudflare.com/"><img src="https://img.shields.io/badge/CDN-Cloudflare-blue" alt="Cloudflare"></a>&nbsp;
+  <a title="CDN2" target="_blank" href="https://edgeone.ai/"><img src="https://img.shields.io/badge/CDN-Tencent%20EdgeOne-blue" alt="Tencent EdgeOne"></a>&nbsp;
+  <a title="Copyright" target="_blank" href="https://nanorocky.top/"><img src="https://img.shields.io/badge/Copyright%20%C2%A9%202023--2026-NanoRocky-red" alt="Copyright"></a>
+</div>

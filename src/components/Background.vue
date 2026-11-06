@@ -1,14 +1,31 @@
 <template>
   <div :class="store.backgroundShow ? 'cover show' : 'cover'">
     <!-- 当前壁纸层 -->
-    <img v-show="store.imgLoadStatus" :src="currentBgUrl" :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
-      alt="cover" @load="imgLoadComplete" @error.once="imgLoadError" @animationend="imgAnimationEnd" />
+    <img
+      v-show="store.imgLoadStatus"
+      :src="currentBgUrl"
+      :class="['bg', 'current', { 'blur-out': isTransitioning, 'no-transition': skipTransition }]"
+      alt="cover"
+      @load="imgLoadComplete"
+      @error.once="imgLoadError"
+      @animationend="imgAnimationEnd"
+    />
     <!-- 新壁纸层 -->
-    <img v-if="isTransitioning" :src="nextBgUrl" :class="['bg', 'next', { 'blur-in': isBlurringIn }]" alt="cover" />
+    <img
+      v-if="isTransitioning"
+      :src="nextBgUrl"
+      :class="['bg', 'next', { 'blur-in': isBlurringIn }]"
+      alt="cover"
+    />
     <div :class="store.backgroundShow ? 'gray o-hidden' : 'gray'" />
     <Transition name="fade" mode="out-in">
-      <a v-if="store.backgroundShow && store.coverType != '3'" class="down" :href="bgUrl" target="_blank">
-        下载壁纸
+      <a
+        v-if="store.backgroundShow && store.coverType != 3"
+        class="down"
+        :href="currentBgUrl"
+        target="_blank"
+      >
+        {{ $t("components.background.download") }}
       </a>
     </Transition>
   </div>
@@ -16,16 +33,17 @@
 
 <script setup lang="js">
 import { mainStore } from "@/store";
-import { Error } from "@icon-park/vue-next";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import Error from "@icon-park/vue-next/es/icons/Error";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { initSnowfall, closeSnowfall } from "@/utils/season/snow";
 import { initFirefly, closeFirefly } from "@/utils/season/firefly";
 import { initLantern, closeLantern } from "@/utils/season/lantern";
-import { ref, h, nextTick } from 'vue';
-import { gasC } from "@/utils/authServer";
-
+import { ref, h, nextTick } from "vue";
+import { useI18n } from "vue-i18n";
+import { gasA, gasC } from "@/utils/authServer";
 
 const store = mainStore();
+const { t } = useI18n();
 const currentBgUrl = ref(null);
 const nextBgUrl = ref(null);
 const isTransitioning = ref(false);
@@ -34,29 +52,49 @@ const skipTransition = ref(false);
 const imgTimeout = ref(null);
 const autoBGSwitchTimer = ref(null); // 定时切换定时器
 const emit = defineEmits(["loadComplete", "imageLoaded"]);
-const key = envConfig.VITE_SFILE_SKEY;
+const key = import.meta.env.VITE_SFILE_SKEY;
 const isLoading = ref(false);
 
 // 自定义壁纸
 // 酪灰的小批注：这里增加了从配置文件读取壁纸数的功能，使得在增加壁纸时不需要重新编译项目，只需修改这个 json 文件内的值
 // 设置一个默认值，防止在无法加载 JSON 文件时壁纸失效。应该尽量保证壁纸数始终不小于这个默认值
 let bgImageCount = 10; // PC 版壁纸
-let bgImageCountP = 2; // 移动版壁纸
+let bgImageCountP = 3; // 移动版壁纸
 let bgRandom = 0;
 let bgRandomp = 0;
 let confUrlS = null;
 let sest = 0;
 let sBGCountN = null;
 
+const getNonRepeatingRandom = (maxCount, storageKey) => {
+  if (maxCount <= 1) return 1;
+  const historySize = Math.floor(maxCount / 3);
+  let history = [];
+  try {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) history = JSON.parse(saved);
+  } catch (e) {}
+  let rand = Math.floor(Math.random() * maxCount + 1);
+  let attempts = 0;
+  while (history.includes(rand) && attempts < 50) {
+    rand = Math.floor(Math.random() * maxCount + 1);
+    attempts++;
+  }
+  history.push(rand);
+  if (history.length > historySize) {
+    history = history.slice(history.length - historySize);
+  }
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(history));
+  } catch (e) {}
+  return rand;
+};
+
 // 加载 config.json
 async function loadConfig() {
   try {
-    if (key) {
-      const confUrl = "/images/config.json";
-      confUrlS = await gasC(confUrl, key);
-    } else {
-      confUrlS = "/images/config.json";
-    };
+    const confUrl = "/images/config.json";
+    key ? (confUrlS = await gasC(confUrl, key)) : (confUrlS = confUrl);
     const response = await fetch(confUrlS);
     const data = await response.json();
     bgImageCount = Math.max(data.bgImageCount, 1);
@@ -67,60 +105,35 @@ async function loadConfig() {
       sBGCountN = null;
       return true;
     } else {
-      bgRandom = Math.floor(Math.random() * bgImageCount + 1);
-      bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+      bgRandom = getNonRepeatingRandom(bgImageCount, "bgRandomHistory");
+      bgRandomp = getNonRepeatingRandom(bgImageCountP, "bgRandompHistory");
       sBGCountN = null;
       return true;
-    };
+    }
   } catch (error) {
-    console.error('无法加载壁纸配置文件:', error);
-    bgRandom = Math.floor(Math.random() * bgImageCount + 1);
-    bgRandomp = Math.floor(Math.random() * bgImageCountP + 1);
+    console.error(t("components.background.loadConfigFailed"), error);
+    bgRandom = getNonRepeatingRandom(bgImageCount, "bgRandomHistory");
+    bgRandomp = getNonRepeatingRandom(bgImageCountP, "bgRandompHistory");
     sBGCountN = null;
     return true;
-  };
-};
+  }
+}
 
-// 检测设备类型
+// 检测屏幕方向与比例
 const detectDevice = () => {
-  const userAgent = navigator.userAgent.toLowerCase();
-  if (/mobile|android|iphone|ipad|ipod|windows phone/.test(userAgent)) {
-    if (/ipad|tablet|playbook|silk|kindle/.test(userAgent)) {
-      return 'tablet'; // 平板
-    } else {
-      return 'mobile'; // 手机
-    };
-  } else {
-    return 'pc'; // PC
-  };
+  if (typeof window === "undefined") return "pc";
+  return window.innerHeight > window.innerWidth ? "mobile" : "pc";
 };
 
 const getLocalBgUrl = async (deviceType) => {
-  // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png
+  // 这里指定了所有自定义背景的文件格式，必须统一。可以自定义修改，比如 webp 或 png 或 avif
   // 酪灰的小批注：这里添加了设备类型识别以加载不同分辨率的壁纸
-  // 如果不需要区分设备类型，则只需要保留这一行 bgUrl.value = `/images/background${bgRandom}.jpg`;
-  if (deviceType === 'mobile') {
-    if (key) {
-      const bgUrlS = `/images/phone/backgroundphone${bgRandomp}.jpg`;
-      return await gasC(bgUrlS, key);
-    } else {
-      return `/images/phone/backgroundphone${bgRandomp}.jpg`;
-    };
-  } else if (deviceType === 'tablet' || deviceType === 'pc') {
-    if (key) {
-      const bgUrlS = `/images/background${bgRandom}.jpg`;
-      return await gasC(bgUrlS, key);
-    } else {
-      return `/images/background${bgRandom}.jpg`;
-    };
-  } else {
-    if (key) {
-      const bgUrlS = `/images/background${bgRandom}.jpg`;
-      return await gasC(bgUrlS, key);
-    } else {
-      return `/images/background${bgRandom}.jpg`;
-    };
-  };
+  // 如果不需要区分设备类型，则只需要保留这一行 const url = `/images/background${bgRandom}.avif`;
+  const url =
+    deviceType === "mobile"
+      ? `/images/phone/backgroundphone${bgRandomp}.avif`
+      : `/images/background${bgRandom}.avif`;
+  return key ? await gasC(url, key) : url;
 };
 
 // 更换壁纸链接
@@ -136,17 +149,27 @@ const changeBg = async (type) => {
       if (type == 0) {
         newBgUrl = await getLocalBgUrl(deviceType);
       } else if (type == 1) {
-        newBgUrl = "https://api.dujin.org/bing/1920.php";
+        newBgUrl = "https://uapis.cn/api/v1/image/bing-daily?random=true&format=image";
       } else if (type == 2) {
-        newBgUrl = "https://api.vvhan.com/api/wallpaper/views";
+        newBgUrl = "https://img.moehu.org/pic.php?id=gqbz";
       } else if (type == 3) {
-        newBgUrl = "https://api.vvhan.com/api/wallpaper/acg";
-      };
+        newBgUrl =
+          deviceType === "mobile"
+            ? "https://img.moehu.org/pics.php?id=sjpic"
+            : "https://img.moehu.org/pic.php?id=pc";
+      }
+
+      if (type != 0) {
+        // 给外部 API 加上时间戳，防止两次请求 URL 相同导致不刷新
+        newBgUrl += newBgUrl.includes("?") ? `&_t=${Date.now()}` : `?_t=${Date.now()}`;
+      }
+
+      // 预加载新壁纸
       const result = await preloadImage(newBgUrl);
       if (!result.ok) {
-        console.error("壁纸加载失败：", currentBgUrl.value);
+        console.error(t("components.background.loadError") + "：", currentBgUrl.value);
         ElMessage({
-          message: "壁纸加载失败，已临时切换回默认",
+          message: t("components.background.loadFailedSwitched"),
           icon: h(Error, {
             theme: "filled",
             fill: "var(--el-message-icon-color)",
@@ -157,17 +180,15 @@ const changeBg = async (type) => {
           currentBgUrl.value = newBgUrl;
         } else {
           performTransition(newBgUrl);
-        };
+        }
         if (store.webSpeech) {
           stopSpeech();
-          const voice = envConfig.VITE_TTS_Voice;
-          const vstyle = envConfig.VITE_TTS_Style;
           SpeechLocal("壁纸加载失败.mp3");
-        };
-      };
+        }
+      }
     } finally {
       isLoading.value = false;
-    };
+    }
   })();
 };
 
@@ -237,33 +258,31 @@ const imgLoadComplete = (event) => {
 
 // 图片动画完成
 const imgAnimationEnd = () => {
-  console.log("壁纸加载且动画完成");
+  console.log(t("components.background.loadSuccess"));
   // 加载完成事件
   emit("loadComplete");
 };
 
 // 图片显示失败
 const imgLoadError = async () => {
-  console.error("壁纸加载失败");
+  console.error(t("components.background.loadError") + "：", currentBgUrl.value);
   ElMessage({
-    message: "壁纸加载失败，已临时切换回默认",
+    message: t("components.background.loadError"),
     icon: h(Error, {
       theme: "filled",
       fill: "var(--el-message-icon-color)",
     }),
   });
   if (key) {
-    const bgUrlS = `/images/background${bgRandom}.jpg`;
+    const bgUrlS = `/images/background${bgRandom}.avif`;
     currentBgUrl.value = await gasC(bgUrlS, key);
   } else {
-    currentBgUrl.value = `/images/background${bgRandom}.jpg`;
-  };
+    currentBgUrl.value = `/images/background${bgRandom}.avif`;
+  }
   if (store.webSpeech) {
     stopSpeech();
-    const voice = envConfig.VITE_TTS_Voice;
-    const vstyle = envConfig.VITE_TTS_Style;
     SpeechLocal("壁纸加载失败.mp3");
-  };
+  }
 };
 
 // 监听壁纸切换
@@ -272,13 +291,13 @@ watch(
   async (value) => {
     await changeBg(Number(value));
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const SeasonStyle = async (type, state, where) => {
   const month = new Date().getMonth() + 1; // 当前月份，1-12
   if (type == 0) {
-    if (sest == 1 && state == true && where == 'normal') return;
+    if (sest == 1 && state == true && where == "normal") return;
     if ([12, 1, 2].includes(month)) {
       if (state == true) {
         initSnowfall();
@@ -286,8 +305,8 @@ const SeasonStyle = async (type, state, where) => {
         closeSnowfall();
       } else {
         return;
-      };
-    };
+      }
+    }
     if ([1, 2].includes(month)) {
       if (state == true) {
         initLantern();
@@ -295,8 +314,8 @@ const SeasonStyle = async (type, state, where) => {
         closeLantern();
       } else {
         return;
-      };
-    };
+      }
+    }
     if ([7, 8, 9].includes(month)) {
       if (state == true) {
         initFirefly();
@@ -304,8 +323,8 @@ const SeasonStyle = async (type, state, where) => {
         closeFirefly();
       } else {
         return;
-      };
-    };
+      }
+    }
   } else if (type == 1) {
     if (state == true) {
       initSnowfall();
@@ -313,7 +332,7 @@ const SeasonStyle = async (type, state, where) => {
       closeSnowfall();
     } else {
       return;
-    };
+    }
   } else if (type == 2) {
     if (state == true) {
       initLantern();
@@ -321,7 +340,7 @@ const SeasonStyle = async (type, state, where) => {
       closeLantern();
     } else {
       return;
-    };
+    }
   } else if (type == 3) {
     if (state == true) {
       initFirefly();
@@ -329,10 +348,10 @@ const SeasonStyle = async (type, state, where) => {
       closeFirefly();
     } else {
       return;
-    };
+    }
   } else {
     return;
-  };
+  }
   sest = 1;
 };
 
@@ -341,22 +360,22 @@ const setupAutoSwitch = () => {
   if (autoBGSwitchTimer.value) {
     clearInterval(autoBGSwitchTimer.value);
     autoBGSwitchTimer.value = null;
-  };
+  }
 
   // 获取定时切换设置值
   const switchMode = store.autoBGSwitchInterval || 0;
 
   // 根据模式设置间隔时间（毫秒）
   const intervals = {
-    0: 0,      // 不自动切换
-    1: 15000,   // 15秒
-    2: 30000,  // 30秒
-    3: 45000   // 45秒
+    0: 0, // 不自动切换
+    1: 15000, // 15秒
+    2: 30000, // 30秒
+    3: 45000, // 45秒
   };
   const interval = intervals[switchMode];
   if (interval === 0) {
     return;
-  };
+  }
 
   const switchBackground = async () => {
     if (isLoading.value) return;
@@ -374,7 +393,11 @@ onMounted(async () => {
   // 加载壁纸
   await changeBg(Number(store.coverType));
   // 加载季节特效
-  if (store.seasonalEffects) { await SeasonStyle(0, true, 'normal') } else { sest = 1 };
+  if (store.seasonalEffects) {
+    await SeasonStyle(0, true, "normal");
+  } else {
+    sest = 1;
+  }
   // 启动定时切换
   setupAutoSwitch();
 });
@@ -382,34 +405,43 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   if (imgTimeout.value) {
     clearTimeout(imgTimeout.value);
-  };
+  }
   if (autoBGSwitchTimer.value) {
     clearInterval(autoBGSwitchTimer.value);
-  };
+  }
 });
 
-watch(() => store.seasonalEffects, async (value) => {
-  if (sest == 0) return;
-  if (value) {
-    await SeasonStyle(0, true, 'userChange');
-  } else {
-    await SeasonStyle(0, false, 'userChange');
-    await SeasonStyle(1, false, 'userChange');
-    await SeasonStyle(2, false, 'userChange');
-    await SeasonStyle(3, false, 'userChange');
-  };
-});
+watch(
+  () => store.seasonalEffects,
+  async (value) => {
+    if (sest == 0) return;
+    if (value) {
+      await SeasonStyle(0, true, "userChange");
+    } else {
+      await SeasonStyle(0, false, "userChange");
+      await SeasonStyle(1, false, "userChange");
+      await SeasonStyle(2, false, "userChange");
+      await SeasonStyle(3, false, "userChange");
+    }
+  },
+);
 
-watch(() => store.sBGCount, async (value) => {
-  if (store.coverType != 0 || value == null || value == 0) return;
-  sBGCountN = value;
-  await changeBg(Number(store.coverType));
-  store.setSBGCount(null);
-});
+watch(
+  () => store.sBGCount,
+  async (value) => {
+    if (store.coverType != 0 || value == null || value == 0) return;
+    sBGCountN = value;
+    await changeBg(Number(store.coverType));
+    store.setSBGCount(null);
+  },
+);
 
-watch(() => store.autoBGSwitchInterval, () => {
-  setupAutoSwitch();
-});
+watch(
+  () => store.autoBGSwitchInterval,
+  () => {
+    setupAutoSwitch();
+  },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -451,14 +483,14 @@ watch(() => store.autoBGSwitchInterval, () => {
       animation-delay: 0.45s;
 
       &.blur-out {
-        filter: blur(30px) brightness(0.4);
-        opacity: 0;
-        transform: scale(1.05);
+        filter: blur(10px) brightness(0.8) !important;
+        opacity: 0 !important;
+        transform: scale(1.05) !important;
       }
     }
 
     &.next {
-      filter: blur(30px) brightness(0.4);
+      filter: blur(10px) brightness(0.8);
       opacity: 0;
       transform: scale(1.05);
       animation: none;
@@ -479,8 +511,11 @@ watch(() => store.autoBGSwitchInterval, () => {
     top: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.5) 100%),
+    background-image:
+      radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.5) 100%),
       radial-gradient(rgba(0, 0, 0, 0) 33%, rgba(0, 0, 0, 0.3) 166%);
+    z-index: 3;
+    pointer-events: none;
 
     transition: 1.5s;
 

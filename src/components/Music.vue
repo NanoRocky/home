@@ -7,30 +7,55 @@
     v-show="store.musicOpenState"
   >
     <div class="btns">
-      <span @click="store.musicBoxOpenState = true">音乐列表</span>
-      <span @click="store.musicOpenState = false">回到一言</span>
+      <span @click="store.musicBoxOpenState = true">{{ $t("components.music.musicList") }}</span>
+      <span @click="store.musicOpenState = false">{{ $t("components.music.backToHitokoto") }}</span>
     </div>
     <div class="control">
-      <go-start theme="filled" size="30" fill="var(--player-control-color)" @click="changeMusicIndex(0)" />
+      <go-start
+        theme="filled"
+        size="30"
+        fill="var(--player-control-color)"
+        @click="changeMusicIndex(0)"
+      />
       <Transition name="fade" mode="out-in">
         <div :key="String(store.playerState)" class="state" @click="changePlayState">
-          <play-one theme="filled" size="50" fill="var(--player-control-color)" v-show="!store.playerState" />
-          <pause theme="filled" size="50" fill="var(--player-control-color)" v-show="store.playerState" />
+          <play-one
+            theme="filled"
+            size="50"
+            fill="var(--player-control-color)"
+            v-show="!store.playerState"
+          />
+          <pause
+            theme="filled"
+            size="50"
+            fill="var(--player-control-color)"
+            v-show="store.playerState"
+          />
         </div>
       </Transition>
-      <go-end theme="filled" size="30" fill="var(--player-control-color)" @click="changeMusicIndex(1)" />
+      <go-end
+        theme="filled"
+        size="30"
+        fill="var(--player-control-color)"
+        @click="changeMusicIndex(1)"
+      />
     </div>
     <div class="menu">
       <div class="name" v-show="!volumeShow">
         <span>{{
           store.getPlayerData.name
             ? store.getPlayerData.name + " - " + store.getPlayerData.artist
-            : "银趴未开始（？）"
+            : $t("components.music.partyNotStarted")
         }}</span>
       </div>
       <div class="volume" v-show="volumeShow">
         <div class="icon">
-          <volume-mute theme="filled" size="24" fill="var(--player-control-color)" v-if="volumeNum == 0" />
+          <volume-mute
+            theme="filled"
+            size="24"
+            fill="var(--player-control-color)"
+            v-if="volumeNum == 0"
+          />
           <volume-small
             theme="filled"
             size="24"
@@ -93,11 +118,11 @@ const volumeNum = ref(store.musicVolume ? store.musicVolume : 0.7);
 const musicListShow = ref(false);
 const playerRef = ref<InstanceType<typeof Player> | null>(null);
 const playerData = reactive({
-  server: envConfig.VITE_SONG_SERVER,
-  type: envConfig.VITE_SONG_TYPE,
-  id: envConfig.VITE_SONG_ID,
-  serverse: envConfig.VITE_SONG_SERVER_SECOND,
-  idse: envConfig.VITE_SONG_ID_SECOND,
+  server: import.meta.env.VITE_SONG_SERVER,
+  type: import.meta.env.VITE_SONG_TYPE,
+  id: import.meta.env.VITE_SONG_ID,
+  serverse: import.meta.env.VITE_SONG_SERVER_SECOND,
+  idse: import.meta.env.VITE_SONG_ID_SECOND,
 });
 
 // 开启播放列表
@@ -123,10 +148,37 @@ const changeMusicIndex = (type) => {
 };
 
 // 键盘事件处理逻辑
-const handleKeydown = (e) => {
-  if (!store.musicIsOk) {
+const handleKeydown = (e: KeyboardEvent) => {
+  if (!store.musicIsOk || store.searchOpenState) {
     return;
   }
+  const target = e.target as HTMLElement | null;
+  const tagName = target?.tagName?.toLowerCase();
+
+  // PGUP / PGDN 切曲逻辑：若音乐正在播放，优先响应切曲
+  if (e.code === "PageUp" || e.code === "PageDown") {
+    if (store.playerState) {
+      e.preventDefault();
+      if (e.code === "PageUp") {
+        changeMusicIndex(0);
+      } else {
+        changeMusicIndex(1);
+      }
+      return;
+    } else if (store.noteOpenState) {
+      return;
+    }
+  }
+
+  if (
+    tagName === "input" ||
+    tagName === "textarea" ||
+    target?.isContentEditable ||
+    (store.noteOpenState && e.code === "Space")
+  ) {
+    return;
+  }
+
   switch (e.code) {
     case "Space": // 播放/暂停
       e.preventDefault(); // 阻止页面默认滚动
@@ -156,15 +208,17 @@ const toggleKeyListener = (add) => {
 const handleFocus = () => toggleKeyListener(true);
 const handleBlur = () => toggleKeyListener(false);
 
+const handleVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    toggleKeyListener(true); // 页面可见时监听
+  } else {
+    toggleKeyListener(false); // 页面不可见时移除监听
+  }
+};
+
 onMounted(() => {
   // 检测页面是否在窗口前端
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      toggleKeyListener(true); // 页面可见时监听
-    } else {
-      toggleKeyListener(false); // 页面不可见时移除监听
-    }
-  });
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 
   // 检测窗口焦点
   window.addEventListener("focus", handleFocus);
@@ -181,7 +235,7 @@ onUnmounted(() => {
   toggleKeyListener(false);
   window.removeEventListener("focus", handleFocus);
   window.removeEventListener("blur", handleBlur);
-  document.removeEventListener("visibilitychange", handleFocus);
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
 });
 
 // 监听音量变化
@@ -200,7 +254,7 @@ watch(
       openMusicList();
     } else {
       closeMusicList();
-    };
+    }
   },
 );
 </script>
@@ -219,10 +273,12 @@ watch(
   align-items: center;
   flex-direction: column;
   animation: fade 0.5s;
+
   .btns {
     display: flex;
     align-items: center;
     margin-bottom: 6px;
+
     span {
       background: var(--music-smcard-background-color);
       padding: 2px 8px;
@@ -231,25 +287,30 @@ watch(
       text-overflow: ellipsis;
       overflow-x: hidden;
       white-space: nowrap;
+
       &:hover {
         background: var(--music-smcard-background-hover-color);
       }
     }
   }
+
   .control {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
     width: 100%;
+
     .state {
       transition: opacity 0.1s;
+
       .i-icon {
         width: 50px;
         height: 50px;
         display: block;
       }
     }
+
     .i-icon {
       width: 36px;
       height: 36px;
@@ -259,14 +320,17 @@ watch(
       justify-content: center;
       border-radius: 6px;
       transform: scale(1);
+
       &:hover {
         background: var(--player-control-hover-bg-color);
       }
+
       &:active {
         transform: scale(0.95);
       }
     }
   }
+
   .menu {
     height: 26px;
     width: 100%;
@@ -275,6 +339,7 @@ watch(
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     .name {
       width: 100%;
       text-align: center;
@@ -283,6 +348,7 @@ watch(
       white-space: nowrap;
       animation: fade 0.3s;
     }
+
     .volume {
       width: 100%;
       padding: 0 12px;
@@ -290,20 +356,25 @@ watch(
       align-items: center;
       flex-direction: row;
       animation: fade 0.3s;
+
       .icon {
         margin-right: 12px;
+
         span {
           width: 24px;
           height: 24px;
           display: block;
         }
       }
+
       :deep(*) {
         transition: none;
       }
+
       :deep(.el-slider__button) {
         transition: 0.3s;
       }
+
       .el-slider {
         margin-right: 12px;
         --el-slider-main-bg-color: var(--player-slider-main-color);
@@ -313,6 +384,7 @@ watch(
     }
   }
 }
+
 .music-list {
   position: fixed;
   top: 0;
@@ -325,6 +397,7 @@ watch(
   backdrop-filter: blur(20px);
   z-index: 1;
   color: var(--text-color);
+
   .list {
     color: var(--text-color);
     position: absolute;
@@ -338,10 +411,12 @@ watch(
     background-color: var(--music-card-background-color);
     border-radius: 6px;
     z-index: 999;
+
     @media (max-width: 720px) {
       left: calc(50% - 45%);
       width: 90%;
     }
+
     .close {
       position: absolute;
       top: 12px;
@@ -349,9 +424,11 @@ watch(
       width: 28px;
       height: 28px;
       display: block;
+
       &:hover {
         transform: scale(1.2);
       }
+
       &:active {
         transform: scale(0.95);
       }
@@ -363,14 +440,17 @@ watch(
 .zoom-enter-active {
   animation: zoom 0.4s ease-in-out;
 }
+
 .zoom-leave-active {
   animation: zoom 0.3s ease-in-out reverse;
 }
+
 @keyframes zoom {
   0% {
     opacity: 0;
     transform: scale(0) translateY(-600px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);

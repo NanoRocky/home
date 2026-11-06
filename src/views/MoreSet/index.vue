@@ -1,10 +1,12 @@
 <template>
-  <div class="mobileset" v-if="store.mobileOpenState" @mouseenter="closeShow = true" @mouseleave="closeShow = false"
-    @click.stop>
-    <transition name="el-fade-in-linear">
-      <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)"
-        @click="store.setOpenState = false" />
-    </transition>
+  <div class="mobileset" v-if="store.mobileOpenState" @click.stop>
+    <close-one
+      class="close"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.setOpenState = false"
+    />
     <el-row>
       <el-col class="left">
         <div class="logo text-truncate-ellipsis">
@@ -14,7 +16,7 @@
         <!-- 移动端设置菜单 -->
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">全局设置</span>
+          <span class="name">{{ $t("components.settings.globalSettings") }}</span>
         </div>
         <div class="mobileset-scrollable">
           <Set />
@@ -27,11 +29,14 @@
       </el-col>
     </el-row>
   </div>
-  <div class="set" v-else @mouseenter="closeShow = true" @mouseleave="closeShow = false" @click.stop>
-    <transition name="el-fade-in-linear">
-      <close-one class="close" theme="filled" size="28" fill="var(--close-icon-color)" v-show="closeShow"
-        @click="store.setOpenState = false" />
-    </transition>
+  <div class="set" v-else @click.stop>
+    <close-one
+      class="close"
+      theme="filled"
+      size="28"
+      fill="var(--close-icon-color)"
+      @click="store.setOpenState = false"
+    />
     <el-row :gutter="40">
       <el-col :span="12" class="left">
         <div class="logo text-truncate-ellipsis">
@@ -39,39 +44,42 @@
           <span class="sm">.{{ siteUrl[1] }}</span>
         </div>
         <div class="version">
-          <el-tooltip content="Version" placement="top" effect="color" :show-arrow="false">
+          <el-tooltip
+            :content="$t('components.settings.tooltips.version')"
+            placement="top"
+            effect="color"
+            :show-arrow="false"
+          >
             <div class="num" @dblclick="toggleVer">v&nbsp;{{ config.version }}</div>
           </el-tooltip>
-          <el-tooltip content="Github 源代码仓库" placement="top" effect="color" :show-arrow="false">
+          <el-tooltip
+            :content="$t('components.settings.tooltips.poweredBy')"
+            placement="top"
+            effect="color"
+            :show-arrow="false"
+          >
             <github-one class="github" theme="outline" size="24" @click="jumpTo(config.github)" />
           </el-tooltip>
-          <el-tooltip content="扩展功能更新仓库" placement="top" effect="color" :show-arrow="false">
-            <file-editing-one class="github" theme="outline" size="24" @click="jumpTo(config.efug)" />
+          <el-tooltip
+            :content="$t('components.settings.tooltips.extensionUpdates')"
+            placement="top"
+            effect="color"
+            :show-arrow="false"
+          >
+            <file-editing-one
+              class="github"
+              theme="outline"
+              size="24"
+              @click="jumpTo(config.efug)"
+            />
           </el-tooltip>
         </div>
-        <!-- <el-card class="update">
-          <template #header>
-            <div class="card-header">
-              <span>更新日志</span>
-            </div>
-          </template>
-<div class="upnote">
-  <div v-for="item in upData.new" :key="item" class="uptext">
-    <add-one theme="outline" size="22" />
-    {{ item }}
-  </div>
-  <div v-for="item in upData.fix" :key="item" class="uptext">
-    <bug theme="outline" size="22" />
-    {{ item }}
-  </div>
-</div>
-</el-card> -->
       </el-col>
       <!-- 桌面端设置菜单 -->
       <el-col :span="12" class="right">
         <div class="title">
           <setting-two theme="filled" size="28" fill="var(--close-icon-color)" />
-          <span class="name">全局设置</span>
+          <span class="name">{{ $t("components.settings.globalSettings") }}</span>
         </div>
         <div class="set-scrollable">
           <Set />
@@ -83,24 +91,26 @@
 
 <script setup lang="ts">
 import { CloseOne, SettingTwo, GithubOne, AddOne, Bug, FileEditingOne } from "@icon-park/vue-next";
-import { Speech, stopSpeech, SpeechLocal } from "@/utils/speech";
+import { stopSpeech, SpeechLocal } from "@/utils/speech";
 import { mainStore } from "@/store";
 import Set from "@/components/Set.vue";
 import config from "@/../package.json";
 
+import { useI18n } from "vue-i18n";
+
 const store = mainStore();
-const closeShow = ref(false);
+const { t } = useI18n();
 let chuover = 0;
 
 // 站点链接
 const siteUrl = computed(() => {
-  const url = envConfig.VITE_SITE_URL;
+  const url = import.meta.env.VITE_SITE_URL;
   if (!url) return "imsyy.top".split(".");
   let urlFormat = url;
   // 判断协议前缀
   urlFormat = urlFormat.replace(/^(https?:\/\/)/, "");
-  const domainOnly = urlFormat.split('/')[0];
-  const hostname = domainOnly.split(':')[0];
+  const domainOnly = urlFormat.split("/")[0];
+  const hostname = domainOnly.split(":")[0];
   return hostname.split(".");
 });
 
@@ -123,27 +133,23 @@ const toggleVer = () => {
   if (chuover > 4) {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: `怎么还在戳哇喂！有那么神秘嘛...？`,
+      message: t("views.moreSet.pokeMore"),
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("戳戳版本.mp3");
-    };
+    }
     store.setV = true;
   } else {
     ElMessage({
       dangerouslyUseHTMLString: true,
-      message: `诶？是在找...什么神秘的东西嘛？`,
+      message: t("views.moreSet.poke"),
     });
     if (store.webSpeech) {
       stopSpeech();
-      const voice = envConfig.VITE_TTS_Voice;
-      const vstyle = envConfig.VITE_TTS_Style;
       SpeechLocal("戳版本.mp3");
-    };
-  };
+    }
+  }
 };
 
 // 跳转源代码仓库
@@ -171,13 +177,20 @@ const jumpTo = (url) => {
     right: 14px;
     width: 28px;
     height: 28px;
+    cursor: pointer;
+    opacity: 0.85;
+    z-index: 10;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
 
     &:hover {
-      transform: scale(1.2);
+      transform: scale(1.15);
+      opacity: 1;
     }
 
     &:active {
-      transform: scale(1);
+      transform: scale(0.95);
     }
   }
 
@@ -337,13 +350,20 @@ const jumpTo = (url) => {
     right: 14px;
     width: 28px;
     height: 28px;
+    cursor: pointer;
+    opacity: 0.85;
+    z-index: 10;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
 
     &:hover {
-      transform: scale(1.2);
+      transform: scale(1.15);
+      opacity: 1;
     }
 
     &:active {
-      transform: scale(1);
+      transform: scale(0.95);
     }
   }
 

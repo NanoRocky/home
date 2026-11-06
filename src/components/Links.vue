@@ -4,25 +4,41 @@
       <Icon size="20" class="iconl">
         <Link />
       </Icon>
-      <span class="title text-truncate-ellipsis" v-if="store.mobileOpenState"
-        @click="store.setOpenState = !store.setOpenState">网站列表</span>
-      <span class="title" v-else>网站列表</span>
+      <span
+        class="title text-truncate-ellipsis"
+        v-if="store.mobileOpenState"
+        @click="store.setOpenState = !store.setOpenState"
+        >{{ $t("components.links.title") }}</span
+      >
+      <span class="title" v-else>{{ $t("components.links.title") }}</span>
     </div>
     <!-- 网站列表 -->
-    <Swiper v-if="siteLinks[0]" :modules="[Pagination, Mousewheel]" :slides-per-view="1" :space-between="40"
+    <Swiper
+      v-if="siteLinks[0]"
+      :modules="[Pagination, Mousewheel]"
+      :slides-per-view="1"
+      :space-between="40"
       :pagination="{
         el: '.swiper-pagination',
         clickable: true,
         bulletElement: 'div',
-      }" :mousewheel="true">
+      }"
+      :mousewheel="true"
+    >
       <SwiperSlide v-for="(site, siteIndex) in siteLinksList" :key="'site-' + siteIndex">
         <el-row class="link-all" :gutter="20">
           <el-col v-for="(item, index) in site" :span="8" :key="'item-' + index">
-            <div class="item cards" :style="index < 3 ? 'margin-bottom: 20px' : null" @click="jumpLink(item)">
+            <div
+              class="item cards"
+              :style="index < 3 ? 'margin-bottom: 20px' : null"
+              @click="jumpLink(item)"
+              @auxclick.stop="jumpLink(item, true)"
+              @mousedown="handleMouseDown"
+            >
               <Icon size="26">
                 <component :is="siteIcon[item.icon]" />
               </Icon>
-              <span class="name text-truncate-ellipsis">{{ item.name }}</span>
+              <span class="name text-truncate-ellipsis">{{ getSiteName(item) }}</span>
             </div>
           </el-col>
         </el-row>
@@ -34,29 +50,46 @@
 
 <script setup lang="ts">
 import { Icon } from "@vicons/utils";
+import { useI18n } from "vue-i18n";
 // 可前往 https://www.xicons.org 自行挑选并在此处引入
-import { Link, Blog, CompactDisc, Cloud, Compass, Book, Fire, LaptopCode } from "@vicons/fa"; // 注意使用正确的类别
+import Link from "@vicons/fa/es/Link.js";
+import Blog from "@vicons/fa/es/Blog.js";
+import CompactDisc from "@vicons/fa/es/CompactDisc.js";
+import Cloud from "@vicons/fa/es/Cloud.js";
+import Compass from "@vicons/fa/es/Compass.js";
+import Book from "@vicons/fa/es/Book.js";
+import Fire from "@vicons/fa/es/Fire.js";
+import LaptopCode from "@vicons/fa/es/LaptopCode.js";
+import Google from "@vicons/fa/es/Google.js";
+import DrawFilledModule from "@vicons/material/lib/DrawFilled.js";
 import { mainStore } from "@/store";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Mousewheel } from "swiper/modules";
 import siteLinks from "@/assets/siteLinks.json";
+import type { SiteLink as AppSiteLink } from "@/typings/app";
 
+const DrawFilled = DrawFilledModule.default || DrawFilledModule;
+const { locale } = useI18n();
 const store = mainStore();
 const siteLinksData = siteLinks as SiteLink[];
 declare const $openList: () => void;
 
-interface SiteLink {
-  icon: keyof typeof siteIcon;
-  name: string;
-  link: string;
-}
+type SiteLink = AppSiteLink<keyof typeof siteIcon>;
+
+// 获取当前语言下的站点名称
+const getSiteName = (item: SiteLink) => {
+  if (locale.value !== "zh-CN" && item.name_en?.trim()) {
+    return item.name_en;
+  }
+  return item.name;
+};
 
 // 计算网站链接
 const siteLinksList = computed(() => {
   const result: SiteLink[][] = [];
   for (let i = 0; i < siteLinksData.length; i += 6) {
     result.push(siteLinksData.slice(i, i + 6));
-  };
+  }
   return result;
 });
 
@@ -69,16 +102,68 @@ const siteIcon = {
   Book,
   Fire,
   LaptopCode,
+  Google,
+};
+
+const handleMouseDown = (e: MouseEvent) => {
+  if (e.button === 1) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
 };
 
 // 链接跳转
-const jumpLink = (data: SiteLink) => {
-  if (data.name === "音乐" && store.musicClick && store.musicIsOk) {
+const jumpLink = (data: SiteLink, isMiddleClick = false) => {
+  if (isMiddleClick) {
+    if (data.link) {
+      window.open(data.link, "_blank");
+    }
+    return;
+  } else if (
+    (data.name === "音乐" || data.name === "Music" || data.name === "音楽") &&
+    store.musicClick &&
+    store.musicIsOk &&
+    !store.boxOpenState &&
+    !store.setOpenState &&
+    !store.backgroundShow &&
+    !store.noteOpenState
+  ) {
     store.musicBoxOpenState = !store.musicBoxOpenState;
+    return;
+  } else if (
+    (data.name === "搜索" || data.name === "Search" || data.name === "検索") &&
+    !store.mobileOpenState &&
+    !store.boxOpenState &&
+    !store.musicBoxOpenState &&
+    !store.setOpenState &&
+    !store.mobileFuncState &&
+    !store.backgroundShow &&
+    !store.noteOpenState &&
+    (store.innerWidth == null || store.innerWidth > 720)
+  ) {
+    store.searchOpenState = !store.searchOpenState;
+    return;
+  } else if (
+    (data.name === "笔记" ||
+      data.name === "Note" ||
+      data.name === "Notes" ||
+      data.name === "便签" ||
+      data.name === "ノート") &&
+    !store.mobileOpenState &&
+    !store.boxOpenState &&
+    !store.musicBoxOpenState &&
+    !store.setOpenState &&
+    !store.mobileFuncState &&
+    !store.backgroundShow &&
+    (store.innerWidth == null || store.innerWidth > 720)
+  ) {
+    if (store.searchOpenState) store.searchOpenState = false;
+    store.noteOpenState = !store.noteOpenState;
     return;
   } else {
     window.open(data.link, "_blank");
-  };
+    return;
+  }
 };
 </script>
 
