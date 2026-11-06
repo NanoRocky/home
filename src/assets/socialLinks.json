@@ -1,38 +1,50 @@
 [
   {
     "name": "Github",
+    "name_en": "GitHub",
     "icon": "/images/icon/github.png",
     "tip": "去 Github 看看",
+    "tip_en": "Visit my GitHub",
     "url": "https://github.com/imsyy"
   },
   {
     "name": "BiliBili",
+    "name_en": "BiliBili",
     "icon": "/images/icon/bilibili.png",
     "tip": "(゜-゜)つロ 干杯 ~",
+    "tip_en": "(゜-゜)つロ Cheers ~",
     "url": "https://space.bilibili.com/98544142"
   },
   {
     "name": "QQ",
+    "name_en": "QQ",
     "icon": "/images/icon/qq.png",
     "tip": "有什么事吗",
+    "tip_en": "What's up?",
     "url": "https://res.abeim.cn/api/qq/?qq=1539250352"
   },
   {
     "name": "Email",
+    "name_en": "Email",
     "icon": "/images/icon/email.png",
     "tip": "来封 Email ~",
+    "tip_en": "Send an email ~",
     "url": "mailto:one@imsyy.top"
   },
   {
     "name": "Twitter",
+    "name_en": "Twitter",
     "icon": "/images/icon/twitter.png",
     "tip": "你懂的 ~",
+    "tip_en": "You know ~",
     "url": "https://x.com/iimmsyy"
   },
   {
     "name": "Telegram",
+    "name_en": "Telegram",
     "icon": "/images/icon/telegram.png",
     "tip": "你懂的 ~",
+    "tip_en": "You know ~",
     "url": "https://t.me/bottom_user"
   }
 ]

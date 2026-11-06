@@ -2,46 +2,55 @@
   {
     "icon": "CompactDisc",
     "name": "音乐",
+    "name_en": "Music",
     "link": "https://music.imsyy.top/"
   },
   {
     "icon": "Google",
     "name": "搜索",
+    "name_en": "Search",
     "link": "https://www.google.com/"
   },
   {
     "icon": "Book",
     "name": "笔记",
+    "name_en": "Notes",
     "link": ""
   },
   {
     "icon": "Blog",
     "name": "博客",
+    "name_en": "Blog",
     "link": "https://blog.imsyy.top/"
   },
   {
     "icon": "Cloud",
     "name": "网盘",
+    "name_en": "Cloud",
     "link": "https://pan.imsyy.top/"
   },
   {
     "icon": "Compass",
     "name": "起始页",
+    "name_en": "Start",
     "link": "https://nav.imsyy.top/"
   },
   {
     "icon": "Book",
     "name": "网址集",
+    "name_en": "Sites",
     "link": "https://web.imsyy.top/"
   },
   {
     "icon": "Fire",
     "name": "今日热榜",
+    "name_en": "Trends",
     "link": "https://hot.imsyy.top/"
   },
   {
     "icon": "LaptopCode",
     "name": "站点监测",
+    "name_en": "Status",
     "link": "https://status.imsyy.top/"
   }
 ]
