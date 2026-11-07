@@ -70,6 +70,7 @@ import VideogameAssetFilled from "@vicons/material/es/VideogameAssetFilled.js";
 import DrawFilledModule from "@vicons/material/lib/DrawFilled.js";
 import IosBasketball from "@vicons/ionicons4/es/IosBasketball.js";
 import GameController from "@vicons/ionicons5/es/GameController.js";
+import StarLineHorizontal316Regular from "@vicons/fluent/es/StarLineHorizontal316Regular.js";
 import { mainStore } from "@/store";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination, Mousewheel } from "swiper/modules";
@@ -119,6 +120,7 @@ const siteIcon = {
   IosBasketball,
   VideogameAssetFilled,
   GameController,
+  StarLineHorizontal316Regular,
   DrawFilled,
 };
 
