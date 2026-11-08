@@ -37,11 +37,11 @@ export default ({ mode }: { mode: string }): UserConfig => {
             AutoImport({
                 imports: ["vue"],
                 resolvers: [ElementPlusResolver()],
-                dts: "src/typings/auto-imports.d.ts",
+                dts: "/src/typings/auto-imports.d.ts",
             }),
             Components({
                 resolvers: [ElementPlusResolver()],
-                dts: "src/typings/components.d.ts",
+                dts: "/src/typings/components.d.ts",
             }),
             VitePWA({
                 registerType: "autoUpdate",
