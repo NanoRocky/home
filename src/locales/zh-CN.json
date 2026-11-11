@@ -138,7 +138,8 @@
       "pilferLrcFetchFailed": "偷取源歌词获取失败: {status}",
       "pilferAlignFallback": "本源歌词处于损坏或无有效歌词状态，对齐失败后启用兜底。",
       "pilferProcessError": "[DWRC-Pilfer] 偷歌词处理异常:",
-      "maxLoadErrorsReached": "连续 {count} 次加载音乐失败，已停止自动切歌加载"
+      "maxLoadErrorsReached": "连续 {count} 次加载音乐失败，已停止自动切歌加载",
+      "signAudioUrlFailed": "音频 URL 签名失败:"
     },
     "notes": {
       "parseFailed": "解析便签数据失败，已回退至初始便签：",

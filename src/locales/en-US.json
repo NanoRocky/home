@@ -138,7 +138,8 @@
       "pilferLrcFetchFailed": "Pilfer lrc fetch failed: {status}",
       "pilferAlignFallback": "Original lyrics invalid, enabling fallback after alignment failure.",
       "pilferProcessError": "[DWRC-Pilfer] Error processing pilfered lyrics:",
-      "maxLoadErrorsReached": "Failed to load music {count} times consecutively, stopped auto-skipping"
+      "maxLoadErrorsReached": "Failed to load music {count} times consecutively, stopped auto-skipping",
+      "signAudioUrlFailed": "Failed to sign audio URL:"
     },
     "notes": {
       "parseFailed": "Failed to parse notes data, falling back to initial note:",
@@ -387,7 +388,16 @@
       },
       "windPowerUnit": " Lv",
       "wind": " Wind",
-      "windDirections": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
+      "windDirections": [
+        "N",
+        "NE",
+        "E",
+        "SE",
+        "S",
+        "SW",
+        "W",
+        "NW"
+      ],
       "beaufortScale": [
         "Calm",
         "Light Air",

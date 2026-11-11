@@ -152,7 +152,7 @@ const signAudioUrl = async (rawUrl?: string): Promise<string | null> => {
     }
     return await gasA(rawUrl, skey);
   } catch (error) {
-    console.error("音频 URL 签名失败:", error);
+    console.error(t("console.player.signAudioUrlFailed"), error);
     return null;
   }
 };
