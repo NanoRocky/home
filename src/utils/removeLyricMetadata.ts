@@ -144,6 +144,15 @@ export async function removeLyricMetadata(
       return "EMPTY";
     }
 
+    // 独立成行的声部提示（如 "合："、"男："、"女："、"合唱：" 等）视为正文，不予抹除
+    if (
+      /^[（(\[{【《「〖『]?\s*(?:男|女|合|[男女合]声|[男女合]唱|全员|众人|群星|独白|对白|旁白|念白|合奏)\s*[:：]?\s*[）)\]}】》」〗』]?\s*[:：]?$/i.test(
+        pureText,
+      )
+    ) {
+      return "REAL";
+    }
+
     // 全闭合书名号/括号包裹，例如《晴天》、[制作名单]
     if (/^[《「【〖『].+[》」】〗』]$/.test(pureText)) {
       logMeta("console.metadata.matchBracket", { text: pureText });
@@ -159,39 +168,27 @@ export async function removeLyricMetadata(
       }
     }
 
-    const colonMatch = pureText.match(/^(.+?)[:：]\s*$/);
-    if (colonMatch) {
-      const prefix = colonMatch[1].replace(/^[（(\[{【]|[）)\]}】]$/g, "").trim();
-      const cleanPrefix = prefix.replace(/\s+/g, "").toLowerCase();
-
-      if (
-        artist &&
-        (cleanPrefix === artist || artist.includes(cleanPrefix) || cleanPrefix.includes(artist))
-      ) {
-        logMeta("console.metadata.matchArtistCue", { text: pureText });
-        return "STRICT_META";
-      }
-
-      if (
-        /^(?:男|女|合|[男女合]声|[男女合]唱|全员|众人|群星|独白|对白|旁白|念白|合奏)$/i.test(
-          cleanPrefix,
-        )
-      ) {
-        logMeta("console.metadata.matchVoicePartCue", { text: pureText });
-        return "STRICT_META";
-      }
-
-      if (cleanPrefix.length >= 1 && cleanPrefix.length <= 10) {
-        logMeta("console.metadata.matchNameCue", { text: pureText });
-        return "STRICT_META";
-      }
-    }
-
-    // 正则规则匹配
+    // 正则规则匹配（命中规则的无论是否带冒号均为元数据，如 "MV团队："、"宣传营销：" 等）
     for (const rule of rules) {
       if (rule.test(pureText)) {
         logMeta("console.metadata.matchRule", { text: pureText });
         return "STRICT_META";
+      }
+    }
+
+    // 独立成行的歌手/角色名冒号提示（如 "周深："、"周杰伦 / 费玉清：" 等）视为正文
+    const colonMatch = pureText.match(/^(.+?)[:：][）)\]}】\s]*$/);
+    if (colonMatch) {
+      const prefix = colonMatch[1].replace(/^[（(\[{【《「〖『]|[）)\]}】》」〗』]$/g, "").trim();
+      const cleanPrefix = prefix.replace(/\s+/g, "").toLowerCase();
+
+      if (
+        cleanPrefix &&
+        !/^(?:制作名单|演职员表|演员表|配音表|角色表|cast|credits?|特别鸣谢|鸣谢)$/i.test(
+          cleanPrefix,
+        )
+      ) {
+        return "REAL";
       }
     }
 

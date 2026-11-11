@@ -6,14 +6,37 @@ const punctuationAndSpace =
   /[\s!"#$%&'()*+,\-.\/:;<=>?@[\]^_`{|}~·！？。，、；：“”‘’（）【】《》〈〉—…～]/g;
 
 const stripTimeTags = (line: string): string =>
-  line.replace(/\[[^\]]*\]/g, "").replace(/\(\d+(?:,\d+)*\)/g, "");
+  line
+    .replace(/\[[^\]]*\]/g, "")
+    .replace(/\(\d+(?:,\d+)*\)/g, "")
+    .replace(/<-?\d[\d:.,\s-]*>/g, "")
+    .replace(/\{[^}]*\}/g, "");
 
-const colonPrefixRegex = /^.*?[:：]/;
+const colonPrefixRegex = /^(?:.*?(?:(?<!\d):|:(?!\d)|：))+/;
+
+const standaloneVoiceCueRegex =
+  /^[（(\[{【《「〖『]?\s*(?:男|女|合|[男女合]声|[男女合]唱|全员|众人|群星|独白|对白|旁白|念白|合奏)\s*[:：]?\s*[）)\]}】》」〗』]?\s*[:：]?$/i;
+
+const inlineBracketVoiceCueRegex =
+  /^[（(\[{【]\s*(?:男|女|合|[男女合]声|[男女合]唱|全员|众人|群星|独白|对白|旁白|念白|合奏)\s*[）)\]}】]\s*/i;
 
 const normalizeLyricLine = (line: string): { normalized: string; hasStrippedPrefix: boolean } => {
-  const withoutTags = stripTimeTags(line);
-  const hasStrippedPrefix = colonPrefixRegex.test(withoutTags);
-  const stripped = withoutTags.replace(colonPrefixRegex, "").normalize("NFKC").toLowerCase();
+  const withoutTags = stripTimeTags(line).trim();
+  if (!withoutTags || standaloneVoiceCueRegex.test(withoutTags)) {
+    return { normalized: "", hasStrippedPrefix: true };
+  }
+  const hasColonPrefix = colonPrefixRegex.test(withoutTags);
+  const hasBracketPrefix = !hasColonPrefix && inlineBracketVoiceCueRegex.test(withoutTags);
+  const hasStrippedPrefix = hasColonPrefix || hasBracketPrefix;
+  const stripped = (
+    hasColonPrefix
+      ? withoutTags.replace(colonPrefixRegex, "")
+      : hasBracketPrefix
+        ? withoutTags.replace(inlineBracketVoiceCueRegex, "")
+        : withoutTags
+  )
+    .normalize("NFKC")
+    .toLowerCase();
   return {
     normalized: stripped.replace(punctuationAndSpace, ""),
     hasStrippedPrefix,
@@ -249,9 +272,11 @@ export const isLrcContentEmpty = (lrcText?: string | null): boolean => {
   const lines = lrcText.split(/\r?\n/);
   for (const line of lines) {
     if (timeRegex.test(line)) {
-      const textOnly = line.replace(/\[[^\]]*\]/g, "").trim();
+      const textOnly = stripTimeTags(line).trim();
       if (
         textOnly &&
+        !standaloneVoiceCueRegex.test(textOnly) &&
+        !/^.+?[:：][）)\]}】\s]*$/.test(textOnly) &&
         !/^(作[词曲]|编曲|监制|歌手|制作人|录音|混音|和声|合声|OP|SP|UP|发行|出品|统筹|企划|推广|封面)[:：]/.test(
           textOnly,
         ) &&
