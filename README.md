@@ -123,17 +123,7 @@ pnpm build
 
 > 构建完成后，静态资源将生成在 **`dist`** 目录中，将 `dist` 目录下的全部文件上传至 Nginx / 静态服务器即可。
 
-### 2. GitHub Actions 自动构建
-
-如果本地构建环境受限，可使用仓库内置的 `GitHub Actions` 自动打包（**为避免在公开仓库中直接提交私有配置导致 API 密钥泄露，强烈建议先将仓库转为私有**）：
-
-1. 点击右上角 **Fork** 本仓库后，进入您仓库的 `Settings` ➔ `General` ➔ 页面底部 `Danger Zone`，依次执行 **Leave fork network（分离复刻网络）** 与 **Change repository visibility（将仓库可见性设为 Private 私密）**。
-2. 进入仓库的 `Actions` 页面并点击开启工作流：
-   ![步骤 1](/screenshots/step1.jpg)
-3. 修改 `.gitignore`（移除 `.env.local` 忽略项），复制 `/.env` 新建 `/.env.local` 并填写自定义配置。提交代码后会自动触发构建工作流；构建完成后，在工作流页面底部下载生成的静态资源压缩包并上传至服务器即可：
-   ![步骤 2](/screenshots/step2.jpg)
-
-### 3. Vercel / Cloudflare Pages 等平台一键部署
+### 2. Vercel / Cloudflare Pages 等平台一键部署
 
 #### 方式一：通过平台环境变量配置（强烈推荐）
 
@@ -151,6 +141,19 @@ pnpm build
 3. 修改仓库中的 `.gitignore`（移除 `.env.local` 忽略项），复制 `/.env` 新建 `/.env.local` 完成配置并提交。
 4. 在 Vercel / Cloudflare Pages 等平台中导入该私有仓库并点击 `Deploy` 完成部署。
 
+</details>
+
+### 3. GitHub Actions 自动构建
+
+<details>
+<summary>如果本地构建环境受限，可使用仓库内置的 `GitHub Actions` 自动打包：</summary>
+（**为避免在公开仓库中直接提交私有配置导致 API 密钥泄露，强烈建议先将仓库转为私有**）
+
+1. 点击右上角 **Fork** 本仓库后，进入您仓库的 `Settings` ➔ `General` ➔ 页面底部 `Danger Zone`，依次执行 **Leave fork network（分离复刻网络）** 与 **Change repository visibility（将仓库可见性设为 Private 私密）**。
+2. 进入仓库的 `Actions` 页面并点击开启工作流：
+   ![步骤 1](/screenshots/step1.jpg)
+3. 修改 `.gitignore`（移除 `.env.local` 忽略项），复制 `/.env` 新建 `/.env.local` 并填写自定义配置。提交代码后会自动触发构建工作流；构建完成后，在工作流页面底部下载生成的静态资源压缩包并上传至服务器即可：
+   ![步骤 2](/screenshots/step2.jpg)
 </details>
 
 ### 4. Docker 部署

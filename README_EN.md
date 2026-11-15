@@ -125,17 +125,7 @@ pnpm build
 
 > Once the build finishes, static assets will be generated in the **`dist`** directory. Upload all files inside `dist` to Nginx or any static web server.
 
-### 2. Automated Build via GitHub Actions
-
-If your local environment cannot run the build, you can use the built-in `GitHub Actions` workflow for automated packaging (**to avoid exposing private API keys in a public repository, detaching the fork and making the repository private first is strongly recommended**):
-
-1. Click **Fork** in the top-right corner, then go to your repository's `Settings` ➔ `General` ➔ `Danger Zone` at the bottom: first click **Leave fork network**, and then click **Change repository visibility** to set the repository to **Private**.
-2. Navigate to the `Actions` tab of your repository and enable workflows:
-   ![Step 1](/screenshots/step1.jpg)
-3. Update `.gitignore` (remove `.env.local` from the ignore list), copy `/.env` to create `/.env.local`, and fill in your custom settings. Committing your changes will automatically trigger the build workflow; once finished, download the generated static bundle archive at the bottom of the workflow summary page and upload it to your server:
-   ![Step 2](/screenshots/step2.jpg)
-
-### 3. One-Click Deployment (Vercel, Cloudflare Pages, etc.)
+### 2. One-Click Deployment (Vercel, Cloudflare Pages, etc.)
 
 #### Option 1: Configure via Platform Environment Variables (Strongly Recommended)
 
@@ -153,6 +143,19 @@ If you prefer managing settings in a configuration file, make sure to convert yo
 3. Edit `.gitignore` in your repository (remove `.env.local`), copy `/.env` to create `/.env.local` with your settings, and commit.
 4. Import your private repository into Vercel, Cloudflare Pages, etc., and click `Deploy` to finish deployment.
 
+</details>
+
+### 3. Automated Build via GitHub Actions
+
+<details>
+<summary>If your local environment cannot run the build, you can use the built-in `GitHub Actions` workflow for automated packaging:</summary>
+(**to avoid exposing private API keys in a public repository, detaching the fork and making the repository private first is strongly recommended**)
+
+1. Click **Fork** in the top-right corner, then go to your repository's `Settings` ➔ `General` ➔ `Danger Zone` at the bottom: first click **Leave fork network**, and then click **Change repository visibility** to set the repository to **Private**.
+2. Navigate to the `Actions` tab of your repository and enable workflows:
+   ![Step 1](/screenshots/step1.jpg)
+3. Update `.gitignore` (remove `.env.local` from the ignore list), copy `/.env` to create `/.env.local`, and fill in your custom settings. Committing your changes will automatically trigger the build workflow; once finished, download the generated static bundle archive at the bottom of the workflow summary page and upload it to your server:
+   ![Step 2](/screenshots/step2.jpg)
 </details>
 
 ### 4. Docker Deployment
