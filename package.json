@@ -20,7 +20,7 @@
     "format": "prettier --write src/",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
     "type-check": "vue-tsc --noEmit",
-    "package-update": "npx npm-check-updates -u && pnpm update --latest --save-exact"
+    "package-update": "npm-check-updates -u && pnpm update --latest --save-exact"
   },
   "dependencies": {
     "@applemusic-like-lyrics/lyric": "^1.1.0",
