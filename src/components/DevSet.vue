@@ -80,8 +80,7 @@
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.wallpaper.advanced')" name="4">
         <div class="item">
-          <span class="text">{{ $t("components.settings.wallpaper.autoSwitch") }}</span
-          ><br /><br />
+          <span class="text">{{ $t("components.settings.wallpaper.autoSwitch") }}</span><br /><br />
           <el-radio-group v-model="autoBGSwitchInterval" size="small" text-color="#FFFFFF">
             <el-radio :value="0" border>{{ $t("common.status.disable") }}</el-radio>
             <el-radio :value="1" border>15 {{ $t("common.unit.sec") }}</el-radio>
