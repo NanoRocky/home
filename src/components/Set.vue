@@ -21,8 +21,7 @@
       </el-collapse-item>
       <el-collapse-item :title="$t('components.settings.tabs.themeSettings')" name="2">
         <div class="item">
-          <span class="text">{{ $t("components.settings.theme.text") }}</span
-          ><br /><br />
+          <span class="text">{{ $t("components.settings.theme.text") }}</span><br /><br />
           <el-radio-group v-model="theme" size="small" text-color="#FFFFFF">
             <el-radio value="system" border>{{ $t("components.settings.theme.system") }}</el-radio>
             <el-radio value="time" border>{{ $t("components.settings.theme.time") }}</el-radio>

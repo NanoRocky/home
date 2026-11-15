@@ -1,10 +1,32 @@
 <template>
-  <APlayer v-if="playList[0]" ref="player" :audio="playList" :autoplay="store.playerAutoplay" :theme="theme"
-    :autoSwitch="false" :loop="store.playerLoop" :order="store.playerOrder" :volume="volume" :lrcShow="true"
-    :lrcType="0" :preload="playerPreload" :listFolded="listFolded" :listMaxHeight="listMaxHeight" :noticeSwitch="false"
-    @play="onPlay" @pause="onPause" @loadstart="onLoadStart" @timeupdate="onTimeUp" @error="loadMusicError"
-    @canplay="onCanplay" @waiting="onWaiting" @listswitch="onListSwitch" @seeked="() => updatePositionState()"
-    @durationchange="() => updatePositionState()" @loadedmetadata="() => updatePositionState()" />
+  <APlayer
+    v-if="playList[0]"
+    ref="player"
+    :audio="playList"
+    :autoplay="store.playerAutoplay"
+    :theme="theme"
+    :autoSwitch="false"
+    :loop="store.playerLoop"
+    :order="store.playerOrder"
+    :volume="volume"
+    :lrcShow="true"
+    :lrcType="0"
+    :preload="playerPreload"
+    :listFolded="listFolded"
+    :listMaxHeight="listMaxHeight"
+    :noticeSwitch="false"
+    @play="onPlay"
+    @pause="onPause"
+    @loadstart="onLoadStart"
+    @timeupdate="onTimeUp"
+    @error="loadMusicError"
+    @canplay="onCanplay"
+    @waiting="onWaiting"
+    @listswitch="onListSwitch"
+    @seeked="() => updatePositionState()"
+    @durationchange="() => updatePositionState()"
+    @loadedmetadata="() => updatePositionState()"
+  />
 </template>
 
 <script setup lang="ts">
@@ -126,7 +148,7 @@ const signAudioUrl = async (rawUrl?: string): Promise<string | null> => {
         if (urlObj.origin !== songApiOrigin) {
           return null;
         }
-      } catch { }
+      } catch {}
     }
     return await gasA(rawUrl, skey);
   } catch (error) {
@@ -449,7 +471,7 @@ onMounted(() => {
         if (playerInstance.audioRef && typeof playerInstance.error === "function") {
           playerInstance.audioRef.removeEventListener("error", playerInstance.error);
         }
-        playerInstance.error = () => { };
+        playerInstance.error = () => {};
 
         const originalPlayerPlay = playerInstance.play;
         playerInstance.play = function (this: any) {
@@ -500,7 +522,7 @@ onMounted(() => {
               }
               originalSetAudio.call(this, audioItem);
               if (this.audioStatus?.playStatus) {
-                this.audioRef?.play()?.catch(() => { });
+                this.audioRef?.play()?.catch(() => {});
               }
             };
           }
@@ -678,7 +700,7 @@ onMounted(() => {
               seektime(details.seekTime);
             }
           });
-        } catch { }
+        } catch {}
       }
       console.log(t("console.player.musicLoaded"));
     } catch (err) {
@@ -738,11 +760,11 @@ const onPlay = () => {
         album: currentTrack.album || store.getPlayerData.album || "",
         artwork: currentTrack.cover
           ? [
-            {
-              src: currentTrack.cover,
-              sizes: "512x512",
-            },
-          ]
+              {
+                src: currentTrack.cover,
+                sizes: "512x512",
+              },
+            ]
           : [],
       });
       navigator.mediaSession.playbackState = "playing";
@@ -756,10 +778,10 @@ const onPlay = () => {
         const vstyle = import.meta.env.VITE_TTS_Style;
         Speech(
           t("components.music.playing") +
-          store.getPlayerData.artist +
-          t("components.music.ofSong") +
-          store.getPlayerData.name +
-          "》。",
+            store.getPlayerData.artist +
+            t("components.music.ofSong") +
+            store.getPlayerData.name +
+            "》。",
           voice,
           vstyle,
         );
@@ -846,9 +868,9 @@ const seektime = (value: number) => {
   if (!player.value) return;
   const dur =
     player.value.audioRef &&
-      !isNaN(player.value.audioRef.duration) &&
-      isFinite(player.value.audioRef.duration) &&
-      player.value.audioRef.duration > 0
+    !isNaN(player.value.audioRef.duration) &&
+    isFinite(player.value.audioRef.duration) &&
+    player.value.audioRef.duration > 0
       ? player.value.audioRef.duration
       : player.value.audioStatus?.duration || store.playerDuration || 0;
 
@@ -1018,7 +1040,7 @@ const checkFallbackLyricSource = async (
     try {
       await currentAudio._rawLrcPromise;
       await nextTick();
-    } catch { }
+    } catch {}
     if (isStale()) return;
     lyrics = player.value?.aplayer?.lyrics?.[expectedIndex];
   }
@@ -1034,7 +1056,7 @@ const checkFallbackLyricSource = async (
           rawText = await resp.text();
           if (currentAudio) currentAudio._rawLrc = rawText;
         }
-      } catch { }
+      } catch {}
       if (isStale()) return;
     }
 
@@ -1274,7 +1296,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number, token = dwrcLoa
             if (!sourceLrcText && currentAudio?._rawLrcPromise) {
               try {
                 sourceLrcText = await currentAudio._rawLrcPromise;
-              } catch { }
+              } catch {}
             }
             if (!sourceLrcText && currentAudio?.lrc) {
               try {
@@ -1283,7 +1305,7 @@ const fetchDWRC = async (dwrcUrl: string, expectedIndex: number, token = dwrcLoa
                   sourceLrcText = await sourceLrcResp.text();
                   if (currentAudio) currentAudio._rawLrc = sourceLrcText;
                 }
-              } catch { }
+              } catch {}
             }
 
             if (isStale()) return;
@@ -1489,7 +1511,7 @@ function onLoadStart() {
       try {
         const urlObj = new URL(currentAudio.lrc);
         songServer = urlObj.searchParams.get("server");
-      } catch { }
+      } catch {}
       if (buildDwrcUrl(currentAudio.lrc)) {
         const currentName = currentAudio?.name?.trim() || store.getPlayerData.name || "";
         const currentArtist = currentAudio?.artist?.trim() || store.getPlayerData.artist || "";
@@ -1532,9 +1554,9 @@ const onTimeUp = () => {
   store.playerCurrentTime = newTime;
   const dur =
     player.value.audioRef &&
-      !isNaN(player.value.audioRef.duration) &&
-      isFinite(player.value.audioRef.duration) &&
-      player.value.audioRef.duration > 0
+    !isNaN(player.value.audioRef.duration) &&
+    isFinite(player.value.audioRef.duration) &&
+    player.value.audioRef.duration > 0
       ? player.value.audioRef.duration
       : player.value.audioStatus.duration;
   store.playerDuration = dur;
@@ -1563,9 +1585,9 @@ function updatePositionState(overridePos?: number) {
   }
   const dur =
     player.value.audioRef &&
-      !isNaN(player.value.audioRef.duration) &&
-      isFinite(player.value.audioRef.duration) &&
-      player.value.audioRef.duration > 0
+    !isNaN(player.value.audioRef.duration) &&
+    isFinite(player.value.audioRef.duration) &&
+    player.value.audioRef.duration > 0
       ? player.value.audioRef.duration
       : player.value.audioStatus?.duration || store.playerDuration || 0;
 
@@ -1573,8 +1595,8 @@ function updatePositionState(overridePos?: number) {
     overridePos !== undefined
       ? overridePos
       : player.value.audioRef &&
-        !isNaN(player.value.audioRef.currentTime) &&
-        isFinite(player.value.audioRef.currentTime)
+          !isNaN(player.value.audioRef.currentTime) &&
+          isFinite(player.value.audioRef.currentTime)
         ? player.value.audioRef.currentTime
         : player.value.audioStatus?.playedTime || 0;
 
@@ -1889,7 +1911,7 @@ onBeforeUnmount(() => {
   showDWRCRunning = 0;
   try {
     player.value?.audioRef?.pause();
-  } catch { }
+  } catch {}
 });
 
 // 暴露子组件方法
@@ -1933,14 +1955,18 @@ defineExpose({ playToggle, changeVolume, changeSong, toggleList });
         text-align: left;
         margin: 7px 0 6px 6px;
         height: 44px;
-        -webkit-mask: linear-gradient(#fff 15%,
-            #fff 85%,
-            hsla(0deg, 0%, 100%, 0.6) 90%,
-            hsla(0deg, 0%, 100%, 0));
-        mask: linear-gradient(#fff 15%,
-            #fff 85%,
-            hsla(0deg, 0%, 100%, 0.6) 90%,
-            hsla(0deg, 0%, 100%, 0));
+        -webkit-mask: linear-gradient(
+          #fff 15%,
+          #fff 85%,
+          hsla(0deg, 0%, 100%, 0.6) 90%,
+          hsla(0deg, 0%, 100%, 0)
+        );
+        mask: linear-gradient(
+          #fff 15%,
+          #fff 85%,
+          hsla(0deg, 0%, 100%, 0.6) 90%,
+          hsla(0deg, 0%, 100%, 0)
+        );
 
         &::before,
         &::after {

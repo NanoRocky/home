@@ -85,12 +85,12 @@
 >   injectRegister: false,
 >   ```
 
-### 1. 配置文件说明（重要）
+### 0. 配置文件说明（重要）
 
 仓库根目录自带一份默认配置模板 `/.env`（请勿删除，否则会触发文件损坏保护提示）。  
 在进行自定义配置时，**请将 `/.env` 复制一份并重命名为 `/.env.local`**，然后在 `/.env.local` 中修改您的自定义配置。
 
-### 2. 本地 / 手动构建部署
+### 1. 本地 / 手动构建部署
 
 1. **准备运行环境**（详见 `package.json` 中的 `engines` 约束）：
    - [Git](https://git-scm.com/)
@@ -123,32 +123,65 @@ pnpm build
 
 > 构建完成后，静态资源将生成在 **`dist`** 目录中，将 `dist` 目录下的全部文件上传至 Nginx / 静态服务器即可。
 
-### 3. GitHub Actions 自动构建
+### 2. GitHub Actions 自动构建
 
-如果本地构建环境受限，可使用仓库内置的 `GitHub Actions` 自动打包：
+如果本地构建环境受限，可使用仓库内置的 `GitHub Actions` 自动打包（**为避免在公开仓库中直接提交私有配置导致 API 密钥泄露，强烈建议先将仓库转为私有**）：
 
-1. 点击右上角 **Fork** 本仓库后，进入您仓库的 `Actions` 页面并点击开启工作流：
+1. 点击右上角 **Fork** 本仓库后，进入您仓库的 `Settings` ➔ `General` ➔ 页面底部 `Danger Zone`，依次执行 **Leave fork network（分离复刻网络）** 与 **Change repository visibility（将仓库可见性设为 Private 私密）**。
+2. 进入仓库的 `Actions` 页面并点击开启工作流：
    ![步骤 1](/screenshots/step1.jpg)
-2. 按需修改配置并提交代码后会自动触发构建工作流；构建完成后，在工作流页面底部下载生成的静态资源压缩包并上传至服务器即可：
+3. 修改 `.gitignore`（移除 `.env.local` 忽略项），复制 `/.env` 新建 `/.env.local` 并填写自定义配置。提交代码后会自动触发构建工作流；构建完成后，在工作流页面底部下载生成的静态资源压缩包并上传至服务器即可：
    ![步骤 2](/screenshots/step2.jpg)
+
+### 3. Vercel / Cloudflare Pages 等平台一键部署
+
+#### 方式一：通过平台环境变量配置（强烈推荐）
+
+1. 点击右上角 `Fork`，将本仓库复制到您的 `GitHub` 账号下。
+2. 在 Vercel / Cloudflare Pages 等平台中选择导入该仓库。
+3. 在导入配置页面的 **Environment Variables（环境变量 / 变量和密钥）** 中，对照 `/.env` 填写需要自定义的变量名与参数值，点击 `Deploy` 完成部署。
+
+<details>
+<summary><b>方式二：通过私有仓库 <code>.env.local</code> 文件配置（点击展开）</b></summary>
+
+如果您更习惯使用配置文件管理参数，请务必先将仓库设为私有以防密钥泄露：
+
+1. 点击右上角 `Fork`，将本仓库复制到您的 `GitHub` 账号下。
+2. 进入仓库 `Settings` ➔ `General` ➔ 底部 `Danger Zone`，先点击 **Leave fork network（分离复刻网络）**，再点击 **Change repository visibility** 将仓库设为 **Private（私密）**。
+3. 修改仓库中的 `.gitignore`（移除 `.env.local` 忽略项），复制 `/.env` 新建 `/.env.local` 完成配置并提交。
+4. 在 Vercel / Cloudflare Pages 等平台中导入该私有仓库并点击 `Deploy` 完成部署。
+
+</details>
 
 ### 4. Docker 部署
 
-项目默认监听 `12445` 端口（如需包含自定义配置，请先在构建上下文目录准备好 `.env.local`）：
+项目内置多阶段构建 `Dockerfile`（在构建阶段自动执行 `pnpm build` 打包静态产物，并通过 `http-server` 默认在容器内监听 `12445` 端口）。
+
+> [!NOTE]
+> 由于 Vite 环境变量在**编译打包阶段**注入到前端静态资源中，请务必在执行 `docker build` **之前**准备好 `.env.local` 及自定义配置（`docker run -e` 传入的运行时环境变量不会对已编译的前端生效）。
 
 ```bash
-# 构建镜像
+# 1. 克隆 EFU 分支源码并进入项目目录
+git clone -b EFU --single-branch https://github.com/NanoRocky/home.git
+cd home
+
+# 2. 复制生成本地配置文件，并按需修改 .env.local（及 src/assets/ 下的链接配置等）
+cp .env .env.local
+vim .env.local
+
+# 3. 构建 Docker 镜像（会自动将当前目录下的 .env.local 一并打包编译）
 docker build -t home .
 
-# 启动容器
-docker run -p 12445:12445 -d --name home home
+# 4. 启动容器（映射宿主机 12445 端口并开启开机/异常自动重启）
+docker run -d \
+  --name home \
+  --restart unless-stopped \
+  -p 12445:12445 \
+  home
 ```
 
-### 5. Vercel 等平台一键部署
-
-1. 点击右上角 `Fork`，将本仓库复制到您的 `GitHub` 账号下。
-2. 在导入项目部署前，可在您的私有仓库中新增 `.env.local`（需自行调整 `.gitignore`）或直接在平台环境变量中配置所需参数。
-3. 在 Vercel 中导入仓库并点击 `Deploy` 完成部署。
+- 启动后即可通过 `http://服务器IP:12445` 访问，生产环境建议配合 `Nginx` 反向代理至 `127.0.0.1:12445` 并配置 `HTTPS` 证书。
+- 后续如果修改了 `.env.local` 配置，重新执行 `docker build -t home .` 并重建容器即可更新。
 
 ---
 

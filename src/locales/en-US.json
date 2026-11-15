@@ -385,16 +385,7 @@
       },
       "windPowerUnit": " Lv",
       "wind": " Wind",
-      "windDirections": [
-        "N",
-        "NE",
-        "E",
-        "SE",
-        "S",
-        "SW",
-        "W",
-        "NW"
-      ],
+      "windDirections": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
       "beaufortScale": [
         "Calm",
         "Light Air",

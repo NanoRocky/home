@@ -87,12 +87,12 @@
 >   injectRegister: false,
 >   ```
 
-### 1. Configuration Files (Important)
+### 0. Configuration Files (Important)
 
 The repository root includes a default configuration template `/.env` (do **not** delete it, or file-integrity protection will be triggered).  
 When customizing your site, **make a copy of `/.env` named `/.env.local`**, and edit your custom settings inside `/.env.local`.
 
-### 2. Local / Manual Build & Deployment
+### 1. Local / Manual Build & Deployment
 
 1. **Prerequisites** (see `engines` constraints in `package.json`):
    - [Git](https://git-scm.com/)
@@ -125,32 +125,65 @@ pnpm build
 
 > Once the build finishes, static assets will be generated in the **`dist`** directory. Upload all files inside `dist` to Nginx or any static web server.
 
-### 3. Automated Build via GitHub Actions
+### 2. Automated Build via GitHub Actions
 
-If your local environment cannot run the build, you can use the built-in `GitHub Actions` workflow for automated packaging:
+If your local environment cannot run the build, you can use the built-in `GitHub Actions` workflow for automated packaging (**to avoid exposing private API keys in a public repository, detaching the fork and making the repository private first is strongly recommended**):
 
-1. Click **Fork** in the top-right corner, navigate to the `Actions` tab of your forked repository, and enable workflows:
+1. Click **Fork** in the top-right corner, then go to your repository's `Settings` ➔ `General` ➔ `Danger Zone` at the bottom: first click **Leave fork network**, and then click **Change repository visibility** to set the repository to **Private**.
+2. Navigate to the `Actions` tab of your repository and enable workflows:
    ![Step 1](/screenshots/step1.jpg)
-2. Commit your configuration changes to automatically trigger the build workflow. Once finished, download the generated static bundle archive at the bottom of the workflow summary page and upload it to your server:
+3. Update `.gitignore` (remove `.env.local` from the ignore list), copy `/.env` to create `/.env.local`, and fill in your custom settings. Committing your changes will automatically trigger the build workflow; once finished, download the generated static bundle archive at the bottom of the workflow summary page and upload it to your server:
    ![Step 2](/screenshots/step2.jpg)
+
+### 3. One-Click Deployment (Vercel, Cloudflare Pages, etc.)
+
+#### Option 1: Configure via Platform Environment Variables (Strongly Recommended)
+
+1. Click `Fork` in the top-right corner to copy this repository to your `GitHub` account.
+2. Import the forked repository in Vercel, Cloudflare Pages, or your preferred platform.
+3. In the platform's **Environment Variables** section during import, add the variables you wish to customize (referring to `/.env`), and click `Deploy` to finish deployment.
+
+<details>
+<summary><b>Option 2: Configure via <code>.env.local</code> in a Private Repository (Click to expand)</b></summary>
+
+If you prefer managing settings in a configuration file, make sure to convert your repository to private first to prevent key leaks:
+
+1. Click `Fork` in the top-right corner to copy this repository to your `GitHub` account.
+2. Go to `Settings` ➔ `General` ➔ `Danger Zone` at the bottom: first click **Leave fork network**, and then click **Change repository visibility** to set the repository to **Private**.
+3. Edit `.gitignore` in your repository (remove `.env.local`), copy `/.env` to create `/.env.local` with your settings, and commit.
+4. Import your private repository into Vercel, Cloudflare Pages, etc., and click `Deploy` to finish deployment.
+
+</details>
 
 ### 4. Docker Deployment
 
-The container listens on port `12445` by default (if you want custom settings included, prepare `.env.local` in the build context directory beforehand):
+The repository includes a multi-stage `Dockerfile` that compiles static assets during the build stage (`pnpm build`) and serves them via `http-server` on port `12445` inside the container.
+
+> [!NOTE]
+> Because Vite environment variables are baked into the frontend bundle **at build time**, please prepare `.env.local` and any custom configurations **before** running `docker build` (passing runtime variables via `docker run -e` will not affect already-compiled frontend assets).
 
 ```bash
-# Build image
+# 1. Clone the EFU branch and enter the project directory
+git clone -b EFU --single-branch https://github.com/NanoRocky/home.git
+cd home
+
+# 2. Create your local config file and edit .env.local (as well as src/assets/ link configs if needed)
+cp .env .env.local
+vim .env.local
+
+# 3. Build the Docker image (automatically includes .env.local from the build context)
 docker build -t home .
 
-# Start container
-docker run -p 12445:12445 -d --name home home
+# 4. Run the container (maps host port 12445 and enables auto-restart)
+docker run -d \
+  --name home \
+  --restart unless-stopped \
+  -p 12445:12445 \
+  home
 ```
 
-### 5. One-Click Deployment (Vercel, etc.)
-
-1. Click `Fork` in the top-right corner to copy this repository to your `GitHub` account.
-2. Before importing and deploying, you can either add `.env.local` in your private repository (adjust `.gitignore` accordingly) or configure the required parameters directly in the platform's Environment Variables settings.
-3. Import the repository into Vercel and click `Deploy` to finish deployment.
+- Once started, visit `http://SERVER_IP:12445`. For production use, placing a reverse proxy `Nginx` in front of `127.0.0.1:12445` with `HTTPS` enabled is recommended.
+- Whenever you update `.env.local`, simply re-run `docker build -t home .` and recreate the container.
 
 ---
 
